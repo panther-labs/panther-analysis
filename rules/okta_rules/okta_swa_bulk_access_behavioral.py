@@ -42,6 +42,14 @@ def severity(event):
     return "MEDIUM"  # Default: anomalous SWA volume with no other escalating signals
 
 
+def dedup_key(event):
+    admin = event.get("admin_email", "unknown")
+    first_event = str(
+        event.get("recent_extraction_first_event") or event.get("recent_swa_first_event", "unknown")
+    )[:10]
+    return f"okta_swa_bulk_{admin}_{first_event}"
+
+
 def alert_context(event):
     return {
         "admin_email": event.get("admin_email"),

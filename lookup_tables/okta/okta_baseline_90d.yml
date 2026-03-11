@@ -21,7 +21,7 @@ Description: |
   - Credential extractions: mean/stddev + temporal ratios for application.user_membership.change_username
     (for Okta.SWA.BulkAccess.Behavioral and Okta.SWA.OffHoursAccess.Behavioral)
 Reference: https://www.varonis.com/blog/okta-attack-vectors
-SnowflakeQuery: |
+Query: |
   -- OKTA SHARED BEHAVIORAL BASELINE
   -- PART 1: General 90-day baseline (all event types)
   -- PARTS 2-5: Event-specific 90-day baselines for detection z-scores
@@ -65,7 +65,8 @@ SnowflakeQuery: |
           target[0]:displayName::string AS app,
           HOUR(published) AS utc_hour
       FROM panther_logs.public.okta_systemlog
-      WHERE p_event_time >= CURRENT_DATE - INTERVAL '90 days'
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_DATE - INTERVAL '7 days'
           AND actor:alternateId::string LIKE '%@%'
   ),
 
@@ -252,7 +253,8 @@ SnowflakeQuery: |
               ELSE 0
           END) AS hourly_security_weakenings
       FROM panther_logs.public.okta_systemlog
-      WHERE p_event_time >= CURRENT_DATE - INTERVAL '90 days'
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_DATE - INTERVAL '7 days'
           AND eventType IN ('policy.rule.update', 'policy.lifecycle.update')
           AND actor:alternateId::string LIKE '%@%'
       GROUP BY user_email, event_hour
@@ -287,7 +289,8 @@ SnowflakeQuery: |
           END) AS hourly_admin_enrollments,
           COUNT(DISTINCT target[0]:alternateId::string) AS hourly_unique_targets
       FROM panther_logs.public.okta_systemlog
-      WHERE p_event_time >= CURRENT_DATE - INTERVAL '90 days'
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_DATE - INTERVAL '7 days'
           AND eventType = 'user.mfa.factor.activate'
           AND actor:alternateId::string LIKE '%@%'
       GROUP BY user_email, event_hour
@@ -320,10 +323,10 @@ SnowflakeQuery: |
           COUNT(*) AS hourly_swa_events,
           COUNT(DISTINCT target[0]:displayName::string) AS hourly_app_diversity,
           COUNT(DISTINCT client:geographicalContext:country::string) AS hourly_country_diversity,
-          COUNT(DISTINCT client:ipAddress::string) AS hourly_ip_diversity,
-          SUM(CASE WHEN HOUR(published) < 9 OR HOUR(published) >= 17 THEN 1 ELSE 0 END) AS hourly_offhours_events
+          COUNT(DISTINCT client:ipAddress::string) AS hourly_ip_diversity
       FROM panther_logs.public.okta_systemlog
-      WHERE p_event_time >= CURRENT_DATE - INTERVAL '90 days'
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_DATE - INTERVAL '7 days'
           AND eventType = 'user.authentication.sso'
           AND actor:alternateId::string LIKE '%@%'
           -- NOTE: swa_mode and signOnMode are internal Okta debug fields.
@@ -343,7 +346,8 @@ SnowflakeQuery: |
           ARRAY_COMPACT(ARRAY_AGG(DISTINCT client:ipAddress::string)) AS swa_known_ips,
           ARRAY_COMPACT(ARRAY_AGG(DISTINCT client:userAgent:rawUserAgent::string)) AS swa_known_user_agents
       FROM panther_logs.public.okta_systemlog
-      WHERE p_event_time >= CURRENT_DATE - INTERVAL '90 days'
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_DATE - INTERVAL '7 days'
           AND eventType = 'user.authentication.sso'
           AND actor:alternateId::string LIKE '%@%'
           AND (
@@ -366,8 +370,7 @@ SnowflakeQuery: |
           AVG(hourly_country_diversity)::FLOAT AS mean_country_diversity_per_hour,
           STDDEV(hourly_country_diversity) AS stddev_country_diversity_per_hour,
           AVG(hourly_ip_diversity)::FLOAT AS mean_ip_diversity_per_hour,
-          STDDEV(hourly_ip_diversity) AS stddev_ip_diversity_per_hour,
-          SUM(hourly_offhours_events)::FLOAT / NULLIF(SUM(hourly_swa_events), 0) AS baseline_offhours_ratio
+          STDDEV(hourly_ip_diversity) AS stddev_ip_diversity_per_hour
       FROM swa_access_hourly
       GROUP BY user_email
   ),
@@ -382,21 +385,63 @@ SnowflakeQuery: |
           DATE_TRUNC('hour', published) AS event_hour,
           COUNT(*) AS hourly_credential_extractions,
           COUNT(DISTINCT target[0]:alternateId::string) AS hourly_victim_diversity,
-          COUNT(DISTINCT client:geographicalContext:country::string) AS hourly_country_diversity,
-          SUM(CASE WHEN HOUR(published) < 9 OR HOUR(published) >= 17 THEN 1 ELSE 0 END) AS hourly_offhours_count,
-          SUM(CASE WHEN DAYOFWEEK(published) IN (0, 6) THEN 1 ELSE 0 END) AS hourly_weekend_count,
-          SUM(CASE WHEN HOUR(published) >= 2 AND HOUR(published) < 6 THEN 1 ELSE 0 END) AS hourly_late_night_count,
-          SUM(CASE WHEN HOUR(published) >= 5 AND HOUR(published) < 9 THEN 1 ELSE 0 END) AS hourly_early_morning_count,
-          SUM(CASE WHEN HOUR(published) >= 18 AND HOUR(published) < 22 THEN 1 ELSE 0 END) AS hourly_evening_count
+          COUNT(DISTINCT client:geographicalContext:country::string) AS hourly_country_diversity
       FROM panther_logs.public.okta_systemlog
-      WHERE p_event_time >= CURRENT_DATE - INTERVAL '90 days'
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_DATE - INTERVAL '7 days'
           AND eventType = 'application.user_membership.change_username'
           AND actor:alternateId::string LIKE '%@%'
-          AND (
-              debugContext:debugData:swa_credential_access::string = 'true'
-              OR debugContext:debugData:swa_credential_access::string = 'view'
-          )
+          AND debugContext:debugData:swa_credential_access::string = 'true'
       GROUP BY user_email, event_hour
+  ),
+
+  -- Per-user UTC hour slot activity (DAYOFWEEK * 24 + HOUR gives a 0-167 slot per hour-of-week)
+  extraction_hour_activity AS (
+      SELECT
+          user_email,
+          DAYOFWEEK(event_hour) * 24 + HOUR(event_hour) AS utc_hour_slot,
+          COUNT(DISTINCT DATE(event_hour)) AS active_days_in_slot
+      FROM extraction_hourly
+      GROUP BY user_email, DAYOFWEEK(event_hour) * 24 + HOUR(event_hour)
+  ),
+
+  -- Array of UTC hour slots where user has meaningful historical activity (>= 3 days)
+  user_active_hour_slots AS (
+      SELECT
+          user_email,
+          ARRAY_AGG(utc_hour_slot) WITHIN GROUP (ORDER BY utc_hour_slot) AS active_utc_hour_slots,
+          COUNT(*) AS active_slot_count
+      FROM extraction_hour_activity
+      WHERE active_days_in_slot >= 3
+      GROUP BY user_email
+  ),
+
+  -- Per-hour binary flag: was this hour in an inactive slot?
+  -- Used to compute baseline distribution of inactive-slot activity for z-score gating
+  extraction_hourly_slot_classified AS (
+      SELECT
+          eh.user_email,
+          eh.event_hour,
+          CASE
+              WHEN uahs.active_utc_hour_slots IS NOT NULL
+                  AND NOT ARRAY_CONTAINS(
+                      (DAYOFWEEK(eh.event_hour) * 24 + HOUR(eh.event_hour))::VARIANT,
+                      uahs.active_utc_hour_slots)
+              THEN 1.0
+              ELSE 0.0
+          END AS is_inactive_slot_hour
+      FROM extraction_hourly eh
+      JOIN user_active_hour_slots uahs ON eh.user_email = uahs.user_email
+  ),
+
+  -- Mean and stddev of the per-hour inactive-slot ratio across the 90-day baseline window
+  extraction_inactive_stats AS (
+      SELECT
+          user_email,
+          AVG(is_inactive_slot_hour)::FLOAT AS mean_inactive_slot_ratio_per_hour,
+          STDDEV(is_inactive_slot_hour) AS stddev_inactive_slot_ratio_per_hour
+      FROM extraction_hourly_slot_classified
+      GROUP BY user_email
   ),
 
   extraction_stats AS (
@@ -416,21 +461,7 @@ SnowflakeQuery: |
           COUNT(DISTINCT DATE(event_hour)) AS baseline_active_days,
           COUNT(*) AS baseline_hours_with_activity,
           AVG(hourly_credential_extractions)::FLOAT AS mean_credential_access_per_hour,
-          STDDEV(hourly_credential_extractions) AS stddev_credential_access_per_hour,
-          SUM(hourly_offhours_count)::FLOAT / NULLIF(SUM(hourly_credential_extractions), 0) AS baseline_offhours_ratio,
-          SUM(hourly_weekend_count)::FLOAT / NULLIF(SUM(hourly_credential_extractions), 0) AS baseline_weekend_ratio,
-          SUM(hourly_late_night_count)::FLOAT / NULLIF(SUM(hourly_credential_extractions), 0) AS baseline_late_night_ratio,
-          SUM(hourly_early_morning_count)::FLOAT / NULLIF(SUM(hourly_credential_extractions), 0) AS baseline_early_morning_ratio,
-          SUM(hourly_evening_count)::FLOAT / NULLIF(SUM(hourly_credential_extractions), 0) AS baseline_evening_ratio,
-          SUM(hourly_offhours_count) AS baseline_total_offhours,
-          SUM(hourly_weekend_count) AS baseline_total_weekend,
-          SUM(hourly_late_night_count) AS baseline_total_late_night,
-          SUM(hourly_early_morning_count) AS baseline_total_early_morning,
-          SUM(hourly_evening_count) AS baseline_total_evening,
-          AVG(hourly_offhours_count)::FLOAT AS mean_offhours_per_hour,
-          STDDEV(hourly_offhours_count) AS stddev_offhours_per_hour,
-          AVG(hourly_late_night_count)::FLOAT AS mean_late_night_per_hour,
-          STDDEV(hourly_late_night_count) AS stddev_late_night_per_hour
+          STDDEV(hourly_credential_extractions) AS stddev_credential_access_per_hour
       FROM extraction_hourly
       GROUP BY user_email
   )
@@ -540,7 +571,6 @@ SnowflakeQuery: |
       sa.stddev_country_diversity_per_hour,
       sa.mean_ip_diversity_per_hour,
       sa.stddev_ip_diversity_per_hour,
-      sa.baseline_offhours_ratio AS swa_baseline_offhours_ratio,
       ks.swa_known_ips,
       ks.swa_known_user_agents,
 
@@ -558,20 +588,10 @@ SnowflakeQuery: |
       ex.baseline_hours_with_activity,
       ex.mean_credential_access_per_hour,
       ex.stddev_credential_access_per_hour,
-      ex.baseline_offhours_ratio,
-      ex.baseline_weekend_ratio,
-      ex.baseline_late_night_ratio,
-      ex.baseline_early_morning_ratio,
-      ex.baseline_evening_ratio,
-      ex.baseline_total_offhours,
-      ex.baseline_total_weekend,
-      ex.baseline_total_late_night,
-      ex.baseline_total_early_morning,
-      ex.baseline_total_evening,
-      ex.mean_offhours_per_hour,
-      ex.stddev_offhours_per_hour,
-      ex.mean_late_night_per_hour,
-      ex.stddev_late_night_per_hour,
+      uahs.active_utc_hour_slots,
+      uahs.active_slot_count,
+      eis.mean_inactive_slot_ratio_per_hour,
+      eis.stddev_inactive_slot_ratio_per_hour,
 
       CURRENT_TIMESTAMP AS baseline_updated_at
 
@@ -596,9 +616,10 @@ SnowflakeQuery: |
   LEFT JOIN swa_access_stats sa ON s.user_email = sa.user_email
   LEFT JOIN swa_known_sources ks ON s.user_email = ks.user_email
   LEFT JOIN extraction_stats ex ON s.user_email = ex.user_email
+  LEFT JOIN user_active_hour_slots uahs ON s.user_email = uahs.user_email
+  LEFT JOIN extraction_inactive_stats eis ON s.user_email = eis.user_email
 
   ORDER BY s.total_events DESC
-  LIMIT 100
 LogTypeMap:
   PrimaryKey: user_email
   AssociatedLogTypes:

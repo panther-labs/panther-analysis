@@ -2,24 +2,24 @@ AnalysisType: scheduled_query
 QueryName: "Query.Okta.SWAOffHoursAccessBehavioral"
 Enabled: true
 Description: |
-  Detects Okta SWA credential access during suspicious time windows using behavioral z-score analysis.
-  Reads pre-computed 90-day baselines from the okta_baseline_90d lookup table, then compares recent
-  (last 7 days) admin temporal credential access patterns against those baselines.
+  Detects Okta SWA credential access during time windows that are unusual for the specific user,
+  using per-user UTC hour slot behavioral analysis. Reads pre-computed 90-day baselines from the
+  okta_baseline_90d lookup table which stores each user's historically active UTC hour-of-week slots.
 
   DETECTION LOGIC:
-  - Z-score: Off-hours ratio spike (ratio of off-hours to total accesses) (> 3σ)
-  - Z-score: Late-night ratio spike (2 AM - 6 AM accesses) (> 2σ)
-  - Z-score: Weekend ratio spike (> 2σ)
-  - Cold-start: First-time off-hours credential access (>= 3 events, no prior baseline)
-  - Cold-start: First-time late-night credential access (>= 2 events, no prior baseline)
-  - Cold-start: First-time weekend credential access (>= 2 events, no prior baseline)
-  - Compound: Geographic shift + off-hours activity
+  - Inactive hour: Recent credential access in UTC hour slots the user is not historically active in
+  - Cold-start: Any credential access when no baseline exists (>= 3 events)
+  - Compound: Geographic shift combined with any credential access
+
+  UTC hour slots are encoded as DAYOFWEEK * 24 + HOUR (0-167), capturing per-user schedules
+  regardless of timezone. A slot is considered active if the user had activity in it on >= 3
+  distinct days during the 90-day baseline window.
 
   PREREQUISITE: okta_baseline_90d lookup table must be populated.
 Query: |
   -- OKTA SWA OFF-HOURS CREDENTIAL ACCESS BEHAVIORAL DETECTION
   -- Reads 90-day baseline from lookup table; scans only last 7 days of raw logs
-  -- Flags: off-hours ratio spikes + late-night/weekend activity + geographic shifts
+  -- Flags: activity in UTC hour slots outside the user's historical active schedule
 
   WITH recent_credential_access AS (
       SELECT
@@ -29,15 +29,8 @@ Query: |
           client:geographicalContext:country::string AS country,
           client:geographicalContext:city::string AS city,
           DATE_TRUNC('hour', published) AS event_hour,
-          CASE
-              WHEN HOUR(published) >= 9 AND HOUR(published) < 17 THEN 0
-              ELSE 1
-          END AS is_offhours,
-          CASE WHEN DAYOFWEEK(published) IN (0, 6) THEN 1 ELSE 0 END AS is_weekend,
-          CASE WHEN HOUR(published) >= 2 AND HOUR(published) < 6 THEN 1 ELSE 0 END AS is_late_night,
-          CASE WHEN HOUR(published) >= 5 AND HOUR(published) < 9 THEN 1 ELSE 0 END AS is_early_morning,
-          CASE WHEN HOUR(published) >= 18 AND HOUR(published) < 22 THEN 1 ELSE 0 END AS is_evening,
-          CASE WHEN HOUR(published) >= 22 OR HOUR(published) < 2 THEN 1 ELSE 0 END AS is_night
+          -- Encode as DAYOFWEEK * 24 + HOUR (0-167) for per-user schedule comparison
+          DAYOFWEEK(published) * 24 + HOUR(published) AS utc_hour_slot
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'application.user_membership.change_username'
@@ -45,19 +38,34 @@ Query: |
           AND debugContext:debugData:swa_credential_access::string = 'true'
   ),
 
+  -- Early join with baseline to classify each event as active or inactive slot for this user
+  recent_classified AS (
+      SELECT
+          r.admin_email,
+          r.published,
+          r.victim_email,
+          r.country,
+          r.city,
+          r.event_hour,
+          r.utc_hour_slot,
+          CASE
+              WHEN b.active_utc_hour_slots IS NULL THEN NULL  -- no baseline yet
+              WHEN ARRAY_CONTAINS(r.utc_hour_slot::VARIANT, b.active_utc_hour_slots) THEN 0
+              ELSE 1
+          END AS is_inactive_slot
+      FROM recent_credential_access r
+      LEFT JOIN panther_lookups.public.okta_baseline_90d b ON r.admin_email = b.user_email
+  ),
+
   recent_hourly AS (
       SELECT
           admin_email,
           event_hour,
           COUNT(*) AS hourly_credential_access,
-          SUM(is_offhours) AS hourly_offhours_count,
-          SUM(is_weekend) AS hourly_weekend_count,
-          SUM(is_late_night) AS hourly_late_night_count,
-          SUM(is_early_morning) AS hourly_early_morning_count,
-          SUM(is_evening) AS hourly_evening_count,
+          SUM(CASE WHEN is_inactive_slot = 1 THEN 1 ELSE 0 END) AS hourly_inactive_slot_events,
           COUNT(DISTINCT victim_email) AS hourly_victim_diversity,
           COUNT(DISTINCT country) AS hourly_country_diversity
-      FROM recent_credential_access
+      FROM recent_classified
       GROUP BY admin_email, event_hour
   ),
 
@@ -68,18 +76,10 @@ Query: |
           COUNT(DISTINCT DATE(event_hour)) AS recent_active_days,
           MAX(hourly_credential_access) AS recent_max_per_hour,
           AVG(hourly_credential_access)::FLOAT AS recent_avg_per_hour,
-          SUM(hourly_offhours_count)::FLOAT / NULLIF(SUM(hourly_credential_access), 0) AS recent_offhours_ratio,
-          SUM(hourly_weekend_count)::FLOAT / NULLIF(SUM(hourly_credential_access), 0) AS recent_weekend_ratio,
-          SUM(hourly_late_night_count)::FLOAT / NULLIF(SUM(hourly_credential_access), 0) AS recent_late_night_ratio,
-          SUM(hourly_early_morning_count)::FLOAT / NULLIF(SUM(hourly_credential_access), 0) AS recent_early_morning_ratio,
-          SUM(hourly_evening_count)::FLOAT / NULLIF(SUM(hourly_credential_access), 0) AS recent_evening_ratio,
-          SUM(hourly_offhours_count) AS recent_total_offhours,
-          SUM(hourly_weekend_count) AS recent_total_weekend,
-          SUM(hourly_late_night_count) AS recent_total_late_night,
-          SUM(hourly_early_morning_count) AS recent_total_early_morning,
-          SUM(hourly_evening_count) AS recent_total_evening,
-          MAX(hourly_offhours_count) AS recent_max_offhours_per_hour,
-          MAX(hourly_late_night_count) AS recent_max_late_night_per_hour,
+          SUM(hourly_inactive_slot_events) AS recent_inactive_slot_events,
+          SUM(hourly_inactive_slot_events)::FLOAT /
+              NULLIF(SUM(hourly_credential_access), 0) AS recent_inactive_slot_ratio,
+          AVG(hourly_inactive_slot_events::FLOAT / NULLIF(hourly_credential_access, 0)) AS recent_avg_inactive_slot_ratio_per_hour,
           MAX(hourly_victim_diversity) AS recent_max_victim_diversity_per_hour,
           MIN(event_hour) AS recent_first_event,
           MAX(event_hour) AS recent_last_event
@@ -108,20 +108,8 @@ Query: |
           COALESCE(b.baseline_hours_with_activity, 0) AS baseline_hours_with_activity,
           ROUND(COALESCE(b.mean_credential_access_per_hour, 0), 2) AS baseline_mean_credential_access_per_hour,
           ROUND(COALESCE(b.stddev_credential_access_per_hour, 0), 2) AS baseline_stddev_credential_access_per_hour,
-
-          -- Baseline temporal ratios from lookup table
-          ROUND(COALESCE(b.baseline_offhours_ratio, 0), 2) AS baseline_offhours_ratio,
-          ROUND(COALESCE(b.baseline_weekend_ratio, 0), 2) AS baseline_weekend_ratio,
-          ROUND(COALESCE(b.baseline_late_night_ratio, 0), 2) AS baseline_late_night_ratio,
-          ROUND(COALESCE(b.baseline_early_morning_ratio, 0), 2) AS baseline_early_morning_ratio,
-          ROUND(COALESCE(b.baseline_evening_ratio, 0), 2) AS baseline_evening_ratio,
-
-          -- Baseline temporal counts from lookup table
-          COALESCE(b.baseline_total_offhours, 0) AS baseline_total_offhours,
-          COALESCE(b.baseline_total_weekend, 0) AS baseline_total_weekend,
-          COALESCE(b.baseline_total_late_night, 0) AS baseline_total_late_night,
-          COALESCE(b.baseline_total_early_morning, 0) AS baseline_total_early_morning,
-          COALESCE(b.baseline_total_evening, 0) AS baseline_total_evening,
+          b.active_utc_hour_slots,
+          COALESCE(b.active_slot_count, 0) AS baseline_active_slot_count,
 
           -- Baseline geographic from lookup table
           b.primary_country AS baseline_primary_country,
@@ -132,16 +120,9 @@ Query: |
           COALESCE(r.recent_active_days, 0) AS recent_active_days,
           COALESCE(r.recent_max_per_hour, 0) AS recent_max_per_hour,
           ROUND(COALESCE(r.recent_avg_per_hour, 0), 2) AS recent_avg_per_hour,
-          ROUND(COALESCE(r.recent_offhours_ratio, 0), 2) AS recent_offhours_ratio,
-          ROUND(COALESCE(r.recent_weekend_ratio, 0), 2) AS recent_weekend_ratio,
-          ROUND(COALESCE(r.recent_late_night_ratio, 0), 2) AS recent_late_night_ratio,
-          ROUND(COALESCE(r.recent_early_morning_ratio, 0), 2) AS recent_early_morning_ratio,
-          ROUND(COALESCE(r.recent_evening_ratio, 0), 2) AS recent_evening_ratio,
-          COALESCE(r.recent_total_offhours, 0) AS recent_total_offhours,
-          COALESCE(r.recent_total_weekend, 0) AS recent_total_weekend,
-          COALESCE(r.recent_total_late_night, 0) AS recent_total_late_night,
-          COALESCE(r.recent_total_early_morning, 0) AS recent_total_early_morning,
-          COALESCE(r.recent_total_evening, 0) AS recent_total_evening,
+          COALESCE(r.recent_inactive_slot_events, 0) AS recent_inactive_slot_events,
+          ROUND(COALESCE(r.recent_inactive_slot_ratio, 0), 4) AS recent_inactive_slot_ratio,
+          ROUND(COALESCE(r.recent_avg_inactive_slot_ratio_per_hour, 0), 4) AS recent_avg_inactive_slot_ratio_per_hour,
           COALESCE(rg.recent_country_diversity, 0) AS recent_country_diversity,
           COALESCE(rg.recent_city_diversity, 0) AS recent_city_diversity,
           rg.recent_primary_country,
@@ -149,49 +130,12 @@ Query: |
           r.recent_first_event,
           r.recent_last_event,
 
-          -- Z-SCORES: Temporal Ratios (fixed stddev=0.1 for ratio comparisons)
-          CASE
-              WHEN b.baseline_total_credential_access >= 3
-              THEN ROUND(
-                  (COALESCE(r.recent_offhours_ratio, 0) - COALESCE(b.baseline_offhours_ratio, 0)) / 0.1,
-                  2)
-              ELSE NULL
-          END AS z_score_offhours_ratio,
-
-          CASE
-              WHEN b.baseline_total_credential_access >= 3
-              THEN ROUND(
-                  (COALESCE(r.recent_weekend_ratio, 0) - COALESCE(b.baseline_weekend_ratio, 0)) / 0.1,
-                  2)
-              ELSE NULL
-          END AS z_score_weekend_ratio,
-
-          CASE
-              WHEN b.baseline_total_credential_access >= 3
-              THEN ROUND(
-                  (COALESCE(r.recent_late_night_ratio, 0) - COALESCE(b.baseline_late_night_ratio, 0)) / 0.1,
-                  2)
-              ELSE NULL
-          END AS z_score_late_night_ratio,
-
-          -- Z-SCORES: Volume-based
-          CASE
-              WHEN b.baseline_total_credential_access >= 3
-              THEN ROUND(
-                  (COALESCE(r.recent_max_offhours_per_hour, 0) - b.mean_offhours_per_hour) /
-                  GREATEST(b.stddev_offhours_per_hour, 0.1),
-                  2)
-              ELSE NULL
-          END AS z_score_offhours_volume,
-
-          CASE
-              WHEN b.baseline_total_credential_access >= 3
-              THEN ROUND(
-                  (COALESCE(r.recent_max_late_night_per_hour, 0) - b.mean_late_night_per_hour) /
-                  GREATEST(b.stddev_late_night_per_hour, 0.1),
-                  2)
-              ELSE NULL
-          END AS z_score_late_night_volume,
+          -- Z-SCORE: inactive-slot ratio vs baseline distribution
+          ROUND(
+              (COALESCE(r.recent_avg_inactive_slot_ratio_per_hour, 0) - b.mean_inactive_slot_ratio_per_hour) /
+              NULLIF(b.stddev_inactive_slot_ratio_per_hour, 0),
+              2
+          ) AS z_score_inactive_slot_ratio,
 
           -- GEOGRAPHIC SHIFT FLAG
           CASE
@@ -202,115 +146,62 @@ Query: |
               ELSE FALSE
           END AS is_geographic_shift,
 
-          -- ANOMALY FLAGS: Volume Z-Score Based (true z-scores using baseline mean/stddev)
+          -- INACTIVE HOUR FLAG: inactive-slot ratio is statistically anomalous (z > 3)
           CASE
-              WHEN b.baseline_total_credential_access >= 3
-                  AND (COALESCE(r.recent_max_offhours_per_hour, 0) - b.mean_offhours_per_hour) /
-                      GREATEST(b.stddev_offhours_per_hour, 0.1) > 3
+              WHEN b.active_utc_hour_slots IS NOT NULL
+                  AND b.stddev_inactive_slot_ratio_per_hour IS NOT NULL
+                  AND (COALESCE(r.recent_avg_inactive_slot_ratio_per_hour, 0) - b.mean_inactive_slot_ratio_per_hour) /
+                      NULLIF(b.stddev_inactive_slot_ratio_per_hour, 0) > 3
               THEN TRUE ELSE FALSE
-          END AS is_offhours_ratio_anomaly,
+          END AS is_inactive_hour_anomaly,
 
+          -- COLD START FLAG: no baseline exists yet
           CASE
-              WHEN b.baseline_total_credential_access >= 3
-                  AND (COALESCE(r.recent_max_late_night_per_hour, 0) - b.mean_late_night_per_hour) /
-                      GREATEST(b.stddev_late_night_per_hour, 0.1) > 2
+              WHEN b.active_utc_hour_slots IS NULL
+                  AND r.recent_total_credential_access >= 3
               THEN TRUE ELSE FALSE
-          END AS is_late_night_ratio_anomaly,
-
-          CASE
-              WHEN b.baseline_total_credential_access >= 3
-                  AND (COALESCE(r.recent_weekend_ratio, 0) - COALESCE(b.baseline_weekend_ratio, 0)) /
-                      GREATEST(b.baseline_weekend_ratio, 0.05) > 2
-              THEN TRUE ELSE FALSE
-          END AS is_weekend_ratio_anomaly,
-
-          -- COLD START FLAGS
-          CASE
-              WHEN (b.baseline_total_offhours IS NULL OR b.baseline_total_offhours = 0)
-                  AND r.recent_total_offhours >= 3
-              THEN TRUE ELSE FALSE
-          END AS is_first_time_offhours,
-
-          CASE
-              WHEN (b.baseline_total_late_night IS NULL OR b.baseline_total_late_night = 0)
-                  AND r.recent_total_late_night >= 2
-              THEN TRUE ELSE FALSE
-          END AS is_first_time_late_night,
-
-          CASE
-              WHEN (b.baseline_total_weekend IS NULL OR b.baseline_total_weekend = 0)
-                  AND r.recent_total_weekend >= 2
-              THEN TRUE ELSE FALSE
-          END AS is_first_time_weekend,
+          END AS is_cold_start,
 
           -- OVERALL ANOMALY FLAG
           CASE
               WHEN (
-                  (b.baseline_total_credential_access >= 3
-                      AND (COALESCE(r.recent_max_offhours_per_hour, 0) - b.mean_offhours_per_hour) /
-                          GREATEST(b.stddev_offhours_per_hour, 0.1) > 3)
+                  -- Inactive-slot ratio is statistically anomalous (z > 3)
+                  (b.active_utc_hour_slots IS NOT NULL
+                      AND b.stddev_inactive_slot_ratio_per_hour IS NOT NULL
+                      AND (COALESCE(r.recent_avg_inactive_slot_ratio_per_hour, 0) - b.mean_inactive_slot_ratio_per_hour) /
+                          NULLIF(b.stddev_inactive_slot_ratio_per_hour, 0) > 3)
                   OR
-                  (b.baseline_total_credential_access >= 3
-                      AND (COALESCE(r.recent_max_late_night_per_hour, 0) - b.mean_late_night_per_hour) /
-                          GREATEST(b.stddev_late_night_per_hour, 0.1) > 2)
+                  -- Cold start: credential access with no baseline
+                  (b.active_utc_hour_slots IS NULL
+                      AND r.recent_total_credential_access >= 3)
                   OR
-                  (b.baseline_total_credential_access >= 3
-                      AND (COALESCE(r.recent_weekend_ratio, 0) - COALESCE(b.baseline_weekend_ratio, 0)) /
-                          GREATEST(b.baseline_weekend_ratio, 0.05) > 2)
-                  OR
-                  ((b.baseline_total_offhours IS NULL OR b.baseline_total_offhours = 0)
-                      AND r.recent_total_offhours >= 3)
-                  OR
-                  ((b.baseline_total_late_night IS NULL OR b.baseline_total_late_night = 0)
-                      AND r.recent_total_late_night >= 2)
-                  OR
-                  ((b.baseline_total_weekend IS NULL OR b.baseline_total_weekend = 0)
-                      AND r.recent_total_weekend >= 2)
-                  OR
+                  -- Geographic shift with any credential access
                   (b.primary_country IS NOT NULL
                       AND rg.recent_primary_country IS NOT NULL
-                      AND b.primary_country != rg.recent_primary_country
-                      AND r.recent_total_offhours >= 3)
+                      AND b.primary_country != rg.recent_primary_country)
               ) THEN TRUE
               ELSE FALSE
           END AS is_anomalous,
 
           -- ANOMALY SEVERITY SCORE
-          CASE
-              WHEN b.baseline_total_credential_access >= 3
-              THEN
-                  ROUND(
-                      GREATEST(
-                          COALESCE((COALESCE(r.recent_max_offhours_per_hour, 0) - b.mean_offhours_per_hour) /
-                              GREATEST(b.stddev_offhours_per_hour, 0.1), 0) * 2,
-                          0
-                      ) +
-                      GREATEST(
-                          COALESCE((COALESCE(r.recent_max_late_night_per_hour, 0) - b.mean_late_night_per_hour) /
-                              GREATEST(b.stddev_late_night_per_hour, 0.1), 0) * 3,
-                          0
-                      ) +
-                      GREATEST(
-                          COALESCE((COALESCE(r.recent_weekend_ratio, 0) - COALESCE(b.baseline_weekend_ratio, 0)) /
-                              GREATEST(b.baseline_weekend_ratio, 0.05), 0),
-                          0
-                      ) +
-                      CASE
-                          WHEN b.primary_country IS NOT NULL
-                              AND rg.recent_primary_country IS NOT NULL
-                              AND b.primary_country != rg.recent_primary_country THEN 5
-                          ELSE 0
-                      END,
-                      2
-                  )
-              ELSE
-                  ROUND(
-                      (COALESCE(r.recent_total_late_night, 0) * 5) +
-                      (COALESCE(r.recent_total_offhours, 0) * 2) +
-                      (COALESCE(r.recent_total_weekend, 0) * 3),
-                      2
-                  )
-          END AS anomaly_severity_score
+          ROUND(
+              -- Weight inactive slot events (more events in unusual hours = higher score)
+              COALESCE(r.recent_inactive_slot_events, 0) * 2 +
+              -- Geographic shift adds flat weight
+              CASE
+                  WHEN b.primary_country IS NOT NULL
+                      AND rg.recent_primary_country IS NOT NULL
+                      AND b.primary_country != rg.recent_primary_country THEN 5
+                  ELSE 0
+              END +
+              -- Cold start: weight by total events
+              CASE
+                  WHEN b.active_utc_hour_slots IS NULL
+                  THEN COALESCE(r.recent_total_credential_access, 0) * 0.5
+                  ELSE 0
+              END,
+              2
+          ) AS anomaly_severity_score
 
       FROM recent_stats r
       LEFT JOIN recent_geo rg ON r.admin_email = rg.admin_email
@@ -319,54 +210,36 @@ Query: |
 
   SELECT
       admin_email,
+
+      -- Baseline context
       baseline_total_credential_access,
       baseline_active_days,
       baseline_hours_with_activity,
       baseline_mean_credential_access_per_hour,
       baseline_stddev_credential_access_per_hour,
-      baseline_offhours_ratio,
-      baseline_weekend_ratio,
-      baseline_late_night_ratio,
-      baseline_early_morning_ratio,
-      baseline_evening_ratio,
-      baseline_total_offhours,
-      baseline_total_weekend,
-      baseline_total_late_night,
-      baseline_total_early_morning,
-      baseline_total_evening,
+      baseline_active_slot_count,
       baseline_primary_country,
       baseline_primary_city,
+
+      -- Recent activity
       recent_total_credential_access,
       recent_active_days,
       recent_max_per_hour,
       recent_avg_per_hour,
-      recent_offhours_ratio,
-      recent_weekend_ratio,
-      recent_late_night_ratio,
-      recent_early_morning_ratio,
-      recent_evening_ratio,
-      recent_total_offhours,
-      recent_total_weekend,
-      recent_total_late_night,
-      recent_total_early_morning,
-      recent_total_evening,
+      recent_inactive_slot_events,
+      recent_inactive_slot_ratio,
+      recent_avg_inactive_slot_ratio_per_hour,
+      z_score_inactive_slot_ratio,
       recent_country_diversity,
       recent_city_diversity,
       recent_primary_country,
       recent_primary_city,
       recent_first_event,
       recent_last_event,
-      z_score_offhours_ratio,
-      z_score_weekend_ratio,
-      z_score_late_night_ratio,
-      z_score_offhours_volume,
-      z_score_late_night_volume,
-      is_offhours_ratio_anomaly,
-      is_late_night_ratio_anomaly,
-      is_weekend_ratio_anomaly,
-      is_first_time_offhours,
-      is_first_time_late_night,
-      is_first_time_weekend,
+
+      -- Anomaly flags
+      is_inactive_hour_anomaly,
+      is_cold_start,
       is_geographic_shift,
       is_anomalous,
       anomaly_severity_score

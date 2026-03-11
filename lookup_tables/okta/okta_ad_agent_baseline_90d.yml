@@ -9,7 +9,7 @@ Description: |
   IP diversity, country diversity, city diversity, and device diversity.
   Used by the Okta.ADAgent.AuthenticationAnomaly.ZScore detection for z-score anomaly detection.
 Reference: https://www.varonis.com/blog/okta-attack-vectors
-SnowflakeQuery: |
+Query: |
   -- OKTA AD AGENT BASELINE BUILDER: 90-Day Behavioral Profile
   -- Purpose: Establish normal AD Agent authentication patterns for anomaly detection
   -- Output: Stored in lookup table for z-score anomaly detection
@@ -43,7 +43,8 @@ SnowflakeQuery: |
           CASE WHEN HOUR(published) < 9 OR HOUR(published) >= 17 THEN 1 ELSE 0 END AS is_offhours
 
       FROM panther_logs.public.okta_systemlog
-      WHERE p_event_time >= CURRENT_DATE - INTERVAL '90 days'
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_DATE - INTERVAL '7 days'
           AND actor:alternateId::string LIKE '%@%'
           AND eventType = 'user.authentication.auth_via_AD_agent'
           AND outcome:result = 'SUCCESS'
@@ -163,7 +164,6 @@ SnowflakeQuery: |
   FROM scalar_features s
   JOIN ad_agent_stats stats ON s.user_email = stats.user_email
   ORDER BY stats.total_events DESC
-  LIMIT 100
 LogTypeMap:
   PrimaryKey: user_email
   AssociatedLogTypes:

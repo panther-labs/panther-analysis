@@ -26,6 +26,15 @@ def severity(event):
     return "MEDIUM"
 
 
+def dedup_key(event):
+    admin = event.get("admin_email", "unknown")
+    first_event = str(
+        event.get("recent_policy_first_event")
+        or event.get("recent_enrollment_first_event", "unknown")
+    )[:10]
+    return f"okta_skeleton_key_{admin}_{first_event}"
+
+
 def alert_context(event):
     return {
         "admin_email": event.get("admin_email"),

@@ -30,6 +30,12 @@ def severity(event):
     return "MEDIUM"
 
 
+def dedup_key(event):
+    actor = event.get("actorId", "unknown")
+    event_date = str(event.get("p_event_time", "unknown"))[:10]
+    return f"okta_ad_agent_token_abuse_{actor}_{event_date}"
+
+
 def alert_context(event):
     return {
         "actor_id": event.get("actorId", "<UNKNOWN_ACTORID>"),

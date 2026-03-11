@@ -31,9 +31,7 @@ Query: |
           COUNT(*) AS hourly_swa_events,
           COUNT(DISTINCT target[0]:displayName::string) AS hourly_app_diversity,
           COUNT(DISTINCT client:geographicalContext:country::string) AS hourly_country_diversity,
-          COUNT(DISTINCT client:ipAddress::string) AS hourly_ip_diversity,
-          SUM(CASE WHEN HOUR(published) < 9 OR HOUR(published) >= 17 THEN 1 ELSE 0 END) AS hourly_offhours_events,
-          SUM(CASE WHEN DAYOFWEEK(published) IN (0, 6) THEN 1 ELSE 0 END) AS hourly_weekend_events
+          COUNT(DISTINCT client:ipAddress::string) AS hourly_ip_diversity
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'user.authentication.sso'
@@ -58,7 +56,6 @@ Query: |
           MAX(hourly_country_diversity) AS recent_max_country_diversity_per_hour,
           MAX(hourly_ip_diversity) AS recent_max_ip_diversity_per_hour,
           AVG(hourly_swa_events)::FLOAT AS recent_avg_swa_events_per_hour,
-          SUM(hourly_offhours_events)::FLOAT / NULLIF(SUM(hourly_swa_events), 0) AS recent_offhours_ratio,
           MIN(event_hour) AS recent_swa_first_event,
           MAX(event_hour) AS recent_swa_last_event
       FROM swa_access_recent_hourly
@@ -157,7 +154,6 @@ Query: |
           ROUND(COALESCE(b.mean_app_diversity_per_hour, 0), 2) AS baseline_mean_app_diversity_per_hour,
           ROUND(COALESCE(b.stddev_app_diversity_per_hour, 0), 2) AS baseline_stddev_app_diversity_per_hour,
           ROUND(COALESCE(b.mean_country_diversity_per_hour, 0), 2) AS baseline_mean_country_diversity_per_hour,
-          ROUND(COALESCE(b.swa_baseline_offhours_ratio, 0), 2) AS baseline_offhours_ratio,
 
           -- SWA ACCESS: RECENT ACTIVITY
           COALESCE(sr.recent_total_swa_events, 0) AS recent_total_swa_events,
@@ -166,7 +162,6 @@ Query: |
           COALESCE(sr.recent_max_country_diversity_per_hour, 0) AS recent_max_country_diversity_per_hour,
           COALESCE(sr.recent_max_ip_diversity_per_hour, 0) AS recent_max_ip_diversity_per_hour,
           ROUND(COALESCE(sr.recent_avg_swa_events_per_hour, 0), 2) AS recent_avg_swa_events_per_hour,
-          ROUND(COALESCE(sr.recent_offhours_ratio, 0), 2) AS recent_offhours_ratio,
           sr.recent_swa_first_event,
           sr.recent_swa_last_event,
 
@@ -192,7 +187,7 @@ Query: |
               WHEN b.baseline_total_swa_events >= 3
               THEN ROUND(
                   (COALESCE(sr.recent_max_swa_events_per_hour, 0) - b.mean_swa_events_per_hour) /
-                  GREATEST(b.stddev_swa_events_per_hour, 0.1),
+                  NULLIF(b.stddev_swa_events_per_hour, 0),
                   2)
               ELSE NULL
           END AS z_score_swa_volume,
@@ -201,7 +196,7 @@ Query: |
               WHEN b.baseline_total_swa_events >= 3
               THEN ROUND(
                   (COALESCE(sr.recent_max_app_diversity_per_hour, 0) - b.mean_app_diversity_per_hour) /
-                  GREATEST(b.stddev_app_diversity_per_hour, 0.1),
+                  NULLIF(b.stddev_app_diversity_per_hour, 0),
                   2)
               ELSE NULL
           END AS z_score_app_diversity,
@@ -210,7 +205,7 @@ Query: |
               WHEN b.baseline_total_swa_events >= 3
               THEN ROUND(
                   (COALESCE(sr.recent_max_country_diversity_per_hour, 0) - b.mean_country_diversity_per_hour) /
-                  GREATEST(b.stddev_country_diversity_per_hour, 0.1),
+                  NULLIF(b.stddev_country_diversity_per_hour, 0),
                   2)
               ELSE NULL
           END AS z_score_swa_country_diversity,
@@ -220,7 +215,7 @@ Query: |
               WHEN b.baseline_total_extractions >= 3
               THEN ROUND(
                   (COALESCE(cr.recent_max_extractions_per_hour, 0) - b.mean_extractions_per_hour) /
-                  GREATEST(b.stddev_extractions_per_hour, 0.1),
+                  NULLIF(b.stddev_extractions_per_hour, 0),
                   2)
               ELSE NULL
           END AS z_score_extraction_volume,
@@ -229,7 +224,7 @@ Query: |
               WHEN b.baseline_total_extractions >= 3
               THEN ROUND(
                   (COALESCE(cr.recent_max_victim_diversity_per_hour, 0) - b.mean_victim_diversity_per_hour) /
-                  GREATEST(b.stddev_victim_diversity_per_hour, 0.1),
+                  NULLIF(b.stddev_victim_diversity_per_hour, 0),
                   2)
               ELSE NULL
           END AS z_score_victim_diversity,
@@ -262,28 +257,28 @@ Query: |
           CASE
               WHEN b.baseline_total_swa_events >= 3
                   AND (COALESCE(sr.recent_max_swa_events_per_hour, 0) - b.mean_swa_events_per_hour) /
-                      GREATEST(b.stddev_swa_events_per_hour, 0.1) > 3
+                      NULLIF(b.stddev_swa_events_per_hour, 0) > 3
               THEN TRUE ELSE FALSE
           END AS is_swa_volume_anomaly,
 
           CASE
               WHEN b.baseline_total_swa_events >= 3
                   AND (COALESCE(sr.recent_max_app_diversity_per_hour, 0) - b.mean_app_diversity_per_hour) /
-                      GREATEST(b.stddev_app_diversity_per_hour, 0.1) > 3
+                      NULLIF(b.stddev_app_diversity_per_hour, 0) > 3
               THEN TRUE ELSE FALSE
           END AS is_app_diversity_anomaly,
 
           CASE
               WHEN b.baseline_total_extractions >= 3
                   AND (COALESCE(cr.recent_max_extractions_per_hour, 0) - b.mean_extractions_per_hour) /
-                      GREATEST(b.stddev_extractions_per_hour, 0.1) > 3
+                      NULLIF(b.stddev_extractions_per_hour, 0) > 3
               THEN TRUE ELSE FALSE
           END AS is_extraction_volume_anomaly,
 
           CASE
               WHEN b.baseline_total_extractions >= 3
                   AND (COALESCE(cr.recent_max_victim_diversity_per_hour, 0) - b.mean_victim_diversity_per_hour) /
-                      GREATEST(b.stddev_victim_diversity_per_hour, 0.1) > 2
+                      NULLIF(b.stddev_victim_diversity_per_hour, 0) > 2
               THEN TRUE ELSE FALSE
           END AS is_victim_diversity_anomaly,
 
@@ -305,19 +300,19 @@ Query: |
               WHEN (
                   (b.baseline_total_swa_events >= 3
                       AND (COALESCE(sr.recent_max_swa_events_per_hour, 0) - b.mean_swa_events_per_hour) /
-                          GREATEST(b.stddev_swa_events_per_hour, 0.1) > 3)
+                          NULLIF(b.stddev_swa_events_per_hour, 0) > 3)
                   OR
                   (b.baseline_total_swa_events >= 3
                       AND (COALESCE(sr.recent_max_app_diversity_per_hour, 0) - b.mean_app_diversity_per_hour) /
-                          GREATEST(b.stddev_app_diversity_per_hour, 0.1) > 3)
+                          NULLIF(b.stddev_app_diversity_per_hour, 0) > 3)
                   OR
                   (b.baseline_total_extractions >= 3
                       AND (COALESCE(cr.recent_max_extractions_per_hour, 0) - b.mean_extractions_per_hour) /
-                          GREATEST(b.stddev_extractions_per_hour, 0.1) > 3)
+                          NULLIF(b.stddev_extractions_per_hour, 0) > 3)
                   OR
                   (b.baseline_total_extractions >= 3
                       AND (COALESCE(cr.recent_max_victim_diversity_per_hour, 0) - b.mean_victim_diversity_per_hour) /
-                          GREATEST(b.stddev_victim_diversity_per_hour, 0.1) > 2)
+                          NULLIF(b.stddev_victim_diversity_per_hour, 0) > 2)
                   OR
                   ((b.baseline_total_swa_events IS NULL OR b.baseline_total_swa_events < 3)
                       AND sr.recent_total_swa_events >= 10)
@@ -353,22 +348,22 @@ Query: |
                   ROUND(
                       GREATEST(
                           COALESCE((COALESCE(sr.recent_max_swa_events_per_hour, 0) - b.mean_swa_events_per_hour) /
-                              GREATEST(b.stddev_swa_events_per_hour, 0.1), 0),
+                              NULLIF(b.stddev_swa_events_per_hour, 0), 0),
                           0
                       ) +
                       GREATEST(
                           COALESCE((COALESCE(sr.recent_max_app_diversity_per_hour, 0) - b.mean_app_diversity_per_hour) /
-                              GREATEST(b.stddev_app_diversity_per_hour, 0.1), 0),
+                              NULLIF(b.stddev_app_diversity_per_hour, 0), 0),
                           0
                       ) +
                       GREATEST(
                           COALESCE((COALESCE(cr.recent_max_extractions_per_hour, 0) - b.mean_extractions_per_hour) /
-                              GREATEST(b.stddev_extractions_per_hour, 0.1), 0) * 3,
+                              NULLIF(b.stddev_extractions_per_hour, 0), 0) * 3,
                           0
                       ) +
                       GREATEST(
                           COALESCE((COALESCE(cr.recent_max_victim_diversity_per_hour, 0) - b.mean_victim_diversity_per_hour) /
-                              GREATEST(b.stddev_victim_diversity_per_hour, 0.1), 0) * 2,
+                              NULLIF(b.stddev_victim_diversity_per_hour, 0), 0) * 2,
                           0
                       ) +
                       -- New IP + extraction: weight 5x extraction count from new IPs
@@ -402,14 +397,12 @@ Query: |
       baseline_mean_app_diversity_per_hour,
       baseline_stddev_app_diversity_per_hour,
       baseline_mean_country_diversity_per_hour,
-      baseline_offhours_ratio,
       recent_total_swa_events,
       recent_max_swa_events_per_hour,
       recent_max_app_diversity_per_hour,
       recent_max_country_diversity_per_hour,
       recent_max_ip_diversity_per_hour,
       recent_avg_swa_events_per_hour,
-      recent_offhours_ratio,
       recent_swa_first_event,
       recent_swa_last_event,
       baseline_total_extractions,

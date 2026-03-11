@@ -7,19 +7,20 @@ def rule(event):
 def title(event):
     admin = event.get("admin_email", "Unknown")
     is_geo_shift = event.get("is_geographic_shift") or False
-    recent_late_night = event.get("recent_total_late_night") or 0
+    is_cold_start = event.get("is_cold_start") or False
+    is_inactive_hour = event.get("is_inactive_hour_anomaly") or False
     baseline_country = event.get("baseline_primary_country", "Unknown")
     recent_country = event.get("recent_primary_country", "Unknown")
-    if is_geo_shift and recent_late_night > 0:
-        return (
-            f"Okta SWA: Late-Night Credential Access with Geographic Shift for {admin}"
-            f" ({baseline_country} -> {recent_country})"
-        )
-    if recent_late_night > 0:
-        return f"Okta SWA: Off-Hours Late-Night Credential Access by {admin}"
-    if is_geo_shift:
+    if is_geo_shift and is_inactive_hour:
         return (
             f"Okta SWA: Off-Hours Credential Access with Geographic Shift for {admin}"
+            f" ({baseline_country} -> {recent_country})"
+        )
+    if is_cold_start:
+        return f"Okta SWA: Credential Access with No Baseline (Cold Start) for {admin}"
+    if is_geo_shift:
+        return (
+            f"Okta SWA: Geographic Shift in Credential Access for {admin}"
             f" ({baseline_country} -> {recent_country})"
         )
     return f"Okta SWA: Off-Hours Credential Access Anomaly for {admin}"
@@ -27,37 +28,38 @@ def title(event):
 
 def severity(event):
     is_geo_shift = event.get("is_geographic_shift") or False
-    recent_late_night = event.get("recent_total_late_night") or 0
-    is_first_late_night = event.get("is_first_time_late_night") or False
-    is_late_night_anomaly = event.get("is_late_night_ratio_anomaly") or False
-    is_offhours_anomaly = event.get("is_offhours_ratio_anomaly") or False
+    is_inactive_hour = event.get("is_inactive_hour_anomaly") or False
+    is_cold_start = event.get("is_cold_start") or False
+    z_score = event.get("z_score_inactive_slot_ratio") or 0
     score = event.get("anomaly_severity_score") or 0
-    if is_geo_shift and recent_late_night > 0:
+    if is_geo_shift and is_inactive_hour:
         return "CRITICAL"
-    is_temporal_anomaly = is_late_night_anomaly or is_offhours_anomaly
-    if (
-        recent_late_night > 0
-        or is_geo_shift
-        or is_first_late_night
-        or is_temporal_anomaly
-        or score > 20
-    ):
+    if is_geo_shift or is_cold_start or z_score > 6 or score > 20:
         return "HIGH"
-    return "MEDIUM"
+    if is_inactive_hour:
+        return "MEDIUM"
+    return "LOW"
+
+
+def dedup_key(event):
+    admin = event.get("admin_email", "unknown")
+    first_event = str(event.get("recent_first_event", "unknown"))[:10]
+    return f"okta_swa_offhours_{admin}_{first_event}"
 
 
 def alert_context(event):
     return {
         "admin_email": event.get("admin_email"),
-        "recent_total_late_night": event.get("recent_total_late_night"),
-        "recent_total_offhours": event.get("recent_total_offhours"),
-        "recent_total_weekend": event.get("recent_total_weekend"),
-        "recent_late_night_ratio": event.get("recent_late_night_ratio"),
-        "recent_offhours_ratio": event.get("recent_offhours_ratio"),
-        "baseline_late_night_ratio": event.get("baseline_late_night_ratio"),
-        "baseline_offhours_ratio": event.get("baseline_offhours_ratio"),
-        "z_score_late_night_ratio": event.get("z_score_late_night_ratio"),
-        "z_score_offhours_ratio": event.get("z_score_offhours_ratio"),
+        "recent_total_credential_access": event.get("recent_total_credential_access"),
+        "recent_inactive_slot_events": event.get("recent_inactive_slot_events"),
+        "recent_inactive_slot_ratio": event.get("recent_inactive_slot_ratio"),
+        "recent_avg_inactive_slot_ratio_per_hour": event.get(
+            "recent_avg_inactive_slot_ratio_per_hour"
+        ),
+        "z_score_inactive_slot_ratio": event.get("z_score_inactive_slot_ratio"),
+        "baseline_active_slot_count": event.get("baseline_active_slot_count"),
+        "is_inactive_hour_anomaly": event.get("is_inactive_hour_anomaly"),
+        "is_cold_start": event.get("is_cold_start"),
         "is_geographic_shift": event.get("is_geographic_shift"),
         "baseline_primary_country": event.get("baseline_primary_country"),
         "recent_primary_country": event.get("recent_primary_country"),
