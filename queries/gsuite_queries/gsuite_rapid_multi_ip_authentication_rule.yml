@@ -1,0 +1,45 @@
+AnalysisType: scheduled_rule
+DisplayName: "Google Workspace Rapid Multi-IP Authentication"
+DedupPeriodMinutes: 360
+RuleID: "Google.Workspace.Rapid.Multi.IP.Authentication"
+Description: |
+  Alerts when users authenticate from 3+ distinct IPv4 addresses within 6 hours.
+  This pattern may indicate GAIA credential theft where attackers use stolen OAuth
+  tokens across multiple compromised machines simultaneously. IPv6 addresses are
+  excluded to avoid false positives from dual-stack networking environments.
+ScheduledQueries:
+  - Google Workspace Rapid Multi-IP Authentication
+Enabled: true
+Status: Experimental
+Filename: gsuite_rapid_multi_ip_authentication_rule.py
+Reference: https://businessinsights.bitdefender.com/the-chain-reaction-new-methods-for-extending-local-breaches-in-google-workspace
+Runbook: |
+  1. Query GSuite.ActivityEvent for all login events by the user in the 12 hours before and after the alert to establish the full timeline of authentication activity and identify all source IP addresses used
+  2. Check if the source IP addresses are associated with cloud providers, VPN services, proxy networks, or known corporate infrastructure, and compare the geographic locations of the IPs to identify impossible travel patterns
+  3. Search for other authentication anomalies for this user in the past 7 days, including login type changes, OAuth token authorizations with privileged scopes, failed authentication attempts, or device compromise warnings
+Severity: Medium
+Tags:
+  - GSuite
+  - Lateral Movement
+  - Valid Accounts
+  - GAIA
+  - Credential Theft
+Reports:
+  MITRE ATT&CK:
+    - TA0008:T1078.004
+    - TA0006:T1550
+SummaryAttributes:
+  - user
+  - ip_addresses
+Tests:
+  - Name: User with 3 distinct IPs
+    ExpectedResult: true
+    Log:
+      user: user@example.com
+      unique_ip_count: 3
+      ip_addresses: ["1.2.3.4", "5.6.7.8", "9.10.11.12"]
+      login_types: ["saml"]
+      first_login: "2024-01-15 10:00:00.000"
+      last_login: "2024-01-15 15:30:00.000"
+      time_span_minutes: 330
+      total_logins: 5

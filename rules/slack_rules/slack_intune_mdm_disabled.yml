@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: slack_intune_mdm_disabled.py
 RuleID: "Slack.AuditLogs.IntuneMDMDisabled"
-DisplayName: "Slack Intune MDM Disabled"
+DisplayName: "Slack Microsoft Intune Mobile Device Management Disabled"
 Enabled: true
 LogTypes:
   - Slack.AuditLogs
@@ -10,12 +10,20 @@ Tags:
   - Defense Evasion
   - Impair Defenses
   - Disable or Modify Tools
+  - Mobile Security
+  - Data Loss Prevention
 Reports:
   MITRE ATT&CK:
     - TA0005:T1562.001
+    - TA0010:T1567
 Severity: Critical
-Description: Detects the disabling of Microsoft Intune Enterprise MDM within Slack
+Description: >
+  Detects when Microsoft Intune MDM integration is disabled for Slack, removing mobile security controls and enabling data exfiltration via unmanaged devices. Intune enforces policies preventing copy/paste to unmanaged apps, requires device encryption, blocks jailbroken devices, and enables remote wipe. Disabling these controls allows unrestricted Slack access from personal or compromised devices without security restrictions.
 Reference: https://slack.com/intl/en-gb/help/articles/6495319642387-Set-up-Slack-for-Intune-mobile-apps
+Runbook: |
+  1. Query Slack audit logs for all security control modifications by actor.user.email in the 30 days around this event including EKM changes, data retention policy modifications, export permission changes, and session management settings to identify a pattern of defense evasion
+  2. Search Slack audit logs for mobile app login events, file downloads, and data exports during the period when Intune MDM was disabled to detect potential data exfiltration via unmanaged mobile devices
+  3. Review Microsoft Intune admin logs and Azure AD audit logs for correlated suspicious activity by the same actor such as removing devices from management or disabling other mobile security policies
 DedupPeriodMinutes: 60
 Threshold: 1
 SummaryAttributes:

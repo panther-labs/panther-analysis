@@ -1,0 +1,196 @@
+AnalysisType: rule
+RuleID: "Kubernetes.Pod.HostPath.Volume"
+DisplayName: "Kubernetes Pod With HostPath Volume Mount"
+Enabled: true
+Status: Experimental
+Filename: k8s_pod_hostpath_volume.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Severity: Medium
+Description: >
+  This detection monitors for pod creation with a hostPath volume mount. The attachment to a
+  node's volume can allow for privilege escalation through underlying vulnerabilities or it can
+  open up possibilities for data exfiltration or unauthorized file access. It is very rare to see
+  this being a pod requirement. System service accounts in the kube-system namespace are excluded
+  to prevent false positives from legitimate system components.
+Runbook: |
+  1. Review all pod creation events by the username in the 24 hours before the alert to establish baseline deployment behavior
+  2. Check if the hostPath volume is mounted from sensitive paths (/, /var, /sys, /proc, /etc) which pose higher security risk
+  3. Search for other hostPath volume mounts by this user in the past 30 days and compare the paths being accessed to identify patterns
+Reference: >
+  - https://kubernetes.io/docs/concepts/security/pod-security-standards/#host-namespaces
+  - https://medium.com/@vincn.ledan/understanding-the-risks-injecting-malicious-pods-via-hostpath-in-kubernetes-due-to-83f54a1bef31
+Reports:
+  Stratus Red Team:
+    - k8s.privilege-escalation.hostpath-volume
+  MITRE ATT&CK:
+    - TA0010:T1041 # Exfiltration Over C2 Channel
+    - TA0004:T1611 # Escape to Host
+DedupPeriodMinutes: 360
+Tags:
+  - Kubernetes
+  - Security Control
+  - Privilege Escalation
+  - Data Exfiltration
+  - Unified Detection
+Tests:
+  - Name: EKS Pod With Suspicious HostPath
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "auditID": "abc-123",
+        "verb": "create",
+        "user": {"username": "user@company.com"},
+        "sourceIPs": ["1.2.3.4"],
+        "userAgent": "kubectl/v1.28.2",
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "default",
+          "name": "test",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Pod",
+          "apiVersion": "v1",
+          "metadata": {"name": "test", "namespace": "default"},
+          "spec": {
+            "containers": [{
+              "name": "test",
+              "image": "nginx",
+              "volumeMounts": [{"mountPath": "/test", "name": "test-volume"}]
+            }],
+            "volumes": [{
+              "name": "test-volume",
+              "hostPath": {
+                "path": "/var/lib/kubelet",
+                "type": "DirectoryOrCreate"
+              }
+            }]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS Pod With HostPath
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"admin@example.com\"},\"sourceIPs\":[\"10.0.0.1\"],\"objectRef\":{\"resource\":\"pods\",\"namespace\":\"default\",\"name\":\"test\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"kind\":\"Pod\",\"spec\":{\"containers\":[{\"name\":\"nginx\",\"volumeMounts\":[{\"mountPath\":\"/data\",\"name\":\"vol\"}]}],\"volumes\":[{\"name\":\"vol\",\"hostPath\":{\"path\":\"/mnt/data\"}}]}}}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GCP GKE Pod With HostPath
+    ExpectedResult: true
+    Log:
+      {
+        "logName": "projects/test-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.core.v1.pods.create",
+            "resource": "core/v1/namespaces/default/pods/test"
+          }],
+          "methodName": "io.k8s.core.v1.pods.create",
+          "request": {
+            "@type": "core.k8s.io/v1.Pod",
+            "apiVersion": "v1",
+            "kind": "Pod",
+            "metadata": {"name": "test", "namespace": "default"},
+            "spec": {
+              "containers": [{
+                "image": "nginx",
+                "name": "test",
+                "volumeMounts": [{"mountPath": "/test", "name": "test-volume"}]
+              }],
+              "volumes": [{
+                "hostPath": {
+                  "path": "/var/lib/kubelet",
+                  "type": "DirectoryOrCreate"
+                },
+                "name": "test-volume"
+              }]
+            }
+          },
+          "requestMetadata": {"callerIP": "1.2.3.4"},
+          "resourceName": "core/v1/namespaces/default/pods/test",
+          "serviceName": "k8s.io"
+        },
+        "resource": {
+          "labels": {
+            "cluster_name": "gke-cluster",
+            "project_id": "test-project"
+          },
+          "type": "k8s_cluster"
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster",
+        "timestamp": "2024-02-16 11:48:22.742"
+      }
+  - Name: Pod Without HostPath
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {"resource": "pods", "namespace": "default"},
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "spec": {
+            "containers": [{"name": "nginx"}],
+            "volumes": [{
+              "name": "config",
+              "configMap": {"name": "app-config"}
+            }]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Pod Creation Failed
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {"resource": "pods", "namespace": "default"},
+        "responseStatus": {"code": 403, "status": "Failure"},
+        "requestObject": {
+          "spec": {
+            "volumes": [{
+              "hostPath": {"path": "/var/lib/kubelet"}
+            }]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: System Namespace Pod (Excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "system:serviceaccount:kube-system:controller"},
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "kube-system",
+          "name": "network-agent"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "spec": {
+            "volumes": [{
+              "hostPath": {"path": "/var/lib/cni"}
+            }]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }

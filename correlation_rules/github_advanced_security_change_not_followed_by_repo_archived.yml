@@ -2,8 +2,21 @@ AnalysisType: correlation_rule
 RuleID: "GitHub.Advanced.Security.Change.NOT.FOLLOWED.BY.Repo.Archived"
 DisplayName: "GitHub Advanced Security Change WITHOUT Repo Archived"
 Enabled: true
-Severity: Critical 
-Description: Identifies when advances security change was made not to archive a repo. Eliminates false positives in the Advances Security Change Rule when the repo is archived.
+Severity: Critical
+Tags:
+  - GitHub
+  - Code Security
+  - Defense Evasion
+  - Configuration Change
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562.001
+Description: >
+  Identifies when GitHub Advanced Security (GHAS) settings are modified without the repository being archived within 90 minutes. GHAS provides code scanning, secret scanning, and dependency review to detect vulnerabilities and exposed credentials. Disabling GHAS while keeping repositories active suggests attackers hiding malicious code, preventing security alert detection, or facilitating backdoors and supply chain attacks.
+Runbook: |
+  1. Query GitHub audit logs for the repository in p_alert_context.repo in the 6 hours around the GHAS change to identify all commits, secret scanning alerts, code scanning alerts, and CI/CD configuration changes made by the user who disabled GHAS
+  2. Review GitHub secret scanning history and code scanning alerts for the repository to check if new secrets or vulnerabilities were introduced around the time GHAS was disabled
+  3. Check the user account's recent activity across all repositories in the organization audit log to identify if they made similar GHAS changes on other repositories or exhibited other suspicious behavior
 Reference: https://docs.github.com/en/code-security/getting-started/auditing-security-alerts
 Detection:
   - Group:

@@ -56,6 +56,8 @@
   - An actor user was denied login access more times than the configured threshold.
 - [External GSuite File Share](../rules/gsuite_reports_rules/gsuite_drive_external_share.yml)
   - An employee shared a sensitive file externally with another organization
+- [GAIA GCPW Credential Theft Attack Chain](../correlation_rules/gaia_credential_theft_attack_chain.yml)
+  - Detects the GAIA (Google Account Information and Authentication) credential theftattack chain: credential dumping tool execution on Windows followed by anomalous GoogleWorkspace authentication. This pattern indicates an attacker has extracted OAuth refreshtokens from a Windows machine and is using them to authenticate to Google Workspace.
 - [Gmail Malicious SMTP Response](../rules/gsuite_activityevent_rules/gsuite_malicious_smtp_response.yml)
   - Detects when Gmail blocks or rejects emails due to malicious SMTP response reasons including malware detection, spam/phishing links, low sender reputation, RBL listings, or denial of service attempts. This rule monitors inbound SMTP connections for security threats that Gmail's filters identify.
 - [Gmail Potential Spoofed Email Delivered](../rules/gsuite_activityevent_rules/gsuite_potential_spoofed_email.yml)
@@ -74,8 +76,22 @@
   - A Google Workspace User configured a new domain application from the Google Workspace Apps Marketplace.
 - [Google Workspace Apps New Mobile App Installed](../rules/gsuite_activityevent_rules/google_workspace_apps_new_mobile_app_installed.yml)
   - A new mobile application was added to your organization's mobile apps whitelist in Google Workspace Apps.
+- [Google Workspace Login Type Anomaly](../queries/gsuite_queries/GSuite_Login_Type_Anomaly_Query.yml)
+  - Detects users authenticating with login types they haven't used in the past 30 days.May indicate GAIA credential theft where attackers use stolen tokens with differentauthentication methods than the victim's normal pattern (e.g., google_password instead of SAML).
 - [Google Workspace Many Docs Downloaded](../rules/gsuite_activityevent_rules/google_workspace_many_docs_downloaded.yml)
   - Checks whether a user has downloaded a large number of documents from Google Drive within a 5-minute period.
+- [Google Workspace OAuth Anomalous Privileged Request](../queries/gsuite_queries/GSuite_OAuth_Anomalous_Scope_Patterns_Query.yml)
+  - Detects new OAuth applications authorized with privileged scopes in Google Workspace.Uses anomaly detection to identify users authorizing OAuth apps they haven't used inthe past 7 days.
+- [Google Workspace OAuth Application Authorized with Privileged Scopes](../rules/gsuite_activityevent_rules/gsuite_oauth_privileged_scopes.yml)
+  - Detects when a user authorizes an OAuth application with privileged scopes in Google Workspace. Privileged scopes grant broad access to sensitive data and administrative functions.
+- [Google Workspace OAuth Token Requests from New IP](../queries/gsuite_queries/gsuite_oauth_token_new_ip_rule.yml)
+  - Alerts when users request OAuth tokens from IP addresses they haven't used in the past 30 days,with 3+ requests indicating active usage. This may indicate GAIA credential theft where attackersuse stolen refresh tokens to request access tokens from their infrastructure.
+- [Google Workspace OAuth Token Requests from New IPs](../queries/gsuite_queries/GSuite_OAuth_Token_New_IP_Query.yml)
+  - Detects users requesting OAuth tokens from IPv4 addresses they haven't used in the past 30 days,with 3+ requests indicating active usage. May indicate GAIA credential theft where attackers usestolen refresh tokens from their infrastructure.
+- [Google Workspace OAuthLogin Scope Anomalous Application Access](../queries/gsuite_queries/GSuite_OAuth_Login_Scope_Anomalous_Access_Query.yml)
+  - Detects apps requesting OAuth tokens with the OAuthLogin scope when they haven't requestedthis scope in the previous 14 days. This scope can be used to access Google's device passwordescrow endpoint for GAIA credential theft.
+- [Google Workspace Rapid Multi-IP Authentication](../queries/gsuite_queries/GSuite_Rapid_Multi_IP_Authentication_Query.yml)
+  - Detects users authenticating from 3+ distinct IPv4 addresses within 6 hours.May indicate GAIA credential theft where stolen OAuth tokens are used acrossmultiple compromised machines simultaneously. IPv6 addresses are excluded toavoid false positives from dual-stack networking.
 - [Gsuite Attachments Downloaded from Spam Email](../rules/gsuite_activityevent_rules/gsuite_attachments_downloaded_from_spam_email.yml)
   - Detects when a user downloads or saves to Google Drive one or more attachments that are classified as spam.
 - [GSuite Calendar Has Been Made Public](../rules/gsuite_activityevent_rules/gsuite_calendar_made_public.yml)
@@ -91,7 +107,7 @@
 - [GSuite External Drive Document](../rules/gsuite_reports_rules/gsuite_drive_visibility_change.yml)
   - A Google drive resource became externally accessible.
 - [GSuite Government Backed Attack](../rules/gsuite_activityevent_rules/gsuite_gov_attack.yml)
-  - GSuite reported that it detected a government backed attack against your account.
+  - Detects Google Workspace warnings of government-backed attacks targeting user accounts, issued only when indicators match nation-state threat actors or APT groups. These sophisticated attacks target high-value individuals using advanced tactics including zero-day exploits, spear-phishing, and social engineering. Successful compromise can lead to persistent access, intellectual property theft, and supply chain attacks.
 - [Gsuite Link Clicked in Spam Email](../rules/gsuite_activityevent_rules/gsuite_links_clicked_in_spam_email.yml)
   - Detects when a user click links contained in a received email that is classified as spam.
 - [GSuite Login Type](../rules/gsuite_activityevent_rules/gsuite_login_type.yml)
@@ -192,6 +208,8 @@
   - Okta Logins from an IP Address not found in CrowdStrike's AIP List
 - [Okta Login From CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/okta_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_FDREvent.yml)
   - Okta Logins from an IP Address not found in CrowdStrike's AIP List (crowdstrike_fdrevent table)
+- [Okta Login Without Push](../correlation_rules/okta_login_without_push.yml)
+  - Identifies successful Okta logins not followed by Push Security authorization within 60 minutes. Push Security provides additional identity verification beyond Okta MFA as a defense-in-depth strategy. Missing Push Security verification suggests compromised credentials, session hijacking, or MFA bypass where attackers satisfied Okta authentication but cannot complete additional verification.
 - [Okta MFA Globally Disabled](../rules/okta_rules/okta_admin_disabled_mfa.yml)
   - An admin user has disabled the MFA requirement for your Okta account
 - [Okta New Behaviors Acessing Admin Console](../rules/okta_rules/okta_new_behavior_accessing_admin_console.yml)
@@ -226,6 +244,8 @@
   - Suspicious Activity Reporting provides an end user with the option to report unrecognized activity from an account activity email notification.This detection alerts when a user marks the raised activity as suspicious.
 - [Okta Username Above 52 Characters Security Advisory](../queries/okta_queries/okta_52_char_username_threat_hunt.yml)
   - On October 30, 2024, a vulnerability was internally identified in generating the cache key for AD/LDAP DelAuth. The Bcrypt algorithm was used to generate the cache key where we hash a combined string of userId + username + password. Under a specific set of conditions, listed below, this could allow users to authenticate by providing the username with the stored cache key of a previous successful authentication. Customers meeting the pre-conditions should investigate their Okta System Log for unexpected authentications from usernames greater than 52 characters between the period of July 23rd, 2024 to October 30th, 2024. https://trust.okta.com/security-advisories/okta-ad-ldap-delegated-authentication-username/
+- [Potential Compromised Okta Credentials](../correlation_rules/potential_compromised_okta_credentials.yml)
+  - Identifies high-confidence credential compromise by detecting Okta login without Push Security verification followed by Push Security phishing attack within 60 minutes. This sequence indicates an attacker authenticated to Okta with stolen credentials then attempted MFA fatigue or push bombing attacks. The correlation of both events provides strong evidence of active account compromise requiring immediate response.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 
@@ -270,6 +290,14 @@
 
 - [Salesforce Admin Login As User](../rules/salesforce_rules/salesforce_admin_login_as_user.yml)
   - Salesforce detection that alerts when an admin logs in as another user.
+- [Salesforce API Anomaly Detection (RET Passthrough)](../rules/salesforce_rules/salesforce_api_anomaly_passthrough.yml)
+  - Salesforce Real-Time Event Monitoring has detected anomalous API activity. This could indicate compromised credentials, automated abuse, data exfiltration attempts, or other suspicious API usage patterns.
+- [Salesforce Bulk API Data Exfiltration](../rules/salesforce_rules/salesforce_bulk_data_exfiltration.yml)
+  - Detects Salesforce Bulk API operations that could indicate data exfiltration attempts. The Bulk API allows users to process large volumes of records (up to millions) asynchronously, making it a common vector for data theft.This detection triggers on all Bulk API job completions and adjusts severity based on:- Operation type (query operations are highest risk for exfiltration)- Volume of records processed- Entity/object type being accessed
+- [Salesforce OAuth Credential Abuse Detection](../rules/salesforce_rules/salesforce_oauth_credential_abuse.yml)
+  - Detects OAuth credential abuse and suspicious token usage patterns in Salesforce. OAuth tokens provide API access and can be abused if compromised, making this detection critical for:- Stolen or leaked OAuth tokens- Token replay attacks- Excessive API usage indicating automated abuse- Failed token refresh attempts (potential brute force)- Unauthorized token revocationsThis detection triggers on OAuth-related security events and adjusts severity based on:- Token revocation events (may indicate compromise response)- Failed OAuth operations (potential attack attempts)- Excessive API usage patterns
+- [Salesforce Third-Party Integration Monitoring](../rules/salesforce_rules/salesforce_third_party_integration.yml)
+  - Monitors third-party integrations and OAuth connected apps accessing Salesforce. Connected apps use OAuth for authorization and can access data on behalf of users, making them a potential vector for:- Unauthorized data access- Shadow IT applications- Compromised OAuth tokens- Over-privileged integrationsThis detection triggers on connected app usage events and adjusts severity based on:- Connection type (refresh tokens are higher risk)- App authorization events- Suspicious app naming patterns
 
 
 ## Slack
@@ -282,36 +310,36 @@
   - Detects when a Slack App has been added to a workspace
 - [Slack App Removed](../rules/slack_rules/slack_app_removed.yml)
   - Detects when a Slack App has been removed
-- [Slack Denial of Service](../rules/slack_rules/slack_application_dos.yml)
-  - Detects when slack admin invalidates user session(s). If it happens more than once in a 24 hour period it can lead to DoS
+- [Slack Denial of Service via Session Invalidation](../rules/slack_rules/slack_application_dos.yml)
+  - Detects potential DoS attacks via excessive session invalidation when administrators reset user sessions 60+ times within 24 hours. Repeated session termination prevents users from maintaining Slack access, disrupting communication and productivity. Legitimate session resets for incident response or troubleshooting typically occur 1-3 times, so reaching the 60-event threshold indicates malicious intent.
 - [Slack DLP Modified](../rules/slack_rules/slack_dlp_modified.yml)
   - Detects when a Data Loss Prevention (DLP) rule has been deactivated or a violation has been deleted
 - [Slack EKM Config Changed](../rules/slack_rules/slack_ekm_config_changed.yml)
   - Detects when the logging settings for a workspace's EKM configuration has changed
 - [Slack EKM Slackbot Unenrolled](../rules/slack_rules/slack_ekm_slackbot_unenrolled.yml)
   - Detects when a workspace is longer enrolled in EKM
-- [Slack EKM Unenrolled](../rules/slack_rules/slack_ekm_unenrolled.yml)
-  - Detects when a workspace is no longer enrolled or managed by EKM
+- [Slack Enterprise Key Management Unenrolled](../rules/slack_rules/slack_ekm_unenrolled.yml)
+  - Detects when Slack Enterprise Key Management (EKM) is unenrolled, removing customer-controlled encryption and reverting to Slack-managed keys. EKM allows organizations to store encryption keys externally (e.g., AWS KMS), ensuring data remains protected even from Slack infrastructure compromise. Unenrollment exposes all workspace data to decryption by Slack systems and violates compliance requirements for regulated industries.
 - [Slack IDP Configuration Changed](../rules/slack_rules/slack_idp_configuration_change.yml)
   - Detects changes to the identity provider (IdP) configuration for Slack organizations.
 - [Slack Information Barrier Modified](../rules/slack_rules/slack_information_barrier_modified.yml)
   - Detects when a Slack information barrier is deleted/updated
-- [Slack Intune MDM Disabled](../rules/slack_rules/slack_intune_mdm_disabled.yml)
-  - Detects the disabling of Microsoft Intune Enterprise MDM within Slack
 - [Slack Legal Hold Policy Modified](../rules/slack_rules/slack_legal_hold_policy_modified.yml)
   - Detects changes to configured legal hold policies
 - [Slack MFA Settings Changed](../rules/slack_rules/slack_mfa_settings_changed.yml)
   - Detects changes to Multi-Factor Authentication requirements
+- [Slack Microsoft Intune Mobile Device Management Disabled](../rules/slack_rules/slack_intune_mdm_disabled.yml)
+  - Detects when Microsoft Intune MDM integration is disabled for Slack, removing mobile security controls and enabling data exfiltration via unmanaged devices. Intune enforces policies preventing copy/paste to unmanaged apps, requires device encryption, blocks jailbroken devices, and enables remote wipe. Disabling these controls allows unrestricted Slack access from personal or compromised devices without security restrictions.
 - [Slack Organization Created](../rules/slack_rules/slack_org_created.yml)
   - Detects when a Slack organization is created
 - [Slack Organization Deleted](../rules/slack_rules/slack_org_deleted.yml)
   - Detects when a Slack organization is deleted
 - [Slack Potentially Malicious File Shared](../rules/slack_rules/slack_potentially_malicious_file_shared.yml)
-  - Detects when a potentially malicious file is shared within Slack
+  - Detects when Slack's automated security scanning identifies malicious files uploaded to the workspace, indicating malware delivery or phishing attempts. Slack scans for executable malware, ransomware, phishing documents, malicious scripts, and files matching threat actor signatures. This detection indicates compromised accounts, insider threats, or successful phishing attacks where users uploaded infected files.
+- [Slack Primary Owner Transferred](../rules/slack_rules/slack_service_owner_transferred.yml)
+  - Detects Slack Primary Owner transfers, representing the highest administrative privilege change with absolute control over workspace settings, security, billing, and data access. Primary Owners can add/remove all admins, delete entire workspaces, and transfer ownership. Unauthorized transfers indicate account compromise, insider threats, or hostile takeovers that could lead to permanent data loss or complete security control loss.
 - [Slack Private Channel Made Public](../rules/slack_rules/slack_private_channel_made_public.yml)
   - Detects when a channel that was previously private is made public
-- [Slack Service Owner Transferred](../rules/slack_rules/slack_service_owner_transferred.yml)
-  - Detects transferring of service owner on request from primary owner
 - [Slack SSO Settings Changed](../rules/slack_rules/slack_sso_settings_changed.yml)
   - Detects changes to Single Sign On (SSO) restrictions
 - [Slack User Privilege Escalation](../rules/slack_rules/slack_user_privilege_escalation.yml)

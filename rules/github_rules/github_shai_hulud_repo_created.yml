@@ -15,7 +15,8 @@ Tags:
 Severity: High
 Description: >
   Detects when a repository is created with the description "Sha1-Hulud: The Second Coming.",
-  which is a known indicator of compromise associated with the Sha1-Hulud 2.0 campaign.
+  which is a known indicator of compromise associated with the Sha1-Hulud 2.0 campaign. Repos
+  created with this description are typically indicators of an exfiltration attempt by the worm.
 Runbook: |
   1. Immediately investigate the repository and its creator
   2. Review the repository owner's account for signs of compromise
@@ -26,7 +27,7 @@ Runbook: |
   7. Review recent activity from the same user across all repositories
   8. Check for any downstream impacts if the repository was forked or cloned
   9. Notify security team and relevant stakeholders immediately
-Reference: https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-supply-chain-security
+Reference: https://www.wiz.io/blog/shai-hulud-2-0-ongoing-supply-chain-attack
 Tests:
   - Name: Sha1-Hulud Repository Created
     ExpectedResult: true

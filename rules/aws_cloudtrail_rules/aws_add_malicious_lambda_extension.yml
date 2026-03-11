@@ -1,23 +1,69 @@
 AnalysisType: rule
 Filename: aws_add_malicious_lambda_extension.py
 RuleID: "AWS.Lambda.UpdateFunctionConfiguration"
-DisplayName: "Lambda Update Function Configuration with Layers"
+DisplayName: "Lambda Configuration with Layers Updated by IAM User"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
 Reports:
   MITRE ATT&CK:
     - TA0007:T1078
-Severity: Info
+Severity: High
 Status: Experimental
-CreateAlert: false
+CreateAlert: true
 Description: >
-  Identifies when a Lambda function configuration is updated with layers, which could indicate a potential security risk.
-Runbook: Make sure that the Lambda function configuration update is expected and authorized. If not, investigate the event further.
+  Detects when Lambda function configuration is updated with layers using direct IAM user credentials instead of assumed roles.
+  Lambda layers can execute code before the main function, making them a stealthy persistence mechanism.
+  This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails,
+  or insider threat activity attempting to inject malicious layers.
+Runbook: |
+  Verify the IAM user and layer ARNs are authorized.
+  Check if layers are from trusted sources (same account, known publishers).
+  If unauthorized:
+  - Disable the IAM user access key
+  - Revert Lambda configuration to previous version
+  - Investigate credential compromise
 Reference: https://stratus-red-team.cloud/attack-techniques/AWS/aws.persistence.lambda-layer-extension/
 Tests:
-  - Name: Lambda Update Function Configuration with Layers
+  - Name: IAM User Updates Lambda Configuration with Layers
     ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.05",
+        "userIdentity": {
+          "type": "IAMUser",
+          "principalId": "AIDAI123456789EXAMPLE",
+          "arn": "arn:aws:iam::123456789012:user/john.developer",
+          "accountId": "123456789012",
+          "accessKeyId": "AKIAI123456789EXAMPLE",
+          "userName": "john.developer"
+        },
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "lambda.amazonaws.com",
+        "eventName": "UpdateFunctionConfiguration20150331v2",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "203.0.113.50",
+        "userAgent": "aws-cli/2.13.5 Python/3.11.4",
+        "requestParameters": {
+          "functionName": "production-api"
+        },
+        "responseElements": {
+          "functionName": "production-api",
+          "layers": [
+            {
+              "arn": "arn:aws:lambda:us-west-2:123456789012:layer:malicious-layer:1"
+            }
+          ]
+        },
+        "requestID": "1",
+        "eventID": "1",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail"
+      }
+  - Name: AssumedRole Updates Lambda Configuration with Layers (Normal CI/CD)
+    ExpectedResult: false
     Log:
       {
         "eventVersion": "1.05",

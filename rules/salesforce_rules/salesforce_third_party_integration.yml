@@ -1,0 +1,211 @@
+AnalysisType: rule
+Description: |
+  Monitors third-party integrations and OAuth connected apps accessing Salesforce. Connected apps use OAuth for authorization and can access data on behalf of users, making them a potential vector for:
+  - Unauthorized data access
+  - Shadow IT applications
+  - Compromised OAuth tokens
+  - Over-privileged integrations
+
+  This detection triggers on connected app usage events and adjusts severity based on:
+  - Connection type (refresh tokens are higher risk)
+  - App authorization events
+  - Suspicious app naming patterns
+DisplayName: "Salesforce Third-Party Integration Monitoring"
+Enabled: true
+Filename: salesforce_third_party_integration.py
+Status: Experimental
+Runbook: |
+  1. Identify the connected app and review its purpose and authorization
+  2. Verify the app is approved and expected for this user
+  3. Review OAuth scopes granted to the app (what permissions it has)
+  4. Check if the source IP is expected for this integration
+  5. Investigate the user's intent for authorizing this app
+  6. Review the app's access history and data accessed
+  7. If unauthorized or suspicious:
+     - Revoke the OAuth token immediately
+     - Review all data accessed by the app
+     - Disable the connected app if not needed
+     - Educate the user on approved applications
+  8. Consider implementing connected app policies and IP restrictions
+Reference: https://help.salesforce.com/s/articleView?id=sf.connected_app_overview.htm
+Severity: Medium
+Tests:
+  - ExpectedResult: true
+    Log:
+      EVENT_TYPE: ConnectedAppUsageEventStore
+      TIMESTAMP: "2024-01-25 16:30:45.123"
+      TIMESTAMP_DERIVED: "2024-01-25 16:30:45.123"
+      EVENT_DATE: "2024-01-25"
+      ORGANIZATION_ID: 00D5f000005uVo7
+      USER_ID: 0055f00000MyOXz
+      USER_ID_DERIVED: 0055f00000MyOXzCCD
+      USER_NAME: oauth.user@company.com
+      USER_TYPE: Standard
+      SOURCE_IP: 203.45.67.89
+      REQUEST_ID: 4CuNZY3NkYY8EYQ-xXWfS-
+      CONNECTED_APP_ID: 0H05f000000XyZmCAK
+      CONNECTED_APP_NAME: ThirdPartyDataSync
+      CONNECTION_TYPE: oauth_refresh_token
+      API_VERSION: "59.0"
+      OAUTH_SCOPES: "api refresh_token"
+      p_event_time: "2024-01-25 16:30:45.123"
+      p_parse_time: "2024-01-25 16:31:22.456"
+      p_log_type: Salesforce.ConnectedAppUsageEventStore
+      p_row_id: j7o2m34n6kl8o0n9j2m5o7k1n4m6j8k0
+      p_source_id: f7e3c18d-837b-461f-9c2e-7f2g4ffa2c17
+      p_source_label: Salesforce - Production
+      p_any_ip_addresses:
+        - 203.45.67.89
+      p_any_usernames:
+        - oauth.user@company.com
+      p_any_actor_ids:
+        - 0055f00000MyOXz
+      p_any_trace_ids:
+        - 4CuNZY3NkYY8EYQ-xXWfS-
+    Name: OAuth Refresh Token - High Severity
+  - ExpectedResult: true
+    Log:
+      EVENT_TYPE: ConnectedAppUsageEventStore
+      TIMESTAMP: "2024-01-26 10:15:30.789"
+      TIMESTAMP_DERIVED: "2024-01-26 10:15:30.789"
+      EVENT_DATE: "2024-01-26"
+      ORGANIZATION_ID: 00D5f000005uVo7
+      USER_ID: 0055f00000NzPYA
+      USER_ID_DERIVED: 0055f00000NzPYADDE
+      USER_NAME: employee@company.com
+      USER_TYPE: Standard
+      SOURCE_IP: 192.168.1.100
+      REQUEST_ID: 5DvOAZ4OlZZ9FZR-yYXgT-
+      CONNECTED_APP_ID: 0H05f000000XzAnDBK
+      CONNECTED_APP_NAME: NewMobileApp
+      CONNECTION_TYPE: oauth_authorization
+      API_VERSION: "58.0"
+      OAUTH_SCOPES: "api web"
+      p_event_time: "2024-01-26 10:15:30.789"
+      p_parse_time: "2024-01-26 10:16:15.123"
+      p_log_type: Salesforce.ConnectedAppUsageEventStore
+      p_row_id: k8p3n45o7lm9p1o0k3n6p8l2o5n7k9l1
+      p_source_id: f7e3c18d-837b-461f-9c2e-7f2g4ffa2c17
+      p_source_label: Salesforce - Production
+      p_any_ip_addresses:
+        - 192.168.1.100
+      p_any_usernames:
+        - employee@company.com
+      p_any_actor_ids:
+        - 0055f00000NzPYA
+      p_any_trace_ids:
+        - 5DvOAZ4OlZZ9FZR-yYXgT-
+    Name: New App Authorization - Medium Severity
+  - ExpectedResult: true
+    Log:
+      EVENT_TYPE: ConnectedAppUsageEventStore
+      TIMESTAMP: "2024-01-27 14:45:15.456"
+      TIMESTAMP_DERIVED: "2024-01-27 14:45:15.456"
+      EVENT_DATE: "2024-01-27"
+      ORGANIZATION_ID: 00D5f000005uVo7
+      USER_ID: 0055f00000OzQZB
+      USER_ID_DERIVED: 0055f00000OzQZBEEF
+      USER_NAME: developer@company.com
+      USER_TYPE: Standard
+      SOURCE_IP: 10.20.30.40
+      REQUEST_ID: 6EwPBA5PmAA0GAT-zZYhU-
+      CONNECTED_APP_ID: 0H05f000000XzBoCCL
+      CONNECTED_APP_NAME: Test-Integration-App
+      CONNECTION_TYPE: oauth_api_call
+      API_VERSION: "59.0"
+      OAUTH_SCOPES: "api full"
+      p_event_time: "2024-01-27 14:45:15.456"
+      p_parse_time: "2024-01-27 14:46:03.789"
+      p_log_type: Salesforce.ConnectedAppUsageEventStore
+      p_row_id: l9q4o56p8mn0q2p1l4o7q9m3p6o8l0m2
+      p_source_id: f7e3c18d-837b-461f-9c2e-7f2g4ffa2c17
+      p_source_label: Salesforce - Production
+      p_any_ip_addresses:
+        - 10.20.30.40
+      p_any_usernames:
+        - developer@company.com
+      p_any_actor_ids:
+        - 0055f00000OzQZB
+      p_any_trace_ids:
+        - 6EwPBA5PmAA0GAT-zZYhU-
+    Name: Suspicious Test App Name - Medium Severity
+  - ExpectedResult: true
+    Log:
+      EVENT_TYPE: ApiConnectedApp
+      TIMESTAMP: "2024-01-28 09:20:30.123"
+      TIMESTAMP_DERIVED: "2024-01-28 09:20:30.123"
+      EVENT_DATE: "2024-01-28"
+      ORGANIZATION_ID: 00D5f000005uVo7
+      USER_ID: 0055f00000PzRAC
+      USER_ID_DERIVED: 0055f00000PzRACFFG
+      USER_NAME: integration.user@company.com
+      USER_TYPE: Standard
+      SOURCE_IP: 172.16.0.100
+      REQUEST_ID: 7FxQCB6QnBB1HBU-AAZiV-
+      CONNECTED_APP_ID: 0H05f000000XzCpDDM
+      CONNECTED_APP_NAME: ApprovedIntegrationService
+      CONNECTION_TYPE: oauth_api_call
+      API_VERSION: "59.0"
+      OAUTH_SCOPES: "api"
+      p_event_time: "2024-01-28 09:20:30.123"
+      p_parse_time: "2024-01-28 09:21:15.456"
+      p_log_type: Salesforce.ApiConnectedApp
+      p_row_id: m0r5p67q9no1r3q2m5p8r0n4q7p9m1n3
+      p_source_id: f7e3c18d-837b-461f-9c2e-7f2g4ffa2c17
+      p_source_label: Salesforce - Production
+      p_any_ip_addresses:
+        - 172.16.0.100
+      p_any_usernames:
+        - integration.user@company.com
+      p_any_actor_ids:
+        - 0055f00000PzRAC
+      p_any_trace_ids:
+        - 7FxQCB6QnBB1HBU-AAZiV-
+    Name: Normal API Call - Default Severity
+  - ExpectedResult: false
+    Log:
+      EVENT_TYPE: Login
+      TIMESTAMP: "2024-01-29 11:30:45.789"
+      TIMESTAMP_DERIVED: "2024-01-29 11:30:45.789"
+      ORGANIZATION_ID: 00D5f000005uVo7
+      USER_ID: 0055f00000QzSBD
+      USER_ID_DERIVED: 0055f00000QzSBDGGH
+      USER_NAME: normal.user@company.com
+      USER_TYPE: Standard
+      LOGIN_STATUS: LOGIN_NO_ERROR
+      SOURCE_IP: 10.10.10.10
+      REQUEST_ID: 8GyRDC7RoCC2ICV-BBZjW-
+      API_VERSION: "59.0"
+      BROWSER_TYPE: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)
+      p_event_time: "2024-01-29 11:30:45.789"
+      p_parse_time: "2024-01-29 11:31:32.123"
+      p_log_type: Salesforce.Login
+      p_row_id: n1s6q78r0op2s4r3n6q9s1o5r8q0n2o4
+      p_source_id: f7e3c18d-837b-461f-9c2e-7f2g4ffa2c17
+      p_source_label: Salesforce - Production
+      p_any_ip_addresses:
+        - 10.10.10.10
+      p_any_usernames:
+        - normal.user@company.com
+      p_any_actor_ids:
+        - 0055f00000QzSBD
+      p_any_trace_ids:
+        - 8GyRDC7RoCC2ICV-BBZjW-
+    Name: Normal Login Event - Not Connected App
+DedupPeriodMinutes: 60
+LogTypes:
+  - Salesforce.RealtimeEvent
+RuleID: "Salesforce.ThirdParty.Integration.Monitoring"
+Threshold: 1
+Tags:
+  - Salesforce
+  - OAuth
+  - Connected Apps
+  - Third-Party Integration
+  - Shadow IT
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1199  # Initial Access: Trusted Relationship
+    - TA0003:T1098  # Persistence: Account Manipulation
+    - TA0005:T1550  # Defense Evasion: Use Alternate Authentication Material
+    - TA0006:T1528  # Credential Access: Steal Application Access Token

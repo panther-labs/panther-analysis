@@ -1,0 +1,118 @@
+AnalysisType: rule
+RuleID: "Kubernetes.Pod.Exec"
+DisplayName: "Kubernetes Exec Into Pod"
+Enabled: false
+Status: Experimental
+Filename: k8s_exec_into_pod.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Security Control
+  - Configuration Required
+  - Unified Detection
+Severity: Medium
+Description: >
+  Detects when users exec into pods across Kubernetes clusters. Execing into pods should be
+  monitored as it can be used for unauthorized access, privilege escalation, or persistent
+  access to workloads. This detection is disabled by default and should be configured with
+  inline filters in the Panther UI to exclude legitimate use cases (e.g., specific service
+  accounts, namespaces, or authorized users).
+Runbook: |
+  1. Query all exec operations by the username in the 24 hours before and after the alert to identify scope of pod access
+  2. Review the namespace and pod name from the alert context to determine if accessing sensitive workloads or data
+  3. Cross-reference the username against authorized administrator or DevOps groups in the past 30 days to verify authorization
+Reference: https://kubernetes.io/docs/tasks/debug/debug-application/get-shell-running-container/
+Tests:
+  - Name: EKS Exec Into Pod
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "auditID": "abc-123",
+        "verb": "create",
+        "user": {
+          "username": "john.doe@example.com",
+          "groups": ["system:authenticated"]
+        },
+        "sourceIPs": ["1.2.3.4"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "pods",
+          "subresource": "exec",
+          "namespace": "default",
+          "name": "nginx-pod",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 101},
+        "requestURI": "/api/v1/namespaces/default/pods/nginx-pod/exec",
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS Exec Into Pod (realistic)
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"level\":\"Request\",\"stage\":\"ResponseStarted\",\"verb\":\"get\",\"user\":{\"username\":\"masterclient\",\"groups\":[\"system:masters\",\"system:authenticated\"]},\"sourceIPs\":[\"20.43.245.209\",\"172.31.52.37\"],\"userAgent\":\"kubectl/v1.35.0\",\"objectRef\":{\"resource\":\"pods\",\"subresource\":\"exec\",\"namespace\":\"default\",\"name\":\"nginx-pod\",\"apiVersion\":\"v1\"},\"responseStatus\":{\"code\":101},\"requestURI\":\"/api/v1/namespaces/default/pods/nginx-pod/exec\"}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GCP GKE Exec Into Pod
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.core.v1.pods.exec.create",
+            "resource": "core/v1/namespaces/default/pods/nginx-pod/exec"
+          }],
+          "methodName": "io.k8s.core.v1.pods.exec.create",
+          "requestMetadata": {
+            "callerIP": "1.2.3.4",
+            "callerSuppliedUserAgent": "kubectl/v1.27.0"
+          },
+          "resourceName": "core/v1/namespaces/default/pods/nginx-pod/exec",
+          "serviceName": "k8s.io"
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: Pod Creation (Not Exec)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "default",
+          "name": "nginx-pod"
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Get Pod (Not Exec - no subresource)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "get",
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "default",
+          "name": "nginx-pod"
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }

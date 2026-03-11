@@ -1,0 +1,245 @@
+AnalysisType: rule
+RuleID: "Kubernetes.Role.WritePermissions"
+DisplayName: "Kubernetes Role With Write Permissions Created"
+Enabled: true
+Status: Experimental
+Filename: k8s_role_write_permissions.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - RBAC
+  - Configuration Management
+  - Unified Detection
+Severity: Low
+Description: >
+  This detection monitors for Roles or ClusterRoles being created with write permissions (create, update, patch,
+  delete, deletecollection). While write permissions are common and often necessary for application operations,
+  tracking role creation helps establish RBAC baselines and identify overly permissive configurations. Severity
+  escalates for write access to sensitive resources like secrets or RBAC objects.
+Runbook: |
+  1. Review the role rules to identify what resources have write permissions and determine if this role creation is expected for the user or application
+  2. Search for RoleBindings or ClusterRoleBindings that reference this role in the past 24 hours to identify who will receive these permissions
+  3. If the role grants excessive permissions, work with the team to implement least-privilege access and replace with a more restrictive role
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1222 # Defense Evasion: File and Directory Permissions Modification
+Reference: >
+  - https://kubernetes.io/docs/reference/access-authn-authz/rbac/#role-and-clusterrole
+  - https://www.paloaltonetworks.ca/cyberpedia/kubernetes-rbac#roles
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - username
+  - resource
+  - name
+  - p_source_label
+Tests:
+  - Name: EKS ClusterRole with delete permissions on secrets
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "admin@example.com"},
+        "sourceIPs": ["203.0.113.42"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "secret-manager",
+          "apiGroup": "rbac.authorization.k8s.io",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "ClusterRole",
+          "metadata": {"name": "secret-manager"},
+          "rules": [
+            {
+              "apiGroups": [""],
+              "resources": ["secrets"],
+              "verbs": ["get", "list", "delete"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS Role with create and update on pods
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"developer@example.com\"},\"sourceIPs\":[\"1.2.3.4\"],\"objectRef\":{\"resource\":\"roles\",\"namespace\":\"production\",\"name\":\"pod-deployer\",\"apiGroup\":\"rbac.authorization.k8s.io\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"kind\":\"Role\",\"metadata\":{\"name\":\"pod-deployer\",\"namespace\":\"production\"},\"rules\":[{\"apiGroups\":[\"\"],\"resources\":[\"pods\"],\"verbs\":[\"create\",\"update\",\"patch\"]}]}}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GKE ClusterRole with deletecollection
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.rbac.v1.clusterroles.create",
+            "resource": "rbac.authorization.k8s.io/v1/clusterroles/cleanup-role"
+          }],
+          "methodName": "io.k8s.rbac.v1.clusterroles.create",
+          "requestMetadata": {"callerIP": "8.8.8.8"},
+          "resourceName": "rbac.authorization.k8s.io/v1/clusterroles/cleanup-role",
+          "serviceName": "k8s.io",
+          "request": {
+            "kind": "ClusterRole",
+            "metadata": {"name": "cleanup-role"},
+            "rules": [
+              {
+                "apiGroups": [""],
+                "resources": ["configmaps"],
+                "verbs": ["deletecollection"]
+              }
+            ]
+          }
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: EKS Role with mixed read and write permissions
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "developer@example.com"},
+        "objectRef": {
+          "resource": "roles",
+          "namespace": "default",
+          "name": "app-manager",
+          "apiGroup": "rbac.authorization.k8s.io"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Role",
+          "rules": [
+            {
+              "apiGroups": [""],
+              "resources": ["pods"],
+              "verbs": ["get", "list"]
+            },
+            {
+              "apiGroups": ["apps"],
+              "resources": ["deployments"],
+              "verbs": ["update", "patch"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: Role with read-only permissions
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "roles",
+          "namespace": "default",
+          "name": "reader",
+          "apiGroup": "rbac.authorization.k8s.io"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Role",
+          "rules": [
+            {
+              "apiGroups": [""],
+              "resources": ["pods", "services"],
+              "verbs": ["get", "list", "watch"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: System principal creating role (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "system:serviceaccount:kube-system:controller"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "controller-role"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "ClusterRole",
+          "rules": [
+            {
+              "apiGroups": [""],
+              "resources": ["pods"],
+              "verbs": ["create", "delete"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Failed request (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "attacker@example.com"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "write-role"
+        },
+        "responseStatus": {"code": 403},
+        "requestObject": {
+          "kind": "ClusterRole",
+          "rules": [
+            {
+              "apiGroups": [""],
+              "resources": ["pods"],
+              "verbs": ["create", "delete"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Updating existing role (not creating)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "update",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "existing-role"
+        },
+        "responseStatus": {"code": 200},
+        "requestObject": {
+          "kind": "ClusterRole",
+          "rules": [
+            {
+              "apiGroups": [""],
+              "resources": ["pods"],
+              "verbs": ["create"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }

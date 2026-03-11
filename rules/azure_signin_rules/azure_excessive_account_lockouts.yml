@@ -1,0 +1,151 @@
+AnalysisType: rule
+Filename: azure_excessive_account_lockouts.py
+RuleID: "Azure.Audit.ExcessiveAccountLockouts"
+DisplayName: "Azure Excessive Account Lockouts"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Azure.Audit
+Severity: High
+DedupPeriodMinutes: 60
+Threshold: 20
+Description: >
+  Detects high volumes of failed Microsoft Entra ID sign-in attempts resulting in account lockouts,
+  indicating potential brute-force credential attacks such as password spraying, password guessing, or
+  credential stuffing. When adversaries repeatedly attempt authentication with incorrect credentials,
+  Entra ID Smart Lockout policies trigger account lockouts (error code 50053).
+Tags:
+  - Credential Access
+  - Brute Force
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1110
+    - TA0006:T1110.001
+    - TA0006:T1110.003
+    - TA0006:T1110.004
+Runbook: |
+  1. Query Azure.Audit logs for all authentication attempts from the attacking callerIpAddress in the 60 minutes before and after the alert to identify the full scope of targeted accounts and any successful compromises
+  2. Analyze properties:userAgent strings for automation indicators like Python, PowerShell, curl, or wget which suggest scripted attacks rather than manual login attempts
+  3. Check if any of the affected user accounts had successful sign-ins from the same callerIpAddress before or after the lockouts, which would indicate successful credential compromise requiring immediate password reset and session revocation
+Reference: https://github.com/elastic/detection-rules/blob/main/rules/integrations/azure/credential_access_entra_id_excessive_account_lockouts.toml
+SummaryAttributes:
+  - callerIpAddress
+  - properties:userPrincipalName
+  - properties:userAgent
+  - properties:location:city
+  - properties:location:countryOrRegion
+Tests:
+  - Name: Account Lockout Error 50053
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-01-15 08:15:23.456",
+        "resourceId": "/tenants/tenant-123/providers/Microsoft.aadiam",
+        "operationName": "Sign-in activity",
+        "operationVersion": "1.0",
+        "category": "SignInLogs",
+        "tenantId": "tenant-123",
+        "resultType": "Failure",
+        "resultSignature": "None",
+        "durationMs": 0,
+        "callerIpAddress": "4.4.4.4",
+        "correlationId": "lockout-attack-001",
+        "Level": "4",
+        "properties":
+          {
+            "userId": "user-001",
+            "userPrincipalName": "boromir@lotr.com",
+            "ipAddress": "4.4.4.4",
+            "authenticationRequirement": "singleFactorAuthentication",
+            "userAgent": "python-requests/2.28.0",
+            "appDisplayName": "Microsoft Office",
+            "resourceDisplayName": "Microsoft Graph",
+            "status":
+              {
+                "errorCode": 50053,
+                "failureReason": "The account is locked, you’ve tried to sign in too many times with an incorrect user ID or password.",
+              },
+            "location":
+              { "city": "Unknown", "countryOrRegion": "RU", "state": "Unknown" },
+            "autonomousSystemNumber": "12345",
+          },
+        "p_event_time": "2025-01-15 08:15:23.456",
+        "p_log_type": "Azure.Audit",
+        "p_row_id": "lockout-row-001",
+      }
+  - Name: Different Error Code
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-01-15 09:30:45.123",
+        "resourceId": "/tenants/tenant-789/providers/Microsoft.aadiam",
+        "operationName": "Sign-in activity",
+        "operationVersion": "1.0",
+        "category": "SignInLogs",
+        "tenantId": "tenant-789",
+        "resultType": "Failure",
+        "resultSignature": "None",
+        "durationMs": 0,
+        "callerIpAddress": "3.3.3.3",
+        "correlationId": "auth-failure-001",
+        "Level": "4",
+        "properties":
+          {
+            "userId": "user-010",
+            "userPrincipalName": "peregrin@lotr.com",
+            "ipAddress": "3.3.3.3",
+            "authenticationRequirement": "singleFactorAuthentication",
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Safari/537.36",
+            "appDisplayName": "Azure Portal",
+            "resourceDisplayName": "Microsoft Azure Management",
+            "status":
+              {
+                "errorCode": 50126,
+                "failureReason": "Invalid username or password",
+              },
+            "location":
+              { "city": "New York", "countryOrRegion": "US", "state": "NY" },
+            "autonomousSystemNumber": "7018",
+          },
+        "p_event_time": "2025-01-15 09:30:45.123",
+        "p_log_type": "Azure.Audit",
+        "p_row_id": "auth-fail-row-001",
+      }
+  - Name: Microsoft Corporate ASN Excluded
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-01-15 10:45:12.345",
+        "resourceId": "/tenants/tenant-mscorp/providers/Microsoft.aadiam",
+        "operationName": "Sign-in activity",
+        "operationVersion": "1.0",
+        "category": "SignInLogs",
+        "tenantId": "tenant-mscorp",
+        "resultType": "Failure",
+        "resultSignature": "None",
+        "durationMs": 0,
+        "callerIpAddress": "13.64.151.161",
+        "correlationId": "ms-corp-lockout-001",
+        "Level": "4",
+        "properties":
+          {
+            "userId": "user-ms-001",
+            "userPrincipalName": "user1@microsoft.com",
+            "ipAddress": "13.64.151.161",
+            "authenticationRequirement": "singleFactorAuthentication",
+            "userAgent": "Microsoft Office/16.0",
+            "appDisplayName": "Microsoft Office",
+            "resourceDisplayName": "Microsoft Graph",
+            "status":
+              {
+                "errorCode": 50053,
+                "failureReason": "Account is locked. The user has tried to sign in too many times with an incorrect user ID or password.",
+              },
+            "location":
+              { "city": "Redmond", "countryOrRegion": "US", "state": "WA" },
+            "autonomousSystemNumber": "8075",
+          },
+        "p_event_time": "2025-01-15 10:45:12.345",
+        "p_log_type": "Azure.Audit",
+        "p_row_id": "ms-corp-row-001",
+      }
