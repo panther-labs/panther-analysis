@@ -42,7 +42,10 @@ Query: |
       WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'application.user_membership.change_username'
           AND actor:alternateId::string LIKE '%@%'
-          AND debugContext:debugData:swa_credential_access::string = 'true'
+          AND (
+              debugContext:debugData:swa_credential_access::string = 'true'
+              OR debugContext:debugData:swa_credential_access::string = 'view'
+          )
   ),
 
   recent_hourly AS (
@@ -220,7 +223,7 @@ Query: |
           CASE
               WHEN b.baseline_total_credential_access >= 3
                   AND (COALESCE(r.recent_weekend_ratio, 0) - COALESCE(b.baseline_weekend_ratio, 0)) /
-                      GREATEST(b.baseline_weekend_ratio, 0.05) > 2
+                      0.1 > 2
               THEN TRUE ELSE FALSE
           END AS is_weekend_ratio_anomaly,
 
@@ -256,7 +259,7 @@ Query: |
                   OR
                   (b.baseline_total_credential_access >= 3
                       AND (COALESCE(r.recent_weekend_ratio, 0) - COALESCE(b.baseline_weekend_ratio, 0)) /
-                          GREATEST(b.baseline_weekend_ratio, 0.05) > 2)
+                          0.1 > 2)
                   OR
                   ((b.baseline_total_offhours IS NULL OR b.baseline_total_offhours = 0)
                       AND r.recent_total_offhours >= 3)
@@ -292,7 +295,7 @@ Query: |
                       ) +
                       GREATEST(
                           COALESCE((COALESCE(r.recent_weekend_ratio, 0) - COALESCE(b.baseline_weekend_ratio, 0)) /
-                              GREATEST(b.baseline_weekend_ratio, 0.05), 0),
+                              0.1, 0),
                           0
                       ) +
                       CASE

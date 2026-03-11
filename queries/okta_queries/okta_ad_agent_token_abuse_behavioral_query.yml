@@ -62,30 +62,19 @@ Query: |
     r.userAgent,
     r.result,
     r.target,
-    'New IP Address' AS anomaly_type
+    CASE
+      WHEN h_ip.actorId IS NULL AND h_ua.actorId IS NULL THEN 'New IP Address + User Agent'
+      WHEN h_ip.actorId IS NULL THEN 'New IP Address'
+      ELSE 'New User Agent'
+    END AS anomaly_type
   FROM recent_events r
-  WHERE NOT EXISTS (
-    SELECT 1 FROM historical_ips h
-    WHERE h.actorId = r.actorId AND h.sourceIP = r.sourceIP
-  )
-
-  UNION ALL
-
-  SELECT
-    r.p_event_time,
-    r.actorId,
-    r.actorName,
-    r.eventType,
-    r.sourceIP,
-    r.userAgent,
-    r.result,
-    r.target,
-    'New User Agent' AS anomaly_type
-  FROM recent_events r
-  WHERE NOT EXISTS (
-    SELECT 1 FROM historical_user_agents h
-    WHERE h.actorId = r.actorId AND h.userAgent = r.userAgent
-  )
+  LEFT JOIN historical_ips h_ip
+    ON h_ip.actorId = r.actorId
+    AND h_ip.sourceIP = r.sourceIP
+  LEFT JOIN historical_user_agents h_ua
+    ON h_ua.actorId = r.actorId
+    AND h_ua.userAgent = r.userAgent
+  WHERE h_ip.actorId IS NULL OR h_ua.actorId IS NULL
 
   ORDER BY p_event_time DESC
   LIMIT 100

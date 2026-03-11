@@ -66,6 +66,7 @@ SnowflakeQuery: |
           HOUR(published) AS utc_hour
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '90 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND actor:alternateId::string LIKE '%@%'
   ),
 
@@ -253,6 +254,7 @@ SnowflakeQuery: |
           END) AS hourly_security_weakenings
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '90 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType IN ('policy.rule.update', 'policy.lifecycle.update')
           AND actor:alternateId::string LIKE '%@%'
       GROUP BY user_email, event_hour
@@ -288,6 +290,7 @@ SnowflakeQuery: |
           COUNT(DISTINCT target[0]:alternateId::string) AS hourly_unique_targets
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '90 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'user.mfa.factor.activate'
           AND actor:alternateId::string LIKE '%@%'
       GROUP BY user_email, event_hour
@@ -324,6 +327,7 @@ SnowflakeQuery: |
           SUM(CASE WHEN HOUR(published) < 9 OR HOUR(published) >= 17 THEN 1 ELSE 0 END) AS hourly_offhours_events
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '90 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'user.authentication.sso'
           AND actor:alternateId::string LIKE '%@%'
           -- NOTE: swa_mode and signOnMode are internal Okta debug fields.
@@ -344,6 +348,7 @@ SnowflakeQuery: |
           ARRAY_COMPACT(ARRAY_AGG(DISTINCT client:userAgent:rawUserAgent::string)) AS swa_known_user_agents
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '90 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'user.authentication.sso'
           AND actor:alternateId::string LIKE '%@%'
           AND (
@@ -390,6 +395,7 @@ SnowflakeQuery: |
           SUM(CASE WHEN HOUR(published) >= 18 AND HOUR(published) < 22 THEN 1 ELSE 0 END) AS hourly_evening_count
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '90 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'application.user_membership.change_username'
           AND actor:alternateId::string LIKE '%@%'
           AND (
@@ -598,7 +604,6 @@ SnowflakeQuery: |
   LEFT JOIN extraction_stats ex ON s.user_email = ex.user_email
 
   ORDER BY s.total_events DESC
-  LIMIT 100
 LogTypeMap:
   PrimaryKey: user_email
   AssociatedLogTypes:
