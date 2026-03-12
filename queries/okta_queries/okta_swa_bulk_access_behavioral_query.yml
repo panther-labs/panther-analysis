@@ -14,7 +14,7 @@ Description: |
   - Z-score: Victim diversity spike (targeting many different users) (> 2σ)
   - Cold-start: First-time bulk SWA access (>= 10 events, no baseline)
   - Cold-start: First-time credential extraction (>= 5 events, no baseline)
-  - New source: SWA access from IP address not seen in 90-day baseline
+  - New source: SWA access from IP address not seen in 90-day baseline (requires baseline or >= 3 recent events)
   - New source: SWA access from user agent not seen in 90-day baseline
   - Critical compound: New IP + any credential extraction events
 
@@ -320,11 +320,18 @@ Query: |
                   ((b.baseline_total_extractions IS NULL OR b.baseline_total_extractions < 3)
                       AND cr.recent_total_extractions >= 5)
                   OR
-                  -- New IP with any recent SWA or extraction activity
+                  -- New IP: requires baseline to exist (known IPs list present) + new IP detected,
+                  -- OR no baseline yet but minimum activity threshold to suppress new-employee noise
                   (
                       rs.admin_email IS NOT NULL
-                      AND (b.swa_known_ips IS NULL
-                           OR ARRAY_SIZE(ARRAY_EXCEPT(COALESCE(rs.recent_ips, ARRAY_CONSTRUCT()), b.swa_known_ips)) > 0)
+                      AND (
+                          (b.swa_known_ips IS NOT NULL
+                           AND ARRAY_SIZE(ARRAY_EXCEPT(COALESCE(rs.recent_ips, ARRAY_CONSTRUCT()), b.swa_known_ips)) > 0)
+                          OR
+                          (b.swa_known_ips IS NULL
+                           AND (COALESCE(sr.recent_total_swa_events, 0) >= 3
+                                OR COALESCE(cr.recent_total_extractions, 0) >= 1))
+                      )
                       AND (COALESCE(sr.recent_total_swa_events, 0) > 0
                            OR COALESCE(cr.recent_total_extractions, 0) > 0)
                   )
