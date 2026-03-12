@@ -41,7 +41,7 @@ Runbook: |
   2. Verify whether sourceIP and userAgent have been seen for actorId in the past 30 days, and check if sourceIP is associated with known corporate or administrative network ranges
   3. Search for other alerts from actorId or sourceIP in the past 7 days, including Okta.ADAgent.AuthenticationAnomaly.ZScore detections that may indicate a stolen token is actively being used
 
-DedupPeriodMinutes: 60
+DedupPeriodMinutes: 1440  # 24 hours — matches dedup_key anchor (actor + event_date)
 SummaryAttributes:
   - eventType
   - anomaly_type
