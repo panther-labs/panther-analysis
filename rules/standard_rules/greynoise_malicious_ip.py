@@ -2,6 +2,7 @@ from panther_greynoise_helpers import (
     get_greynoise_v3_business_service_object,
     get_greynoise_v3_object,
     greynoise_v3_alert_context,
+    greynoise_v3_severity,
 )
 
 CLASSIFICATIONS_TO_ALERT = {"malicious", "unknown"}
@@ -43,10 +44,8 @@ def title(event):
     return f"GreyNoise: {classification.title()} IP [{MATCHED_IP}] detected in {log_type}"
 
 
-def severity(event):  # pylint: disable=unused-argument
-    if SCANNER and SCANNER.classification(MATCHED_IP) == "malicious":
-        return "HIGH"
-    return "INFO"
+def severity(event):
+    return greynoise_v3_severity(event, MATCHED_IP)
 
 
 def alert_context(event):
