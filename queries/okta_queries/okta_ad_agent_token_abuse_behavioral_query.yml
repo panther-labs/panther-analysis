@@ -31,18 +31,20 @@ Query: |
       AND actor:alternateId IS NOT NULL
   ),
 
-  -- IPs seen per actor in the historical window (older than 1 day)
+  -- IPs seen per actor in the historical window (older than 1 day); NULLs excluded
   historical_ips AS (
     SELECT DISTINCT actorId, sourceIP
     FROM all_events
     WHERE p_event_time < CURRENT_TIMESTAMP - INTERVAL '1 day'
+      AND sourceIP IS NOT NULL
   ),
 
-  -- User agents seen per actor in the historical window
+  -- User agents seen per actor in the historical window; NULLs excluded
   historical_user_agents AS (
     SELECT DISTINCT actorId, userAgent
     FROM all_events
     WHERE p_event_time < CURRENT_TIMESTAMP - INTERVAL '1 day'
+      AND userAgent IS NOT NULL
   ),
 
   -- Events from the last 1 day
@@ -63,11 +65,11 @@ Query: |
     r.target,
     ARRAY_TO_STRING(
       ARRAY_COMPACT(ARRAY_CONSTRUCT(
-        CASE WHEN NOT EXISTS (
+        CASE WHEN r.sourceIP IS NOT NULL AND NOT EXISTS (
           SELECT 1 FROM historical_ips h
           WHERE h.actorId = r.actorId AND h.sourceIP = r.sourceIP
         ) THEN 'New IP Address' END,
-        CASE WHEN NOT EXISTS (
+        CASE WHEN r.userAgent IS NOT NULL AND NOT EXISTS (
           SELECT 1 FROM historical_user_agents h
           WHERE h.actorId = r.actorId AND h.userAgent = r.userAgent
         ) THEN 'New User Agent' END
@@ -76,14 +78,14 @@ Query: |
     ) AS anomaly_type
   FROM recent_events r
   WHERE
-    NOT EXISTS (
+    (r.sourceIP IS NOT NULL AND NOT EXISTS (
       SELECT 1 FROM historical_ips h
       WHERE h.actorId = r.actorId AND h.sourceIP = r.sourceIP
-    )
-    OR NOT EXISTS (
+    ))
+    OR (r.userAgent IS NOT NULL AND NOT EXISTS (
       SELECT 1 FROM historical_user_agents h
       WHERE h.actorId = r.actorId AND h.userAgent = r.userAgent
-    )
+    ))
   ORDER BY p_event_time DESC
   LIMIT 100
 Schedule:
