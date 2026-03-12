@@ -23,8 +23,8 @@ def severity(event):
     if "api_token.create" in event_type:
         return "HIGH"
 
-    # Config changes and auth failures are medium-high severity
-    if "config_change" in event_type or "bad_credentials" in event_type:
+    # Config changes are medium severity
+    if "config_change" in event_type:
         return "MEDIUM"
 
     return "MEDIUM"

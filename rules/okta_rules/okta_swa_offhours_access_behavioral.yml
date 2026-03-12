@@ -58,120 +58,140 @@ SummaryAttributes:
   - is_geographic_shift
 Tests:
   # Positive Tests - Should Alert
-  - Name: Geographic Shift with Late-Night Access - Critical Severity
+  - Name: Geographic Shift with Off-Hours Access - Critical Severity
     ExpectedResult: true
     Log:
       {
         "admin_email": "victim-admin@company.com",
         "baseline_total_credential_access": 80,
         "baseline_active_days": 25,
-        "baseline_offhours_ratio": 0.1,
-        "baseline_late_night_ratio": 0.0,
-        "baseline_weekend_ratio": 0.05,
-        "baseline_total_offhours": 8,
-        "baseline_total_late_night": 0,
-        "baseline_total_weekend": 4,
+        "baseline_hours_with_activity": 60,
+        "baseline_mean_credential_access_per_hour": 1.33,
+        "baseline_stddev_credential_access_per_hour": 0.5,
+        "baseline_active_slot_count": 45,
         "baseline_primary_country": "United States",
         "baseline_primary_city": "San Francisco",
         "recent_total_credential_access": 20,
-        "recent_offhours_ratio": 0.8,
-        "recent_late_night_ratio": 0.5,
-        "recent_weekend_ratio": 0.0,
-        "recent_total_offhours": 16,
-        "recent_total_late_night": 10,
-        "recent_total_weekend": 0,
+        "recent_active_days": 3,
+        "recent_max_per_hour": 5,
+        "recent_avg_per_hour": 2.5,
+        "recent_inactive_slot_events": 16,
+        "recent_inactive_slot_ratio": 0.8,
+        "recent_avg_inactive_slot_ratio_per_hour": 0.75,
+        "z_score_inactive_slot_ratio": 7.0,
+        "recent_country_diversity": 1,
+        "recent_city_diversity": 1,
         "recent_primary_country": "Russia",
         "recent_primary_city": "Moscow",
-        "z_score_offhours_ratio": 7.0,
-        "z_score_late_night_ratio": 5.0,
-        "z_score_weekend_ratio": -0.5,
-        "is_offhours_ratio_anomaly": true,
-        "is_late_night_ratio_anomaly": true,
-        "is_weekend_ratio_anomaly": false,
-        "is_first_time_offhours": false,
-        "is_first_time_late_night": false,
-        "is_first_time_weekend": false,
+        "recent_first_event": "2024-01-15 02:00:00",
+        "recent_last_event": "2024-01-15 05:00:00",
+        "is_inactive_hour_anomaly": true,
+        "is_cold_start": false,
         "is_geographic_shift": true,
         "is_anomalous": true,
-        "anomaly_severity_score": 34.0,
-        "recent_first_event": "2024-01-15 02:00:00",
-        "recent_last_event": "2024-01-15 05:00:00"
+        "anomaly_severity_score": 34.0
       }
 
-  - Name: First-Time Late-Night Credential Access - High Severity
+  - Name: Cold Start - No Baseline - High Severity
     ExpectedResult: true
     Log:
       {
         "admin_email": "admin@company.com",
-        "baseline_total_credential_access": 0,
-        "baseline_total_offhours": 0,
-        "baseline_total_late_night": 0,
-        "baseline_total_weekend": 0,
-        "baseline_offhours_ratio": 0.0,
-        "baseline_late_night_ratio": 0.0,
-        "baseline_weekend_ratio": 0.0,
+        "baseline_total_credential_access": null,
+        "baseline_active_days": null,
+        "baseline_hours_with_activity": null,
+        "baseline_mean_credential_access_per_hour": null,
+        "baseline_stddev_credential_access_per_hour": null,
+        "baseline_active_slot_count": null,
         "baseline_primary_country": null,
+        "baseline_primary_city": null,
         "recent_total_credential_access": 8,
-        "recent_offhours_ratio": 0.63,
-        "recent_late_night_ratio": 0.38,
-        "recent_weekend_ratio": 0.0,
-        "recent_total_offhours": 5,
-        "recent_total_late_night": 3,
-        "recent_total_weekend": 0,
+        "recent_active_days": 2,
+        "recent_max_per_hour": 3,
+        "recent_avg_per_hour": 1.5,
+        "recent_inactive_slot_events": 5,
+        "recent_inactive_slot_ratio": 0.63,
+        "recent_avg_inactive_slot_ratio_per_hour": 0.6,
+        "z_score_inactive_slot_ratio": null,
+        "recent_country_diversity": 1,
+        "recent_city_diversity": 1,
         "recent_primary_country": "United States",
         "recent_primary_city": "New York",
-        "z_score_offhours_ratio": null,
-        "z_score_late_night_ratio": null,
-        "is_offhours_ratio_anomaly": false,
-        "is_late_night_ratio_anomaly": false,
-        "is_first_time_offhours": true,
-        "is_first_time_late_night": true,
-        "is_first_time_weekend": false,
+        "recent_first_event": "2024-01-15 03:00:00",
+        "recent_last_event": "2024-01-15 04:00:00",
+        "is_inactive_hour_anomaly": false,
+        "is_cold_start": true,
         "is_geographic_shift": false,
         "is_anomalous": true,
-        "anomaly_severity_score": 25.0,
-        "recent_first_event": "2024-01-15 03:00:00",
-        "recent_last_event": "2024-01-15 04:00:00"
+        "anomaly_severity_score": 8.0
       }
 
-  - Name: Off-Hours Ratio Z-Score Spike - High Severity
+  - Name: Inactive Hour Z-Score Spike - Medium Severity
     ExpectedResult: true
     Log:
       {
         "admin_email": "svc-admin@company.com",
         "baseline_total_credential_access": 60,
         "baseline_active_days": 20,
-        "baseline_offhours_ratio": 0.05,
-        "baseline_late_night_ratio": 0.0,
-        "baseline_weekend_ratio": 0.02,
-        "baseline_total_offhours": 3,
-        "baseline_total_late_night": 0,
-        "baseline_total_weekend": 1,
+        "baseline_hours_with_activity": 45,
+        "baseline_mean_credential_access_per_hour": 1.33,
+        "baseline_stddev_credential_access_per_hour": 0.4,
+        "baseline_active_slot_count": 38,
         "baseline_primary_country": "United States",
         "baseline_primary_city": "Chicago",
         "recent_total_credential_access": 15,
-        "recent_offhours_ratio": 0.73,
-        "recent_late_night_ratio": 0.0,
-        "recent_weekend_ratio": 0.0,
-        "recent_total_offhours": 11,
-        "recent_total_late_night": 0,
-        "recent_total_weekend": 0,
+        "recent_active_days": 4,
+        "recent_max_per_hour": 4,
+        "recent_avg_per_hour": 1.5,
+        "recent_inactive_slot_events": 11,
+        "recent_inactive_slot_ratio": 0.73,
+        "recent_avg_inactive_slot_ratio_per_hour": 0.6,
+        "z_score_inactive_slot_ratio": 4.5,
+        "recent_country_diversity": 1,
+        "recent_city_diversity": 1,
         "recent_primary_country": "United States",
         "recent_primary_city": "Chicago",
-        "z_score_offhours_ratio": 6.8,
-        "z_score_late_night_ratio": 0.0,
-        "z_score_weekend_ratio": -0.2,
-        "is_offhours_ratio_anomaly": true,
-        "is_late_night_ratio_anomaly": false,
-        "is_weekend_ratio_anomaly": false,
-        "is_first_time_offhours": false,
-        "is_first_time_late_night": false,
-        "is_first_time_weekend": false,
+        "recent_first_event": "2024-01-15 19:00:00",
+        "recent_last_event": "2024-01-15 23:00:00",
+        "is_inactive_hour_anomaly": true,
+        "is_cold_start": false,
         "is_geographic_shift": false,
         "is_anomalous": true,
-        "anomaly_severity_score": 13.6,
-        "recent_first_event": "2024-01-15 19:00:00",
-        "recent_last_event": "2024-01-15 23:00:00"
+        "anomaly_severity_score": 9.0
+      }
+
+  - Name: Geographic Shift Only - High Severity
+    ExpectedResult: true
+    Log:
+      {
+        "admin_email": "admin@company.com",
+        "baseline_total_credential_access": 50,
+        "baseline_active_days": 18,
+        "baseline_hours_with_activity": 40,
+        "baseline_mean_credential_access_per_hour": 1.25,
+        "baseline_stddev_credential_access_per_hour": 0.3,
+        "baseline_active_slot_count": 35,
+        "baseline_primary_country": "United States",
+        "baseline_primary_city": "Austin",
+        "recent_total_credential_access": 10,
+        "recent_active_days": 2,
+        "recent_max_per_hour": 3,
+        "recent_avg_per_hour": 1.4,
+        "recent_inactive_slot_events": 2,
+        "recent_inactive_slot_ratio": 0.2,
+        "recent_avg_inactive_slot_ratio_per_hour": 0.15,
+        "z_score_inactive_slot_ratio": 1.5,
+        "recent_country_diversity": 1,
+        "recent_city_diversity": 1,
+        "recent_primary_country": "Germany",
+        "recent_primary_city": "Berlin",
+        "recent_first_event": "2024-01-15 10:00:00",
+        "recent_last_event": "2024-01-15 14:00:00",
+        "is_inactive_hour_anomaly": false,
+        "is_cold_start": false,
+        "is_geographic_shift": true,
+        "is_anomalous": true,
+        "anomaly_severity_score": 5.0
       }
 
   # Note: rule() only validates admin_email; anomaly thresholds are enforced at the query level.
@@ -183,7 +203,7 @@ Tests:
     Log:
       {
         "baseline_total_credential_access": 60,
-        "recent_total_late_night": 5,
+        "recent_inactive_slot_events": 5,
         "is_anomalous": true,
         "anomaly_severity_score": 25.0
       }
@@ -194,7 +214,7 @@ Tests:
       {
         "admin_email": "",
         "baseline_total_credential_access": 60,
-        "recent_total_late_night": 5,
+        "recent_inactive_slot_events": 5,
         "is_anomalous": true,
         "anomaly_severity_score": 25.0
       }

@@ -30,7 +30,6 @@ Description: |
   - API token creation from new IPs or user agents
   - New AD agent registrations from unexpected sources
   - AD agent configuration changes from new locations
-  - Authentication failures from new sources
 
   **Complementary Detection:**
   Use alongside `Okta.ADAgent.AuthenticationAnomaly.ZScore` which detects the actual
@@ -90,20 +89,6 @@ Tests:
         "result": "SUCCESS",
         "target": [{"displayName": "AD Agent Config"}],
         "anomaly_type": "New IP Address"
-      }
-  - Name: New User Agent for Bad Credentials - Medium Severity
-    ExpectedResult: true
-    Log:
-      {
-        "p_event_time": "2024-01-15 17:00:00.000",
-        "actorId": "ad-agent-svc@company.com",
-        "actorName": "AD Agent Service",
-        "eventType": "system.agent.ad.bad_credentials",
-        "sourceIP": "172.16.0.10",
-        "userAgent": "okta-ad-agent/2.1.0-new",
-        "result": "SUCCESS",
-        "target": [{"displayName": "AD Integration"}],
-        "anomaly_type": "New User Agent"
       }
   - Name: New IP for Agent Registration - Critical Severity
     ExpectedResult: true
