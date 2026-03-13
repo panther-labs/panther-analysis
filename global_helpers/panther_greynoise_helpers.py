@@ -46,8 +46,8 @@ def _find_greynoise_v3_lut_name(event) -> str:
     return None
 
 
-class GreyNoiseV3ScannerIntelligence(LookupTableMatches):
-    """Helper to get GreyNoise V3 Internet Scanner Intelligence for enriched fields"""
+class _GreyNoiseV3Base(LookupTableMatches):
+    """Shared base for GreyNoise V3 helpers with common IP/URL methods."""
 
     def __init__(self, event, lut_name=None):
         super().__init__()
@@ -55,6 +55,21 @@ class GreyNoiseV3ScannerIntelligence(LookupTableMatches):
             lut_name = _find_greynoise_v3_lut_name(event)
         if lut_name:
             super()._register(event, lut_name)
+
+    def ip_address(self, match_field: str) -> Union[list[str], str]:
+        return self._lookup(match_field, "ip")
+
+    def url(self, match_field: str) -> Union[list[str], str, None]:
+        ip_addr = self._lookup(match_field, "ip")
+        if not ip_addr:
+            return None
+        if isinstance(ip_addr, Sequence) and not isinstance(ip_addr, str):
+            return [f"https://www.greynoise.io/viz/ip/{addr}" for addr in ip_addr]
+        return f"https://www.greynoise.io/viz/ip/{ip_addr}"
+
+
+class GreyNoiseV3ScannerIntelligence(_GreyNoiseV3Base):
+    """Helper to get GreyNoise V3 Internet Scanner Intelligence for enriched fields"""
 
     def _scanner_lookup(self, match_field: str, *keys):
         return self._lookup(match_field, "internet_scanner_intelligence", *keys)
@@ -110,17 +125,6 @@ class GreyNoiseV3ScannerIntelligence(LookupTableMatches):
             return parser.parse(time)
         except (ValueError, TypeError):
             return None
-
-    def ip_address(self, match_field: str) -> Union[list[str], str]:
-        return self._lookup(match_field, "ip")
-
-    def url(self, match_field: str) -> Union[list[str], str, None]:
-        ip_address = self._lookup(match_field, "ip")
-        if not ip_address:
-            return None
-        if isinstance(ip_address, Sequence) and not isinstance(ip_address, str):
-            return [f"https://www.greynoise.io/viz/ip/{addr}" for addr in ip_address]
-        return f"https://www.greynoise.io/viz/ip/{ip_address}"
 
     # Metadata accessors
     def asn(self, match_field: str) -> Union[list[str], str]:
@@ -231,15 +235,8 @@ class GreyNoiseV3ScannerIntelligence(LookupTableMatches):
         }
 
 
-class GreyNoiseV3BusinessService(LookupTableMatches):
+class GreyNoiseV3BusinessService(_GreyNoiseV3Base):
     """Helper to get GreyNoise V3 Business Service Intelligence for enriched fields"""
-
-    def __init__(self, event, lut_name=None):
-        super().__init__()
-        if lut_name is None:
-            lut_name = _find_greynoise_v3_lut_name(event)
-        if lut_name:
-            super()._register(event, lut_name)
 
     def _bsi_lookup(self, match_field: str, *keys):
         return self._lookup(match_field, "business_service_intelligence", *keys)
@@ -277,17 +274,6 @@ class GreyNoiseV3BusinessService(LookupTableMatches):
             return parser.parse(time)
         except (ValueError, TypeError):
             return None
-
-    def ip_address(self, match_field: str) -> Union[list[str], str]:
-        return self._lookup(match_field, "ip")
-
-    def url(self, match_field: str) -> Union[list[str], str, None]:
-        ip_address = self._lookup(match_field, "ip")
-        if not ip_address:
-            return None
-        if isinstance(ip_address, Sequence) and not isinstance(ip_address, str):
-            return [f"https://www.greynoise.io/viz/ip/{addr}" for addr in ip_address]
-        return f"https://www.greynoise.io/viz/ip/{ip_address}"
 
     def context(self, match_field: str) -> dict:
         return {
@@ -345,8 +331,8 @@ def greynoise_v3_alert_context(event, field):
     lut_name = _find_greynoise_v3_lut_name(event)
     if not lut_name:
         return {}
-
     scanner = GreyNoiseV3ScannerIntelligence(event, lut_name=lut_name)
+    bsi = GreyNoiseV3BusinessService(event, lut_name=lut_name)
     ctx = scanner.context(field)
     first_seen = scanner.first_seen(field)
     ctx["FirstSeen"] = str(first_seen) if first_seen is not None else None
@@ -359,7 +345,6 @@ def greynoise_v3_alert_context(event, field):
     ctx["OperatingSystem"] = scanner.operating_system(field)
     ctx["ReverseDNS"] = scanner.rev_dns(field)
 
-    bsi = GreyNoiseV3BusinessService(event, lut_name=lut_name)
     if bsi.found(field):
         ctx["BusinessService"] = bsi.context(field)
 
