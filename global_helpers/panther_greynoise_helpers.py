@@ -49,9 +49,10 @@ def _find_greynoise_v3_lut_name(event) -> str:
 class GreyNoiseV3ScannerIntelligence(LookupTableMatches):
     """Helper to get GreyNoise V3 Internet Scanner Intelligence for enriched fields"""
 
-    def __init__(self, event):
+    def __init__(self, event, lut_name=None):
         super().__init__()
-        lut_name = _find_greynoise_v3_lut_name(event)
+        if lut_name is None:
+            lut_name = _find_greynoise_v3_lut_name(event)
         if lut_name:
             super()._register(event, lut_name)
 
@@ -233,9 +234,10 @@ class GreyNoiseV3ScannerIntelligence(LookupTableMatches):
 class GreyNoiseV3BusinessService(LookupTableMatches):
     """Helper to get GreyNoise V3 Business Service Intelligence for enriched fields"""
 
-    def __init__(self, event):
+    def __init__(self, event, lut_name=None):
         super().__init__()
-        lut_name = _find_greynoise_v3_lut_name(event)
+        if lut_name is None:
+            lut_name = _find_greynoise_v3_lut_name(event)
         if lut_name:
             super()._register(event, lut_name)
 
@@ -300,25 +302,27 @@ class GreyNoiseV3BusinessService(LookupTableMatches):
 
 def get_greynoise_v3_object(event):
     """Returns a GreyNoiseV3ScannerIntelligence object or None if not available"""
-    if _find_greynoise_v3_lut_name(event):
-        return GreyNoiseV3ScannerIntelligence(event)
+    lut_name = _find_greynoise_v3_lut_name(event)
+    if lut_name:
+        return GreyNoiseV3ScannerIntelligence(event, lut_name=lut_name)
     return None
 
 
 def get_greynoise_v3_business_service_object(event):
     """Returns a GreyNoiseV3BusinessService object or None if not available"""
-    if _find_greynoise_v3_lut_name(event):
-        return GreyNoiseV3BusinessService(event)
+    lut_name = _find_greynoise_v3_lut_name(event)
+    if lut_name:
+        return GreyNoiseV3BusinessService(event, lut_name=lut_name)
     return None
 
 
 def greynoise_v3_severity(event, field, default="MEDIUM"):
     """Set severity based on GreyNoise V3 classification and business service intelligence"""
-    scanner = get_greynoise_v3_object(event)
-    bsi = get_greynoise_v3_business_service_object(event)
-
-    if not scanner:
+    lut_name = _find_greynoise_v3_lut_name(event)
+    if not lut_name:
         return default
+    scanner = GreyNoiseV3ScannerIntelligence(event, lut_name=lut_name)
+    bsi = GreyNoiseV3BusinessService(event, lut_name=lut_name)
 
     # If IP is a known business service, lower severity
     if bsi and bsi.found(field):
@@ -338,13 +342,16 @@ def greynoise_v3_severity(event, field, default="MEDIUM"):
 
 def greynoise_v3_alert_context(event, field):
     """Build a rich alert context dict from GreyNoise V3 enrichment data."""
-    scanner = get_greynoise_v3_object(event)
-    if not scanner:
+    lut_name = _find_greynoise_v3_lut_name(event)
+    if not lut_name:
         return {}
 
+    scanner = GreyNoiseV3ScannerIntelligence(event, lut_name=lut_name)
     ctx = scanner.context(field)
-    ctx["FirstSeen"] = str(scanner.first_seen(field))
-    ctx["LastSeen"] = str(scanner.last_seen(field))
+    first_seen = scanner.first_seen(field)
+    ctx["FirstSeen"] = str(first_seen) if first_seen is not None else None
+    last_seen = scanner.last_seen(field)
+    ctx["LastSeen"] = str(last_seen) if last_seen is not None else None
     ctx["Spoofable"] = scanner.is_spoofable(field)
     ctx["Organization"] = scanner.organization(field)
     ctx["SourceCountry"] = scanner.source_country(field)
@@ -352,8 +359,8 @@ def greynoise_v3_alert_context(event, field):
     ctx["OperatingSystem"] = scanner.operating_system(field)
     ctx["ReverseDNS"] = scanner.rev_dns(field)
 
-    bsi = get_greynoise_v3_business_service_object(event)
-    if bsi and bsi.found(field):
+    bsi = GreyNoiseV3BusinessService(event, lut_name=lut_name)
+    if bsi.found(field):
         ctx["BusinessService"] = bsi.context(field)
 
     return ctx
