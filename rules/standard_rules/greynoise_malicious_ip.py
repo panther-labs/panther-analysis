@@ -7,13 +7,13 @@ from panther_greynoise_helpers import (
 
 CLASSIFICATIONS_TO_ALERT = {"malicious", "unknown"}
 
-MATCHED_IP = None
+MATCHED_IPS = {}  # {ip: classification}
 SCANNER = None
 
 
 def rule(event):
-    global MATCHED_IP, SCANNER  # pylint: disable=global-statement
-    MATCHED_IP = None
+    global MATCHED_IPS, SCANNER  # pylint: disable=global-statement
+    MATCHED_IPS = {}
     SCANNER = None
 
     scanner = get_greynoise_v3_object(event)
@@ -31,24 +31,35 @@ def rule(event):
             continue
 
         if classification in CLASSIFICATIONS_TO_ALERT:
-            MATCHED_IP = ip_addr
-            SCANNER = scanner
-            return True
+            MATCHED_IPS[ip_addr] = classification
 
+    if MATCHED_IPS:
+        SCANNER = scanner
+        return True
     return False
 
 
 def title(event):
     log_type = event.get("p_log_type", "Unknown")
-    classification = SCANNER.classification(MATCHED_IP) if SCANNER else "malicious"
-    return f"GreyNoise: {classification.title()} IP [{MATCHED_IP}] detected in {log_type}"
+    if len(MATCHED_IPS) == 1:
+        ip_addr, classification = next(iter(MATCHED_IPS.items()))
+        return f"GreyNoise: {classification.title()} IP [{ip_addr}] detected in {log_type}"
+    return f"GreyNoise: {len(MATCHED_IPS)} suspicious IPs detected in {log_type}"
 
 
 def severity(event):
-    return greynoise_v3_severity(event, MATCHED_IP)
+    # Use the highest-severity matched IP
+    for ip_addr in MATCHED_IPS:
+        return greynoise_v3_severity(event, ip_addr)
+    return "MEDIUM"
 
 
 def alert_context(event):
-    if not MATCHED_IP:
+    if not MATCHED_IPS:
         return {}
-    return greynoise_v3_alert_context(event, MATCHED_IP)
+    ctx = {}
+    for ip_addr, classification in MATCHED_IPS.items():
+        ip_ctx = greynoise_v3_alert_context(event, ip_addr)
+        ip_ctx["MatchedClassification"] = classification
+        ctx[ip_addr] = ip_ctx
+    return ctx
