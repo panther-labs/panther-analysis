@@ -1,20 +1,19 @@
 from panther_greynoise_helpers import (
     get_greynoise_v3_business_service_object,
     get_greynoise_v3_object,
+    greynoise_severity_decode,
     greynoise_v3_alert_context,
-    greynoise_v3_severity,
+    severity_greater_than,
 )
 
 CLASSIFICATIONS_TO_ALERT = {"malicious", "unknown"}
 
 MATCHED_IPS = {}  # {ip: classification}
-SCANNER = None
 
 
 def rule(event):
-    global MATCHED_IPS, SCANNER  # pylint: disable=global-statement
+    global MATCHED_IPS  # pylint: disable=global-statement
     MATCHED_IPS = {}
-    SCANNER = None
 
     scanner = get_greynoise_v3_object(event)
     if not scanner:
@@ -33,10 +32,7 @@ def rule(event):
         if classification in CLASSIFICATIONS_TO_ALERT:
             MATCHED_IPS[ip_addr] = classification
 
-    if MATCHED_IPS:
-        SCANNER = scanner
-        return True
-    return False
+    return bool(MATCHED_IPS)
 
 
 def title(event):
@@ -47,11 +43,13 @@ def title(event):
     return f"GreyNoise: {len(MATCHED_IPS)} suspicious IPs detected in {log_type}"
 
 
-def severity(event):
-    # Use the highest-severity matched IP
-    for ip_addr in MATCHED_IPS:
-        return greynoise_v3_severity(event, ip_addr)
-    return "MEDIUM"
+def severity(event):  # pylint: disable=unused-argument
+    highest = "INFO"
+    for classification in MATCHED_IPS.values():
+        sev = greynoise_severity_decode(classification, "DEFAULT")
+        if severity_greater_than(sev, highest):
+            highest = sev
+    return highest or "DEFAULT"
 
 
 def alert_context(event):
