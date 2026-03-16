@@ -92,10 +92,7 @@ class GreyNoiseV3ScannerIntelligence(_GreyNoiseV3Base):
         return cves
 
     def cve_string(self, match_field: str, limit: int = 10) -> str:
-        cves = self.cve_list(match_field)
-        if isinstance(cves, Sequence) and not isinstance(cves, str):
-            return " ".join(cves[:limit])
-        return cves
+        return " ".join(self.cve_list(match_field)[:limit])
 
     def first_seen(self, match_field: str) -> datetime.date:
         time = self._scanner_lookup(match_field, "first_seen")
