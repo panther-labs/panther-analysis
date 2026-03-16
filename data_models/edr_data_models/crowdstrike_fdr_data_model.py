@@ -74,7 +74,7 @@ def get_os(event):
 
     if event_platform == "Win":
         return "windows"
-    if event_platform == "Linux":
+    if event_platform == "Lin":
         return "linux"
     if event_platform == "Mac":
         return "macos"

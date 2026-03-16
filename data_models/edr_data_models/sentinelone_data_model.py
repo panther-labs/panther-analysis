@@ -59,7 +59,7 @@ def get_event_category(event):
         return "registry_event"
     if object_type == "DNS":
         return "dns_query"
-    if object_type in ["DNS", "Url", "IP"]:
+    if object_type in ["Url", "IP"]:
         return "network_connection"
 
     return None

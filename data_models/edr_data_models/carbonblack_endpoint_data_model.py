@@ -40,7 +40,14 @@ def get_event_category(event):
 
     # Network connection events
     if event_type == "endpoint.event.netconn":
+        netconn_protocol = event.get("netconn_protocol", "")
+        if netconn_protocol == "PROTO_DNS":
+            return "dns_query"
         return "network_connection"
+
+    # Registry events
+    if event_type == "endpoint.event.regmod":
+        return "registry_event"
 
     return None
 

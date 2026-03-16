@@ -433,6 +433,8 @@ class TestCarbonBlackEndpointDataModel(unittest.TestCase):
         self.assertEqual("sshd", event.udm("ParentProcessName"))
         self.assertEqual("bash", event.udm("process_name"))
         self.assertEqual("sshd", event.udm("parent_process_name"))
+
+
 class TestAzureAKSDataModel(unittest.TestCase):
     data_model = log_type_to_data_model.get("Azure.MonitorActivity")
 
