@@ -24,7 +24,7 @@ def greynoise_severity_decode(classification: str, default: str) -> str:
 
 
 def severity_greater_than(sev1: str, sev2: str) -> bool:
-    return _SEVERITIES.get(sev1) > _SEVERITIES.get(sev2)
+    return _SEVERITIES.get(sev1, -1) > _SEVERITIES.get(sev2, -1)
 
 
 # GreyNoise V3 API Helpers
