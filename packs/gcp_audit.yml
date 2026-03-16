@@ -6,6 +6,7 @@ PackDefinition:
     - GCP.Access.Attempts.Violating.IAP.Access.Controls
     - GCP.Access.Attempts.Violating.VPC.Service.Controls
     - GCP.BigQuery.Large.Scan
+    - GCP.CloudArmor.React2Shell.RCE.Attempt
     - GCP.Cloud.Storage.Buckets.Modified.Or.Deleted
     - GCP.CloudBuild.Potential.Privilege.Escalation
     - GCP.Cloudfunctions.Functions.Create
@@ -14,7 +15,6 @@ PackDefinition:
     - GCP.Cloud.Run.Service.Created.FOLLOWED.BY.Set.IAM.Policy
     - GCP.Cloud.Run.Set.IAM.Policy
     - GCP.Compute.IAM.Policy.Update
-    - GCP.Compute.SSHConnection
     - GCP.Destructive.Queries
     - GCP.DNS.Zone.Modified.or.Deleted
     - GCP.Firewall.Rule.Created
@@ -52,6 +52,10 @@ PackDefinition:
     - GCP.Tag.Binding.Creation  # signal
     - GCP.Privileged.Operation  # signal
     - GCP.Privilege.Escalation.Via.TagBinding  # CR
+    - GCP.GCS.BulkObjectRewrite
+    - GCP.GCS.Ransom.Note.Upload
+    - GCP.KMS.BulkEncryption
+    - GCP.KMS.CrossProjectEncryption
     - GSuite.ExternalMailForwarding
     - GSuite.DocOwnershipTransfer
     # Data model

@@ -1,11 +1,11 @@
 AnalysisType: rule
 Description: >
-  Detecting EC2 instances launched with AMIs containing potentially vulnerable versions of XZ (CVE-2024-3094)
+  Detects EC2 instances launched using Amazon Machine Images containing vulnerable XZ Utils library versions (5.6.0 or 5.6.1) affected by CVE-2024-3094. This critical supply chain vulnerability introduced a backdoor allowing remote attackers to bypass SSH authentication on affected Linux systems. The rule monitors CloudTrail RunInstances events and checks AMI IDs against known vulnerable images.
 DisplayName: "AWS EC2 Vulnerable XZ Image Launched"
 Enabled: true
 Filename: aws_ec2_vulnerable_xz_image_launched.py
 Reference: https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-3094
-Severity: Critical
+Severity: High
 Tags:
   - AWS
   - Linux
@@ -15,8 +15,9 @@ Reports:
   MITRE ATT&CK:
     - TA0001:T1195.001
 Runbook: |
-  - Verify that the AMI is indeed vulnerable to CVE-2024-3094 (xz -V being 5.6.0 or 5.6.1)
-  - If the AMI is vulnerable, terminate the instance and launch a new instance with a non-vulnerable AMI
+  1. Query CloudTrail for all RunInstances events using the same responseElements.instancesSet.items.imageId across all regions in the 30 days before this alert to identify other instances launched with vulnerable XZ AMIs
+  2. For the launched instance ID in responseElements.instancesSet.items.instanceId, verify the XZ Utils version using AWS Systems Manager Session Manager by running `xz --version` to confirm if version 5.6.0 or 5.6.1 is installed
+  3. Review CloudTrail logs for userIdentity.arn in the 24 hours before the launch to determine if this was automated infrastructure deployment or manual execution, and check for other suspicious API calls from the same principal
 Tests:
   - ExpectedResult: true
     Name: Single vulnerable AMI Launched

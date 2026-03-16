@@ -1,0 +1,111 @@
+AnalysisType: rule
+Filename: azure_ropc_login_no_mfa.py
+RuleID: "Azure.Audit.ROPCLoginNoMFA"
+DisplayName: "Azure ROPC Login Attempt Without MFA"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Azure.Audit
+Severity: Medium
+DedupPeriodMinutes: 60
+Description: >
+  Detects Resource Owner Password Credentials (ROPC) OAuth 2.0 authentication attempts in Microsoft
+  Entra ID using single-factor authentication without MFA enforcement. ROPC is a deprecated legacy
+  flow that allows applications to directly collect user credentials to obtain access tokens, bypassing
+  modern authentication and MFA requirements. Adversaries commonly exploit ROPC during credential
+  enumeration and password spraying campaigns using tools like TeamFiltration and MSOLSpray.
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078
+    - TA0001:T1078.004
+Runbook: |
+  1. Query Azure.Audit logs for all ROPC authentication attempts by properties:userPrincipalName in the 24 hours surrounding this event to determine if this represents isolated testing or part of a broader password spraying or credential enumeration campaign with multiple failed attempts across different accounts
+  2. Identify the application using ROPC by reviewing properties:appDisplayName and properties:appId, and verify with application owners whether this application has a legitimate business requirement for ROPC authentication or if it should be migrated to modern OAuth flows with interactive authentication
+  3. Review the source IP address callerIpAddress and user agent properties:userAgent for indicators of automated attack tools (e.g., python-requests, curl, TeamFiltration signatures), check if the IP is associated with known malicious infrastructure, and if suspicious activity is confirmed, block the application from using ROPC through Azure AD application policies and force password reset for the affected user
+Reference: https://github.com/elastic/detection-rules/blob/main/rules/integrations/azure/initial_access_entra_id_unusual_ropc_login_attempt.toml
+SummaryAttributes:
+  - properties:userPrincipalName
+  - callerIpAddress
+  - properties:appDisplayName
+Tests:
+  - Name: ROPC Login Without MFA
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-01-15 09:30:25.123",
+        "resourceId": "/tenants/tenant-123/providers/Microsoft.aadiam",
+        "operationName": "Sign-in activity",
+        "operationVersion": "1.0",
+        "category": "SignInLogs",
+        "tenantId": "tenant-123",
+        "resultType": "0",
+        "resultSignature": "SUCCESS",
+        "durationMs": 0,
+        "callerIpAddress": "2.2.2.2",
+        "correlationId": "ropc-signin-001",
+        "Level": "4",
+        "properties":
+          {
+            "createdDateTime": "2025-01-15T09:30:25.1234567Z",
+            "userPrincipalName": "gandalf@lotr.com",
+            "userId": "user-123",
+            "ipAddress": "2.2.2.2",
+            "authenticationProtocol": "ropc",
+            "authenticationRequirement": "singleFactorAuthentication",
+            "userType": "Member",
+            "appDisplayName": "Legacy Application",
+            "appId": "app-legacy-456",
+            "clientAppUsed": "Other clients",
+            "userAgent": "python-requests/2.28.1",
+            "isInteractive": false,
+            "authenticationDetails":
+              [{ "authenticationMethod": "Password", "authenticationStepDateTime": "2025-01-15T09:30:25.1234567Z" }],
+            "conditionalAccessStatus": "notApplied",
+            "deviceDetail": { "browser": "Unknown", "operatingSystem": "Unknown" },
+            "resourceDisplayName": "Microsoft Graph",
+            "resourceId": "00000003-0000-0000-c000-111111111111",
+          },
+        "p_event_time": "2025-01-15 09:30:25.123",
+        "p_log_type": "Azure.Audit",
+      }
+  - Name: Failed ROPC Login
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-01-15 15:05:50.678",
+        "resourceId": "/tenants/tenant-ghi/providers/Microsoft.aadiam",
+        "operationName": "Sign-in activity",
+        "operationVersion": "1.0",
+        "category": "SignInLogs",
+        "tenantId": "tenant-ghi",
+        "resultType": "50126",
+        "resultSignature": "None",
+        "durationMs": 0,
+        "callerIpAddress": "192.0.2.250",
+        "correlationId": "ropc-fail-001",
+        "Level": "4",
+        "properties":
+          {
+            "createdDateTime": "2025-01-15T15:05:50.6789012Z",
+            "userPrincipalName": "attacker@company.com",
+            "userId": "user-attacker-999",
+            "ipAddress": "192.0.2.250",
+            "authenticationProtocol": "ropc",
+            "authenticationRequirement": "singleFactorAuthentication",
+            "userType": "Member",
+            "appDisplayName": "Office Application",
+            "appId": "app-office-555",
+            "clientAppUsed": "Other clients",
+            "userAgent": "curl/7.68.0",
+            "isInteractive": false,
+            "status":
+              {
+                "errorCode": 50126,
+                "failureReason": "Invalid username or password",
+              },
+            "conditionalAccessStatus": "notApplied",
+            "deviceDetail": { "browser": "Unknown", "operatingSystem": "Unknown" },
+          },
+        "p_event_time": "2025-01-15 15:05:50.678",
+        "p_log_type": "Azure.Audit",
+      }

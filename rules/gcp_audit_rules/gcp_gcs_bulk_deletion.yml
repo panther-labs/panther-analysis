@@ -1,0 +1,88 @@
+AnalysisType: rule
+Filename: gcp_gcs_bulk_deletion.py
+RuleID: "GCP.GCS.BulkDeletion"
+DisplayName: "GCP GCS Bulk Object Deletion"
+Enabled: true
+Status: Experimental
+Threshold: 10
+LogTypes:
+  - GCP.AuditLog
+Tags:
+  - GCP
+  - Google Cloud Storage
+  - Impact:Data Destruction
+  - Ransomware
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1485
+Severity: Medium
+Description: >
+  Detects bulk deletion of GCS objects. This pattern is indicative of a ransomware attack
+  or data destruction where an adversary deletes storage objects at scale. The threshold
+  of 10+ deletion operations suggests automated bulk deletion rather than normal application
+  behavior. This can be part of a double extortion ransomware attack where data is both
+  encrypted and deleted to increase pressure on victims.
+Runbook: |
+  1. Query GCP Audit logs for all storage.objects.delete operations by the principal email in the 1 hour window around this alert
+  2. Identify the total number of deletion operations, affected buckets, and the rate of deletions per minute
+  3. Check if the source IP matches the user's typical access patterns or is associated with known VPN/cloud providers
+  4. Determine if the deleted objects can be recovered from versioning, soft delete, or backups
+  5. Search for other ransomware indicators (KMS key changes, bucket configuration changes, bulk encryption) from this project in the past 24 hours
+  6. Review IAM policy changes for the principal to determine if permissions were recently escalated
+Reference: https://cloud.google.com/storage/docs/json_api/v1/objects/delete
+SummaryAttributes:
+  - severity
+  - p_any_ip_addresses
+  - p_any_emails
+Tests:
+  - Name: GCS Object Deletion - Success
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              {
+                "principalEmail": "denethor@lotr.com",
+              },
+            "methodName": "storage.objects.delete",
+            "resourceName": "projects/_/buckets/test-bucket/objects/test-file.txt",
+            "serviceName": "storage.googleapis.com",
+            "status": {},
+          },
+        "resource":
+          {
+            "labels":
+              {
+                "bucket_name": "test-bucket",
+                "location": "us",
+                "project_id": "test-project",
+              },
+            "type": "gcs_bucket",
+          },
+        "severity": "NOTICE",
+        "timestamp": "2025-12-15 15:40:29.533794920",
+      }
+  - Name: GCS Object Deletion - Failed
+    ExpectedResult: false
+    Log:
+      {
+        "protoPayload":
+          {
+            "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
+            "authenticationInfo":
+              { "principalEmail": "user@example.com" },
+            "methodName": "storage.objects.delete",
+            "resourceName": "projects/_/buckets/test-bucket/objects/test-file.txt",
+            "serviceName": "storage.googleapis.com",
+            "status": { "code": 7, "message": "PERMISSION_DENIED" },
+          },
+        "resource":
+          {
+            "labels": { "bucket_name": "test-bucket" },
+            "type": "gcs_bucket",
+          },
+        "severity": "ERROR",
+        "timestamp": "2025-12-15 15:40:29.533794920",
+      }

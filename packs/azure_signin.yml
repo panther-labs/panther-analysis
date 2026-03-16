@@ -3,13 +3,22 @@ PackID: PantherManaged.AzureAudit.Signin
 Description: Group of Azure.Audit detections
 PackDefinition:
   IDs:
+    - Azure.Audit.DeviceCodeBrokerClient
+    - Azure.Audit.DomainSettingsModified
+    - Azure.Audit.ElevateUserAccessAdministrator
     - Azure.Audit.LegacyAuth
+    - Azure.Audit.OIDC.Changed
+    - Azure.Audit.ServicePrincipalCredentialsAdded
     - Azure.Audit.ManyFailedSignIns
     - Azure.Audit.RiskLevelPassthrough
     - Azure.Audit.InviteExternalUsers
     - Azure.Audit.MFADisabled
     - Azure.Audit.PolicyChanged
     - Azure.Audit.RoleChangedPIM
+    # Queries
+    - Microsoft Entra ID Anomalous Application Consent
+    - Microsoft Entra ID First Time Seen Device Code Authentication
+    - Microsoft Entra ID Graph Email Access by Unusual Public Client
     # Globals used in these detections
     - panther_azuresignin_helpers
     - panther_base_helpers

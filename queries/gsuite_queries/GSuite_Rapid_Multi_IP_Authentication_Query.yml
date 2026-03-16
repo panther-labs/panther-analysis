@@ -1,0 +1,44 @@
+AnalysisType: scheduled_query
+QueryName: "Google Workspace Rapid Multi-IP Authentication"
+Description: |
+  Detects users authenticating from 3+ distinct IPv4 addresses within 6 hours.
+  May indicate GAIA credential theft where stolen OAuth tokens are used across
+  multiple compromised machines simultaneously. IPv6 addresses are excluded to
+  avoid false positives from dual-stack networking.
+Enabled: false
+Query: |
+  SELECT
+    actor:email AS user,
+    COUNT(DISTINCT
+      CASE
+        WHEN ipAddress LIKE '%:%' THEN NULL
+        ELSE ipAddress
+      END
+    ) AS unique_ip_count,
+    COUNT(*) AS total_logins,
+    ARRAY_UNIQUE_AGG(
+      CASE
+        WHEN ipAddress LIKE '%:%' THEN NULL
+        ELSE ipAddress
+      END
+    ) AS ip_addresses,
+    ARRAY_UNIQUE_AGG(parameters:login_type) AS login_types,
+    MIN(p_event_time) AS first_login,
+    MAX(p_event_time) AS last_login,
+    DATEDIFF('minute', MIN(p_event_time), MAX(p_event_time)) AS time_span_minutes
+  FROM panther_logs.public.gsuite_activityevent
+  WHERE p_occurs_since('6 hours')
+    AND id:applicationName = 'login'
+    AND name = 'login_success'
+  GROUP BY actor:email
+  HAVING COUNT(DISTINCT
+    CASE
+      WHEN ipAddress LIKE '%:%' THEN NULL
+      ELSE ipAddress
+    END
+  ) >= 3
+  ORDER BY unique_ip_count DESC
+  LIMIT 10000
+Schedule:
+  RateMinutes: 360
+  TimeoutMinutes: 3

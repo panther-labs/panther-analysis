@@ -3,13 +3,13 @@ RuleID: Wiz.Update.IP.Restrictions
 Description: This rule detects updates of IP restrictions.
 DisplayName: Wiz Update IP Restrictions
 Runbook: Verify that this change was planned. If not, revert the change and ensure this doesn't happen again.
-Reference: https://support.wix.com/en/article/wix-enterprise-managing-access-to-your-sites-using-ip-allowlisting
+Reference: https://docs.wiz.io/docs/portal-security-settings#ip-restrictions
 Enabled: true
 Filename: wiz_update_ip_restrictions.py
 Severity: High
 Reports:
   MITRE ATT&CK:
-    - TA0003:T1556.009 # Modify Authentication Process: Conditional Access Policies 
+    - TA0003:T1556.009 # Modify Authentication Process: Conditional Access Policies
 LogTypes:
   - Wiz.Audit
 DedupPeriodMinutes: 60

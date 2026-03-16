@@ -10,7 +10,7 @@ METHODS_TO_CHECK = [
 def rule(event):
     method = event.deep_get("protoPayload", "methodName")
     request_host_pid = event.deep_get("protoPayload", "request", "spec", "hostPID")
-    response_host_pid = event.deep_get("protoPayload", "responce", "spec", "hostPID")
+    response_host_pid = event.deep_get("protoPayload", "response", "spec", "hostPID")
     if not ((request_host_pid is True or response_host_pid is True) and method in METHODS_TO_CHECK):
         return False
 

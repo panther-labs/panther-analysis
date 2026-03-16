@@ -8,17 +8,9 @@ PackDefinition:
     - Google.Workspace.Apps.Marketplace.Allowlist
     - Google.Workspace.Apps.Marketplace.New.Domain.Application
     - Google.Workspace.Apps.New.Mobile.App.Installed
-    - Google.Workspace.ManyDocsDownloaded
     - GSuite.AdvancedProtection
     - GSuite.CalendarMadePublic
     - GSuite.Drive.Many.Documents.Deleted
-    - GSuite.Gmail.Email.SpamFilter.Bypass
-    - GSuite.Gmail.Malicious.SMTP.Response
-    - GSuite.Gmail.Potential.Spoofed.Email
-    - GSuite.Gmail.Malware.In.Email
-    - GSuite.Gmail.Spam.Email.Surge
-    - GSuite.Gmail.SpamEmail.AttachmentDownload
-    - GSuite.Gmail.SpamEmail.LinkClicked
     - GSuite.GoogleAccess
     - GSuite.GovernmentBackedAttack
     - GSuite.GroupBannedUser
@@ -26,7 +18,6 @@ PackDefinition:
     - GSuite.DeviceCompromise
     - GSuite.DeviceUnlockFailure
     - GSuite.DeviceSuspiciousActivity
-    - GSuite.IsSuspiciousTag
     - GSuite.Rule
     - GSuite.SuspiciousLogins
     - GSuite.TwoStepVerification
@@ -40,6 +31,12 @@ PackDefinition:
     - GSuite.Workspace.PasswordReuseEnabled
     - GSuite.Workspace.TrustedDomainsAllowlist
     - GSuite.DriveOverlyVisible
+    - GSuite.Gmail.Email.SpamFilter.Bypass
+    - GSuite.Gmail.Malicious.SMTP.Response
+    - GSuite.Gmail.Malware.In.Email
+    - GSuite.Gmail.Potential.Spoofed.Email
+    - GSuite.Gmail.SpamEmail.AttachmentDownload
+    - GSuite.Gmail.SpamEmail.LinkClicked
     # Data Models used in these detections
     - Standard.GSuite.ActivityEvent
     # Globals used in these detections
@@ -50,4 +47,8 @@ PackDefinition:
     # Queries
     - GSuite Many Docs Deleted Query
     - GSuite Many Docs Downloaded Query
+    - Google Workspace Login Type Anomaly
+    - Google Workspace Rapid Multi-IP Authentication
+    - Google Workspace OAuthLogin Scope Anomalous Application Access
+    - Google Workspace OAuth Token Requests from New IPs
 DisplayName: "Panther GSuite Pack"

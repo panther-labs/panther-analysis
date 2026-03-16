@@ -5,5 +5,5 @@ def rule(event):
 def title(event):
     return (
         f"{event.get('p_source_label', '<UNKNOWN LOG SOURCE>')}: "
-        f"{event.get('GRANTED_BY', '<UNKNWON ACTOR>')} made changes to the PUBLIC role"
+        f"{event.get('GRANTED_BY', '<UNKNOWN ACTOR>')} made changes to the PUBLIC role"
     )

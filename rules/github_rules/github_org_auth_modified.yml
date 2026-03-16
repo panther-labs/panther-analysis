@@ -7,7 +7,13 @@ LogTypes:
   - GitHub.Audit
 Tags:
   - GitHub
-  - Persistence:Account Manipulation
+  - Persistence
+  - Account Manipulation
+  - Identity and Access Management
+  - Security Configuration
+  - Privilege Escalation
+  - Defense Evasion
+  - Organization Security
 Reports:
   MITRE ATT&CK:
     - TA0003:T1098
@@ -15,11 +21,15 @@ Severity: Critical
 SummaryAttributes:
   - actor
   - action
-Description: Detects changes to GitHub org authentication changes.
-Runbook: Verify that the GitHub admin performed this activity and validate its use.
+Description: >
+  Detects critical changes to GitHub organization authentication settings including SAML SSO, 2FA requirements, SAML provider configuration, and OAuth restrictions. These foundational security controls protect entire organizations, and unauthorized modifications can enable attackers to bypass identity management, maintain persistence, or prepare for data exfiltration. Legitimate changes are rare and should be well-documented with proper authorization.
+Runbook: |
+  1. Query GitHub audit logs for all actions by the actor in the 48 hours around this authentication change to identify other suspicious activities such as adding organization members, creating personal access tokens, modifying repository permissions, or accessing private repositories
+  2. Review the organization membership changes, team permission modifications, and repository access grants in the 6 hours around this event to determine if the actor used elevated access to establish additional persistence mechanisms
+  3. Check GitHub audit logs for authentication failures, suspicious login locations, or unusual access patterns from the actor's account in the 7 days before this change that might indicate account compromise
 Reference: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-authentication-to-github
 Tests:
-  - Name: GitHub - Authentication Method Changed
+  - Name: GitHub - SAML Disabled
     ExpectedResult: true
     Log:
       {
@@ -29,6 +39,66 @@ Tests:
         "p_log_type": "GitHub.Audit",
         "org": "my-org",
         "repo": "my-org/my-repo",
+      }
+  - Name: GitHub - Two Factor Requirement Disabled
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "admin-user",
+        "action": "org.disable_two_factor_requirement",
+        "created_at": 1621305118553,
+        "p_log_type": "GitHub.Audit",
+        "org": "my-org",
+      }
+  - Name: GitHub - Two Factor Requirement Enabled
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "security-admin",
+        "action": "org.enable_two_factor_requirement",
+        "created_at": 1621305118553,
+        "p_log_type": "GitHub.Audit",
+        "org": "my-org",
+      }
+  - Name: GitHub - OAuth App Restrictions Disabled
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "org-owner",
+        "action": "org.disable_oauth_app_restrictions",
+        "created_at": 1621305118553,
+        "p_log_type": "GitHub.Audit",
+        "org": "my-org",
+      }
+  - Name: GitHub - OAuth App Restrictions Enabled
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "security-admin",
+        "action": "org.enable_oauth_app_restrictions",
+        "created_at": 1621305118553,
+        "p_log_type": "GitHub.Audit",
+        "org": "my-org",
+      }
+  - Name: GitHub - SAML Provider Settings Updated
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "it-admin",
+        "action": "org.update_saml_provider_settings",
+        "created_at": 1621305118553,
+        "p_log_type": "GitHub.Audit",
+        "org": "my-org",
+      }
+  - Name: GitHub - SAML Enabled
+    ExpectedResult: true
+    Log:
+      {
+        "actor": "security-team",
+        "action": "org.saml_enabled",
+        "created_at": 1621305118553,
+        "p_log_type": "GitHub.Audit",
+        "org": "my-org",
       }
   - Name: GitHub - Non Auth Related Org Change
     ExpectedResult: false
@@ -40,4 +110,15 @@ Tests:
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
         "repo": "my-org/my-repo",
+      }
+  - Name: GitHub - Non Org Action
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "developer",
+        "action": "repo.create",
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "repo": "my-org/new-repo",
       }

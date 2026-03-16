@@ -1,0 +1,140 @@
+AnalysisType: rule
+Filename: proofpoint_phishing_detected.py
+RuleID: "Proofpoint.PhishingDetected"
+DisplayName: "Proofpoint Phishing Email Detected"
+Enabled: true
+LogTypes:
+  - Proofpoint.Event
+Status: Experimental
+Tags:
+  - Proofpoint
+  - Email Security
+  - Phishing
+  - Credential Theft
+  - Initial Access:Phishing
+  - Credential Access:Phishing for Information
+Severity: High
+Description: >
+  This rule alerts when Proofpoint detects phishing attempts in email.
+  It triggers when emails are quarantined with the phish rule, have a
+  high phish score (80+), or contain active phishing threats in the
+  threats map.
+Runbook: |
+  1. Check if users clicked on malicious links within the last 4 hours and force password reset immediately if credentials may be compromised
+  2. Block the sender domain/URL within 15 minutes and notify affected users
+  3. Report to anti-phishing authorities within 24 hours and share IOCs with threat intelligence platforms
+Reference: https://www.proofpoint.com/us/solutions/protect-against-phishing
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1566 # Initial Access: Phishing
+    - TA0006:T1598 # Credential Access: Phishing for Information
+Tests:
+  - Name: Phishing Quarantine Rule
+    ExpectedResult: true
+    Log:
+      messageTime: "2026-01-08T10:00:00Z"
+      sender: "fake-security@examp1e.com"
+      senderIP: "192.0.2.100"
+      fromAddress:
+        - "fake-security@examp1e.com"
+      toAddresses:
+        - "employee@company.com"
+      recipient:
+        - "employee@company.com"
+      subject: "Urgent: Verify Your Account"
+      malwareScore: 0
+      phishScore: 95
+      spamScore: 20
+      impostorScore: 0
+      quarantineFolder: "Phish"
+      quarantineRule: "phish"
+      messageID: "<phish123@examp1e.com>"
+      headerFrom: "Security Team <fake-security@examp1e.com>"
+      threatsInfoMap:
+        - threatType: "url"
+          classification: "phish"
+          threatStatus: "active"
+          threat: "http://fake-login.example.com/verify"
+          threatID: "phish-threat-001"
+          threatUrl: "https://threatinsight.proofpoint.com/threat/details"
+  - Name: High Phish Score
+    ExpectedResult: true
+    Log:
+      messageTime: "2026-01-08T11:30:00Z"
+      sender: "support@paypa1.com"
+      senderIP: "198.51.100.150"
+      fromAddress:
+        - "support@paypa1.com"
+      toAddresses:
+        - "user@company.com"
+      recipient:
+        - "user@company.com"
+      subject: "Action Required: Confirm Your Payment"
+      malwareScore: 5
+      phishScore: 85
+      spamScore: 30
+      impostorScore: 10
+      quarantineFolder: "Phish"
+      quarantineRule: "phish"
+      messageID: "<phish456@paypa1.com>"
+      headerFrom: "PayPal Support <support@paypa1.com>"
+  - Name: Active Phishing Threat in Threats Map
+    ExpectedResult: true
+    Log:
+      messageTime: "2026-01-08T13:00:00Z"
+      sender: "admin@company-login.net"
+      senderIP: "203.0.113.200"
+      fromAddress:
+        - "admin@company-login.net"
+      toAddresses:
+        - "victim@company.com"
+      recipient:
+        - "victim@company.com"
+      subject: "Password Reset Required"
+      malwareScore: 0
+      phishScore: 75
+      spamScore: 15
+      impostorScore: 5
+      messageID: "<cred-phish@company-login.net>"
+      threatsInfoMap:
+        - threatType: "url"
+          classification: "phish"
+          threatStatus: "active"
+          threat: "http://malicious-site.com/login"
+          threatID: "phish-url-789"
+  - Name: Legitimate Email - No Alert
+    ExpectedResult: false
+    Log:
+      messageTime: "2026-01-08T14:00:00Z"
+      sender: "colleague@company.com"
+      senderIP: "203.0.113.50"
+      fromAddress:
+        - "colleague@company.com"
+      toAddresses:
+        - "employee@company.com"
+      recipient:
+        - "employee@company.com"
+      subject: "Meeting Tomorrow"
+      malwareScore: 0
+      phishScore: 0
+      spamScore: 0
+      impostorScore: 0
+      messageID: "<meeting123@company.com>"
+  - Name: Low Phish Score - No Alert
+    ExpectedResult: false
+    Log:
+      messageTime: "2026-01-08T15:00:00Z"
+      sender: "newsletter@marketing.com"
+      senderIP: "198.51.100.50"
+      fromAddress:
+        - "newsletter@marketing.com"
+      toAddresses:
+        - "user@company.com"
+      recipient:
+        - "user@company.com"
+      subject: "Weekly Newsletter"
+      malwareScore: 0
+      phishScore: 25
+      spamScore: 40
+      impostorScore: 0
+      messageID: "<newsletter@marketing.com>"

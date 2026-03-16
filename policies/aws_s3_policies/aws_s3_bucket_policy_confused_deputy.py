@@ -25,6 +25,8 @@ def policy(resource):
                 if isinstance(condition, dict):
                     flat_condition_keys.update(condition.keys())
             # Check if any required condition key is present
-            if not REQUIRED_CONDITIONS.intersection(flat_condition_keys):
+            if not {str.casefold(x) for x in REQUIRED_CONDITIONS} & {
+                str.casefold(x) for x in flat_condition_keys
+            }:
                 return False
     return True

@@ -55,7 +55,7 @@ lint: lint-pylint lint-fmt ## Run all linters (pylint, bandit, isort, black chec
 
 ## lint-pylint: Run pylint, bandit, and isort checks
 lint-pylint: ## Run pylint, bandit, and isort checks
-	pipenv run bandit -r $(dirs)
+	pipenv run bandit --ini .bandit -r $(dirs)
 	pipenv run pylint $(dirs)
 	pipenv run isort --profile=black --check-only $(dirs)
 

@@ -1,0 +1,48 @@
+AnalysisType: rule
+Description: |
+  Base rule for detecting OpenAI failed login attempts. This rule is used primarily
+  as a building block for correlation rules and does not generate alerts on its own.
+DisplayName: "OpenAI Failed Login (Base Rule)"
+Enabled: true
+Filename: openai_login_failed.py
+CreateAlert: false
+Severity: Info
+DedupPeriodMinutes: 60
+Threshold: 999999
+LogTypes:
+  - OpenAI.Audit
+RuleID: "OpenAI.Login.Failed"
+Tests:
+  - Name: "Failed login"
+    ExpectedResult: true
+    Log:
+      id: "audit_log-failed001"
+      type: "login.failed"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-123"
+            email: "user@company.com"
+          ip_address: "203.0.113.100"
+          user_agent: "Mozilla/5.0"
+      login_failed:
+        error_code: "invalid_credentials"
+        error_message: "Invalid username or password"
+  - Name: "Successful login - No match"
+    ExpectedResult: false
+    Log:
+      id: "audit_log-success001"
+      type: "login.succeeded"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-123"
+            email: "user@company.com"
+          ip_address: "203.0.113.100"
+          user_agent: "Mozilla/5.0"

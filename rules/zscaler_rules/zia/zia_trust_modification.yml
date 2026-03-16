@@ -73,3 +73,30 @@ Tests:
         },
         "sourcetype": "zscalernss-audit"
       }
+  - Name: Administration > Administration Management > UPDATE without SAML fields
+    ExpectedResult: false
+    Log:
+      {
+        "event": {
+          "action": "UPDATE",
+          "adminid": "admin@16991311.zscalerbeta.net",
+          "auditlogtype": "ZIA",
+          "category": "ADMINISTRATOR_MANAGEMENT",
+          "clientip": "123.123.123.123",
+          "errorcode": "None",
+          "interface": "UI",
+          "postaction": {
+            "certFilename": "abc.crt",
+            "productId": 0
+          },
+          "preaction": {
+            "productId": 0
+          },
+          "recordid": "332",
+          "resource": "None",
+          "result": "SUCCESS",
+          "subcategory": "ADMINISTRATOR_SAML",
+          "time": "2024-10-22 22:13:23.000000000"
+        },
+        "sourcetype": "zscalernss-audit"
+      }

@@ -1,0 +1,175 @@
+AnalysisType: rule
+Description: |
+  Detects when an admin or owner role is assigned to a user or group in OpenAI.
+  Admin and owner roles grant elevated privileges that allow significant control over
+  the organization, including managing users, API keys, billing, and security settings.
+  Unauthorized or unexpected admin role assignments can indicate:
+  - Privilege escalation attempts
+  - Insider threats
+  - Compromised administrator accounts
+  - Policy violations
+  This rule alerts on all admin role assignments for visibility and audit purposes.
+DisplayName: "OpenAI Admin Role Assignment"
+Enabled: true
+Status: Experimental
+Filename: openai_admin_role_assignment.py
+Reference: https://platform.openai.com/docs/api-reference/audit-logs
+Runbook: |
+  1. Verify the role assignment was authorized. Confirm the assigned user/group should have admin privileges and the assignment aligns with approved access requests or organizational policy.
+  2. Review the assignment context including the actor performing the assignment, source IP address, geolocation, and timing. Check for anomalous patterns such as assignments from unusual locations or during off-hours.
+  3. If the assignment is suspicious or unauthorized, immediately revoke the admin role. Review all actions performed by the principal since the role was granted, investigate potential account compromise of the actor who granted the role, and escalate for security review.
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098  # Account Manipulation
+    - TA0004:T1078  # Valid Accounts
+    - TA0005:T1098.003  # Additional Cloud Roles
+Severity: High
+DedupPeriodMinutes: 60
+Threshold: 1
+LogTypes:
+  - OpenAI.Audit
+RuleID: "OpenAI.Admin.Role.Assignment"
+Tests:
+  - Name: "Admin role assignment - organization owner - Alert"
+    ExpectedResult: true
+    Log:
+      id: "audit_log-test001"
+      type: "role.assignment.created"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-admin123"
+            email: "admin@company.com"
+          ip_address: "203.0.113.100"
+          user_agent: "Mozilla/5.0"
+          ip_address_details:
+            country: "US"
+            city: "San Francisco"
+            region: "California"
+      role_assignment_created:
+        id: "role_assignment_role-api-organization-owner__api-organization__org-abc123_user-newadmin456"
+        principal_id: "user-newadmin456"
+        principal_type: "user"
+        resource_id: "org-abc123"
+        resource_type: "api.organization"
+  - Name: "Admin role assignment - contains admin keyword - Alert"
+    ExpectedResult: true
+    Log:
+      id: "audit_log-test002"
+      type: "role.assignment.created"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-superadmin001"
+            email: "superadmin@company.com"
+          ip_address: "192.0.2.50"
+          user_agent: "Mozilla/5.0"
+      role_assignment_created:
+        id: "role_assignment_role-api-project-admin__api-project__proj-xyz789_user-contractor999"
+        principal_id: "user-contractor999"
+        principal_type: "user"
+        resource_id: "proj-xyz789"
+        resource_type: "api.project"
+  - Name: "Group assigned owner role - Alert"
+    ExpectedResult: true
+    Log:
+      id: "audit_log-test003"
+      type: "role.assignment.created"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-admin123"
+            email: "admin@company.com"
+          ip_address: "203.0.113.100"
+          user_agent: "Mozilla/5.0"
+      role_assignment_created:
+        id: "role_assignment_role-api-organization-owner__api-organization__org-abc123_group-engineering001"
+        principal_id: "group-engineering001"
+        principal_type: "group"
+        resource_id: "org-abc123"
+        resource_type: "api.organization"
+  - Name: "Non-admin role assignment - reader - No Alert"
+    ExpectedResult: false
+    Log:
+      id: "audit_log-test004"
+      type: "role.assignment.created"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-admin123"
+            email: "admin@company.com"
+          ip_address: "203.0.113.100"
+          user_agent: "Mozilla/5.0"
+      role_assignment_created:
+        id: "role_assignment_role-api-organization-reader__api-organization__org-abc123_user-employee456"
+        principal_id: "user-employee456"
+        principal_type: "user"
+        resource_id: "org-abc123"
+        resource_type: "api.organization"
+  - Name: "Non-admin role assignment - viewer - No Alert"
+    ExpectedResult: false
+    Log:
+      id: "audit_log-test005"
+      type: "role.assignment.created"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-manager001"
+            email: "manager@company.com"
+          ip_address: "198.51.100.25"
+          user_agent: "Mozilla/5.0"
+      role_assignment_created:
+        id: "role_assignment_role-api-project-viewer__api-project__proj-def456_user-intern789"
+        principal_id: "user-intern789"
+        principal_type: "user"
+        resource_id: "proj-def456"
+        resource_type: "api.project"
+  - Name: "Role assignment removed - No Alert"
+    ExpectedResult: false
+    Log:
+      id: "audit_log-test006"
+      type: "role.assignment.deleted"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-admin123"
+            email: "admin@company.com"
+          ip_address: "203.0.113.100"
+          user_agent: "Mozilla/5.0"
+      role_assignment_deleted:
+        id: "role_assignment_role-api-organization-owner__api-organization__org-abc123_user-oldadmin999"
+        principal_id: "user-oldadmin999"
+        principal_type: "user"
+  - Name: "Unrelated event type - No Alert"
+    ExpectedResult: false
+    Log:
+      id: "audit_log-test007"
+      type: "login.succeeded"
+      effective_at: 1702857600
+      object: "organization.audit_log"
+      actor:
+        type: "session"
+        session:
+          user:
+            id: "user-normal001"
+            email: "user@company.com"
+          ip_address: "203.0.113.200"
+          user_agent: "Mozilla/5.0"

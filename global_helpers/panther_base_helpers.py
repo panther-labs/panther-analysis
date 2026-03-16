@@ -165,16 +165,23 @@ def golang_nanotime_to_python_datetime(golang_time: str) -> datetime:
     return datetime.strptime(golang_time_rounded, golang_time_format)
 
 
-def is_base64(b64: str) -> str:
+def is_base64(b64: str, min_length: int = 28) -> str:
     # if the string is base64 encoded, return the decoded string
     # otherwise return an empty string
-    # handle false positives for very short strings
-    if len(b64) < 12:
+    # Minimum length for intentional base64 encoding
+    # Legitimate service identifiers are typically shorter; exfil chunks are longer
+    # Default 28 chars for DNS exfiltration, but can be customized per use case
+    if len(b64) < min_length:
         return ""
     # Base64 strings should only contain ASCII characters
     try:
         b64.encode("ascii")
     except UnicodeEncodeError:
+        return ""
+    # Filter out 32-char alphanumeric strings - these are common service/session IDs
+    # Examples: hex UUIDs like "ba680ec474b5402da89ce553c20075eb"
+    # or other IDs like "4ifgvg5jcq6meu7m4acon5vnfa0kocom" (both decode to gibberish CJK)
+    if len(b64) == 32 and re.match(r"^[A-Za-z0-9]{32}$", b64):
         return ""
     # Base64 uses only: A-Z, a-z, 0-9, +, /, and = for padding
     if not re.match(r"^[A-Za-z0-9+/]*={0,2}$", b64):
@@ -190,7 +197,24 @@ def is_base64(b64: str) -> str:
     # Try decoding with different encodings in order of likelihood
     for encoding in ["ascii", "utf-16-le", "utf-8"]:
         try:
-            return decoded_bytes.decode(encoding)
+            decoded_str = decoded_bytes.decode(encoding)
+            # Additional validation: check if decoded content is mostly printable
+            # This filters out random alphanumeric strings that decode to gibberish
+            if decoded_str:
+                printable_ratio = sum(c.isprintable() or c.isspace() for c in decoded_str) / len(
+                    decoded_str
+                )
+                # Require at least 70% printable characters
+                if printable_ratio < 0.7:
+                    continue
+
+                # Reject decoded strings containing any non-ASCII characters
+                # Legitimate base64 payloads (commands, scripts, paths) decode to pure ASCII
+                # Any CJK, Hangul, or other non-ASCII indicates a random string that
+                # happens to be valid base64 (e.g. "NewUpdatesReadyToApply" -> ꔔ귖쑺楞鏜ઠ革)
+                if not decoded_str.isascii():
+                    continue
+            return decoded_str
         except UnicodeDecodeError:
             continue
 

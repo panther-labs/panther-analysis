@@ -16,8 +16,10 @@ def rule(event):
 
 def title(event):
     # For INFO-level events, just group them all together since they're not that interesting
-    if severity(event) == "INFO":
-        return "Failed Annonymous EKS Acces Attempt(s) Detected"
+    if event.deep_get("annotations", "authorization.k8s.io/decision") != "allow":
+        return "Failed Anonymous EKS Access Attempt(s) Detected"
+    if event.get("requestURI") == "/version":
+        return "Anonymous EKS Access to /version Endpoint Detected"
     p_eks = eks_panther_obj_ref(event)
     return (
         f"Anonymous API access detected on Kubernetes API server "

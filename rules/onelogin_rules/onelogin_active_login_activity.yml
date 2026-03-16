@@ -12,6 +12,8 @@ Severity: Medium
 Reports:
   MITRE ATT&CK:
     - TA0008:T1550
+Threshold: 3
+DedupPeriodMinutes: 720
 Description: Multiple user accounts logged in from the same ip address.
 Reference: https://support.onelogin.com/kb/4271392/user-policies
 Runbook: Investigate whether multiple user's logging in from the same ip address is expected. Determine if this ip address should be added to the SHARED_IP_SPACE array.
@@ -20,7 +22,18 @@ SummaryAttributes:
   - user_name
   - user_id
 Tests:
-  - Name: Normal Login Event
+  - Name: Login Event - Counts Toward Threshold
+    ExpectedResult: true
+    Log:
+      {
+        "event_type_id": "5",
+        "actor_user_id": 123456,
+        "actor_user_name": "Bob Cat",
+        "user_id": 123456,
+        "user_name": "Bob Cat",
+        "ipaddr": "203.0.113.55",
+      }
+  - Name: Non-Login Event Type - No Match
     ExpectedResult: false
     Log:
       {
@@ -30,7 +43,7 @@ Tests:
         "user_id": 123456,
         "user_name": "Bob Cat",
       }
-  - Name: Shared IP Login Event
+  - Name: Shared IP Login Event - No Match
     ExpectedResult: false
     Log:
       {

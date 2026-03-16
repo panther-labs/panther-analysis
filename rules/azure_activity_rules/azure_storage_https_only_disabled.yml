@@ -1,0 +1,62 @@
+AnalysisType: rule
+Filename: azure_storage_https_only_disabled.py
+RuleID: "Azure.MonitorActivity.StorageAccount.HttpsOnlyDisabled"
+DisplayName: "Azure Storage Account HTTPS-Only Traffic Disabled"
+Enabled: true
+LogTypes:
+  - Azure.MonitorActivity
+Severity: High
+Status: Experimental
+Description: >
+  Detects when Azure storage account HTTPS-only traffic requirement is disabled.
+  Disabling HTTPS-only allows unencrypted HTTP connections, which is a security downgrade that may expose data in transit.
+Reports:
+  MITRE ATT&CK:
+    - TA0009:T1071 # Command and Control: Application Layer Protocol
+Tags:
+  - Command and Control
+  - Application Layer Protocol
+Runbook: |
+  1. Query Azure Monitor Activity logs for all storage account operations by the callerIpAddress in the 6 hours before and after this alert to identify patterns
+  2. Check if the source IP is associated with known cloud providers, VPN services, or corporate network ranges using threat intelligence
+  3. Search for other Azure storage account security downgrades or suspicious configuration changes from the same user or IP in the past 7 days
+Reference: https://learn.microsoft.com/en-us/azure/storage/common/storage-require-secure-transfer
+SummaryAttributes:
+  - resourceId
+  - callerIpAddress
+  - correlationId
+Tests:
+  - Name: HTTPS Only Disabled
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2024-12-17T10:30:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/mystorageaccount",
+        "operationName": "Microsoft.Storage/storageAccounts/write",
+        "operationVersion": "2021-04-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "1.1.1.1",
+        "correlationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "properties": {
+          "requestbody": "{\"properties\":{\"supportsHttpsTrafficOnly\":false}}"
+        },
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
+  - Name: HTTPS Only Enabled
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2024-12-17T12:00:00.0000000Z",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/myresourcegroup/providers/Microsoft.Storage/storageAccounts/securestorageaccount",
+        "operationName": "Microsoft.Storage/storageAccounts/write",
+        "operationVersion": "2021-04-01",
+        "category": "Administrative",
+        "resultType": "Success",
+        "callerIpAddress": "2.2.2.2",
+        "correlationId": "c3d4e5f6-a7b8-9012-cdef-222222222222",
+        "properties": {
+          "requestbody": "{\"properties\":{\"supportsHttpsTrafficOnly\":true}}"
+        },
+        "tenantId": "87654321-4321-4321-4321-111111111111"
+      }
