@@ -147,7 +147,7 @@ Query: |
           END AS z_score_enrollments,
 
           CASE
-              WHEN b.baseline_total_enrollments >= 3
+              WHEN b.baseline_total_admin_enrollments >= 3
               THEN ROUND(
                   (COALESCE(er.recent_max_admin_enrollments_per_hour, 0) - b.mean_admin_enrollments_per_hour) /
                   NULLIF(b.stddev_admin_enrollments_per_hour, 0),
@@ -180,7 +180,7 @@ Query: |
           END AS is_security_weakening_anomaly,
 
           CASE
-              WHEN b.baseline_total_enrollments >= 3
+              WHEN b.baseline_total_admin_enrollments >= 3
                   AND (COALESCE(er.recent_max_admin_enrollments_per_hour, 0) - b.mean_admin_enrollments_per_hour) /
                       NULLIF(b.stddev_admin_enrollments_per_hour, 0) > 3
               THEN TRUE ELSE FALSE
@@ -194,7 +194,7 @@ Query: |
           END AS is_first_time_security_weakening,
 
           CASE
-              WHEN (b.baseline_total_enrollments IS NULL OR b.baseline_total_enrollments < 3)
+              WHEN (b.baseline_total_admin_enrollments IS NULL OR b.baseline_total_admin_enrollments = 0)
                   AND er.recent_total_admin_enrollments > 0
               THEN TRUE ELSE FALSE
           END AS is_first_time_admin_enrollment,
@@ -206,14 +206,14 @@ Query: |
                       AND (COALESCE(pr.recent_max_weakenings_per_hour, 0) - b.mean_weakenings_per_hour) /
                           NULLIF(b.stddev_weakenings_per_hour, 0) > 2)
                   OR
-                  (b.baseline_total_enrollments >= 3
+                  (b.baseline_total_admin_enrollments >= 3
                       AND (COALESCE(er.recent_max_admin_enrollments_per_hour, 0) - b.mean_admin_enrollments_per_hour) /
                           NULLIF(b.stddev_admin_enrollments_per_hour, 0) > 3)
                   OR
-                  ((b.baseline_total_policy_changes IS NULL OR b.baseline_total_policy_changes < 3)
-                      AND pr.recent_total_weakenings > 0)
+                  (pr.recent_total_weakenings > 0
+                      AND (b.baseline_total_weakenings IS NULL OR b.baseline_total_weakenings = 0))
                   OR
-                  ((b.baseline_total_enrollments IS NULL OR b.baseline_total_enrollments < 3)
+                  ((b.baseline_total_admin_enrollments IS NULL OR b.baseline_total_admin_enrollments = 0)
                       AND er.recent_total_admin_enrollments > 0)
               ) THEN TRUE
               ELSE FALSE
