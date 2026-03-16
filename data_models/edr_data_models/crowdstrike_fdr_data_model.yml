@@ -37,6 +37,8 @@ Mappings:
     Path: $.event.ParentCommandLine
   - Name: ParentProcessName
     Method: get_parent_process_name
+  - Name: ProcessName
+    Method: get_process_name
 
   # Sigma Field Mappings - Hashes
   - Name: sha256
@@ -79,6 +81,10 @@ Mappings:
     Path: $.event.ParentProcessId
   - Name: IntegrityLevel
     Path: $.event.IntegrityLevel
+
+  # Sigma Field Mappings - File
+  - Name: TargetFilename
+    Path: $.event.TargetFileName
 
   # Sigma Metadata Fields (normalized)
   - Name: _event_category

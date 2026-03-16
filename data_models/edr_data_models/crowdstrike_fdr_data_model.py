@@ -41,6 +41,7 @@ def get_parent_process_name(event):
 
 
 def get_event_category(event):
+    # pylint: disable=too-many-return-statements
     """Normalize CrowdStrike event_simpleName to Sigma category"""
     event_simple_name = event.get("event_simpleName", "")
 
@@ -64,6 +65,18 @@ def get_event_category(event):
         "NetworkReceiveAcceptIP6",
     ]:
         return "network_connection"
+
+    # Registry events
+    if event_simple_name in ["RegKeySecurityChanged", "RegKeyCreated", "RegKeyDeleted"]:
+        return "registry_event"
+
+    # Image load events
+    if event_simple_name == "ModuleLoad":
+        return "image_load"
+
+    # Named pipe events
+    if event_simple_name == "NamedPipeEvent":
+        return "pipe_creation"
 
     return None
 
