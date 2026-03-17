@@ -391,7 +391,6 @@ Query: |
           AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'application.user_membership.change_username'
           AND actor:alternateId::string LIKE '%@%'
-          AND debugContext:debugData:swa_credential_access::string = 'true'
       GROUP BY user_email, event_hour
   ),
 
