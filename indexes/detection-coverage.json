@@ -5360,6 +5360,34 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.",
+        "DisplayName": "GreyNoise V3 Malicious IP Activity",
+        "LogTypes": [
+            "AWS.ALB",
+            "AWS.CloudTrail",
+            "AWS.VPCFlow",
+            "Amazon.EKS.Audit",
+            "Asana.Audit",
+            "Atlassian.Audit",
+            "Azure.Audit",
+            "Azure.MonitorActivity",
+            "Box.Event",
+            "Cloudflare.Firewall",
+            "Cloudflare.HttpRequest",
+            "Crowdstrike.FDREvent",
+            "GCP.AuditLog",
+            "GSuite.ActivityEvent",
+            "Notion.AuditLogs",
+            "Okta.SystemLog",
+            "OneLogin.Events",
+            "OnePassword.SignInAttempt",
+            "Zendesk.Audit",
+            "Zoom.Activity"
+        ],
+        "YAMLPath": "rules/standard_rules/greynoise_malicious_ip.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects when a user downloads or saves to Google Drive one or more attachments that are classified as spam.",
         "DisplayName": "Gsuite Attachments Downloaded from Spam Email",
         "LogTypes": [

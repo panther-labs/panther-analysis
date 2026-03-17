@@ -22,6 +22,8 @@
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
   - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Malicious Content Detected](../rules/box_rules/box_malicious_content.yml)
   - Box has detect malicious content, such as a virus.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
@@ -92,6 +94,8 @@
   - Detects apps requesting OAuth tokens with the OAuthLogin scope when they haven't requestedthis scope in the previous 14 days. This scope can be used to access Google's device passwordescrow endpoint for GAIA credential theft.
 - [Google Workspace Rapid Multi-IP Authentication](../queries/gsuite_queries/GSuite_Rapid_Multi_IP_Authentication_Query.yml)
   - Detects users authenticating from 3+ distinct IPv4 addresses within 6 hours.May indicate GAIA credential theft where stolen OAuth tokens are used acrossmultiple compromised machines simultaneously. IPv6 addresses are excluded toavoid false positives from dual-stack networking.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Gsuite Attachments Downloaded from Spam Email](../rules/gsuite_activityevent_rules/gsuite_attachments_downloaded_from_spam_email.yml)
   - Detects when a user downloads or saves to Google Drive one or more attachments that are classified as spam.
 - [GSuite Calendar Has Been Made Public](../rules/gsuite_activityevent_rules/gsuite_calendar_made_public.yml)
@@ -170,6 +174,8 @@
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
   - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Impossible Travel for Login Action](../rules/standard_rules/impossible_travel_login.yml)
   - A user has subsequent logins from two geographic locations that are very far apart
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
@@ -268,6 +274,8 @@
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
   - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [New User Account Created](../rules/indicator_creation_rules/new_user_account_logging.yml)
   - A new account was created
 - [OneLogin Active Login Activity](../rules/onelogin_rules/onelogin_active_login_activity.yml)
@@ -394,6 +402,8 @@
   - Assigning an admin role manually could be a sign of privilege escalation
 - [Enabled Zendesk Support to Assume Users](../rules/zendesk_rules/zendesk_user_assumption.yml)
   - User enabled or disabled zendesk support user assumption.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
@@ -414,6 +424,8 @@
 
 ## Zoom
 
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [New User Account Created](../rules/indicator_creation_rules/new_user_account_logging.yml)
   - A new account was created
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)

@@ -8,6 +8,12 @@
   - This policy validates that all ACM certificates are using secure key and signature algorithms.
 
 
+## AWS ALB
+
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+
+
 ## AWS BedrockModelInvocation
 
 - [AWS Bedrock Model Invocation Abnormal Token Usage](../rules/aws_bedrockmodelinvocation_rules/aws_bedrockmodelinvocation_abnormaltokenusage.yml)
@@ -225,6 +231,8 @@
   - This rule detects when a principal from one AWS account accesses resources in a different AWS account using a VPC Endpoint. While cross-account access may be expected in some cases, it could also indicate unauthorized lateral movement between AWS accounts.
 - [Failed Root Console Login](../rules/aws_cloudtrail_rules/aws_console_root_login_failed.yml)
   - A Root console login failed.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [IAM Administrator Role Policy Attached](../rules/aws_cloudtrail_rules/aws_iam_attach_admin_role_policy.yml)
   - An IAM role policy was attached with Administrator Access, which could indicate a potential security risk.
 - [IAM Assume Role Blocklist Ignored](../rules/aws_cloudtrail_rules/aws_iam_assume_role_blocklist_ignored.yml)
@@ -415,6 +423,8 @@
   - This detection identifies if a public sourceIP is generating multiple 403s with the Kubernetes API server.
 - [EKS Audit Log Reporting system Namespace is Used From A Public IP](../rules/aws_eks_rules/system_namespace_public_ip.yml)
   - This detection identifies if an activity is recorded in the Kubernetes audit log where the user:username attribute begins with "system:" or "eks:" and the requests originating IP Address is a Public IP Address
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [IOC Activity in K8 Control Plane](../queries/kubernetes_queries/kubernetes_ioc_activity_query.yml)
   - This detection monitors for any kubernetes API Request originating from an Indicator of Compromise.
 - [Kubernetes Admission Controller Webhook Created](../rules/kubernetes_rules/k8s_admission_controller_created.yml)
@@ -717,6 +727,8 @@
   - Look at which VPC hosts have been sending a lot of traffic over the past hour
 - [AWS VPC Healthy Log Status](../rules/aws_vpc_flow_rules/aws_vpc_healthy_log_status.yml)
   - Checks for the log status `SKIPDATA`, which indicates that data was lost either to an internal server error or due to capacity constraints.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [VPC Flow Logs Inbound Port Allowlist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_allowlist.yml)
   - VPC Flow Logs observed inbound traffic violating the port allowlist.
 - [VPC Flow Logs Inbound Port Blocklist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_blocklist.yml)
