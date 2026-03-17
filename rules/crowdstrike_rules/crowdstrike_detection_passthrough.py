@@ -1,3 +1,5 @@
+import uuid
+
 from panther_crowdstrike_fdr_helpers import (
     crowdstrike_detection_alert_context,
     get_crowdstrike_field,
@@ -28,4 +30,11 @@ def severity(event):
 
 
 def dedup(event):
-    return f"{get_crowdstrike_field(event, 'EventUUID')} "
+    # CompositeId is unique per detection indicator and present in both
+    # DetectionSummary and FDREvent formats. EventUUID is null in FDREvent,
+    # which previously caused all detections to share the dedup key "None ".
+    composite_id = get_crowdstrike_field(event, "CompositeId")
+    if composite_id:
+        return composite_id
+    # Fallback: generate a unique ID so detections never silently merge
+    return str(uuid.uuid4())

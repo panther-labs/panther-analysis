@@ -32,7 +32,7 @@ jobs:
           fetch-depth: 1
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: ${{ secrets.AWS_BEDROCK_REGION }}
@@ -40,12 +40,12 @@ jobs:
 
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@7dee1b0c1557f278e5c7dc244927139d78c0e22a
+        uses: tj-actions/changed-files@22103cc46bda19c2b464ffe86db46df6922fd323
 
       # Step 1: Style Guide Review
       - name: Style Guide Review
         id: style-review
-        uses: anthropics/claude-code-action@64c7a0ef71df67b14cb4471f4d9c8565c61042bf # v1.0.66
+        uses: anthropics/claude-code-action@26ec041249acb0a944c0a47b6c0c13f05dbc5b44 # v1.0.70
         with:
           use_bedrock: 'true'
           claude_args: |
@@ -115,7 +115,7 @@ jobs:
 
       # Step 2: Python Logic Review
       - name: Python Logic Review
-        uses: anthropics/claude-code-action@64c7a0ef71df67b14cb4471f4d9c8565c61042bf # v1.0.66
+        uses: anthropics/claude-code-action@26ec041249acb0a944c0a47b6c0c13f05dbc5b44 # v1.0.70
         with:
           use_bedrock: 'true'
           claude_args: |
@@ -209,7 +209,7 @@ jobs:
 
       # Step 3: YAML Metadata Review
       - name: YAML Metadata Review
-        uses: anthropics/claude-code-action@64c7a0ef71df67b14cb4471f4d9c8565c61042bf # v1.0.66
+        uses: anthropics/claude-code-action@26ec041249acb0a944c0a47b6c0c13f05dbc5b44 # v1.0.70
         with:
           use_bedrock: 'true'
           claude_args: |
@@ -302,7 +302,7 @@ jobs:
 
       # Step 4: Testing Review
       - name: Testing Review
-        uses: anthropics/claude-code-action@64c7a0ef71df67b14cb4471f4d9c8565c61042bf # v1.0.66
+        uses: anthropics/claude-code-action@26ec041249acb0a944c0a47b6c0c13f05dbc5b44 # v1.0.70
         with:
           use_bedrock: 'true'
           claude_args: |
@@ -378,7 +378,7 @@ jobs:
 
       # Step 5: Query Review (if applicable)
       - name: Query Review
-        uses: anthropics/claude-code-action@64c7a0ef71df67b14cb4471f4d9c8565c61042bf # v1.0.66
+        uses: anthropics/claude-code-action@26ec041249acb0a944c0a47b6c0c13f05dbc5b44 # v1.0.70
         with:
           use_bedrock: 'true'
           claude_args: |
@@ -455,7 +455,7 @@ jobs:
 
       # Step 6: Architecture Compliance
       - name: Architecture Compliance Review
-        uses: anthropics/claude-code-action@64c7a0ef71df67b14cb4471f4d9c8565c61042bf # v1.0.66
+        uses: anthropics/claude-code-action@26ec041249acb0a944c0a47b6c0c13f05dbc5b44 # v1.0.70
         with:
           use_bedrock: 'true'
           claude_args: |

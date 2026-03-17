@@ -16,6 +16,7 @@
 # A
 
 - [AWS ACM](#aws-acm)
+- [AWS ALB](#aws-alb)
 - [AWS BedrockModelInvocation](#aws-bedrockmodelinvocation)
 - [AWS CloudFormation](#aws-cloudformation)
 - [AWS CloudTrail](#aws-cloudtrail)
@@ -55,6 +56,12 @@
   - This policy checks if an ACM certificate renewal is pending or has failed and is in use by any other resources within the account.
 - [AWS ACM Secure Algorithms](../policies/aws_acm_policies/aws_acm_certificate_has_secure_algorithms.yml)
   - This policy validates that all ACM certificates are using secure key and signature algorithms.
+
+
+## AWS ALB
+
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 
 
 ## AWS BedrockModelInvocation
@@ -274,6 +281,8 @@
   - This rule detects when a principal from one AWS account accesses resources in a different AWS account using a VPC Endpoint. While cross-account access may be expected in some cases, it could also indicate unauthorized lateral movement between AWS accounts.
 - [Failed Root Console Login](../rules/aws_cloudtrail_rules/aws_console_root_login_failed.yml)
   - A Root console login failed.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [IAM Administrator Role Policy Attached](../rules/aws_cloudtrail_rules/aws_iam_attach_admin_role_policy.yml)
   - An IAM role policy was attached with Administrator Access, which could indicate a potential security risk.
 - [IAM Assume Role Blocklist Ignored](../rules/aws_cloudtrail_rules/aws_iam_assume_role_blocklist_ignored.yml)
@@ -464,6 +473,8 @@
   - This detection identifies if a public sourceIP is generating multiple 403s with the Kubernetes API server.
 - [EKS Audit Log Reporting system Namespace is Used From A Public IP](../rules/aws_eks_rules/system_namespace_public_ip.yml)
   - This detection identifies if an activity is recorded in the Kubernetes audit log where the user:username attribute begins with "system:" or "eks:" and the requests originating IP Address is a Public IP Address
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [IOC Activity in K8 Control Plane](../queries/kubernetes_queries/kubernetes_ioc_activity_query.yml)
   - This detection monitors for any kubernetes API Request originating from an Indicator of Compromise.
 - [Kubernetes Admission Controller Webhook Created](../rules/kubernetes_rules/k8s_admission_controller_created.yml)
@@ -766,6 +777,8 @@
   - Look at which VPC hosts have been sending a lot of traffic over the past hour
 - [AWS VPC Healthy Log Status](../rules/aws_vpc_flow_rules/aws_vpc_healthy_log_status.yml)
   - Checks for the log status `SKIPDATA`, which indicates that data was lost either to an internal server error or due to capacity constraints.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [VPC Flow Logs Inbound Port Allowlist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_allowlist.yml)
   - VPC Flow Logs observed inbound traffic violating the port allowlist.
 - [VPC Flow Logs Inbound Port Blocklist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_blocklist.yml)
@@ -831,6 +844,8 @@
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
   - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Impossible Travel for Login Action](../rules/standard_rules/impossible_travel_login.yml)
   - A user has subsequent logins from two geographic locations that are very far apart
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
@@ -847,6 +862,8 @@
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
   - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
@@ -1076,6 +1093,8 @@
   - Detects when an Azure disk snapshot is deleted. Snapshots serve critical functions for backup, disaster recovery, and forensic analysis. Adversaries may target snapshots to prevent data recovery, destroy forensic evidence, or undermine backup strategies before launching ransomware or destructive operations.
 - [Azure VS Code OAuth Phishing](../rules/azure_signin_rules/azure_vscode_oauth_phishing.yml)
   - Detects OAuth authorization flows where Visual Studio Code successfully authenticates to Microsoft Graph. While legitimate for developers, this pattern is commonly abused in phishing campaigns where attackers use the trusted VS Code client ID to trick users into granting OAuth tokens.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Kubernetes Admission Controller Webhook Created](../rules/kubernetes_rules/k8s_admission_controller_created.yml)
   - This detection monitors for creation of MutatingWebhookConfiguration or ValidatingWebhookConfiguration resources. Admission controller webhooks can intercept all API requests to the Kubernetes API server, allowing attackers to inspect, modify, or block any resource creation or modification. This provides powerful capabilities for persistence (modifying deployments to inject backdoors), credential theft (intercepting secrets), and reconnaissance (enumerating all cluster activity).
 - [Kubernetes All Secrets Dumped Across Namespaces](../rules/kubernetes_rules/k8s_secrets_dump_all_namespaces.yml)
@@ -1173,6 +1192,8 @@
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
   - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Malicious Content Detected](../rules/box_rules/box_malicious_content.yml)
   - Box has detect malicious content, such as a virus.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
@@ -1225,6 +1246,8 @@
   - Layer 7 Distributed Denial of Service (DDoS) detected
 - [Cloudflare React2Shell RCE Attempt Detected](../rules/cloudflare_rules/cloudflare_react2shell_rce_attempt.yml)
   - Detects React2Shell (CVE-2025-55182) RCE attempts blocked by Cloudflare WAF
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 
 
 ## Crowdstrike
@@ -1305,6 +1328,8 @@
   - Detects DNS requests to domains on a custom denylist configured by security teams based on their threat landscape. This template rule requires configuration before enabling and monitors for C2 communication, phishing infrastructure, malware distribution, and data exfiltration. Organizations populate the denylist with threat intelligence indicators, known malicious infrastructure, and domains associated with targeted campaigns.
 - [Execution of Command Line Tool with Base64 Encoded Arguments](../rules/crowdstrike_rules/crowdstrike_base64_encoded_args.yml)
   - Detects the execution of common command line tools (e.g., PowerShell, cmd.exe) with Base64 encoded arguments, which could indicate an attempt to obfuscate malicious commands.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [MacOS Browser Credential Access (crowdstrike_fdrevent table)](../queries/crowdstrike_queries/MacOS_Browser_Credential_Access_FDREvent.yml)
   - Detects processes that contain known browser credential files in arguments. (crowdstrike_fdrevent table)
 - [Malicious SSO DNS Lookup](../rules/standard_rules/malicious_sso_dns_lookup.yml)
@@ -1535,6 +1560,8 @@
   - Detects privilege escalation in GCP by taking over the deploymentsmanager.deployments.create permission
 - [GCS Bucket Made Public](../rules/gcp_audit_rules/gcp_gcs_public.yml)
   - Adversaries may access data objects from improperly secured cloud storage.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Kubernetes Admission Controller Webhook Created](../rules/kubernetes_rules/k8s_admission_controller_created.yml)
   - This detection monitors for creation of MutatingWebhookConfiguration or ValidatingWebhookConfiguration resources. Admission controller webhooks can intercept all API requests to the Kubernetes API server, allowing attackers to inspect, modify, or block any resource creation or modification. This provides powerful capabilities for persistence (modifying deployments to inject backdoors), credential theft (intercepting secrets), and reconnaissance (enumerating all cluster activity).
 - [Kubernetes All Secrets Dumped Across Namespaces](../rules/kubernetes_rules/k8s_secrets_dump_all_namespaces.yml)
@@ -1743,6 +1770,8 @@
   - Detects apps requesting OAuth tokens with the OAuthLogin scope when they haven't requestedthis scope in the previous 14 days. This scope can be used to access Google's device passwordescrow endpoint for GAIA credential theft.
 - [Google Workspace Rapid Multi-IP Authentication](../queries/gsuite_queries/GSuite_Rapid_Multi_IP_Authentication_Query.yml)
   - Detects users authenticating from 3+ distinct IPv4 addresses within 6 hours.May indicate GAIA credential theft where stolen OAuth tokens are used acrossmultiple compromised machines simultaneously. IPv6 addresses are excluded toavoid false positives from dual-stack networking.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Gsuite Attachments Downloaded from Spam Email](../rules/gsuite_activityevent_rules/gsuite_attachments_downloaded_from_spam_email.yml)
   - Detects when a user downloads or saves to Google Drive one or more attachments that are classified as spam.
 - [GSuite Calendar Has Been Made Public](../rules/gsuite_activityevent_rules/gsuite_calendar_made_public.yml)
@@ -1904,6 +1933,8 @@
 
 ## Notion
 
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Impossible Travel for Login Action](../rules/standard_rules/impossible_travel_login.yml)
   - A user has subsequent logins from two geographic locations that are very far apart
 - [Notion Audit Log Exported](../rules/notion_rules/notion_workspace_audit_log_exported.yml)
@@ -1975,10 +2006,16 @@
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
   - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Impossible Travel for Login Action](../rules/standard_rules/impossible_travel_login.yml)
   - A user has subsequent logins from two geographic locations that are very far apart
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
+- [Okta AD Agent Authentication Anomaly - Z-Score Detection](../rules/okta_rules/okta_ad_agent_auth_zscore_anomaly.yml)
+  - Detects potential Okta AD Agent token theft and credential abuse using statistical z-score analysis.This detection uses a lookup table containing 90-day behavioral baselines for each user's AD Agentauthentication patterns, then calculates z-scores to identify suspicious activity in the last 7 days.**PREREQUISITES:**1. Baseline builder query must run first: `Query.Okta.ADAgentBaselineBuilder`2. Lookup table must be configured: `okta_ad_agent_baseline_90d`3. Allow 24 hours for initial baseline to populate**Detection Logic:**- Calculates mean and standard deviation for hourly authentication volume, IP diversity,  country diversity, and device diversity- Alerts when recent activity shows BOTH:  1. Volume spike (z-score > 3 standard deviations)  2. Geographic/IP diversity spike (z-score > 2 standard deviations)**Why This Matters:**Token theft attacks have a distinct signature: stolen credentials are used from multiplelocations/IPs simultaneously or in rapid succession. This creates both a volume spike anda diversity spike that this detection identifies.**Complementary Detection:**This rule complements `Okta.ADAgent.TokenAbuse.Behavioral` which detects admin actions(token creation, agent configuration) from new sources. This rule detects the actual USEof stolen tokens through authentication patterns.
+- [Okta AD Agent Token Abuse - Behavioral](../rules/okta_rules/okta_ad_agent_token_abuse_behavioral.yml)
+  - Detects potential Okta AD Agent token theft and abuse using behavioral analysis.Instead of relying on hardcoded service account patterns, this detection identifieswhen AD agent-related activities (API token creation, agent registration, config changes)occur from previously unseen IP addresses or user agents. This behavioral approachadapts to your environment and catches anomalous access patterns that may indicatecompromised credentials or unauthorized token generation.**What This Detection Catches:**- API token creation from new IPs or user agents- New AD agent registrations from unexpected sources- AD agent configuration changes from new locations**Complementary Detection:**Use alongside `Okta.ADAgent.AuthenticationAnomaly.ZScore` which detects the actualUSE of stolen tokens through authentication pattern anomalies.
 - [Okta Admin Access Granted](../queries/okta_queries/okta_admin_access_granted.yml)
   - Audit instances of admin access granted in your okta tenant
 - [Okta Admin Role Assigned](../rules/okta_rules/okta_admin_role_assigned.yml)
@@ -1993,6 +2030,8 @@
   - When a client wants to renew an access token, it sends the refresh token with the access token request to the /token Okta endpoint.Okta validates the incoming refresh token, issues a new set of tokens and invalidates the refresh token that was passed with the initial request.This detection alerts when a previously used refresh token is used again with the token request
 - [Okta App Unauthorized Access Attempt](../rules/okta_rules/okta_app_unauthorized_access_attempt.yml)
   - Detects when a user is denied access to an Okta application
+- [Okta Authentication Bypass via Skeleton Key Injection - Behavioral](../rules/okta_rules/okta_skeleton_key_bypass_behavioral.yml)
+  - Detects potential Okta authentication bypass via skeleton key injection using behavioral z-score analysis.Skeleton key attacks in Okta involve manipulating authentication policies to weaken MFA requirements(disabling requireFactor, zeroing maxSessionLifetime) and bulk-enrolling attacker-controlledauthenticators on victim accounts. This detection builds a 90-day behavioral baseline for eachadmin's policy change and factor enrollment patterns, then identifies anomalous spikes in the last7 days.**Detection Logic:**- Z-score: Spike in security-weakening policy changes (> 2σ above baseline)- Z-score: Spike in admin-on-behalf-of MFA factor enrollments (> 3σ above baseline)- Cold-start: First-time security weakening (no prior baseline - immediate high-confidence signal)- Cold-start: First-time admin-enrolled factors for other users**Why This Matters:**Skeleton key attacks require two steps: weaken authentication policies to reduce MFA friction,then enroll attacker-controlled authenticators on victim accounts. This detection catches bothsteps using behavioral baselines that adapt to legitimate admin workflows.**Complementary Detection:**Use alongside `Okta.ADAgent.TokenAbuse.Behavioral` for admin credential theft scenarios.
 - [Okta Cleartext Passwords Extracted via SCIM Application](../rules/okta_rules/okta_password_extraction_via_scim.yml)
   - An application admin has extracted cleartext user passwords via SCIM app. Malcious actors can extract plaintext passwords by creating a SCIM application under their control and configuring it to sync passwords from Okta.
 - [Okta Group Admin Role Assigned](../rules/okta_rules/okta_group_admin_role_assigned.yml)
@@ -2035,6 +2074,10 @@
   - An admin user has granted access to Okta Support to your account
 - [Okta Support Reset Credential](../rules/okta_rules/okta_support_reset.yml)
   - A Password or MFA factor was reset by Okta Support
+- [Okta SWA Bulk Access, New Source, and Credential Extraction - Behavioral](../rules/okta_rules/okta_swa_bulk_access_behavioral.yml)
+  - Detects Okta SWA (Secure Web Authentication) bulk credential extraction, abuse, and access frompreviously unseen IP addresses or user agents using behavioral z-score and source novelty analysis.SWA apps store credentials in Okta's encrypted vault. Admin accounts with SWA access can view orrotate credentials for users across many apps. This detection builds a 90-day behavioral baselinefor each admin's SWA access, credential change patterns, and known source IPs/user agents, thenidentifies anomalous spikes or new sources in the last 7 days.**Detection Logic:**- Z-score: SWA authentication volume spike (> 3σ above baseline)- Z-score: Unique SWA app diversity spike (many different apps accessed in one hour) (> 3σ)- Z-score: Credential extraction volume spike (> 3σ)- Z-score: Victim diversity spike (credential changes across many users) (> 2σ)- Cold-start: First-time bulk SWA access (>= 10 events, no prior baseline)- Cold-start: First-time credential extraction (>= 5 extractions, no prior baseline)- New source: SWA access from IP address not seen in 90-day baseline- New source: SWA access from user agent not seen in 90-day baseline- Critical compound: New IP + any credential extraction events**Why This Matters:**SWA credential extraction is a powerful lateral movement technique. An attacker with admin accesscan silently retrieve plaintext credentials for hundreds of SWA-protected applications withouttriggering MFA or generating obvious authentication failures. New source detection catches theinitial access phase when a compromised admin account is used from an unfamiliar device or location.**Complementary Detection:**Use alongside `Okta.SWA.OffHoursAccess.Behavioral` which detects the same attack vectoroccurring outside normal business hours.
+- [Okta SWA Off-Hours Credential Access - Behavioral](../rules/okta_rules/okta_swa_offhours_access_behavioral.yml)
+  - Detects Okta SWA credential access occurring outside normal business hours using behavioralz-score analysis on temporal patterns.Compromised admin accounts often access SWA credentials at unusual times - late at night,during weekends, or from a different geographic location than normal. This detection buildsa 90-day baseline for each admin's temporal credential access patterns, then identifiesanomalous shifts toward off-hours, late-night, and weekend activity in the last 7 days.**Detection Logic:**- Z-score: Off-hours ratio spike (> 3σ above normal off-hours proportion)- Z-score: Late-night ratio spike (2 AM - 6 AM accesses) (> 2σ)- Z-score: Weekend ratio spike (> 2σ)- Cold-start: First-time off-hours credential access (>= 3 events, no prior baseline)- Cold-start: First-time late-night access (>= 2 events, no prior baseline)- Cold-start: First-time weekend access (>= 2 events, no prior baseline)- Compound: Geographic shift + off-hours activity (high-confidence indicator)**Why This Matters:**Attackers using stolen admin credentials typically operate at off-hours to avoid detectionand minimize interference with active users. A sudden shift in the time distribution ofSWA credential accesses is a strong indicator of account compromise.**Complementary Detection:**Use alongside `Okta.SWA.BulkAccess.Behavioral` which detects the same attack vectorbased on volume rather than temporal patterns.
 - [Okta ThreatInsight Security Threat Detected](../rules/okta_rules/okta_threatinsight_security_threat_detected.yml)
   - Okta ThreatInsight identified request from potentially malicious IP address
 - [Okta User Account Locked](../rules/okta_rules/okta_user_account_locked.yml)
@@ -2063,6 +2106,8 @@
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
   - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [New User Account Created](../rules/indicator_creation_rules/new_user_account_logging.yml)
   - A new account was created
 - [OneLogin Active Login Activity](../rules/onelogin_rules/onelogin_active_login_activity.yml)
@@ -2107,6 +2152,8 @@
   - An actor user was denied login access more times than the configured threshold.
 - [Configuration Required - Sensitive 1Password Item Accessed](../rules/onepassword_rules/onepassword_sensitive_item_access.yml)
   - Alerts when a user defined list of sensitive items in 1Password is accessed
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 - [Unusual 1Password Client Detected](../rules/onepassword_rules/onepassword_unusual_client.yml)
@@ -2564,6 +2611,8 @@
   - Assigning an admin role manually could be a sign of privilege escalation
 - [Enabled Zendesk Support to Assume Users](../rules/zendesk_rules/zendesk_user_assumption.yml)
   - User enabled or disabled zendesk support user assumption.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
@@ -2584,6 +2633,8 @@
 
 ## Zoom
 
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [New User Account Created](../rules/indicator_creation_rules/new_user_account_logging.yml)
   - A new account was created
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
