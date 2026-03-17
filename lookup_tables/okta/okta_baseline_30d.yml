@@ -66,7 +66,7 @@ Query: |
           HOUR(published) AS utc_hour
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '37 days'
-          AND p_event_time < CURRENT_DATE - INTERVAL '7 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND actor:alternateId::string LIKE '%@%'
   ),
 
@@ -254,7 +254,7 @@ Query: |
           END) AS hourly_security_weakenings
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '37 days'
-          AND p_event_time < CURRENT_DATE - INTERVAL '7 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType IN ('policy.rule.update', 'policy.lifecycle.update')
           AND actor:alternateId::string LIKE '%@%'
       GROUP BY user_email, event_hour
@@ -290,7 +290,7 @@ Query: |
           COUNT(DISTINCT target[0]:alternateId::string) AS hourly_unique_targets
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '37 days'
-          AND p_event_time < CURRENT_DATE - INTERVAL '7 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'user.mfa.factor.activate'
           AND actor:alternateId::string LIKE '%@%'
       GROUP BY user_email, event_hour
@@ -326,7 +326,7 @@ Query: |
           COUNT(DISTINCT client:ipAddress::string) AS hourly_ip_diversity
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '37 days'
-          AND p_event_time < CURRENT_DATE - INTERVAL '7 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'user.authentication.sso'
           AND actor:alternateId::string LIKE '%@%'
           -- NOTE: swa_mode and signOnMode are internal Okta debug fields.
@@ -347,7 +347,7 @@ Query: |
           ARRAY_COMPACT(ARRAY_AGG(DISTINCT client:userAgent:rawUserAgent::string)) AS swa_known_user_agents
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '37 days'
-          AND p_event_time < CURRENT_DATE - INTERVAL '7 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'user.authentication.sso'
           AND actor:alternateId::string LIKE '%@%'
           AND (
@@ -388,7 +388,7 @@ Query: |
           COUNT(DISTINCT client:geographicalContext:country::string) AS hourly_country_diversity
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '37 days'
-          AND p_event_time < CURRENT_DATE - INTERVAL '7 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'application.user_membership.change_username'
           AND actor:alternateId::string LIKE '%@%'
           AND debugContext:debugData:swa_credential_access::string = 'true'

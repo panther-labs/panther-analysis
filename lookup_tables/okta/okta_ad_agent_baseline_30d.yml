@@ -44,7 +44,7 @@ Query: |
 
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '37 days'
-          AND p_event_time < CURRENT_DATE - INTERVAL '7 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND actor:alternateId::string LIKE '%@%'
           AND eventType = 'user.authentication.auth_via_AD_agent'
           AND outcome:result = 'SUCCESS'
