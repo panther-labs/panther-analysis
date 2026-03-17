@@ -1,0 +1,97 @@
+AnalysisType: scheduled_query
+QueryName: "Query.Okta.ADAgentTokenAbuseBehavioral"
+Enabled: false
+Description: |
+  Detects API token creation and AD agent activity from previously unseen IP addresses or user agents.
+  Uses behavioral analysis to identify anomalous token creation patterns.
+Query: |
+  -- Detects AD agent-related events from IP addresses or user agents not seen
+  -- in the prior 29 days for the same actor (i.e., new in the last 24 hours).
+
+  WITH all_events AS (
+    SELECT
+      p_event_time,
+      actor:alternateId::string AS actorId,
+      actor:displayName::string AS actorName,
+      eventType::string AS eventType,
+      client:ipAddress::string AS sourceIP,
+      client:userAgent:rawUserAgent::string AS userAgent,
+      outcome:result::string AS result,
+      target
+    FROM panther_logs.public.okta_systemlog
+    WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '30 days'
+      AND (
+        eventType = 'system.api_token.create'
+        OR eventType IN (
+          'system.agent.ad.config_change_detected',
+          'system.agent.ad.agent_instance_added'
+        )
+      )
+      AND outcome:result = 'SUCCESS'
+      AND actor:alternateId IS NOT NULL
+  ),
+
+  -- IPs seen per actor in the historical window (older than 1 day); NULLs excluded
+  historical_ips AS (
+    SELECT DISTINCT actorId, sourceIP
+    FROM all_events
+    WHERE p_event_time < CURRENT_TIMESTAMP - INTERVAL '1 day'
+      AND sourceIP IS NOT NULL
+  ),
+
+  -- User agents seen per actor in the historical window; NULLs excluded
+  historical_user_agents AS (
+    SELECT DISTINCT actorId, userAgent
+    FROM all_events
+    WHERE p_event_time < CURRENT_TIMESTAMP - INTERVAL '1 day'
+      AND userAgent IS NOT NULL
+  ),
+
+  -- Events from the last 1 day
+  recent_events AS (
+    SELECT *
+    FROM all_events
+    WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '1 day'
+  )
+
+  SELECT
+    r.p_event_time,
+    r.actorId,
+    r.actorName,
+    r.eventType,
+    r.sourceIP,
+    r.userAgent,
+    r.result,
+    r.target,
+    ARRAY_TO_STRING(
+      ARRAY_COMPACT(ARRAY_CONSTRUCT(
+        CASE WHEN r.sourceIP IS NOT NULL AND NOT EXISTS (
+          SELECT 1 FROM historical_ips h
+          WHERE h.actorId = r.actorId AND h.sourceIP = r.sourceIP
+        ) THEN 'New IP Address' END,
+        CASE WHEN r.userAgent IS NOT NULL AND NOT EXISTS (
+          SELECT 1 FROM historical_user_agents h
+          WHERE h.actorId = r.actorId AND h.userAgent = r.userAgent
+        ) THEN 'New User Agent' END
+      )),
+      ', '
+    ) AS anomaly_type
+  FROM recent_events r
+  WHERE
+    (r.sourceIP IS NOT NULL AND NOT EXISTS (
+      SELECT 1 FROM historical_ips h
+      WHERE h.actorId = r.actorId AND h.sourceIP = r.sourceIP
+    ))
+    OR (r.userAgent IS NOT NULL AND NOT EXISTS (
+      SELECT 1 FROM historical_user_agents h
+      WHERE h.actorId = r.actorId AND h.userAgent = r.userAgent
+    ))
+  ORDER BY p_event_time DESC
+  LIMIT 100
+Schedule:
+  RateMinutes: 60
+  TimeoutMinutes: 5
+Tags:
+  - Okta
+  - Anomaly Detection
+  - Behavioral Analytics
