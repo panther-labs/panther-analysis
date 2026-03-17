@@ -1,0 +1,148 @@
+AnalysisType: rule
+Filename: greynoise_malicious_ip.py
+RuleID: "Standard.GreyNoiseV3.MaliciousIP"
+DisplayName: "GreyNoise V3 Malicious IP Activity"
+Enabled: true
+Status: Experimental
+Severity: High
+Description: >-
+  Detects when an IP address in any log event is classified as malicious or unknown
+  by GreyNoise V3 internet scanner intelligence. Known business services and benign
+  IPs are excluded.
+Runbook: |
+  1. Review the alert context and open the GreyNoise URL to assess the IP's classification,
+     associated CVEs, tags, and scanning behavior.
+  2. Query the data lake for all events involving this IP to determine what assets or services
+     were contacted and whether any connections were successful.
+  3. If the IP is confirmed malicious and interaction was successful, block the IP, isolate
+     affected hosts, and reset any credentials that may have been exposed.
+Reference: https://docs.panther.com/enrichment/greynoise
+DedupPeriodMinutes: 60
+Reports:
+  MITRE ATT&CK:
+    - TA0043:T1595.001
+Tags:
+  - Reconnaissance:Active Scanning
+  - GreyNoise
+  - Threat Intelligence
+SummaryAttributes:
+  - p_any_ip_addresses
+  - p_source_label
+LogTypes:
+  - Amazon.EKS.Audit
+  - Asana.Audit
+  - Atlassian.Audit
+  - AWS.ALB
+  - AWS.CloudTrail
+  - AWS.VPCFlow
+  - Azure.Audit
+  - Azure.MonitorActivity
+  - Box.Event
+  - Cloudflare.Firewall
+  - Cloudflare.HttpRequest
+  - Crowdstrike.FDREvent
+  - GCP.AuditLog
+  - GSuite.ActivityEvent
+  - Notion.AuditLogs
+  - Okta.SystemLog
+  - OneLogin.Events
+  - OnePassword.SignInAttempt
+  - Zendesk.Audit
+  - Zoom.Activity
+Tests:
+  - Name: "Malicious IP Detected"
+    ExpectedResult: true
+    Log:
+      p_any_ip_addresses:
+        - "142.93.204.250"
+      p_log_type: "AWS.CloudTrail"
+      p_enrichment:
+        greynoise_noise:
+          "142.93.204.250":
+            ip: "142.93.204.250"
+            internet_scanner_intelligence:
+              classification: "malicious"
+              found: true
+              actor: "alphastrike"
+              bot: false
+              cves:
+                - "CVE-2021-44228"
+              metadata:
+                asn: "AS14061"
+                organization: "DigitalOcean, LLC"
+                os: "Linux"
+                source_country: "United States"
+              spoofable: false
+              tags:
+                - id: "tag1"
+                  name: "Log4j Scanner"
+                  category: "activity"
+                  intention: "malicious"
+              tor: false
+              vpn: false
+              vpn_service: ""
+            business_service_intelligence:
+              found: false
+  - Name: "Benign IP - No Alert"
+    ExpectedResult: false
+    Log:
+      p_any_ip_addresses:
+        - "8.8.8.8"
+      p_log_type: "Okta.SystemLog"
+      p_enrichment:
+        greynoise_noise:
+          "8.8.8.8":
+            ip: "8.8.8.8"
+            internet_scanner_intelligence:
+              classification: "benign"
+              found: true
+              actor: "Google DNS"
+              metadata:
+                organization: "Google LLC"
+            business_service_intelligence:
+              found: false
+  - Name: "No Enrichment Data"
+    ExpectedResult: false
+    Log:
+      p_any_ip_addresses:
+        - "10.0.0.1"
+      p_log_type: "AWS.VPCFlow"
+  - Name: "Unknown Classification"
+    ExpectedResult: true
+    Log:
+      p_any_ip_addresses:
+        - "203.0.113.50"
+      p_log_type: "Cloudflare.HttpRequest"
+      p_enrichment:
+        greynoise_noise:
+          "203.0.113.50":
+            ip: "203.0.113.50"
+            internet_scanner_intelligence:
+              classification: "unknown"
+              found: true
+              actor: ""
+              metadata:
+                organization: "Example ISP"
+            business_service_intelligence:
+              found: false
+  - Name: "Known Business Service - No Alert"
+    ExpectedResult: false
+    Log:
+      p_any_ip_addresses:
+        - "8.8.4.4"
+      p_log_type: "GSuite.ActivityEvent"
+      p_enrichment:
+        greynoise_noise:
+          "8.8.4.4":
+            ip: "8.8.4.4"
+            internet_scanner_intelligence:
+              classification: "benign"
+              found: true
+              actor: "Google DNS"
+              metadata:
+                organization: "Google LLC"
+            business_service_intelligence:
+              found: true
+              name: "Google DNS"
+              category: "public_dns"
+              trust_level: 1

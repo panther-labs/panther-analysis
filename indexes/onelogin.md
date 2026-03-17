@@ -6,6 +6,8 @@
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
   - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [New User Account Created](../rules/indicator_creation_rules/new_user_account_logging.yml)
   - A new account was created
 - [OneLogin Active Login Activity](../rules/onelogin_rules/onelogin_active_login_activity.yml)

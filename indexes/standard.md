@@ -44,6 +44,28 @@ Detects DNS queries with Base64 encoded subdomains, which could indicate an atte
   - Crowdstrike
 
 
+[GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)  
+Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+  - AWS ALB
+  - AWS CloudTrail
+  - AWS EKS
+  - AWS VPCFlow
+  - Asana
+  - Atlassian
+  - Azure
+  - Box
+  - Cloudflare
+  - Crowdstrike
+  - GCP
+  - Google Workspace
+  - Notion
+  - Okta
+  - OneLogin
+  - OnePassword
+  - Zendesk
+  - Zoom
+
+
 [Impossible Travel for Login Action](../rules/standard_rules/impossible_travel_login.yml)  
 A user has subsequent logins from two geographic locations that are very far apart
   - AWS CloudTrail

@@ -16,6 +16,7 @@
 # A
 
 - [AWS ACM](#aws-acm)
+- [AWS ALB](#aws-alb)
 - [AWS BedrockModelInvocation](#aws-bedrockmodelinvocation)
 - [AWS CloudFormation](#aws-cloudformation)
 - [AWS CloudTrail](#aws-cloudtrail)
@@ -55,6 +56,12 @@
   - This policy checks if an ACM certificate renewal is pending or has failed and is in use by any other resources within the account.
 - [AWS ACM Secure Algorithms](../policies/aws_acm_policies/aws_acm_certificate_has_secure_algorithms.yml)
   - This policy validates that all ACM certificates are using secure key and signature algorithms.
+
+
+## AWS ALB
+
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 
 
 ## AWS BedrockModelInvocation
@@ -274,6 +281,8 @@
   - This rule detects when a principal from one AWS account accesses resources in a different AWS account using a VPC Endpoint. While cross-account access may be expected in some cases, it could also indicate unauthorized lateral movement between AWS accounts.
 - [Failed Root Console Login](../rules/aws_cloudtrail_rules/aws_console_root_login_failed.yml)
   - A Root console login failed.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [IAM Administrator Role Policy Attached](../rules/aws_cloudtrail_rules/aws_iam_attach_admin_role_policy.yml)
   - An IAM role policy was attached with Administrator Access, which could indicate a potential security risk.
 - [IAM Assume Role Blocklist Ignored](../rules/aws_cloudtrail_rules/aws_iam_assume_role_blocklist_ignored.yml)
@@ -464,6 +473,8 @@
   - This detection identifies if a public sourceIP is generating multiple 403s with the Kubernetes API server.
 - [EKS Audit Log Reporting system Namespace is Used From A Public IP](../rules/aws_eks_rules/system_namespace_public_ip.yml)
   - This detection identifies if an activity is recorded in the Kubernetes audit log where the user:username attribute begins with "system:" or "eks:" and the requests originating IP Address is a Public IP Address
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [IOC Activity in K8 Control Plane](../queries/kubernetes_queries/kubernetes_ioc_activity_query.yml)
   - This detection monitors for any kubernetes API Request originating from an Indicator of Compromise.
 - [Kubernetes Admission Controller Webhook Created](../rules/kubernetes_rules/k8s_admission_controller_created.yml)
@@ -766,6 +777,8 @@
   - Look at which VPC hosts have been sending a lot of traffic over the past hour
 - [AWS VPC Healthy Log Status](../rules/aws_vpc_flow_rules/aws_vpc_healthy_log_status.yml)
   - Checks for the log status `SKIPDATA`, which indicates that data was lost either to an internal server error or due to capacity constraints.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [VPC Flow Logs Inbound Port Allowlist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_allowlist.yml)
   - VPC Flow Logs observed inbound traffic violating the port allowlist.
 - [VPC Flow Logs Inbound Port Blocklist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_blocklist.yml)
@@ -831,6 +844,8 @@
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
   - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Impossible Travel for Login Action](../rules/standard_rules/impossible_travel_login.yml)
   - A user has subsequent logins from two geographic locations that are very far apart
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
@@ -847,6 +862,8 @@
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
   - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
@@ -1076,6 +1093,8 @@
   - Detects when an Azure disk snapshot is deleted. Snapshots serve critical functions for backup, disaster recovery, and forensic analysis. Adversaries may target snapshots to prevent data recovery, destroy forensic evidence, or undermine backup strategies before launching ransomware or destructive operations.
 - [Azure VS Code OAuth Phishing](../rules/azure_signin_rules/azure_vscode_oauth_phishing.yml)
   - Detects OAuth authorization flows where Visual Studio Code successfully authenticates to Microsoft Graph. While legitimate for developers, this pattern is commonly abused in phishing campaigns where attackers use the trusted VS Code client ID to trick users into granting OAuth tokens.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Kubernetes Admission Controller Webhook Created](../rules/kubernetes_rules/k8s_admission_controller_created.yml)
   - This detection monitors for creation of MutatingWebhookConfiguration or ValidatingWebhookConfiguration resources. Admission controller webhooks can intercept all API requests to the Kubernetes API server, allowing attackers to inspect, modify, or block any resource creation or modification. This provides powerful capabilities for persistence (modifying deployments to inject backdoors), credential theft (intercepting secrets), and reconnaissance (enumerating all cluster activity).
 - [Kubernetes All Secrets Dumped Across Namespaces](../rules/kubernetes_rules/k8s_secrets_dump_all_namespaces.yml)
@@ -1173,6 +1192,8 @@
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
   - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Malicious Content Detected](../rules/box_rules/box_malicious_content.yml)
   - Box has detect malicious content, such as a virus.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
@@ -1225,6 +1246,8 @@
   - Layer 7 Distributed Denial of Service (DDoS) detected
 - [Cloudflare React2Shell RCE Attempt Detected](../rules/cloudflare_rules/cloudflare_react2shell_rce_attempt.yml)
   - Detects React2Shell (CVE-2025-55182) RCE attempts blocked by Cloudflare WAF
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 
 
 ## Crowdstrike
@@ -1305,6 +1328,8 @@
   - Detects DNS requests to domains on a custom denylist configured by security teams based on their threat landscape. This template rule requires configuration before enabling and monitors for C2 communication, phishing infrastructure, malware distribution, and data exfiltration. Organizations populate the denylist with threat intelligence indicators, known malicious infrastructure, and domains associated with targeted campaigns.
 - [Execution of Command Line Tool with Base64 Encoded Arguments](../rules/crowdstrike_rules/crowdstrike_base64_encoded_args.yml)
   - Detects the execution of common command line tools (e.g., PowerShell, cmd.exe) with Base64 encoded arguments, which could indicate an attempt to obfuscate malicious commands.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [MacOS Browser Credential Access (crowdstrike_fdrevent table)](../queries/crowdstrike_queries/MacOS_Browser_Credential_Access_FDREvent.yml)
   - Detects processes that contain known browser credential files in arguments. (crowdstrike_fdrevent table)
 - [Malicious SSO DNS Lookup](../rules/standard_rules/malicious_sso_dns_lookup.yml)
@@ -1535,6 +1560,8 @@
   - Detects privilege escalation in GCP by taking over the deploymentsmanager.deployments.create permission
 - [GCS Bucket Made Public](../rules/gcp_audit_rules/gcp_gcs_public.yml)
   - Adversaries may access data objects from improperly secured cloud storage.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Kubernetes Admission Controller Webhook Created](../rules/kubernetes_rules/k8s_admission_controller_created.yml)
   - This detection monitors for creation of MutatingWebhookConfiguration or ValidatingWebhookConfiguration resources. Admission controller webhooks can intercept all API requests to the Kubernetes API server, allowing attackers to inspect, modify, or block any resource creation or modification. This provides powerful capabilities for persistence (modifying deployments to inject backdoors), credential theft (intercepting secrets), and reconnaissance (enumerating all cluster activity).
 - [Kubernetes All Secrets Dumped Across Namespaces](../rules/kubernetes_rules/k8s_secrets_dump_all_namespaces.yml)
@@ -1743,6 +1770,8 @@
   - Detects apps requesting OAuth tokens with the OAuthLogin scope when they haven't requestedthis scope in the previous 14 days. This scope can be used to access Google's device passwordescrow endpoint for GAIA credential theft.
 - [Google Workspace Rapid Multi-IP Authentication](../queries/gsuite_queries/GSuite_Rapid_Multi_IP_Authentication_Query.yml)
   - Detects users authenticating from 3+ distinct IPv4 addresses within 6 hours.May indicate GAIA credential theft where stolen OAuth tokens are used acrossmultiple compromised machines simultaneously. IPv6 addresses are excluded toavoid false positives from dual-stack networking.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Gsuite Attachments Downloaded from Spam Email](../rules/gsuite_activityevent_rules/gsuite_attachments_downloaded_from_spam_email.yml)
   - Detects when a user downloads or saves to Google Drive one or more attachments that are classified as spam.
 - [GSuite Calendar Has Been Made Public](../rules/gsuite_activityevent_rules/gsuite_calendar_made_public.yml)
@@ -1904,6 +1933,8 @@
 
 ## Notion
 
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Impossible Travel for Login Action](../rules/standard_rules/impossible_travel_login.yml)
   - A user has subsequent logins from two geographic locations that are very far apart
 - [Notion Audit Log Exported](../rules/notion_rules/notion_workspace_audit_log_exported.yml)
@@ -1975,6 +2006,8 @@
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
   - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Impossible Travel for Login Action](../rules/standard_rules/impossible_travel_login.yml)
   - A user has subsequent logins from two geographic locations that are very far apart
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
@@ -2063,6 +2096,8 @@
   - An actor user was denied login access more times than the configured threshold.
 - [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
   - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [New User Account Created](../rules/indicator_creation_rules/new_user_account_logging.yml)
   - A new account was created
 - [OneLogin Active Login Activity](../rules/onelogin_rules/onelogin_active_login_activity.yml)
@@ -2107,6 +2142,8 @@
   - An actor user was denied login access more times than the configured threshold.
 - [Configuration Required - Sensitive 1Password Item Accessed](../rules/onepassword_rules/onepassword_sensitive_item_access.yml)
   - Alerts when a user defined list of sensitive items in 1Password is accessed
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 - [Unusual 1Password Client Detected](../rules/onepassword_rules/onepassword_unusual_client.yml)
@@ -2564,6 +2601,8 @@
   - Assigning an admin role manually could be a sign of privilege escalation
 - [Enabled Zendesk Support to Assume Users](../rules/zendesk_rules/zendesk_user_assumption.yml)
   - User enabled or disabled zendesk support user assumption.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
@@ -2584,6 +2623,8 @@
 
 ## Zoom
 
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [New User Account Created](../rules/indicator_creation_rules/new_user_account_logging.yml)
   - A new account was created
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
