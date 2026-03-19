@@ -11,6 +11,7 @@
 - [P](#P)
 - [S](#S)
 - [T](#T)
+- [U](#U)
 - [W](#W)
 - [Z](#Z)
 # A
@@ -2531,6 +2532,25 @@
 
 - [Tracebit Alert](../rules/tracebit_rules/tracebit_alert.yml)
   - Tracebit maintains security canaries across your organization to detect potential intrusions.This alert indicates that Tracebit has detected activity on security canaries.
+
+
+# U
+
+- [Upwind](#upwind)
+
+
+## Upwind
+
+- [Upwind API Detection Passthrough](../rules/upwind_rules/upwind_api_detection_passthrough.yml)
+  - Re-raises Upwind API security detections in Panther. Covers broken authentication, authorization flaws, injection, mass assignment, token misuse, and sensitive data exposure patterns detected at the API layer.
+- [Upwind Network Detection Passthrough](../rules/upwind_rules/upwind_network_detection_passthrough.yml)
+  - Re-raises Upwind network security detections in Panther. Covers port scans, DoS activity, DNS anomalies, DNS-over-HTTPS abuse, and other anomalous network behaviors.
+- [Upwind Posture Detection Passthrough](../rules/upwind_rules/upwind_posture_detection_passthrough.yml)
+  - Re-raises Upwind cloud posture and CSPM detections in Panther. Covers cloud misconfigurations, exposed secrets, configuration drift, and CSPM policy violations.
+- [Upwind Runtime Detection Passthrough](../rules/upwind_rules/upwind_runtime_detection_passthrough.yml)
+  - Re-raises Upwind runtime security detections in Panther. Covers process execution anomalies, syscall-based threats, container escapes, and other host/container behavioral threats.
+- [Upwind Vulnerability Detection Passthrough](../rules/upwind_rules/upwind_vulnerability_detection_passthrough.yml)
+  - Re-raises Upwind vulnerability detections in Panther. Covers exploitable CVEs identified in runtime containers, VMs, and serverless environments, prioritized by active exposure.
 
 
 # W
