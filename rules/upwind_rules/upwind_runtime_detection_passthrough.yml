@@ -110,6 +110,33 @@ Tests:
         "mitre_attacks": [],
         "triggers": []
       }
+  - Name: Compound Category Container Vulnerability - Defers to Vulnerability Rule
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2026-03-18T10:00:00Z",
+        "p_log_type": "Upwind.Detections",
+        "p_row_id": "dd4455ee6677dd4455ee6677dd4455ee",
+        "p_schema_version": 0,
+        "category": "Container Vulnerability",
+        "description": "Critical CVE found in a running container image.",
+        "first_seen_time": "2026-03-18T09:55:00Z",
+        "id": "det-runtime-compound-001",
+        "last_seen_time": "2026-03-18T10:00:00Z",
+        "occurrence_count": 1,
+        "severity": "CRITICAL",
+        "status": "open",
+        "title": "Critical CVE in Container",
+        "type": "vulnerability",
+        "resource": {
+          "cloud_account_id": "123456789012",
+          "name": "api-server-pod",
+          "region": "us-east-1",
+          "type": "Pod"
+        },
+        "mitre_attacks": [],
+        "triggers": []
+      }
   - Name: Runtime Category with Unknown Severity - Suppressed
     ExpectedResult: false
     Log:

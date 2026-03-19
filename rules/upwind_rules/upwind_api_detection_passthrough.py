@@ -12,9 +12,8 @@ API_KEYWORDS = ("api",)
 
 def rule(event):
     category = event.get("category", "").lower()
-    return (
-        event.get("severity", "").upper() in SEVERITY_MAP
-        and any(kw in category for kw in API_KEYWORDS)
+    return event.get("severity", "").upper() in SEVERITY_MAP and any(
+        kw in category for kw in API_KEYWORDS
     )
 
 

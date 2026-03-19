@@ -9,12 +9,16 @@ SEVERITY_MAP = {
 # DNS-over-HTTPS abuse, and other anomalous network behaviors.
 NETWORK_KEYWORDS = ("network",)
 
+# Defer to higher-priority rules when their keywords also appear in the category
+NETWORK_EXCLUSIONS = ("api", "vulnerab")
+
 
 def rule(event):
     category = event.get("category", "").lower()
     return (
         event.get("severity", "").upper() in SEVERITY_MAP
         and any(kw in category for kw in NETWORK_KEYWORDS)
+        and not any(ex in category for ex in NETWORK_EXCLUSIONS)
     )
 
 

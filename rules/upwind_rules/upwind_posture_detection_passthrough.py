@@ -7,7 +7,11 @@ SEVERITY_MAP = {
 
 # Upwind posture detections cover cloud misconfigurations, exposed secrets,
 # configuration drift, and CSPM policy violations.
-POSTURE_KEYWORDS = ("posture", "cspm", "misconfigur", "config")
+# Note: "config" intentionally excluded — too broad and covered by "misconfigur".
+POSTURE_KEYWORDS = ("posture", "cspm", "misconfigur")
+
+# Defer to higher-priority rules when their keywords also appear in the category
+POSTURE_EXCLUSIONS = ("api", "vulnerab", "network")
 
 
 def rule(event):
@@ -15,6 +19,7 @@ def rule(event):
     return (
         event.get("severity", "").upper() in SEVERITY_MAP
         and any(kw in category for kw in POSTURE_KEYWORDS)
+        and not any(ex in category for ex in POSTURE_EXCLUSIONS)
     )
 
 
@@ -40,9 +45,7 @@ def reference(event):
 
 def alert_context(event):
     resource = event.get("resource", {})
-    policies = [
-        t.get("policy_name") for t in event.get("triggers", []) if t.get("policy_name")
-    ]
+    policies = [t.get("policy_name") for t in event.get("triggers", []) if t.get("policy_name")]
     return {
         "detection_id": event.get("id"),
         "category": event.get("category"),

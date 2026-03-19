@@ -132,6 +132,33 @@ Tests:
         "mitre_attacks": [],
         "triggers": []
       }
+  - Name: Compound Category Network Misconfiguration - Defers to Network Rule
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2026-03-18T16:00:00Z",
+        "p_log_type": "Upwind.Detections",
+        "p_row_id": "cc5566dd7788cc5566dd7788cc5566dd",
+        "p_schema_version": 0,
+        "category": "Network Misconfiguration",
+        "description": "Network ACL allows unrestricted outbound traffic.",
+        "first_seen_time": "2026-03-18T15:50:00Z",
+        "id": "det-posture-compound-001",
+        "last_seen_time": "2026-03-18T16:00:00Z",
+        "occurrence_count": 1,
+        "severity": "HIGH",
+        "status": "open",
+        "title": "Unrestricted Outbound Network ACL",
+        "type": "cspm_finding",
+        "resource": {
+          "cloud_account_id": "123456789012",
+          "name": "prod-nacl",
+          "region": "us-east-1",
+          "type": "NetworkACL"
+        },
+        "mitre_attacks": [],
+        "triggers": []
+      }
   - Name: Posture Category with Unknown Severity - Suppressed
     ExpectedResult: false
     Log:
