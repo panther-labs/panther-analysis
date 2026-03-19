@@ -8565,6 +8565,51 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Re-raises Upwind API security detections in Panther. Covers broken authentication, authorization flaws, injection, mass assignment, token misuse, and sensitive data exposure patterns detected at the API layer.",
+        "DisplayName": "Upwind API Detection Passthrough",
+        "LogTypes": [
+            "Upwind.Detections"
+        ],
+        "YAMLPath": "rules/upwind_rules/upwind_api_detection_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Re-raises Upwind network security detections in Panther. Covers port scans, DoS activity, DNS anomalies, DNS-over-HTTPS abuse, and other anomalous network behaviors.",
+        "DisplayName": "Upwind Network Detection Passthrough",
+        "LogTypes": [
+            "Upwind.Detections"
+        ],
+        "YAMLPath": "rules/upwind_rules/upwind_network_detection_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Re-raises Upwind cloud posture and CSPM detections in Panther. Covers cloud misconfigurations, exposed secrets, configuration drift, and CSPM policy violations.",
+        "DisplayName": "Upwind Posture Detection Passthrough",
+        "LogTypes": [
+            "Upwind.Detections"
+        ],
+        "YAMLPath": "rules/upwind_rules/upwind_posture_detection_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Re-raises Upwind runtime security detections in Panther. Covers process execution anomalies, syscall-based threats, container escapes, and other host/container behavioral threats.",
+        "DisplayName": "Upwind Runtime Detection Passthrough",
+        "LogTypes": [
+            "Upwind.Detections"
+        ],
+        "YAMLPath": "rules/upwind_rules/upwind_runtime_detection_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Re-raises Upwind vulnerability detections in Panther. Covers exploitable CVEs identified in runtime containers, VMs, and serverless environments, prioritized by active exposure.",
+        "DisplayName": "Upwind Vulnerability Detection Passthrough",
+        "LogTypes": [
+            "Upwind.Detections"
+        ],
+        "YAMLPath": "rules/upwind_rules/upwind_vulnerability_detection_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "A User logged in as root",
         "DisplayName": "User Logged in as root",
         "LogTypes": [
