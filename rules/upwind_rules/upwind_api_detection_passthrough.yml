@@ -1,0 +1,140 @@
+AnalysisType: rule
+RuleID: Upwind.Detection.API.Passthrough
+DisplayName: Upwind API Detection Passthrough
+Description: >
+  Re-raises Upwind API security detections in Panther. Covers broken authentication,
+  authorization flaws, injection, mass assignment, token misuse, and sensitive data
+  exposure patterns detected at the API layer.
+Runbook: |
+  1. Query Upwind.Detections for all API threat detections against resource.name in the 24 hours before and after this alert to establish the scope of API abuse
+  2. Review triggers[].events[].initiator fields (name, arn, userName, accountId) and determine whether this initiating entity has a history of legitimate access to this service in the past 30 days
+  3. Search for other alerts from the same triggers[].events[].initiator.arn or triggers[].events[].initiator.accountId in the past 7 days to identify credential misuse or account compromise
+Reference: https://docs.upwind.io/restapi/v1/get-threat-detection
+Enabled: true
+Filename: upwind_api_detection_passthrough.py
+Severity: Medium
+LogTypes:
+  - Upwind.Detections
+DedupPeriodMinutes: 720
+Threshold: 1
+Tags:
+  - Upwind
+  - Passthrough
+  - API
+Tests:
+  - Name: High API Detection
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2026-03-18T12:00:00Z",
+        "p_log_type": "Upwind.Detections",
+        "p_row_id": "ee1122ff3344ee1122ff3344ee1122ff",
+        "p_schema_version": 0,
+        "category": "API Threat",
+        "description": "Broken object-level authorization detected on a REST API endpoint.",
+        "first_seen_time": "2026-03-18T11:50:00Z",
+        "id": "det-api-001",
+        "last_seen_time": "2026-03-18T12:00:00Z",
+        "occurrence_count": 7,
+        "severity": "HIGH",
+        "status": "open",
+        "title": "BOLA - Unauthorized Object Access",
+        "type": "api_threat",
+        "upwind_console_link": "https://console.upwind.io/detections/det-api-001",
+        "resource": {
+          "cloud_account_id": "123456789012",
+          "cloud_account_name": "prod-aws",
+          "cloud_provider": "AWS",
+          "name": "payments-api",
+          "namespace": "production",
+          "region": "us-east-1",
+          "type": "Service",
+          "upwind_asset_id": "asset-api-001"
+        },
+        "mitre_attacks": [
+          {
+            "tactic_id": "TA0001",
+            "tactic_name": "Initial Access",
+            "technique_id": "T1190",
+            "technique_name": "Exploit Public-Facing Application"
+          }
+        ],
+        "triggers": [
+          {
+            "policy_id": "pol-api-001",
+            "policy_name": "Detect BOLA/IDOR Patterns",
+            "events": [
+              {
+                "timestamp": "2026-03-18T11:55:00Z",
+                "type": "api_request",
+                "description": "Access to another user's resource",
+                "initiator": {
+                  "name": "external-user",
+                  "type": "IAMUser",
+                  "arn": "arn:aws:iam::123456789012:user/external-user",
+                  "userName": "external-user",
+                  "accountId": "123456789012",
+                  "accessKeyId": "AKIAIOSFODNN7EXAMPLE"
+                },
+                "data": {
+                  "description": "GET /api/v1/users/999/orders returned 200"
+                }
+              }
+            ]
+          }
+        ]
+      }
+  - Name: Non-API Category - Not Matched
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2026-03-18T12:00:00Z",
+        "p_log_type": "Upwind.Detections",
+        "p_row_id": "ff2233aa4455ff2233aa4455ff2233aa",
+        "p_schema_version": 0,
+        "category": "Network Anomaly",
+        "description": "Port scan detected.",
+        "first_seen_time": "2026-03-18T11:50:00Z",
+        "id": "det-network-003",
+        "last_seen_time": "2026-03-18T12:00:00Z",
+        "occurrence_count": 3,
+        "severity": "HIGH",
+        "status": "open",
+        "title": "Port Scan from Pod",
+        "type": "network_threat",
+        "resource": {
+          "cloud_account_id": "123456789012",
+          "name": "scan-pod",
+          "region": "us-east-1",
+          "type": "Pod"
+        },
+        "mitre_attacks": [],
+        "triggers": []
+      }
+  - Name: API Category with Unknown Severity - Suppressed
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2026-03-18T12:00:00Z",
+        "p_log_type": "Upwind.Detections",
+        "p_row_id": "aa3344bb5566aa3344bb5566aa3344bb",
+        "p_schema_version": 0,
+        "category": "API Threat",
+        "description": "Low-confidence API anomaly.",
+        "first_seen_time": "2026-03-18T11:50:00Z",
+        "id": "det-api-002",
+        "last_seen_time": "2026-03-18T12:00:00Z",
+        "occurrence_count": 1,
+        "severity": "INFO",
+        "status": "open",
+        "title": "Unusual API Parameter",
+        "type": "api_anomaly",
+        "resource": {
+          "cloud_account_id": "123456789012",
+          "name": "internal-api",
+          "region": "us-east-1",
+          "type": "Service"
+        },
+        "mitre_attacks": [],
+        "triggers": []
+      }
