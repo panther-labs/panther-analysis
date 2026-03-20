@@ -1,9 +1,10 @@
-SEVERITY_MAP = {
-    "CRITICAL": "CRITICAL",
-    "HIGH": "HIGH",
-    "MEDIUM": "MEDIUM",
-    "LOW": "LOW",
-}
+from panther_upwind_helpers import (
+    upwind_base_alert_context,
+    upwind_commands_observed,
+    upwind_format_mitre_attacks,
+    upwind_is_known_severity,
+    upwind_severity,
+)
 
 # Upwind runtime detections cover process execution, syscall anomalies,
 # container escapes, and other host/container behavioral threats.
@@ -16,7 +17,7 @@ RUNTIME_EXCLUSIONS = ("api", "vulnerab", "network")
 def rule(event):
     category = event.get("category", "").lower()
     return (
-        event.get("severity", "").upper() in SEVERITY_MAP
+        upwind_is_known_severity(event)
         and any(kw in category for kw in RUNTIME_KEYWORDS)
         and not any(ex in category for ex in RUNTIME_EXCLUSIONS)
     )
@@ -27,7 +28,7 @@ def title(event):
 
 
 def severity(event):
-    return SEVERITY_MAP.get(event.get("severity", "").upper(), "DEFAULT")
+    return upwind_severity(event)
 
 
 def dedup(event):
@@ -43,38 +44,7 @@ def reference(event):
 
 
 def alert_context(event):
-    resource = event.get("resource", {})
-    mitre = [
-        {
-            "tactic": m.get("tactic_name"),
-            "technique_id": m.get("technique_id"),
-            "technique": m.get("technique_name"),
-        }
-        for m in event.get("mitre_attacks", [])
-    ]
-    # Surface process-level detail from trigger events when available
-    commands = []
-    for trigger in event.get("triggers", []):
-        for evt in trigger.get("events", []):
-            if cmd := evt.get("data", {}).get("command"):
-                commands.append(cmd)
-    return {
-        "detection_id": event.get("id"),
-        "category": event.get("category"),
-        "type": event.get("type"),
-        "status": event.get("status"),
-        "occurrence_count": event.get("occurrence_count"),
-        "resource": {
-            "name": resource.get("name"),
-            "type": resource.get("type"),
-            "namespace": resource.get("namespace"),
-            "region": resource.get("region"),
-            "cloud_provider": resource.get("cloud_provider"),
-            "cloud_account_id": resource.get("cloud_account_id"),
-            "internet_facing": resource.get("internet_exposure", {})
-            .get("ingress", {})
-            .get("active_communication"),
-        },
-        "commands_observed": commands,
-        "mitre_attacks": mitre,
-    }
+    ctx = upwind_base_alert_context(event)
+    ctx["commands_observed"] = upwind_commands_observed(event)
+    ctx["mitre_attacks"] = upwind_format_mitre_attacks(event)
+    return ctx

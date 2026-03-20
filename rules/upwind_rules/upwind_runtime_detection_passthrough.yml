@@ -12,14 +12,22 @@ Reference: https://docs.upwind.io/restapi/v1/get-threat-detection
 Enabled: true
 Filename: upwind_runtime_detection_passthrough.py
 Severity: Medium
+Status: Experimental
 LogTypes:
   - Upwind.Detections
 DedupPeriodMinutes: 720
 Threshold: 1
+Reports:
+  MITRE ATT&CK:
+    - TA0002:T1059  # Execution: Command and Scripting Interpreter
+    - TA0004:T1611  # Privilege Escalation: Escape to Host
 Tags:
   - Upwind
   - Passthrough
   - Runtime
+  - Execution
+  - Privilege Escalation
+  - Command and Scripting Interpreter
 Tests:
   - Name: Critical Runtime Detection
     ExpectedResult: true

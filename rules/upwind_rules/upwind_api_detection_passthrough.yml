@@ -13,14 +13,20 @@ Reference: https://docs.upwind.io/restapi/v1/get-threat-detection
 Enabled: true
 Filename: upwind_api_detection_passthrough.py
 Severity: Medium
+Status: Experimental
 LogTypes:
   - Upwind.Detections
 DedupPeriodMinutes: 720
 Threshold: 1
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1190  # Initial Access: Exploit Public-Facing Application
 Tags:
   - Upwind
   - Passthrough
   - API
+  - Initial Access
+  - Exploit Public-Facing Application
 Tests:
   - Name: High API Detection
     ExpectedResult: true

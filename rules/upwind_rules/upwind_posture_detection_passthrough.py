@@ -1,9 +1,9 @@
-SEVERITY_MAP = {
-    "CRITICAL": "CRITICAL",
-    "HIGH": "HIGH",
-    "MEDIUM": "MEDIUM",
-    "LOW": "LOW",
-}
+from panther_upwind_helpers import (
+    upwind_base_alert_context,
+    upwind_is_known_severity,
+    upwind_severity,
+    upwind_triggered_policies,
+)
 
 # Upwind posture detections cover cloud misconfigurations, exposed secrets,
 # configuration drift, and CSPM policy violations.
@@ -17,7 +17,7 @@ POSTURE_EXCLUSIONS = ("api", "vulnerab", "network")
 def rule(event):
     category = event.get("category", "").lower()
     return (
-        event.get("severity", "").upper() in SEVERITY_MAP
+        upwind_is_known_severity(event)
         and any(kw in category for kw in POSTURE_KEYWORDS)
         and not any(ex in category for ex in POSTURE_EXCLUSIONS)
     )
@@ -28,7 +28,7 @@ def title(event):
 
 
 def severity(event):
-    return SEVERITY_MAP.get(event.get("severity", "").upper(), "DEFAULT")
+    return upwind_severity(event)
 
 
 def dedup(event):
@@ -44,22 +44,6 @@ def reference(event):
 
 
 def alert_context(event):
-    resource = event.get("resource", {})
-    policies = [t.get("policy_name") for t in event.get("triggers", []) if t.get("policy_name")]
-    return {
-        "detection_id": event.get("id"),
-        "category": event.get("category"),
-        "type": event.get("type"),
-        "status": event.get("status"),
-        "occurrence_count": event.get("occurrence_count"),
-        "resource": {
-            "name": resource.get("name"),
-            "type": resource.get("type"),
-            "region": resource.get("region"),
-            "cloud_provider": resource.get("cloud_provider"),
-            "cloud_account_id": resource.get("cloud_account_id"),
-            "cloud_account_name": resource.get("cloud_account_name"),
-            "risk_categories": resource.get("risk_categories", []),
-        },
-        "triggered_policies": policies,
-    }
+    ctx = upwind_base_alert_context(event)
+    ctx["triggered_policies"] = upwind_triggered_policies(event)
+    return ctx

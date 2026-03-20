@@ -12,15 +12,23 @@ Reference: https://docs.upwind.io/restapi/v1/get-threat-detection
 Enabled: true
 Filename: upwind_posture_detection_passthrough.py
 Severity: Medium
+Status: Experimental
 LogTypes:
   - Upwind.Detections
 DedupPeriodMinutes: 1440
 Threshold: 1
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562  # Defense Evasion: Impair Defenses
+    - TA0010:T1530  # Exfiltration: Data from Cloud Storage
 Tags:
   - Upwind
   - Passthrough
   - Posture
   - CSPM
+  - Defense Evasion
+  - Exfiltration
+  - Impair Defenses
 Tests:
   - Name: High Posture Detection
     ExpectedResult: true

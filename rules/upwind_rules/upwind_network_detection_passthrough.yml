@@ -12,14 +12,20 @@ Reference: https://docs.upwind.io/restapi/v1/get-threat-detection
 Enabled: true
 Filename: upwind_network_detection_passthrough.py
 Severity: Medium
+Status: Experimental
 LogTypes:
   - Upwind.Detections
 DedupPeriodMinutes: 720
 Threshold: 1
+Reports:
+  MITRE ATT&CK:
+    - TA0007:T1046  # Discovery: Network Service Discovery
 Tags:
   - Upwind
   - Passthrough
   - Network
+  - Discovery
+  - Network Service Discovery
 Tests:
   - Name: High Network Detection
     ExpectedResult: true
