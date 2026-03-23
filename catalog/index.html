@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panther Content Catalog</title>
+<style>
+  :root {
+    --bg: #0d1117; --surface: #161b22; --border: #30363d;
+    --text: #e6edf3; --muted: #8b949e; --accent: #58a6ff;
+    --red: #f85149; --orange: #d29922; --green: #3fb950; --cyan: #39d2c0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+
+  .app { display: grid; grid-template-columns: 300px 1fr; grid-template-rows: auto 1fr auto; height: 100vh; }
+
+  /* Header */
+  .header { grid-column: 1 / -1; padding: 12px 20px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; }
+  .header h1 { font-size: 16px; font-weight: 600; white-space: nowrap; }
+  .header h1 span { color: var(--accent); }
+  .search-box { flex: 1; max-width: 600px; }
+  .search-box input { width: 100%; padding: 6px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 14px; outline: none; }
+  .search-box input:focus { border-color: var(--accent); }
+  .stats-bar { color: var(--muted); font-size: 13px; white-space: nowrap; }
+
+  /* Sidebar */
+  .sidebar { background: var(--surface); border-right: 1px solid var(--border); overflow-y: auto; padding: 12px; grid-row: 2 / 4; }
+
+  .filter-section { margin-bottom: 16px; }
+  .filter-section.collapsed .filter-tags,
+  .filter-section.collapsed .filter-search { display: none; }
+  .filter-section h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 6px; cursor: pointer; user-select: none; }
+  .filter-section h3:hover { color: var(--text); }
+  .filter-option { display: flex; align-items: center; gap: 6px; padding: 2px 4px; font-size: 13px; cursor: pointer; border-radius: 3px; position: relative; }
+  .filter-option:hover { color: var(--accent); }
+  .filter-option input[type="checkbox"] { accent-color: var(--accent); position: relative; z-index: 1; }
+  .filter-option .fo-label { position: relative; z-index: 1; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .filter-option .count { color: var(--muted); font-size: 11px; position: relative; z-index: 1; flex-shrink: 0; }
+  .filter-option .fo-bar { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; pointer-events: none; }
+  .filter-option.dimmed { opacity: 0.35; }
+  .filter-option.checked { position: sticky; top: 0; z-index: 2; background: var(--surface); }
+  .filter-tags { max-height: 220px; overflow-y: auto; }
+  .filter-search { width: 100%; padding: 3px 6px; margin-bottom: 4px; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-size: 12px; outline: none; }
+  .filter-search:focus { border-color: var(--accent); }
+  .filter-search::placeholder { color: var(--muted); }
+  .clear-filters { font-size: 12px; color: var(--accent); cursor: pointer; margin-bottom: 12px; display: none; }
+  .clear-filters:hover { text-decoration: underline; }
+
+  /* Main */
+  .main { overflow-y: auto; padding: 16px; }
+
+  /* List view */
+  .content-list { display: flex; flex-direction: column; gap: 6px; }
+  .content-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; cursor: pointer; transition: border-color 0.15s; }
+  .content-card:hover { border-color: var(--accent); }
+  .content-card.expanded .card-details { display: block; }
+  .card-header { display: flex; align-items: flex-start; gap: 10px; }
+  .sev-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+  .sev-CRITICAL { background: #f8514933; color: var(--red); }
+  .sev-HIGH { background: #f8514922; color: #ff7b72; }
+  .sev-MEDIUM { background: #d2992233; color: var(--orange); }
+  .sev-LOW { background: #39d2c022; color: var(--cyan); }
+  .sev-INFO { background: #8b949e22; color: var(--muted); }
+  .card-title { font-size: 14px; font-weight: 600; }
+  .card-id { font-size: 12px; color: var(--muted); font-family: monospace; }
+  .card-meta { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .pill { font-size: 11px; padding: 1px 8px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border); color: var(--muted); }
+  .pill.tag { border-color: #1f6feb44; color: var(--accent); }
+  .pill.logtype { border-color: #3fb95044; color: var(--green); }
+  .pill.mitre { border-color: #f8514944; color: #ff7b72; }
+  .pill.tactic { border-color: #d2992244; color: var(--orange); }
+  .pill.type-badge { border-color: #d2992244; color: var(--orange); }
+  .card-details { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted); }
+  .card-details p { margin-bottom: 6px; }
+  .card-details .label { color: var(--text); font-weight: 600; }
+
+  /* Sort bar */
+  .sort-bar { display: flex; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
+  .sort-btn { padding: 4px 10px; font-size: 12px; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; user-select: none; }
+  .sort-btn:hover { color: var(--text); border-color: var(--muted); }
+  .sort-btn.active { color: var(--accent); border-color: var(--accent); }
+
+  /* ATT&CK Matrix — pinned to bottom */
+  .matrix-panel { grid-column: 2; grid-row: 3; background: var(--surface); border-top: 1px solid var(--border); padding: 8px 16px; overflow: auto; max-height: 25vh; }
+  .matrix-section { }
+  .matrix-toggle { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); cursor: pointer; user-select: none; display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+  .matrix-toggle:hover { color: var(--text); }
+  .matrix-toggle .arrow { font-size: 10px; transition: transform 0.15s; }
+  .matrix-toggle .arrow.open { transform: rotate(90deg); }
+  .matrix-container { overflow-x: auto; padding-bottom: 8px; }
+  .matrix-grid { display: flex; gap: 3px; min-width: min-content; }
+  .tactic-col { display: flex; flex-direction: column; gap: 2px; min-width: 130px; max-width: 150px; flex-shrink: 0; }
+  .tactic-header { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; padding: 6px 6px; text-align: center; border-radius: 4px; cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s; background: var(--surface); line-height: 1.3; }
+  .tactic-header:hover { border-color: var(--muted); }
+  .tactic-header.active { border-color: var(--accent); }
+  .tactic-header .tactic-count { display: block; font-size: 10px; font-weight: 400; color: var(--muted); }
+  .tech-box { font-size: 10px; padding: 3px 5px; border-radius: 3px; cursor: pointer; border: 1.5px solid transparent; transition: border-color 0.15s; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tech-box:hover { border-color: #ffffffaa; }
+  .tech-box.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .tech-box .tech-id { font-weight: 600; }
+  .tech-box .tech-name { font-weight: 400; }
+  .matrix-legend { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 11px; color: var(--muted); }
+  .legend-bar { display: flex; height: 10px; border-radius: 2px; overflow: hidden; width: 120px; }
+  .legend-bar span { flex: 1; }
+
+  /* Presets */
+  .preset-select { background: var(--surface); border: 1px solid var(--border); color: var(--muted); padding: 5px 8px; border-radius: 6px; font-size: 13px; cursor: pointer; outline: none; }
+  .preset-select:hover { border-color: var(--muted); color: var(--text); }
+  .preset-select:focus { border-color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1><span>Panther</span> Content Catalog</h1>
+    <div class="search-box"><input type="text" id="searchInput" placeholder="Search detections... (e.g. exfiltration, brute force, AWS.CloudTrail)"></div>
+    <select class="preset-select" id="presetSelect" onchange="applyPreset(this.value); this.value=''">
+      <option value="" disabled selected>Presets</option>
+    </select>
+    <div class="stats-bar" id="statsBar"></div>
+  </div>
+
+  <div class="sidebar">
+    <div class="clear-filters" id="clearFilters" onclick="clearAllFilters()">Clear all filters</div>
+    <div id="sidebarFilters"></div>
+  </div>
+
+  <div class="main">
+    <div id="viewContainer"></div>
+  </div>
+
+  <div class="matrix-panel" id="matrixContainer"></div>
+</div>
+
+<script>
+let DATA = [];
+let MITRE_LOOKUP = { tactics: {}, techniques: {} };
+let activeFilters = {};
+let sortField = 'severity';
+let sortDir = 'desc';
+let filterSearchValues = {};
+let matrixOpen = true;
+
+const SEV_ORDER = { CRITICAL: 5, HIGH: 4, MEDIUM: 3, LOW: 2, INFO: 1 };
+
+// Canonical tactic order
+const TACTIC_ORDER = ['TA0043','TA0042','TA0001','TA0002','TA0003','TA0004','TA0005','TA0006','TA0007','TA0008','TA0009','TA0011','TA0010','TA0040'];
+
+// Heatmap gradient stops: [threshold, color]
+const HEAT_COLORS = [
+  [1, '#0a2540'],  // deep navy
+  [3, '#0d3b66'],  // dark blue
+  [6, '#115e88'],  // steel blue
+  [10, '#1a8a6e'], // teal
+  [18, '#2ab558'], // emerald
+  [30, '#4edc6a'], // bright green
+  [Infinity, '#7dff8a'], // vivid green
+];
+
+function heatColor(count) {
+  if (count === 0) return 'transparent';
+  for (const [threshold, color] of HEAT_COLORS) {
+    if (count <= threshold) return color;
+  }
+  return HEAT_COLORS[HEAT_COLORS.length - 1][1];
+}
+
+// Bar colors per filter section
+const BAR_COLORS = {
+  severity: '#8b949e18',
+  type: '#d2992215',
+  enabled: '#3fb95015',
+  logtypes: '#3fb95012',
+  tags: '#58a6ff10',
+};
+
+function sortItems(items) {
+  const dir = sortDir === 'asc' ? 1 : -1;
+  return [...items].sort((a, b) => {
+    let cmp = 0;
+    if (sortField === 'severity') {
+      cmp = (SEV_ORDER[a.severity] || 0) - (SEV_ORDER[b.severity] || 0);
+    } else if (sortField === 'name') {
+      cmp = (a.displayName || '').localeCompare(b.displayName || '');
+    } else if (sortField === 'id') {
+      cmp = (a.id || '').localeCompare(b.id || '');
+    } else if (sortField === 'type') {
+      cmp = (a.type || '').localeCompare(b.type || '');
+    } else if (sortField === 'logtypes') {
+      cmp = ((a.logTypes||[])[0] || '').localeCompare(((b.logTypes||[])[0] || ''));
+    } else if (sortField === 'tests') {
+      cmp = (a.testCount || 0) - (b.testCount || 0);
+    }
+    return cmp * dir;
+  });
+}
+
+function setSort(field) {
+  if (sortField === field) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  else { sortField = field; sortDir = field === 'severity' || field === 'tests' ? 'desc' : 'asc'; }
+  render();
+}
+
+// ── Presets ──
+const PRESETS = [
+  {
+    name: 'Cloud Ransomware',
+    filters: {
+      tags: ['Ransomware'],
+      logtypes: ['AWS.CloudTrail','AWS.S3ServerAccess','AWS.GuardDuty','AWS.SecurityFindingFormat','GCP.AuditLog','Azure.Audit','Azure.MonitorActivity'],
+    },
+  },
+  {
+    name: 'Business Data Exfiltration',
+    filters: {
+      logtypes: ['Salesforce.LoginAs','Salesforce.RealtimeEvent','Notion.AuditLogs','Slack.AuditLogs','Slack.AccessLogs','Slack.IntegrationLogs'],
+      mitreTactics: ['TA0010'],
+    },
+  },
+  {
+    name: 'Enabled Config Required',
+    filters: {
+      tags: ['Configuration Required'],
+      enabled: ['Yes'],
+    },
+  },
+  {
+    name: 'Credential Theft & Brute Force',
+    filters: {
+      mitreTactics: ['TA0006'],
+      severity: ['HIGH', 'CRITICAL'],
+    },
+  },
+];
+
+function applyPreset(name) {
+  const preset = PRESETS.find(p => p.name === name);
+  if (!preset) return;
+  activeFilters = {};
+  filterSearchValues = {};
+  document.getElementById('searchInput').value = '';
+  for (const [field, values] of Object.entries(preset.filters)) {
+    activeFilters[field] = new Set(values);
+  }
+  render();
+}
+
+function buildPresetDropdown() {
+  const select = document.getElementById('presetSelect');
+  for (const preset of PRESETS) {
+    const opt = document.createElement('option');
+    opt.value = preset.name;
+    opt.textContent = preset.name;
+    select.appendChild(opt);
+  }
+}
+
+async function init() {
+  const [catalogResp, mitreResp] = await Promise.all([
+    fetch('catalog.json'),
+    fetch('mitre_lookup.json'),
+  ]);
+  DATA = await catalogResp.json();
+  MITRE_LOOKUP = await mitreResp.json();
+  buildPresetDropdown();
+  render();
+}
+
+// ── Filtering ──
+function getItemTacticIds(item) {
+  return [...new Set((item.mitreRaw || []).map(r => r.split(':')[0]))];
+}
+function getItemTechniqueIds(item) {
+  return [...new Set((item.mitreRaw || []).map(r => r.split(':')[1]).filter(Boolean))];
+}
+
+function getFieldValues(item, field) {
+  if (field === 'tags') return item.tags || [];
+  if (field === 'logtypes') return item.logTypes || [];
+  if (field === 'mitreTactics') return getItemTacticIds(item);
+  if (field === 'mitreTechniques') return getItemTechniqueIds(item);
+  if (field === 'severity') return item.severity ? [item.severity] : [];
+  if (field === 'type') return item.type ? [item.type] : [];
+  if (field === 'enabled') return [item.enabled ? 'Yes' : 'No'];
+  return [];
+}
+
+function getFiltered() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  return DATA.filter(item => {
+    if (q) {
+      const haystack = [item.id, item.displayName, item.description, ...(item.tags||[]),
+        ...(item.logTypes||[]), ...(item.mitreTactics||[]), ...(item.mitreTechniques||[]),
+        item.severity, item.type, item.runbook].join(' ').toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+    for (const [field, vals] of Object.entries(activeFilters)) {
+      if (vals.size === 0) continue;
+      const itemVals = getFieldValues(item, field);
+      if (!itemVals.some(v => vals.has(v))) return false;
+    }
+    return true;
+  });
+}
+
+// ── Sidebar (no MITRE — that's in the matrix) ──
+const SIDEBAR_SECTIONS = [
+  { field: 'severity', label: 'Severity', order: ['CRITICAL','HIGH','MEDIUM','LOW','INFO'] },
+  { field: 'type', label: 'Type' },
+  { field: 'enabled', label: 'Enabled' },
+  { field: 'logtypes', label: 'Log / Resource Types' },
+  { field: 'tags', label: 'Tags' },
+];
+
+function buildSidebar(filtered) {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+
+  function getItemsExcluding(excludeField) {
+    return DATA.filter(item => {
+      if (q) {
+        const haystack = [item.id, item.displayName, item.description, ...(item.tags||[]),
+          ...(item.logTypes||[]), ...(item.mitreTactics||[]), ...(item.mitreTechniques||[]),
+          item.severity, item.type, item.runbook].join(' ').toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+      for (const [field, vals] of Object.entries(activeFilters)) {
+        if (vals.size === 0 || field === excludeField) continue;
+        const itemVals = getFieldValues(item, field);
+        if (!itemVals.some(v => vals.has(v))) return false;
+      }
+      return true;
+    });
+  }
+
+  const collapsedSections = new Set();
+  document.querySelectorAll('.filter-section.collapsed').forEach(el => {
+    const h3 = el.querySelector('h3');
+    if (h3) collapsedSections.add(h3.textContent);
+  });
+
+  let html = '';
+  for (const sec of SIDEBAR_SECTIONS) {
+    const pool = getItemsExcluding(sec.field);
+    const counts = {};
+    for (const item of pool) {
+      for (const v of getFieldValues(item, sec.field)) {
+        counts[v] = (counts[v] || 0) + 1;
+      }
+    }
+
+    const checked = activeFilters[sec.field] || new Set();
+    for (const v of checked) {
+      if (!(v in counts)) counts[v] = 0;
+    }
+
+    let sorted;
+    if (sec.order) {
+      sorted = sec.order.filter(k => k in counts).map(k => [k, counts[k]]);
+    } else {
+      sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]);
+    }
+
+    if (sorted.length === 0) continue;
+
+    const maxCount = Math.max(...sorted.map(([,c]) => c), 1);
+    const barColor = BAR_COLORS[sec.field] || '#58a6ff10';
+
+    const checkedItems = sorted.filter(([val]) => checked.has(val));
+    const uncheckedItems = sorted.filter(([val]) => !checked.has(val));
+    sorted = [...checkedItems, ...uncheckedItems];
+
+    const prevSearchVal = filterSearchValues[sec.field] || '';
+    const isCollapsed = collapsedSections.has(sec.label);
+    const showSearch = (checkedItems.length + uncheckedItems.length) > 6;
+    html += `<div class="filter-section${isCollapsed ? ' collapsed' : ''}">
+      <h3 onclick="this.parentElement.classList.toggle('collapsed')">${sec.label}</h3>
+      ${showSearch ? `<input class="filter-search" type="text" placeholder="Search ${sec.label.toLowerCase()}..." value="${escAttr(prevSearchVal)}" data-field="${sec.field}" oninput="onFilterSearch(this)">` : ''}
+      <div class="filter-tags">`;
+    for (const [val, count] of sorted) {
+      const isChecked = checked.has(val);
+      const dimClass = count === 0 && !isChecked ? ' dimmed' : '';
+      const hidden = prevSearchVal && !val.toLowerCase().includes(prevSearchVal.toLowerCase()) && !isChecked;
+      const barPct = maxCount > 0 ? (count / maxCount * 100) : 0;
+      html += `<label class="filter-option${dimClass}${isChecked ? ' checked' : ''}" ${hidden ? 'style="display:none"' : ''}>
+        <div class="fo-bar" style="width:${barPct}%;background:${barColor}"></div>
+        <input type="checkbox" data-field="${sec.field}" value="${escAttr(val)}" ${isChecked ? 'checked' : ''} onchange="toggleFilter(this)">
+        <span class="fo-label" title="${escAttr(val)}">${esc(val)}</span>
+        <span class="count">${count}</span>
+      </label>`;
+    }
+    html += '</div></div>';
+  }
+  document.getElementById('sidebarFilters').innerHTML = html;
+}
+
+function toggleFilter(el) {
+  const field = el.dataset.field;
+  if (!activeFilters[field]) activeFilters[field] = new Set();
+  if (el.checked) activeFilters[field].add(el.value);
+  else activeFilters[field].delete(el.value);
+  render();
+}
+
+function onFilterSearch(el) {
+  const field = el.dataset.field;
+  const query = el.value.toLowerCase();
+  filterSearchValues[field] = el.value;
+  const container = el.nextElementSibling;
+  container.querySelectorAll('.filter-option').forEach(label => {
+    const cb = label.querySelector('input');
+    const val = cb.value.toLowerCase();
+    const isChecked = cb.checked;
+    label.style.display = (!query || val.includes(query) || isChecked) ? '' : 'none';
+  });
+}
+
+function clearAllFilters() {
+  activeFilters = {};
+  filterSearchValues = {};
+  render();
+}
+
+// ── MITRE Matrix toggle filters ──
+function toggleMitreFilter(field, value) {
+  if (!activeFilters[field]) activeFilters[field] = new Set();
+  if (activeFilters[field].has(value)) activeFilters[field].delete(value);
+  else activeFilters[field].add(value);
+  render();
+}
+
+// ── Render ──
+function render() {
+  const filtered = getFiltered();
+  document.getElementById('statsBar').textContent = `${filtered.length} / ${DATA.length} detections`;
+
+  buildSidebar(filtered);
+  const hasFilters = Object.values(activeFilters).some(s => s.size > 0);
+  document.getElementById('clearFilters').style.display = hasFilters ? 'block' : 'none';
+
+  renderList(document.getElementById('viewContainer'), filtered);
+  renderMatrix(document.getElementById('matrixContainer'), filtered);
+}
+
+function renderSortBar() {
+  const options = [
+    { field: 'severity', label: 'Severity' },
+    { field: 'name', label: 'Name' },
+    { field: 'id', label: 'ID' },
+    { field: 'type', label: 'Type' },
+    { field: 'logtypes', label: 'Log Type' },
+    { field: 'tests', label: 'Tests' },
+  ];
+  return `<div class="sort-bar">${options.map(o => {
+    const active = sortField === o.field;
+    const arrow = active ? (sortDir === 'asc' ? ' &#9650;' : ' &#9660;') : '';
+    return `<span class="sort-btn${active ? ' active' : ''}" onclick="setSort('${o.field}')">${o.label}${arrow}</span>`;
+  }).join('')}</div>`;
+}
+
+function renderList(container, items) {
+  items = sortItems(items);
+  let html = renderSortBar() + `<div class="content-list">`;
+  for (const item of items) {
+    const tactics = item.mitreTactics || [];
+    const techniques = item.mitreTechniques || [];
+    html += `<div class="content-card" onclick="this.classList.toggle('expanded')">
+      <div class="card-header">
+        <span class="sev-badge sev-${item.severity}">${item.severity || '?'}</span>
+        <div>
+          <div class="card-title">${esc(item.displayName)}</div>
+          <div class="card-id">${esc(item.id)}</div>
+          <div class="card-meta">
+            <span class="pill type-badge">${item.type}</span>
+            ${item.logTypes.slice(0,3).map(t => `<span class="pill logtype">${esc(t)}</span>`).join('')}
+            ${item.logTypes.length > 3 ? `<span class="pill">+${item.logTypes.length-3} more</span>` : ''}
+            ${item.tags.slice(0,4).map(t => `<span class="pill tag">${esc(t)}</span>`).join('')}
+            ${item.tags.length > 4 ? `<span class="pill">+${item.tags.length-4} more</span>` : ''}
+          </div>
+        </div>
+      </div>
+      <div class="card-details">
+        ${item.description ? `<p><span class="label">Description:</span> ${esc(item.description)}</p>` : ''}
+        <p><span class="label">File:</span> <code>${esc(item.filepath)}</code></p>
+        ${item.logTypes.length ? `<p><span class="label">Log Types:</span> ${item.logTypes.map(t => `<span class="pill logtype">${esc(t)}</span>`).join(' ')}</p>` : ''}
+        ${item.tags.length ? `<p><span class="label">Tags:</span> ${item.tags.map(t => `<span class="pill tag">${esc(t)}</span>`).join(' ')}</p>` : ''}
+        ${tactics.length ? `<p><span class="label">MITRE Tactics:</span> ${tactics.map(t => `<span class="pill tactic">${esc(t)}</span>`).join(' ')}</p>` : ''}
+        ${techniques.length ? `<p><span class="label">MITRE Techniques:</span> ${techniques.map(t => `<span class="pill mitre">${esc(t)}</span>`).join(' ')}</p>` : ''}
+        ${item.reference ? `<p><span class="label">Reference:</span> <a href="${escAttr(item.reference)}" target="_blank" style="color:var(--accent)">${esc(item.reference)}</a></p>` : ''}
+        <p><span class="label">Enabled:</span> ${item.enabled ? 'Yes' : 'No'} | <span class="label">Tests:</span> ${item.testCount}</p>
+      </div>
+    </div>`;
+  }
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+// ── ATT&CK Matrix ──
+function renderMatrix(container, filtered) {
+  const activeTactics = activeFilters.mitreTactics || new Set();
+  const activeTechniques = activeFilters.mitreTechniques || new Set();
+
+  // Count techniques in filtered items (excluding MITRE filters for cross-filter behavior)
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const poolForMatrix = DATA.filter(item => {
+    if (q) {
+      const haystack = [item.id, item.displayName, item.description, ...(item.tags||[]),
+        ...(item.logTypes||[]), ...(item.mitreTactics||[]), ...(item.mitreTechniques||[]),
+        item.severity, item.type, item.runbook].join(' ').toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+    for (const [field, vals] of Object.entries(activeFilters)) {
+      if (vals.size === 0) continue;
+      if (field === 'mitreTactics' || field === 'mitreTechniques') continue;
+      const itemVals = getFieldValues(item, field);
+      if (!itemVals.some(v => vals.has(v))) return false;
+    }
+    return true;
+  });
+
+  // Build tactic → technique → count from pool
+  // Use mitreRaw pairs to get the tactic-technique associations from actual data
+  const tacticTechCounts = {}; // { tacticId: { techId: count } }
+  const tacticCounts = {};
+  for (const item of poolForMatrix) {
+    const seenPairs = new Set();
+    for (const raw of (item.mitreRaw || [])) {
+      if (seenPairs.has(raw)) continue;
+      seenPairs.add(raw);
+      const [tacticId, techId] = raw.split(':');
+      if (!tacticId || !techId) continue;
+      if (!tacticTechCounts[tacticId]) tacticTechCounts[tacticId] = {};
+      tacticTechCounts[tacticId][techId] = (tacticTechCounts[tacticId][techId] || 0) + 1;
+      tacticCounts[tacticId] = (tacticCounts[tacticId] || 0) + 1;
+    }
+  }
+
+  let html = `<div class="matrix-section">
+    <div class="matrix-toggle" onclick="matrixOpen=!matrixOpen; render()">
+      <span class="arrow ${matrixOpen ? 'open' : ''}">&#9654;</span>
+      ATT&CK Coverage Matrix
+    </div>`;
+
+  if (matrixOpen) {
+    html += `<div class="matrix-container"><div class="matrix-grid">`;
+
+    for (const tacticId of TACTIC_ORDER) {
+      const tacticName = MITRE_LOOKUP.tactics[tacticId] || tacticId;
+      const techCounts = tacticTechCounts[tacticId] || {};
+      const totalCount = tacticCounts[tacticId] || 0;
+      const isActiveTactic = activeTactics.has(tacticId);
+
+      // Sort techniques by count desc
+      const techEntries = Object.entries(techCounts).sort((a,b) => b[1] - a[1]);
+
+      html += `<div class="tactic-col">
+        <div class="tactic-header${isActiveTactic ? ' active' : ''}" onclick="toggleMitreFilter('mitreTactics','${tacticId}')" title="${tacticId}: ${escAttr(tacticName)}">
+          ${esc(tacticName)}
+          <span class="tactic-count">${totalCount}</span>
+        </div>`;
+
+      for (const [techId, count] of techEntries) {
+        const techInfo = MITRE_LOOKUP.techniques[techId];
+        const techName = techInfo ? techInfo.name : techId;
+        const isActiveTech = activeTechniques.has(techId);
+        const bg = heatColor(count);
+        html += `<div class="tech-box${isActiveTech ? ' active' : ''}"
+          style="background:${bg}"
+          onclick="toggleMitreFilter('mitreTechniques','${techId}')"
+          title="${techId}: ${escAttr(techName)} (${count})">
+          <span class="tech-id">${techId}</span> <span class="tech-name">${esc(techName)}</span>
+        </div>`;
+      }
+
+      html += `</div>`;
+    }
+
+    html += `</div></div>`;
+
+    // Legend
+    html += `<div class="matrix-legend">
+      <span>Coverage:</span>
+      <span>Low</span>
+      <div class="legend-bar">
+        ${HEAT_COLORS.map(([,c]) => `<span style="background:${c}"></span>`).join('')}
+      </div>
+      <span>High</span>
+    </div>`;
+  }
+
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+function escAttr(s) { return (s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+let _t;
+document.getElementById('searchInput').addEventListener('input', () => { clearTimeout(_t); _t = setTimeout(render, 200); });
+
+init();
+</script>
+</body>
+</html>
