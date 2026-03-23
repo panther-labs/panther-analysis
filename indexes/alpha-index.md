@@ -2275,6 +2275,7 @@
 
 # S
 
+- [SOCRadar](#socradar)
 - [Salesforce](#salesforce)
 - [SentinelOne](#sentinelone)
 - [Slack](#slack)
@@ -2282,6 +2283,12 @@
 - [Snyk](#snyk)
 - [Sublime](#sublime)
 - [Suricata](#suricata)
+
+
+## SOCRadar
+
+- [SOCRadar Alert Passthrough](../rules/socradar_rules/socradar_alert_passthrough.yml)
+  - Surfaces all open SOCRadar security incidents as Panther alerts. Severity is mapped dynamically from SOCRadar's alarm_risk_level (CRITICAL/HIGH/MEDIUM/LOW/INFO). SOCRadar performs the underlying threat detection; this rule ensures every open incident is visible in Panther for triage and response.
 
 
 ## Salesforce
