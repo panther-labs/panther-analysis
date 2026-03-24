@@ -15,10 +15,10 @@ Tags:
   - Execution:User Execution
 Severity: Medium
 Description: >
-  This rule alerts when multiple active threats are detected in a single
-  email message. This could indicate a sophisticated multi-vector attack
-  combining malware, phishing URLs, and malicious attachments. Severity
-  is dynamic: CRITICAL (5+ threats), HIGH (3-4 threats), MEDIUM (2 threats).
+  This rule alerts when three or more active threats are detected in a single
+  email message. This indicates a sophisticated multi-vector attack combining
+  malware, phishing URLs, and malicious attachments. Severity is dynamic:
+  CRITICAL (5+ threats), HIGH (3-4 threats).
 Runbook: |
   1. Verify the email was quarantined and review all threat types in the alert context immediately
   2. Block sender infrastructure within 15 minutes and search for similar multi-vector attacks from the last 7 days
@@ -29,8 +29,8 @@ Reports:
     - TA0001:T1566 # Initial Access: Phishing
     - TA0002:T1204 # Execution: User Execution
 Tests:
-  - Name: Two Active Threats
-    ExpectedResult: true
+  - Name: Two Active Threats - No Alert
+    ExpectedResult: false
     Log:
       messageTime: "2026-01-08T12:00:00Z"
       sender: "attacker@evil.com"
