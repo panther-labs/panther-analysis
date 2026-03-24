@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: aws_overwrite_lambda_code.py
 RuleID: "AWS.Lambda.UpdateFunctionCode"
-DisplayName: "Lambda Code Updated by IAM User"
+DisplayName: "Lambda Code Updated by User"
 Enabled: true
 CreateAlert: true
 LogTypes:
@@ -12,15 +12,14 @@ Reports:
 Severity: High
 Status: Experimental
 Description: >
-  Detects when Lambda function code is updated using direct IAM user credentials instead of assumed roles.
-  This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails,
-  or insider threat activity. Modern best practice uses roles for programmatic access, making IAM user
-  activity on Lambda code updates a high-confidence security signal.
+  Detects when Lambda function code is updated by an IAM user, federated user, or AWS SSO user.
+  This may indicate compromised credentials, a developer bypassing CI/CD guardrails,
+  or insider threat activity.
 Runbook: |
-  Verify the IAM user identity and whether this is authorized.
+  Verify the user identity and whether this is authorized.
   Review the code changes made to the Lambda function.
   If unauthorized:
-  - Disable the IAM user access key
+  - Disable the user's access key or revoke the SSO session
   - Revert Lambda function code to previous version
   - Investigate credential compromise
 Reference: https://stratus-red-team.cloud/attack-techniques/AWS/aws.persistence.lambda-overwrite-code/
@@ -94,6 +93,82 @@ Tests:
         },
         "responseElements": {
           "functionName": "my-lambda-function"
+        },
+        "requestID": "1",
+        "eventID": "1",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail"
+      }
+  - Name: SSO AssumedRole Updates Lambda Code
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.05",
+        "userIdentity": {
+          "type": "AssumedRole",
+          "principalId": "AROA123456789EXAMPLE:bob.ross",
+          "arn": "arn:aws:sts::123456789012:assumed-role/AWSReservedSSO_DevAdmin_abc123/bob.ross",
+          "accountId": "123456789012",
+          "accessKeyId": "ASIA123456789EXAMPLE",
+          "sessionContext": {
+            "sessionIssuer": {
+              "type": "Role",
+              "principalId": "AROA123456789EXAMPLE",
+              "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin_abc123",
+              "accountId": "123456789012",
+              "userName": "AWSReservedSSO_DevAdmin_abc123"
+            },
+            "webIdFederationData": {},
+            "attributes": {
+              "mfaAuthenticated": "false",
+              "creationDate": "2019-01-01T00:00:00Z"
+            }
+          }
+        },
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "lambda.amazonaws.com",
+        "eventName": "UpdateFunctionCode20150331v2",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "203.0.113.50",
+        "userAgent": "aws-cli/2.13.5 Python/3.11.4",
+        "requestParameters": {
+          "functionName": "production-api"
+        },
+        "responseElements": {
+          "functionName": "production-api"
+        },
+        "requestID": "1",
+        "eventID": "1",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail"
+      }
+  - Name: FederatedUser Updates Lambda Code
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.05",
+        "userIdentity": {
+          "type": "FederatedUser",
+          "principalId": "123456789012:federated-user",
+          "arn": "arn:aws:sts::123456789012:federated-user/federated-user",
+          "accountId": "123456789012",
+          "accessKeyId": "ASIA123456789EXAMPLE"
+        },
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "lambda.amazonaws.com",
+        "eventName": "UpdateFunctionCode20150331v2",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "203.0.113.50",
+        "userAgent": "aws-cli/2.13.5 Python/3.11.4",
+        "requestParameters": {
+          "functionName": "production-api"
+        },
+        "responseElements": {
+          "functionName": "production-api"
         },
         "requestID": "1",
         "eventID": "1",

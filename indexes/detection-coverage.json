@@ -6150,8 +6150,8 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects when Lambda function code is updated using direct IAM user credentials instead of assumed roles. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity. Modern best practice uses roles for programmatic access, making IAM user activity on Lambda code updates a high-confidence security signal.",
-        "DisplayName": "Lambda Code Updated by IAM User",
+        "Description": "Detects when Lambda function code is updated by an IAM user, federated user, or AWS SSO user. This may indicate compromised credentials, a developer bypassing CI/CD guardrails, or insider threat activity.",
+        "DisplayName": "Lambda Code Updated by User",
         "LogTypes": [
             "AWS.CloudTrail"
         ],
@@ -6159,8 +6159,8 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects when Lambda function configuration is updated with layers using direct IAM user credentials instead of assumed roles. Lambda layers can execute code before the main function, making them a stealthy persistence mechanism. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity attempting to inject malicious layers.",
-        "DisplayName": "Lambda Configuration with Layers Updated by IAM User",
+        "Description": "Detects when Lambda function configuration is updated with layers by an IAM user, federated user, or AWS SSO user. Lambda layers can execute code before the main function, making them a stealthy persistence mechanism. This may indicate compromised credentials, a developer bypassing CI/CD guardrails, or insider threat activity.",
+        "DisplayName": "Lambda Configuration Updated with Layers by User",
         "LogTypes": [
             "AWS.CloudTrail"
         ],
@@ -8571,6 +8571,51 @@
             "OnePassword.SignInAttempt"
         ],
         "YAMLPath": "rules/onepassword_rules/onepassword_unusual_client.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Re-raises Upwind API security detections in Panther. Covers broken authentication, authorization flaws, injection, mass assignment, token misuse, and sensitive data exposure patterns detected at the API layer.",
+        "DisplayName": "Upwind API Detection Passthrough",
+        "LogTypes": [
+            "Upwind.Detections"
+        ],
+        "YAMLPath": "rules/upwind_rules/upwind_api_detection_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Re-raises Upwind network security detections in Panther. Covers port scans, DoS activity, DNS anomalies, DNS-over-HTTPS abuse, and other anomalous network behaviors.",
+        "DisplayName": "Upwind Network Detection Passthrough",
+        "LogTypes": [
+            "Upwind.Detections"
+        ],
+        "YAMLPath": "rules/upwind_rules/upwind_network_detection_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Re-raises Upwind cloud posture and CSPM detections in Panther. Covers cloud misconfigurations, exposed secrets, configuration drift, and CSPM policy violations.",
+        "DisplayName": "Upwind Posture Detection Passthrough",
+        "LogTypes": [
+            "Upwind.Detections"
+        ],
+        "YAMLPath": "rules/upwind_rules/upwind_posture_detection_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Re-raises Upwind runtime security detections in Panther. Covers process execution anomalies, syscall-based threats, container escapes, and other host/container behavioral threats.",
+        "DisplayName": "Upwind Runtime Detection Passthrough",
+        "LogTypes": [
+            "Upwind.Detections"
+        ],
+        "YAMLPath": "rules/upwind_rules/upwind_runtime_detection_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Re-raises Upwind vulnerability detections in Panther. Covers exploitable CVEs identified in runtime containers, VMs, and serverless environments, prioritized by active exposure.",
+        "DisplayName": "Upwind Vulnerability Detection Passthrough",
+        "LogTypes": [
+            "Upwind.Detections"
+        ],
+        "YAMLPath": "rules/upwind_rules/upwind_vulnerability_detection_passthrough.yml"
     },
     {
         "AnalysisType": "Rule",
