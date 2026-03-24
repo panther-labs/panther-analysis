@@ -17,3 +17,9 @@ def title(event):
     new_mode = event.deep_get("new", "mode")
     return f"Phishing attack on app {app_type} user {employee_email}. \
              Attack detected in mode {new_mode}."
+
+
+def alert_context(event):
+    return {
+        "employee_email": event.deep_get("new", "employee", "email", default=""),
+    }
