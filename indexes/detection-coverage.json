@@ -6150,8 +6150,8 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects when Lambda function code is updated using direct IAM user credentials instead of assumed roles. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity. Modern best practice uses roles for programmatic access, making IAM user activity on Lambda code updates a high-confidence security signal.",
-        "DisplayName": "Lambda Code Updated by IAM User",
+        "Description": "Detects when Lambda function code is updated by an IAM user, federated user, or AWS SSO user. This may indicate compromised credentials, a developer bypassing CI/CD guardrails, or insider threat activity.",
+        "DisplayName": "Lambda Code Updated by User",
         "LogTypes": [
             "AWS.CloudTrail"
         ],
@@ -6159,8 +6159,8 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects when Lambda function configuration is updated with layers using direct IAM user credentials instead of assumed roles. Lambda layers can execute code before the main function, making them a stealthy persistence mechanism. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity attempting to inject malicious layers.",
-        "DisplayName": "Lambda Configuration with Layers Updated by IAM User",
+        "Description": "Detects when Lambda function configuration is updated with layers by an IAM user, federated user, or AWS SSO user. Lambda layers can execute code before the main function, making them a stealthy persistence mechanism. This may indicate compromised credentials, a developer bypassing CI/CD guardrails, or insider threat activity.",
+        "DisplayName": "Lambda Configuration Updated with Layers by User",
         "LogTypes": [
             "AWS.CloudTrail"
         ],
