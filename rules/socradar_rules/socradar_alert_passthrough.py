@@ -1,12 +1,3 @@
-SEVERITY_MAP = {
-    "CRITICAL": "Critical",
-    "HIGH": "High",
-    "MEDIUM": "Medium",
-    "LOW": "Low",
-    "INFO": "Info",
-}
-
-
 def rule(event):
     return event.get("status") != "CLOSED"
 
@@ -19,8 +10,7 @@ def title(event):
 
 
 def severity(event):
-    risk = event.get("alarm_risk_level", "").upper()
-    return SEVERITY_MAP.get(risk, "Medium")
+    return event.get("alarm_risk_level", "DEFAULT").upper()
 
 
 def dedup(event):
