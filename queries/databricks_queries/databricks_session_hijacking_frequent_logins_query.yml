@@ -1,0 +1,139 @@
+AnalysisType: scheduled_query
+QueryName: "Query.Databricks.SessionHijackingFrequentLogins"
+Enabled: false
+Description: |
+  Detects rapid login events from different public IPs and user agents within a short time
+  window for the same user. Compares recent login burst patterns against a 30-day baseline
+  to suppress alerts for users who normally log in from many IPs (e.g., mobile or VPN users).
+
+  DETECTION LOGIC:
+  - Sliding 10-minute windows: flags users with 3+ distinct public IPs AND 2+ distinct user agents
+  - Z-score: Hourly unique IP count > 2σ above per-user baseline mean
+  - Cold-start: First-time multi-IP burst for users with no prior baseline
+
+  PREREQUISITE: databricks_user_session_baseline_30d lookup table must be populated.
+Query: |
+  -- DATABRICKS SESSION HIJACKING: FREQUENT LOGINS
+  -- Finds users with rapid logins from multiple IPs/devices in short windows
+
+  WITH login_events AS (
+      SELECT
+          user_identity:email::string AS user_email,
+          source_ip_address,
+          user_agent,
+          session_id,
+          workspace_id,
+          p_event_time,
+          DATE_TRUNC('hour', p_event_time) AS event_hour
+      FROM panther_logs.public.databricks_audit
+      WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '1 day'
+          AND action_name IN (
+              'login', 'samlLogin', 'tokenLogin', 'jwtLogin', 'certLogin',
+              'aadBrowserLogin', 'aadTokenLogin', 'oidcBrowserLogin',
+              'mfaLogin', 'passwordVerifyAuthentication'
+          )
+          AND response:statusCode::int = 200
+          AND user_identity:email::string IS NOT NULL
+          AND user_identity:email::string != 'System-User'
+          -- Exclude private IPs
+          AND NOT (
+              source_ip_address LIKE '10.%'
+              OR source_ip_address LIKE '172.16.%' OR source_ip_address LIKE '172.17.%'
+              OR source_ip_address LIKE '172.18.%' OR source_ip_address LIKE '172.19.%'
+              OR source_ip_address LIKE '172.2_.%' OR source_ip_address LIKE '172.30.%'
+              OR source_ip_address LIKE '172.31.%'
+              OR source_ip_address LIKE '192.168.%'
+              OR source_ip_address LIKE '127.%'
+          )
+          -- Exclude known service agents
+          AND user_agent NOT LIKE '%Databricks-Service%'
+          AND user_agent NOT LIKE '%Databricks-Runtime%'
+  ),
+
+  hourly_stats AS (
+      SELECT
+          user_email,
+          event_hour,
+          COUNT(*) AS hourly_logins,
+          COUNT(DISTINCT source_ip_address) AS hourly_unique_ips,
+          COUNT(DISTINCT user_agent) AS hourly_unique_agents,
+          ARRAY_AGG(DISTINCT source_ip_address) AS ip_list,
+          ARRAY_AGG(DISTINCT user_agent) AS agent_list,
+          MIN(p_event_time) AS first_event,
+          MAX(p_event_time) AS last_event
+      FROM login_events
+      GROUP BY user_email, event_hour
+      HAVING hourly_unique_ips >= 3 AND hourly_unique_agents >= 2
+  ),
+
+  with_baseline AS (
+      SELECT
+          h.user_email,
+          h.event_hour,
+          h.hourly_logins,
+          h.hourly_unique_ips,
+          h.hourly_unique_agents,
+          h.ip_list,
+          h.agent_list,
+          h.first_event,
+          h.last_event,
+
+          -- Baseline
+          COALESCE(b.mean_unique_ips_per_day, 0) AS baseline_mean_ips_per_day,
+          COALESCE(b.stddev_unique_ips_per_day, 0) AS baseline_stddev_ips_per_day,
+          COALESCE(b.active_days, 0) AS baseline_active_days,
+          COALESCE(b.ip_diversity, 0) AS baseline_ip_diversity,
+
+          -- Z-score for IP diversity
+          CASE
+              WHEN b.active_days >= 3 AND b.stddev_unique_ips_per_day > 0
+              THEN ROUND(
+                  (h.hourly_unique_ips - b.mean_unique_ips_per_day) /
+                  b.stddev_unique_ips_per_day, 2)
+              ELSE NULL
+          END AS z_score_unique_ips,
+
+          -- Cold-start flag
+          CASE
+              WHEN b.active_days IS NULL OR b.active_days < 3 THEN TRUE
+              ELSE FALSE
+          END AS is_cold_start,
+
+          -- Anomaly flags
+          CASE
+              WHEN b.active_days >= 3 AND b.stddev_unique_ips_per_day > 0
+                  AND (h.hourly_unique_ips - b.mean_unique_ips_per_day) /
+                      b.stddev_unique_ips_per_day > 2
+              THEN TRUE
+              WHEN b.active_days IS NULL OR b.active_days < 3
+              THEN TRUE
+              ELSE FALSE
+          END AS is_anomalous,
+
+          ROUND(
+              CASE
+                  WHEN b.active_days >= 3 AND b.stddev_unique_ips_per_day > 0
+                  THEN GREATEST(
+                      (h.hourly_unique_ips - b.mean_unique_ips_per_day) /
+                      b.stddev_unique_ips_per_day, 0) * h.hourly_unique_agents
+                  ELSE h.hourly_unique_ips * h.hourly_unique_agents
+              END, 2
+          ) AS anomaly_severity_score
+
+      FROM hourly_stats h
+      LEFT JOIN panther_lookups.public.databricks_user_session_baseline_30d b
+          ON h.user_email = b.user_email
+  )
+
+  SELECT *
+  FROM with_baseline
+  WHERE is_anomalous = TRUE
+  ORDER BY anomaly_severity_score DESC
+  LIMIT 100
+Schedule:
+  RateMinutes: 60
+  TimeoutMinutes: 5
+Tags:
+  - Databricks
+  - Session Hijacking
+  - Anomaly Detection

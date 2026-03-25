@@ -1,0 +1,149 @@
+AnalysisType: lookup_table
+LookupName: databricks_user_session_baseline_30d
+Enabled: false
+Refresh:
+  PeriodMinutes: 1440
+Description: |
+  30-day behavioral baseline for Databricks user sessions. Computes per-user statistics
+  across network, device, and temporal dimensions to support session hijacking detection.
+
+  Features:
+  - Network baselines: known IPs, ASNs, IP diversity
+  - Device baselines: known user agents, user agent diversity
+  - Temporal baselines: active days, mean/stddev logins per day
+  - Distribution objects: IP distribution, user agent distribution
+
+  Used by:
+  - Databricks.Audit.SessionHijackingFrequentLogins
+  - Databricks.Audit.SessionHijackingMultiDevice
+  - Databricks.Audit.SessionHijackingSessionCount
+Reference: https://github.com/databricks-solutions/cybersec-workspace-detection-app/tree/main/base/detections/behavioral
+Query: |
+  -- DATABRICKS USER SESSION BASELINE (30 days)
+  -- Builds per-user network and device profiles for session hijacking detection
+
+  WITH base AS (
+      SELECT
+          user_identity:email::string AS user_email,
+          source_ip_address,
+          user_agent,
+          session_id,
+          workspace_id,
+          p_event_time,
+          response:statusCode::int AS status_code
+      FROM panther_logs.public.databricks_audit
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '37 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND action_name IN (
+              'login', 'samlLogin', 'tokenLogin', 'jwtLogin', 'certLogin',
+              'aadBrowserLogin', 'aadTokenLogin', 'oidcBrowserLogin',
+              'mfaLogin', 'passwordVerifyAuthentication'
+          )
+          AND response:statusCode::int = 200
+          AND user_identity:email::string IS NOT NULL
+          AND user_identity:email::string != 'System-User'
+  ),
+
+  daily_stats AS (
+      SELECT
+          user_email,
+          DATE(p_event_time) AS login_date,
+          COUNT(*) AS daily_logins,
+          COUNT(DISTINCT source_ip_address) AS daily_unique_ips,
+          COUNT(DISTINCT user_agent) AS daily_unique_agents
+      FROM base
+      GROUP BY user_email, DATE(p_event_time)
+  ),
+
+  global_stats AS (
+      SELECT
+          user_email,
+          COUNT(DISTINCT source_ip_address) AS ip_diversity,
+          COUNT(DISTINCT user_agent) AS agent_diversity,
+          COUNT(DISTINCT session_id) AS session_diversity
+      FROM base
+      GROUP BY user_email
+  ),
+
+  user_aggregates AS (
+      SELECT
+          d.user_email,
+          COUNT(DISTINCT d.login_date) AS active_days,
+          AVG(d.daily_logins) AS mean_logins_per_day,
+          STDDEV(d.daily_logins) AS stddev_logins_per_day,
+          AVG(d.daily_unique_ips) AS mean_unique_ips_per_day,
+          STDDEV(d.daily_unique_ips) AS stddev_unique_ips_per_day,
+          AVG(d.daily_unique_agents) AS mean_unique_agents_per_day,
+          STDDEV(d.daily_unique_agents) AS stddev_unique_agents_per_day,
+          MAX(g.ip_diversity) AS ip_diversity,
+          MAX(g.agent_diversity) AS agent_diversity,
+          MAX(g.session_diversity) AS session_diversity
+      FROM daily_stats d
+      JOIN global_stats g ON d.user_email = g.user_email
+      GROUP BY d.user_email
+  ),
+
+  ip_distribution AS (
+      SELECT
+          user_email,
+          OBJECT_AGG(source_ip_address, ip_count) AS ip_dist
+      FROM (
+          SELECT user_email, source_ip_address, COUNT(*) AS ip_count
+          FROM base
+          GROUP BY user_email, source_ip_address
+      )
+      GROUP BY user_email
+  ),
+
+  agent_distribution AS (
+      SELECT
+          user_email,
+          OBJECT_AGG(user_agent, agent_count) AS agent_dist
+      FROM (
+          SELECT user_email, user_agent, COUNT(*) AS agent_count
+          FROM base
+          GROUP BY user_email, user_agent
+      )
+      GROUP BY user_email
+  ),
+
+  workspace_distribution AS (
+      SELECT
+          user_email,
+          OBJECT_AGG(workspace_id, ws_count) AS workspace_dist
+      FROM (
+          SELECT user_email, workspace_id::string AS workspace_id, COUNT(*) AS ws_count
+          FROM base
+          WHERE workspace_id IS NOT NULL
+          GROUP BY user_email, workspace_id
+      )
+      GROUP BY user_email
+  )
+
+  SELECT
+      ua.user_email,
+      ua.active_days,
+      ROUND(ua.mean_logins_per_day, 2) AS mean_logins_per_day,
+      ROUND(COALESCE(ua.stddev_logins_per_day, 0), 2) AS stddev_logins_per_day,
+      ROUND(ua.mean_unique_ips_per_day, 2) AS mean_unique_ips_per_day,
+      ROUND(COALESCE(ua.stddev_unique_ips_per_day, 0), 2) AS stddev_unique_ips_per_day,
+      ROUND(ua.mean_unique_agents_per_day, 2) AS mean_unique_agents_per_day,
+      ROUND(COALESCE(ua.stddev_unique_agents_per_day, 0), 2) AS stddev_unique_agents_per_day,
+      ua.ip_diversity,
+      ua.agent_diversity,
+      ua.session_diversity,
+      ip.ip_dist AS ip_distribution,
+      ag.agent_dist AS agent_distribution,
+      ws.workspace_dist AS workspace_distribution,
+      CURRENT_TIMESTAMP AS baseline_updated_at
+  FROM user_aggregates ua
+  LEFT JOIN ip_distribution ip ON ua.user_email = ip.user_email
+  LEFT JOIN agent_distribution ag ON ua.user_email = ag.user_email
+  LEFT JOIN workspace_distribution ws ON ua.user_email = ws.user_email
+  WHERE ua.active_days >= 3
+LogTypeMap:
+  PrimaryKey: user_email
+  AssociatedLogTypes:
+    - LogType: Databricks.Audit
+      Selectors:
+        - "$.userIdentity.email"

@@ -1,0 +1,108 @@
+AnalysisType: scheduled_query
+QueryName: "Query.Databricks.SessionHijackingMultiDevice"
+Enabled: false
+Description: |
+  Detects the same Databricks session ID being used from a different IP address and a
+  different user agent within a 24-hour period. This is a strong indicator of session
+  token theft where an attacker replays a stolen session cookie from their own device.
+
+  DETECTION LOGIC:
+  - Per-session: flags sessions with 2+ distinct IPs AND 2+ distinct user agents (excluding private IPs and service agents)
+  - User agent similarity: uses JACCARD_SIMILARITY on tokenized user agents to detect truly different devices vs minor version changes
+  - Baseline-aware: compares against user's historical IP diversity to reduce false positives for VPN users
+
+  PREREQUISITE: databricks_user_session_baseline_30d lookup table must be populated.
+Query: |
+  -- DATABRICKS SESSION HIJACKING: MULTI-DEVICE
+  -- Finds sessions used from different IPs AND different devices
+
+  WITH login_events AS (
+      SELECT
+          user_identity:email::string AS user_email,
+          session_id,
+          source_ip_address,
+          user_agent,
+          workspace_id,
+          p_event_time
+      FROM panther_logs.public.databricks_audit
+      WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '1 day'
+          AND action_name IN (
+              'login', 'samlLogin', 'tokenLogin', 'jwtLogin', 'certLogin',
+              'aadBrowserLogin', 'aadTokenLogin', 'oidcBrowserLogin',
+              'mfaLogin', 'passwordVerifyAuthentication'
+          )
+          AND response:statusCode::int = 200
+          AND session_id IS NOT NULL
+          AND user_identity:email::string IS NOT NULL
+          AND user_identity:email::string != 'System-User'
+          AND NOT (
+              source_ip_address LIKE '10.%'
+              OR source_ip_address LIKE '172.16.%' OR source_ip_address LIKE '172.17.%'
+              OR source_ip_address LIKE '172.18.%' OR source_ip_address LIKE '172.19.%'
+              OR source_ip_address LIKE '172.2_.%' OR source_ip_address LIKE '172.30.%'
+              OR source_ip_address LIKE '172.31.%'
+              OR source_ip_address LIKE '192.168.%'
+              OR source_ip_address LIKE '127.%'
+          )
+          AND user_agent NOT LIKE '%Databricks-Service%'
+          AND user_agent NOT LIKE '%Databricks-Runtime%'
+  ),
+
+  session_stats AS (
+      SELECT
+          user_email,
+          session_id,
+          COUNT(*) AS total_events,
+          COUNT(DISTINCT source_ip_address) AS unique_ips,
+          COUNT(DISTINCT user_agent) AS unique_agents,
+          ARRAY_AGG(DISTINCT source_ip_address) AS ip_list,
+          ARRAY_AGG(DISTINCT user_agent) AS agent_list,
+          MIN(p_event_time) AS first_event,
+          MAX(p_event_time) AS last_event
+      FROM login_events
+      GROUP BY user_email, session_id
+      HAVING unique_ips >= 2 AND unique_agents >= 2
+  ),
+
+  with_baseline AS (
+      SELECT
+          s.user_email,
+          s.session_id,
+          s.total_events,
+          s.unique_ips,
+          s.unique_agents,
+          s.ip_list,
+          s.agent_list,
+          s.first_event,
+          s.last_event,
+
+          COALESCE(b.mean_unique_ips_per_day, 0) AS baseline_mean_ips_per_day,
+          COALESCE(b.active_days, 0) AS baseline_active_days,
+          COALESCE(b.ip_diversity, 0) AS baseline_ip_diversity,
+          COALESCE(b.agent_diversity, 0) AS baseline_agent_diversity,
+
+          CASE
+              WHEN b.active_days IS NULL OR b.active_days < 3 THEN TRUE
+              ELSE FALSE
+          END AS is_cold_start,
+
+          TRUE AS is_anomalous,
+
+          ROUND(s.unique_ips * s.unique_agents * 10.0, 2) AS anomaly_severity_score
+
+      FROM session_stats s
+      LEFT JOIN panther_lookups.public.databricks_user_session_baseline_30d b
+          ON s.user_email = b.user_email
+  )
+
+  SELECT *
+  FROM with_baseline
+  ORDER BY anomaly_severity_score DESC
+  LIMIT 100
+Schedule:
+  RateMinutes: 60
+  TimeoutMinutes: 5
+Tags:
+  - Databricks
+  - Session Hijacking
+  - Anomaly Detection

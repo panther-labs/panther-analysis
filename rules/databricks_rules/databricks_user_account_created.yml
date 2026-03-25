@@ -1,0 +1,64 @@
+AnalysisType: rule
+Filename: databricks_user_account_created.py
+RuleID: "Databricks.Audit.UserAccountCreated"
+DisplayName: "Databricks User Account Created"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Persistence
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1136 # Create Account
+Severity: Info
+Description: >
+  Detects creation of new user accounts in Databricks. Account creation may be part of
+  normal onboarding or could indicate an attacker establishing persistence.
+Runbook: |
+  1. Verify the account creation was part of an approved onboarding workflow
+  2. Check if the new account was immediately granted elevated privileges
+  3. Review the actor who created the account
+Reference: https://github.com/databricks-solutions/cybersec-workspace-detection-app/tree/main/base/detections/behavioral
+Tests:
+  - Name: User Created via createUser
+    ExpectedResult: true
+    Log:
+      serviceName: "accounts"
+      actionName: "createUser"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        targetUserName: "newuser@example.com"
+      response:
+        statusCode: 200
+
+  - Name: User Added via add
+    ExpectedResult: true
+    Log:
+      serviceName: "accounts"
+      actionName: "add"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        targetUserName: "newuser@example.com"
+        endpoint: "adminConsole"
+      response:
+        statusCode: 200
+
+  - Name: Different Service - Should Not Alert
+    ExpectedResult: false
+    Log:
+      serviceName: "workspace"
+      actionName: "createUser"
+      userIdentity:
+        email: "admin@example.com"
+
+  - Name: Different Action - Should Not Alert
+    ExpectedResult: false
+    Log:
+      serviceName: "accounts"
+      actionName: "deleteUser"
+      userIdentity:
+        email: "admin@example.com"

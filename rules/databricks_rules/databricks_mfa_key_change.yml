@@ -1,0 +1,64 @@
+AnalysisType: rule
+Filename: databricks_mfa_key_change.py
+RuleID: "Databricks.Audit.MFAKeyChange"
+DisplayName: "Databricks MFA Key Change"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Credential Access
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1556 # Modify Authentication Process
+Severity: Info
+Description: >
+  Detects addition or deletion of MFA keys on Databricks accounts. MFA key deletion
+  may indicate an attacker weakening account security, while unexpected additions may
+  indicate enrollment of attacker-controlled authenticators.
+Runbook: |
+  1. Verify the actor intended to modify their MFA settings
+  2. For deletions, check if a replacement key was added
+  3. For additions, verify the new key was enrolled by the legitimate user
+Reference: https://github.com/databricks-solutions/cybersec-workspace-detection-app/tree/main/base/detections/behavioral
+Tests:
+  - Name: MFA Key Added
+    ExpectedResult: true
+    Log:
+      serviceName: "accounts"
+      actionName: "mfaAddKey"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 200
+
+  - Name: MFA Key Deleted
+    ExpectedResult: true
+    Log:
+      serviceName: "accounts"
+      actionName: "mfaDeleteKey"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 200
+
+  - Name: Different Service - Should Not Alert
+    ExpectedResult: false
+    Log:
+      serviceName: "workspace"
+      actionName: "mfaAddKey"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 200
+
+  - Name: Different Action - Should Not Alert
+    ExpectedResult: false
+    Log:
+      serviceName: "accounts"
+      actionName: "login"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 200

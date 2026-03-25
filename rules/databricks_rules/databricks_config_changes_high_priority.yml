@@ -1,0 +1,109 @@
+AnalysisType: rule
+Filename: databricks_config_changes_high_priority.py
+RuleID: "Databricks.Audit.ConfigChangesHighPriority"
+DisplayName: "Databricks High Priority Configuration Changes"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Defense Evasion
+  - Persistence
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562.008 # Impair Defenses: Disable Cloud Logs
+    - TA0003:T1098 # Account Manipulation
+Severity: Medium
+Description: >
+  Detects high-priority security configuration changes including audit logging modifications,
+  IP access list changes, and security-critical workspace settings. Dynamic severity adjusts
+  based on the specific change and whether it was successful (CRITICAL for disabled audit
+  logging, HIGH for deleted IP access lists).
+Runbook: |
+  1. Query audit logs for all configuration changes by the actor in the 24 hours before and after this critical change
+  2. Check if this configuration change has been performed by this actor in the past 90 days to establish legitimacy
+  3. Find all other high-risk configuration changes (IP access lists, audit settings) across all workspaces in the past 7 days
+Reference: https://github.com/databricks-solutions/cybersec-workspace-detection-app/blob/main/base/detections/event-based/configuration_changes_high_priority.py
+SummaryAttributes:
+  - actor
+  - config_key
+  - change_category
+Tests:
+  - Name: Audit Logging Disabled - Handled By Dedicated Rule
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "workspace"
+      actionName: "workspaceConfEdit"
+      userIdentity:
+        email: "admin@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        workspaceConfKeys: "enableVerboseAuditLogs"
+        workspaceConfValues: "false"
+      response:
+        statusCode: 200
+  - Name: Audit Logging Enabled
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "workspace"
+      actionName: "workspaceConfEdit"
+      userIdentity:
+        email: "admin@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        workspaceConfKeys: "enableVerboseAuditLogs"
+        workspaceConfValues: "true"
+      response:
+        statusCode: 200
+  - Name: IP Access List Deleted
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "deleteIpAccessList"
+      userIdentity:
+        email: "admin@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        listId: "acl-123"
+      response:
+        statusCode: 200
+  - Name: IP Access List Created
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "createIpAccessList"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        ipAddresses: ["10.0.0.0/8"]
+      response:
+        statusCode: 200
+  - Name: MFA Enforcement Changed
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "workspace"
+      actionName: "workspaceConfEdit"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        workspaceConfKeys: "enforceMFA"
+        workspaceConfValues: "false"
+      response:
+        statusCode: 200
+  - Name: Non-Critical Config Change
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "workspace"
+      actionName: "workspaceConfEdit"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        workspaceConfKeys: "displayName"
+        workspaceConfValues: "Production Workspace"

@@ -1,0 +1,88 @@
+AnalysisType: rule
+Filename: databricks_destructive_activities.py
+RuleID: "Databricks.Audit.DestructiveActivities"
+DisplayName: "Databricks Destructive Activities"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Impact
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1485 # Data Destruction
+Severity: Medium
+Threshold: 50
+DedupPeriodMinutes: 1440
+Description: >
+  Detects high volume destructive activities by a single user (≥50 delete actions per day)
+  which may indicate malicious data destruction, ransomware, or insider threats.
+Runbook: |
+  1. Query audit logs for all delete actions by this user in the past 7 days to identify patterns
+  2. Check if deleted resources can be recovered or if backups exist
+  3. Find all users with high deletion rates in the past 30 days to establish baseline
+Reference: https://github.com/andyweaves/system-tables-audit-logs/blob/main/resources/queries_and_alerts.json
+Tests:
+  - Name: Delete Table
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "unityCatalog"
+      actionName: "deleteTable"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 200
+  - Name: Drop Schema
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "unityCatalog"
+      actionName: "dropSchema"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 200
+  - Name: Trash Notebook
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "workspace"
+      actionName: "trashNotebook"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 200
+  - Name: Undelete Should Not Alert
+    ExpectedResult: false
+    Log:
+      timestamp: 1704067200000
+      serviceName: "unityCatalog"
+      actionName: "undeleteTable"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 200
+  - Name: System User Should Not Alert
+    ExpectedResult: false
+    Log:
+      timestamp: 1704067200000
+      serviceName: "unityCatalog"
+      actionName: "deleteTable"
+      userIdentity:
+        email: "System-User"
+      response:
+        statusCode: 200
+  - Name: Non-Destructive Action
+    ExpectedResult: false
+    Log:
+      timestamp: 1704067200000
+      serviceName: "unityCatalog"
+      actionName: "createTable"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 200
+SummaryAttributes:
+  - actor

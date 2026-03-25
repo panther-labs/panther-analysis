@@ -1,0 +1,89 @@
+AnalysisType: rule
+Filename: databricks_repeated_unauthorized_uc_data_requests.py
+RuleID: "Databricks.Audit.RepeatedUnauthorizedUCDataRequests"
+DisplayName: "Databricks Repeated Unauthorized UC Data Requests"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Collection
+  - Unity Catalog
+Reports:
+  MITRE ATT&CK:
+    - TA0009:T1530 # Data from Cloud Storage Object
+Severity: High
+Threshold: 16
+DedupPeriodMinutes: 60
+Description: >
+  Detects repeated unauthorized Unity Catalog data access attempts (>15 per hour) including
+  credential generation failures and Delta Sharing access denials.
+Runbook: |
+  1. Query Unity Catalog audit logs for all data access attempts by this user in the past 24 hours
+  2. Check which specific tables, volumes, or shares the user attempted to access
+  3. Find all users with high unauthorized data request rates in the past 7 days
+Reference: https://github.com/andyweaves/system-tables-audit-logs/blob/main/resources/queries_and_alerts.json
+SummaryAttributes:
+  - actor
+Tests:
+  - Name: Failed Table Credential Generation
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "unityCatalog"
+      actionName: "generateTemporaryTableCredential"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 403
+  - Name: Failed Volume Credential Generation
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "unityCatalog"
+      actionName: "generateTemporaryVolumeCredential"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 401
+  - Name: Failed Path Credential Generation
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "unityCatalog"
+      actionName: "generateTemporaryPathCredential"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 403
+  - Name: Delta Sharing Access Denied
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "deltaSharingAccess"
+      actionName: "getShare"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 403
+  - Name: Successful Credential Generation
+    ExpectedResult: false
+    Log:
+      timestamp: 1704067200000
+      serviceName: "unityCatalog"
+      actionName: "generateTemporaryTableCredential"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 200
+  - Name: Different Service Name
+    ExpectedResult: false
+    Log:
+      timestamp: 1704067200000
+      serviceName: "workspace"
+      actionName: "login"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 403

@@ -1,0 +1,102 @@
+AnalysisType: lookup_table
+LookupName: databricks_user_query_baseline_30d
+Enabled: false
+Refresh:
+  PeriodMinutes: 1440
+Description: |
+  30-day behavioral baseline for Databricks user query activity. Computes per-user
+  statistics for admin-level queries (ALTER, DROP, GRANT, REVOKE, CREATE, UPDATE on
+  tables/schemas/catalogs) to support anomaly detection for privilege escalation
+  and unusual administrative activity.
+
+  Features:
+  - Volume baselines: mean/stddev daily admin query counts per user
+  - Temporal baselines: active days, total admin queries
+  - Command distribution: breakdown of admin command types
+
+  Used by:
+  - Databricks.Audit.SpikeInTableAdminActivity
+Reference: https://github.com/databricks-solutions/cybersec-workspace-detection-app/tree/main/base/detections/behavioral
+Query: |
+  -- DATABRICKS USER QUERY BASELINE (30 days)
+  -- Builds per-user admin query volume profiles for anomaly detection
+
+  WITH admin_queries AS (
+      SELECT
+          user_identity:email::string AS user_email,
+          action_name,
+          request_params:commandText::string AS command_text,
+          p_event_time,
+          DATE(p_event_time) AS query_date
+      FROM panther_logs.public.databricks_audit
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '37 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND service_name IN ('sqlPermissions', 'unityCatalog', 'databrickssql')
+          AND user_identity:email::string IS NOT NULL
+          AND user_identity:email::string != 'System-User'
+          AND (
+              -- Admin DDL/DCL commands
+              UPPER(request_params:commandText::string) RLIKE '.*(ALTER|DROP|GRANT|REVOKE|CREATE|UPDATE|DELETE)\\s+(TABLE|SCHEMA|CATALOG|DATABASE|VIEW|FUNCTION|VOLUME|CONNECTION|STORAGE CREDENTIAL|EXTERNAL LOCATION).*'
+              -- Or explicit permission/ownership actions
+              OR action_name IN (
+                  'changeOwner', 'updatePermissions', 'setPermissions',
+                  'grant', 'revoke', 'updateCatalog', 'updateSchema',
+                  'updateTable', 'deleteTable', 'deleteCatalog', 'deleteSchema'
+              )
+          )
+  ),
+
+  daily_stats AS (
+      SELECT
+          user_email,
+          query_date,
+          COUNT(*) AS daily_admin_queries,
+          COUNT(DISTINCT action_name) AS daily_unique_actions
+      FROM admin_queries
+      GROUP BY user_email, query_date
+  ),
+
+  user_aggregates AS (
+      SELECT
+          user_email,
+          COUNT(DISTINCT query_date) AS active_days,
+          SUM(daily_admin_queries) AS total_admin_queries,
+          AVG(daily_admin_queries) AS mean_admin_queries_per_day,
+          STDDEV(daily_admin_queries) AS stddev_admin_queries_per_day,
+          MAX(daily_admin_queries) AS max_admin_queries_per_day,
+          AVG(daily_unique_actions) AS mean_unique_actions_per_day
+      FROM daily_stats
+      GROUP BY user_email
+  ),
+
+  action_distribution AS (
+      SELECT
+          user_email,
+          OBJECT_AGG(action_name, action_count) AS action_dist
+      FROM (
+          SELECT user_email, action_name, COUNT(*) AS action_count
+          FROM admin_queries
+          GROUP BY user_email, action_name
+      )
+      GROUP BY user_email
+  )
+
+  SELECT
+      ua.user_email,
+      ua.active_days,
+      ua.total_admin_queries,
+      ROUND(ua.mean_admin_queries_per_day, 2) AS mean_admin_queries_per_day,
+      ROUND(COALESCE(ua.stddev_admin_queries_per_day, 0), 2) AS stddev_admin_queries_per_day,
+      ua.max_admin_queries_per_day,
+      ROUND(ua.mean_unique_actions_per_day, 2) AS mean_unique_actions_per_day,
+      ad.action_dist AS action_distribution,
+      CURRENT_TIMESTAMP AS baseline_updated_at
+  FROM user_aggregates ua
+  LEFT JOIN action_distribution ad ON ua.user_email = ad.user_email
+  WHERE ua.active_days >= 3
+LogTypeMap:
+  PrimaryKey: user_email
+  AssociatedLogTypes:
+    - LogType: Databricks.Audit
+      Selectors:
+        - "$.userIdentity.email"
