@@ -4,8 +4,10 @@ def rule(event):
 
 
 def title(event):
+    branch = event.get("branch", "<UNKNOWN_BRANCH>")
     return (
         f"A branch protection requirement in the repository"
         f" [{event.get('repo', '<UNKNOWN_REPO>')}]"
         f" was overridden by user [{event.udm('actor_user')}]"
+        f" on branch [{branch}]"
     )

@@ -11,6 +11,7 @@
 - [P](#P)
 - [S](#S)
 - [T](#T)
+- [U](#U)
 - [W](#W)
 - [Z](#Z)
 # A
@@ -305,10 +306,10 @@
   - A user has subsequent logins from two geographic locations that are very far apart
 - [KMS CMK Disabled or Deleted](../rules/aws_cloudtrail_rules/aws_kms_cmk_loss.yml)
   - A KMS Customer Managed Key was disabled or scheduled for deletion. This could potentially lead to permanent loss of encrypted data.
-- [Lambda Code Updated by IAM User](../rules/aws_cloudtrail_rules/aws_overwrite_lambda_code.yml)
-  - Detects when Lambda function code is updated using direct IAM user credentials instead of assumed roles. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity. Modern best practice uses roles for programmatic access, making IAM user activity on Lambda code updates a high-confidence security signal.
-- [Lambda Configuration with Layers Updated by IAM User](../rules/aws_cloudtrail_rules/aws_add_malicious_lambda_extension.yml)
-  - Detects when Lambda function configuration is updated with layers using direct IAM user credentials instead of assumed roles. Lambda layers can execute code before the main function, making them a stealthy persistence mechanism. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity attempting to inject malicious layers.
+- [Lambda Code Updated by User](../rules/aws_cloudtrail_rules/aws_overwrite_lambda_code.yml)
+  - Detects when Lambda function code is updated by an IAM user, federated user, or AWS SSO user. This may indicate compromised credentials, a developer bypassing CI/CD guardrails, or insider threat activity.
+- [Lambda Configuration Updated with Layers by User](../rules/aws_cloudtrail_rules/aws_add_malicious_lambda_extension.yml)
+  - Detects when Lambda function configuration is updated with layers by an IAM user, federated user, or AWS SSO user. Lambda layers can execute code before the main function, making them a stealthy persistence mechanism. This may indicate compromised credentials, a developer bypassing CI/CD guardrails, or insider threat activity.
 - [Lambda CRUD Actions](../rules/aws_cloudtrail_rules/aws_lambda_crud.yml)
   - Unauthorized lambda Create, Read, Update, or Delete event occurred.
 - [Logins Without MFA](../rules/aws_cloudtrail_rules/aws_console_login_without_mfa.yml)
@@ -1342,9 +1343,98 @@
 
 # D
 
+- [Databricks](#databricks)
 - [Docusign](#docusign)
 - [Dropbox](#dropbox)
 - [Duo](#duo)
+
+
+## Databricks
+
+- [Databricks Access to Multiple Workspaces](../rules/databricks_rules/databricks_access_to_multiple_workspaces.yml)
+  - Detects users accessing 5 or more distinct workspaces within 24 hours, which may indicate lateral movement, reconnaissance, or compromised credentials.
+- [Databricks Access Token Revoked](../rules/databricks_rules/databricks_access_token_revoked.yml)
+  - Detects revocation of Databricks access tokens. Token revocation may be routine credential rotation or could indicate an attacker covering their tracks after using a compromised token.
+- [Databricks Account Admin Privileged Role Assignment](../rules/databricks_rules/databricks_account_admin_privileged_role_assignment.yml)
+  - Detects when account-level admin privileges are granted in Databricks through direct role assignments or administrative group membership. Account admins have extensive control across all workspaces and should be carefully monitored. Successful grants are elevated to HIGH severity.
+- [Databricks Account-Level Configuration Changes](../rules/databricks_rules/databricks_config_changes_account_level.yml)
+  - Detects configuration changes at the Databricks account level, including account settings, metastore configurations, and SSO settings. Account-level changes affect all workspaces and should be monitored for unauthorized modifications.
+- [Databricks Attempted Logon From Denied IP](../rules/databricks_rules/databricks_attempted_logon_from_denied_ip.yml)
+  - Detects blocked login attempts from IP addresses explicitly denied by workspace IP access control policies. This excludes known service agents and telemetry operations. While these attempts were successfully blocked, they may indicate reconnaissance or unauthorized access attempts.
+- [Databricks Data Downloads From Control Plane](../rules/databricks_rules/databricks_data_downloads_from_control_plane.yml)
+  - Detects high volume data downloads (>20 per hour) from the control plane which may indicate data exfiltration. Monitors various download actions including query results, notebooks, and models.
+- [Databricks Data Movement with Explicit Credentials](../rules/databricks_rules/databricks_data_movement_explicit_credentials.yml)
+  - Detects creation or modification of storage credentials, connections, and external locations that could facilitate data exfiltration. These operations establish direct paths to external storage and may indicate data movement preparation. Mount point creation is covered separately by Databricks.Audit.MountPointCreation.
+- [Databricks Delta Sharing IP Access Failures](../rules/databricks_rules/databricks_delta_sharing_ip_access_failures.yml)
+  - Detects blocked Delta Sharing access attempts due to IP access list restrictions, which may indicate unauthorized access attempts from unexpected locations.
+- [Databricks Delta Sharing Recipient Without IP ACLs](../rules/databricks_rules/databricks_delta_sharing_recipient_without_ip_acls.yml)
+  - Detects creation of Delta Sharing recipients without IP access list restrictions, which could allow unauthorized data access from any location.
+- [Databricks Destructive Activities](../rules/databricks_rules/databricks_destructive_activities.yml)
+  - Detects high volume destructive activities by a single user (≥50 delete actions per day) which may indicate malicious data destruction, ransomware, or insider threats.
+- [Databricks Employee Logon](../rules/databricks_rules/databricks_employee_logon.yml)
+  - Detects when a Databricks employee successfully logs into a workspace using GENIE_AUTH authentication. This is typically for legitimate support purposes but should be tracked for awareness.
+- [Databricks Global Init Script Changes](../rules/databricks_rules/databricks_global_init_script_changes.yml)
+  - Detects modifications to global initialization scripts which run on all clusters at startup. These scripts can be used for persistence or to execute malicious code across the environment. All script creations, updates, and deletions are monitored.
+- [Databricks Group Created](../rules/databricks_rules/databricks_group_created.yml)
+  - Detects creation of user groups in Databricks. Group creation may be part of normal administration or could indicate privilege escalation preparation by creating a group that will later receive elevated permissions.
+- [Databricks Group Deleted](../rules/databricks_rules/databricks_group_deleted.yml)
+  - Detects group deletions in Databricks accounts. While often part of normal cleanup processes, unauthorized group deletions could indicate access control dismantling. Successful deletions are elevated to HIGH severity.
+- [Databricks High Priority Configuration Changes](../rules/databricks_rules/databricks_config_changes_high_priority.yml)
+  - Detects high-priority security configuration changes including audit logging modifications, IP access list changes, and security-critical workspace settings. Dynamic severity adjusts based on the specific change and whether it was successful (CRITICAL for disabled audit logging, HIGH for deleted IP access lists).
+- [Databricks Install Library on All Clusters](../rules/databricks_rules/databricks_install_library_all_clusters.yml)
+  - Detects use of the deprecated installLibraryOnAllClusters action. This anti-pattern can introduce security risks by installing potentially malicious libraries across the entire environment without proper review or controls.
+- [Databricks Long-Lifetime Token Generated](../rules/databricks_rules/databricks_long_lifetime_token_generated.yml)
+  - Detects generation of personal access tokens (PATs) with lifetime exceeding 72 hours. Long-lived tokens increase the risk of credential theft and unauthorized access if compromised. Tokens with lifetime >90 days are elevated to MEDIUM, >1 year to HIGH severity.
+- [Databricks Metastore Admin Privilege Granted](../rules/databricks_rules/databricks_metastore_admin_privilege_granted.yml)
+  - Detects when metastore admin privileges are granted in Databricks through direct metastore ownership changes or addition to metastore admin groups. Metastore admins have extensive control over data access and governance policies in Unity Catalog.
+- [Databricks MFA Key Change](../rules/databricks_rules/databricks_mfa_key_change.yml)
+  - Detects addition or deletion of MFA keys on Databricks accounts. MFA key deletion may indicate an attacker weakening account security, while unexpected additions may indicate enrollment of attacker-controlled authenticators.
+- [Databricks Mount Point Creation](../rules/databricks_rules/databricks_mount_point_creation.yml)
+  - Detects creation of legacy mount points in Databricks. Mount points are deprecated in favor of Unity Catalog external locations and can pose security risks by bypassing access controls. This anti-pattern should be avoided in modern Databricks deployments.
+- [Databricks Non-SSO Login Detected](../rules/databricks_rules/databricks_non_sso_login.yml)
+  - Detects successful logins that bypass SSO (SAML). In organizations that enforce SSO, non-SAML logins may indicate credential compromise, misconfigured service accounts, or unauthorized access methods.
+- [Databricks Potential Privilege Escalation](../rules/databricks_rules/databricks_potential_privilege_escalation.yml)
+  - Detects potential privilege escalation through high volume permission modifications (≥25 per hour) by the same user. Monitors various permission-related actions across account, workspace, and Unity Catalog.
+- [Databricks Principal Removed From Group](../rules/databricks_rules/databricks_principal_removed_from_group.yml)
+  - Detects when principals (users or service principals) are removed from groups in Databricks accounts. This is often legitimate administrative activity but should be monitored for unauthorized membership changes.
+- [Databricks Repeated Access to Secrets](../rules/databricks_rules/databricks_repeated_access_to_secrets.yml)
+  - Detects repeated secret access (≥10 times in 60 minutes) which may indicate credential harvesting or unauthorized secret enumeration.
+- [Databricks Repeated Failed Login Attempts](../rules/databricks_rules/databricks_repeated_failed_login_attempts.yml)
+  - Detects repeated failed login attempts within a 60-minute window, which may indicate credential stuffing, brute force attacks, or compromised credentials.
+- [Databricks Repeated Unauthorized UC Data Requests](../rules/databricks_rules/databricks_repeated_unauthorized_uc_data_requests.yml)
+  - Detects repeated unauthorized Unity Catalog data access attempts (>15 per hour) including credential generation failures and Delta Sharing access denials.
+- [Databricks Repeated Unauthorized Unity Catalog Requests](../rules/databricks_rules/databricks_repeated_unauthorized_uc_requests.yml)
+  - Detects repeated unauthorized Unity Catalog API requests (>25 per hour) which may indicate reconnaissance, privilege enumeration, or unauthorized data access attempts.
+- [Databricks Session Hijacking - Frequent Logins](../rules/databricks_rules/databricks_session_hijacking_frequent_logins.yml)
+  - Detects rapid login events from different public IPs and user agents within a one-hourwindow for the same user. This pattern may indicate session token theft, credentialcompromise, or automated replay of stolen credentials.Detection logic:- Flags hours where a user has 3+ distinct public IPs AND 2+ distinct user agents- Z-score: hourly unique IP count > 2σ above the user's 30-day baseline mean- Cold-start: alerts on any multi-IP burst for users with no prior baselineRequires: databricks_user_session_baseline_30d lookup table.
+- [Databricks Session Hijacking - Multi Device](../rules/databricks_rules/databricks_session_hijacking_multi_device.yml)
+  - Detects the same Databricks session ID being used from a different IP address and adifferent device (user agent) within 24 hours. This is a strong indicator of sessiontoken theft, where an attacker replays a stolen session cookie from their own infrastructure.Detection logic:- Per-session: flags sessions with 2+ distinct public IPs AND 2+ distinct user agents- Excludes private IPs and known Databricks service agents- Baseline-aware: includes user's historical IP/agent diversity for triage contextRequires: databricks_user_session_baseline_30d lookup table.
+- [Databricks Session Hijacking - Session Count](../rules/databricks_rules/databricks_session_hijacking_session_count.yml)
+  - Detects a single Databricks session ID being used from 3 or more distinct public IPaddresses within a 24-hour period. While a user might occasionally switch networks,a session appearing from many distinct IPs strongly suggests token theft or session replay.Detection logic:- Per-session: flags sessions with 3+ distinct public IPs in 24 hours- Z-score: unique IP count per session > 2σ above user's baseline mean- Cold-start: alerts on any session with 3+ IPs for users with no prior baselineRequires: databricks_user_session_baseline_30d lookup table.
+- [Databricks Spike in Table Admin Activity](../rules/databricks_rules/databricks_spike_in_table_admin_activity.yml)
+  - Detects abnormal spikes in admin-level query activity per user using behavioralz-score analysis against a 30-day baseline. Admin queries include DDL/DCL commands(ALTER, DROP, GRANT, REVOKE, CREATE, UPDATE) on tables, schemas, catalogs, andUnity Catalog objects.Detection logic:- Z-score: daily admin query count > 2σ above user's baseline mean- Volume spike: daily count > 1.5x baseline mean (for low-variance users)- Historical max: daily count > 2x the user's all-time max- Cold-start: first-time admin activity with > 5 queries (no prior baseline)Requires: databricks_user_query_baseline_30d lookup table.
+- [Databricks SSO Configuration Changed](../rules/databricks_rules/databricks_sso_config_changed.yml)
+  - Detects modifications to single sign-on (SSO) configurations in Databricks. While SSO changes may be part of planned identity provider updates, unauthorized modifications could indicate attempts to tamper with authentication mechanisms. Successful changes are elevated to MEDIUM severity.
+- [Databricks Terms of Service Changes](../rules/databricks_rules/databricks_terms_of_service_changes.yml)
+  - Detects Terms of Service acceptance or distribution events for compliance tracking. These events should be monitored for audit and governance purposes.
+- [Databricks Token Scanning Activity](../rules/databricks_rules/databricks_token_scanning_activity.yml)
+  - Detects anomalously low activity from API tokens across multiple public IPs, indicatingbrute-force token probing or scanning. Attackers probe stolen or guessed tokens withsingle requests from many IPs to avoid rate limiting and detection.Detection logic:- Per-token: finds tokens with 3+ distinct public IPs AND < 2 events per IP on average- Failure rate: weights severity by the proportion of 401/403 responses- Baseline: compares IP diversity against user's normal patternsRequires: databricks_user_session_baseline_30d lookup table.
+- [Databricks TruffleHog Scan Detected](../rules/databricks_rules/databricks_trufflehog_scan_detected.yml)
+  - Detects TruffleHog secret scanning activity in Databricks. TruffleHog is a tool used to scan repositories and systems for exposed credentials and secrets. While it can be used legitimately for security audits, unauthorized scanning may indicate credential harvesting attempts. External IP sources are elevated to HIGH severity.
+- [Databricks User Account Created](../rules/databricks_rules/databricks_user_account_created.yml)
+  - Detects creation of new user accounts in Databricks. Account creation may be part of normal onboarding or could indicate an attacker establishing persistence.
+- [Databricks User Account Deleted](../rules/databricks_rules/databricks_user_account_deleted.yml)
+  - Detects user account deletions in Databricks. While often part of normal offboarding processes, unauthorized deletions could indicate malicious activity or insider threats. Successful deletions are elevated to HIGH severity.
+- [Databricks User Password Changed](../rules/databricks_rules/databricks_user_password_changed.yml)
+  - Detects password change events on Databricks accounts. May indicate legitimate password rotation or an unauthorized reset following account compromise.
+- [Databricks User Role Modified](../rules/databricks_rules/databricks_user_role_modified.yml)
+  - Detects when user roles are modified or users are added to administrative groups in Databricks. This is often legitimate administrative activity but should be monitored for unauthorized changes.
+- [Databricks Verbose Audit Logging Disabled](../rules/databricks_rules/databricks_verbose_audit_logging_disabled.yml)
+  - Detects when verbose audit logging is disabled in a Databricks workspace. Disabling verbose audit logging significantly reduces the visibility of security-relevant events and is a common technique used by attackers to hide malicious activity. Successful disabling is elevated to CRITICAL severity.
+- [Databricks Workspace Admin Privileged Role Assignment](../rules/databricks_rules/databricks_workspace_admin_privileged_role_assignment.yml)
+  - Detects when workspace-level admin privileges are granted in Databricks through direct role assignments or administrative group membership. This simplified version detects direct admin grants and additions to admin groups. For nested group resolution (detecting when groups are added to admin groups), consider implementing a correlation rule. Successful grants to the system 'admins' group are elevated to HIGH severity.
+- [Databricks Workspace-Level Configuration Changes](../rules/databricks_rules/databricks_config_changes_workspace_level.yml)
+  - Detects configuration changes at the Databricks workspace level. Workspace-level changes affect a single workspace and include settings like cluster configurations, notebook settings, and workspace-specific security controls.
 
 
 ## Docusign
@@ -2531,6 +2621,25 @@
 
 - [Tracebit Alert](../rules/tracebit_rules/tracebit_alert.yml)
   - Tracebit maintains security canaries across your organization to detect potential intrusions.This alert indicates that Tracebit has detected activity on security canaries.
+
+
+# U
+
+- [Upwind](#upwind)
+
+
+## Upwind
+
+- [Upwind API Detection Passthrough](../rules/upwind_rules/upwind_api_detection_passthrough.yml)
+  - Re-raises Upwind API security detections in Panther. Covers broken authentication, authorization flaws, injection, mass assignment, token misuse, and sensitive data exposure patterns detected at the API layer.
+- [Upwind Network Detection Passthrough](../rules/upwind_rules/upwind_network_detection_passthrough.yml)
+  - Re-raises Upwind network security detections in Panther. Covers port scans, DoS activity, DNS anomalies, DNS-over-HTTPS abuse, and other anomalous network behaviors.
+- [Upwind Posture Detection Passthrough](../rules/upwind_rules/upwind_posture_detection_passthrough.yml)
+  - Re-raises Upwind cloud posture and CSPM detections in Panther. Covers cloud misconfigurations, exposed secrets, configuration drift, and CSPM policy violations.
+- [Upwind Runtime Detection Passthrough](../rules/upwind_rules/upwind_runtime_detection_passthrough.yml)
+  - Re-raises Upwind runtime security detections in Panther. Covers process execution anomalies, syscall-based threats, container escapes, and other host/container behavioral threats.
+- [Upwind Vulnerability Detection Passthrough](../rules/upwind_rules/upwind_vulnerability_detection_passthrough.yml)
+  - Re-raises Upwind vulnerability detections in Panther. Covers exploitable CVEs identified in runtime containers, VMs, and serverless environments, prioritized by active exposure.
 
 
 # W
