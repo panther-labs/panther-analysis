@@ -1,0 +1,17 @@
+AnalysisType: pack
+PackID: PantherManaged.Databricks
+Description: Group of all Databricks detections
+PackDefinition:
+  IDs:
+    # Globals
+    - panther_databricks_helpers
+    # Scheduled Queries
+    - Query.Databricks.SessionHijackingFrequentLogins
+    - Query.Databricks.SessionHijackingMultiDevice
+    - Query.Databricks.SessionHijackingSessionCount
+    - Query.Databricks.SpikeInTableAdminActivity
+    - Query.Databricks.TokenScanningActivity
+    # Lookup Tables
+    - databricks_user_session_baseline_30d
+    - databricks_user_query_baseline_30d
+DisplayName: "Panther Databricks Pack"
