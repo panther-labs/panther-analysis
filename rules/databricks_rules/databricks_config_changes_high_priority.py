@@ -51,7 +51,9 @@ def title(event):
 
 def dedup(event):
     config_key, _ = get_config_key_value(event)
-    return f"critical_config_change_{config_key}"
+    # IP access list events don't have workspaceConfKeys, so fall back to actionName
+    key = config_key or event.get("actionName", "unknown")
+    return f"critical_config_change_{key}"
 
 
 def alert_context(event):

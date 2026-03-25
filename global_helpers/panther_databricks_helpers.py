@@ -33,12 +33,11 @@ CONFIG_ACTIONS = {
     "sso": ["create", "update", "delete"],
 }
 
-# IP access list actions
+# IP access list configuration actions (not including IpAccessDenied, which is a login denial)
 IP_ACCESS_ACTIONS = [
     "createIpAccessList",
     "updateIpAccessList",
     "deleteIpAccessList",
-    "IpAccessDenied",
 ]
 
 # Privilege modification actions (broad set for escalation detection)
