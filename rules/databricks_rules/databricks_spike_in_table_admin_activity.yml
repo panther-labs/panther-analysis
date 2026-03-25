@@ -16,16 +16,9 @@ Reports:
     - TA0004:T1078 # Privilege Escalation - Valid Accounts
     - TA0003:T1098 # Persistence - Account Manipulation
 Description: |
-  Detects abnormal spikes in admin-level query activity per user using behavioral
-  z-score analysis against a 30-day baseline. Admin queries include DDL/DCL commands
-  (ALTER, DROP, GRANT, REVOKE, CREATE, UPDATE) on tables, schemas, catalogs, and
-  Unity Catalog objects.
-
-  Detection logic:
-  - Z-score: daily admin query count > 2σ above user's baseline mean
-  - Volume spike: daily count > 1.5x baseline mean (for low-variance users)
-  - Historical max: daily count > 2x the user's all-time max
-  - Cold-start: first-time admin activity with > 5 queries (no prior baseline)
+  Detects abnormal spikes in admin-level query activity per user against a 30-day
+  behavioral baseline. Admin queries include DDL/DCL commands (ALTER, DROP, GRANT,
+  REVOKE, CREATE, UPDATE) on tables, schemas, catalogs, and Unity Catalog objects.
 
   Requires: databricks_user_query_baseline_30d lookup table.
 Runbook: |

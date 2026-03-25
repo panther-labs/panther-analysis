@@ -16,8 +16,8 @@ Severity: Medium
 Threshold: 21
 DedupPeriodMinutes: 60
 Description: >
-  Detects high volume data downloads (>20 per hour) from the control plane which may indicate
-  data exfiltration. Monitors various download actions including query results, notebooks, and models.
+  Detects high volume data downloads from the control plane which may indicate
+  data exfiltration. Monitors download actions including query results, notebooks, and models.
 Runbook: |
   1. Query audit logs for all download actions by this user in the past 24 hours to calculate total volume
   2. Check if the downloaded data contains sensitive classifications or PII in the 6 hours around this alert

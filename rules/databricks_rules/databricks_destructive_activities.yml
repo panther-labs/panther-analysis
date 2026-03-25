@@ -16,8 +16,8 @@ Severity: Medium
 Threshold: 50
 DedupPeriodMinutes: 1440
 Description: >
-  Detects high volume destructive activities by a single user (≥50 delete actions per day)
-  which may indicate malicious data destruction, ransomware, or insider threats.
+  Detects high volume destructive activities by a single user which may indicate
+  malicious data destruction, ransomware, or insider threats.
 Runbook: |
   1. Query audit logs for all delete actions by this user in the past 7 days to identify patterns
   2. Check if deleted resources can be recovered or if backups exist

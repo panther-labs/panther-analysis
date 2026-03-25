@@ -451,11 +451,14 @@ def is_config_change(event, config_category=None):
             return action_name in CONFIG_ACTIONS["sso"]
         return False
 
-    # Check any config change
-    for actions in CONFIG_ACTIONS.values():
-        if action_name in actions:
-            return True
-    return False
+    # Check any config change, with service name guard to prevent
+    # generic SSO actions ("create", "update", "delete") from matching non-config events
+    service_action_map = {
+        "workspace": CONFIG_ACTIONS["workspace"],
+        "accounts": CONFIG_ACTIONS["account"],
+        "ssoConfigBackend": CONFIG_ACTIONS["sso"],
+    }
+    return action_name in service_action_map.get(service_name, [])
 
 
 def get_config_key_value(event):

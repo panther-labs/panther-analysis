@@ -21,11 +21,6 @@ Description: |
   brute-force token probing or scanning. Attackers probe stolen or guessed tokens with
   single requests from many IPs to avoid rate limiting and detection.
 
-  Detection logic:
-  - Per-token: finds tokens with 3+ distinct public IPs AND < 2 events per IP on average
-  - Failure rate: weights severity by the proportion of 401/403 responses
-  - Baseline: compares IP diversity against user's normal patterns
-
   Requires: databricks_user_session_baseline_30d lookup table.
 Runbook: |
   1. Check token_id and whether it's a legitimate token for the user

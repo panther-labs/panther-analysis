@@ -18,12 +18,8 @@ Reports:
 Description: |
   Detects rapid login events from different public IPs and user agents within a one-hour
   window for the same user. This pattern may indicate session token theft, credential
-  compromise, or automated replay of stolen credentials.
-
-  Detection logic:
-  - Flags hours where a user has 3+ distinct public IPs AND 2+ distinct user agents
-  - Z-score: hourly unique IP count > 2σ above the user's 30-day baseline mean
-  - Cold-start: alerts on any multi-IP burst for users with no prior baseline
+  compromise, or automated replay of stolen credentials. Uses behavioral baselining to
+  suppress alerts for users who normally log in from many IPs.
 
   Requires: databricks_user_session_baseline_30d lookup table.
 Runbook: |
