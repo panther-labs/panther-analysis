@@ -11,6 +11,7 @@
 - [P](#P)
 - [S](#S)
 - [T](#T)
+- [U](#U)
 - [W](#W)
 - [Z](#Z)
 # A
@@ -305,10 +306,10 @@
   - A user has subsequent logins from two geographic locations that are very far apart
 - [KMS CMK Disabled or Deleted](../rules/aws_cloudtrail_rules/aws_kms_cmk_loss.yml)
   - A KMS Customer Managed Key was disabled or scheduled for deletion. This could potentially lead to permanent loss of encrypted data.
-- [Lambda Code Updated by IAM User](../rules/aws_cloudtrail_rules/aws_overwrite_lambda_code.yml)
-  - Detects when Lambda function code is updated using direct IAM user credentials instead of assumed roles. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity. Modern best practice uses roles for programmatic access, making IAM user activity on Lambda code updates a high-confidence security signal.
-- [Lambda Configuration with Layers Updated by IAM User](../rules/aws_cloudtrail_rules/aws_add_malicious_lambda_extension.yml)
-  - Detects when Lambda function configuration is updated with layers using direct IAM user credentials instead of assumed roles. Lambda layers can execute code before the main function, making them a stealthy persistence mechanism. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity attempting to inject malicious layers.
+- [Lambda Code Updated by User](../rules/aws_cloudtrail_rules/aws_overwrite_lambda_code.yml)
+  - Detects when Lambda function code is updated by an IAM user, federated user, or AWS SSO user. This may indicate compromised credentials, a developer bypassing CI/CD guardrails, or insider threat activity.
+- [Lambda Configuration Updated with Layers by User](../rules/aws_cloudtrail_rules/aws_add_malicious_lambda_extension.yml)
+  - Detects when Lambda function configuration is updated with layers by an IAM user, federated user, or AWS SSO user. Lambda layers can execute code before the main function, making them a stealthy persistence mechanism. This may indicate compromised credentials, a developer bypassing CI/CD guardrails, or insider threat activity.
 - [Lambda CRUD Actions](../rules/aws_cloudtrail_rules/aws_lambda_crud.yml)
   - Unauthorized lambda Create, Read, Update, or Delete event occurred.
 - [Logins Without MFA](../rules/aws_cloudtrail_rules/aws_console_login_without_mfa.yml)
@@ -2531,6 +2532,25 @@
 
 - [Tracebit Alert](../rules/tracebit_rules/tracebit_alert.yml)
   - Tracebit maintains security canaries across your organization to detect potential intrusions.This alert indicates that Tracebit has detected activity on security canaries.
+
+
+# U
+
+- [Upwind](#upwind)
+
+
+## Upwind
+
+- [Upwind API Detection Passthrough](../rules/upwind_rules/upwind_api_detection_passthrough.yml)
+  - Re-raises Upwind API security detections in Panther. Covers broken authentication, authorization flaws, injection, mass assignment, token misuse, and sensitive data exposure patterns detected at the API layer.
+- [Upwind Network Detection Passthrough](../rules/upwind_rules/upwind_network_detection_passthrough.yml)
+  - Re-raises Upwind network security detections in Panther. Covers port scans, DoS activity, DNS anomalies, DNS-over-HTTPS abuse, and other anomalous network behaviors.
+- [Upwind Posture Detection Passthrough](../rules/upwind_rules/upwind_posture_detection_passthrough.yml)
+  - Re-raises Upwind cloud posture and CSPM detections in Panther. Covers cloud misconfigurations, exposed secrets, configuration drift, and CSPM policy violations.
+- [Upwind Runtime Detection Passthrough](../rules/upwind_rules/upwind_runtime_detection_passthrough.yml)
+  - Re-raises Upwind runtime security detections in Panther. Covers process execution anomalies, syscall-based threats, container escapes, and other host/container behavioral threats.
+- [Upwind Vulnerability Detection Passthrough](../rules/upwind_rules/upwind_vulnerability_detection_passthrough.yml)
+  - Re-raises Upwind vulnerability detections in Panther. Covers exploitable CVEs identified in runtime containers, VMs, and serverless environments, prioritized by active exposure.
 
 
 # W

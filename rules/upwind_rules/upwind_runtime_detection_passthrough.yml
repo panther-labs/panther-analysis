@@ -1,0 +1,174 @@
+AnalysisType: rule
+RuleID: Upwind.Detection.Runtime.Passthrough
+DisplayName: Upwind Runtime Detection Passthrough
+Description: >
+  Re-raises Upwind runtime security detections in Panther. Covers process execution anomalies,
+  syscall-based threats, container escapes, and other host/container behavioral threats.
+Runbook: |
+  1. Query Upwind.Detections for all detections against the same resource.name and resource.namespace in the 24 hours before this alert to determine if this is an isolated event or part of a pattern
+  2. Review the commands observed in triggers[].events[].data.command and the process user in triggers[].events[].data.user_name to assess whether the activity is consistent with normal workload behavior for this resource
+  3. Search for other HIGH or CRITICAL severity alerts from the same resource.cloud_account_id or resource.cluster_id in the past 7 days to identify lateral movement or broader compromise
+Reference: https://docs.upwind.io/restapi/v1/get-threat-detection
+Enabled: true
+Filename: upwind_runtime_detection_passthrough.py
+Severity: Medium
+Status: Experimental
+LogTypes:
+  - Upwind.Detections
+DedupPeriodMinutes: 720
+Threshold: 1
+Reports:
+  MITRE ATT&CK:
+    - TA0002:T1059  # Execution: Command and Scripting Interpreter
+    - TA0004:T1611  # Privilege Escalation: Escape to Host
+Tags:
+  - Upwind
+  - Passthrough
+  - Runtime
+  - Execution
+  - Privilege Escalation
+  - Command and Scripting Interpreter
+Tests:
+  - Name: Critical Runtime Detection
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2026-03-18T10:00:00Z",
+        "p_log_type": "Upwind.Detections",
+        "p_row_id": "aabbcc112233aabbcc112233aabbcc11",
+        "p_schema_version": 0,
+        "category": "Container Execution",
+        "description": "Suspicious process execution detected inside a container.",
+        "first_seen_time": "2026-03-18T09:55:00Z",
+        "id": "det-runtime-001",
+        "last_seen_time": "2026-03-18T10:00:00Z",
+        "occurrence_count": 3,
+        "severity": "CRITICAL",
+        "status": "open",
+        "title": "Suspicious Container Process Execution",
+        "type": "runtime_threat",
+        "upwind_console_link": "https://console.upwind.io/detections/det-runtime-001",
+        "resource": {
+          "cloud_account_id": "123456789012",
+          "cloud_account_name": "prod-aws",
+          "cloud_provider": "AWS",
+          "cluster_id": "cluster-abc123",
+          "name": "api-server-pod",
+          "namespace": "production",
+          "region": "us-east-1",
+          "type": "Pod",
+          "upwind_asset_id": "asset-abc-001",
+          "internet_exposure": {
+            "ingress": {
+              "active_communication": true
+            }
+          }
+        },
+        "mitre_attacks": [
+          {
+            "tactic_id": "TA0002",
+            "tactic_name": "Execution",
+            "technique_id": "T1059",
+            "technique_name": "Command and Scripting Interpreter"
+          }
+        ],
+        "triggers": [
+          {
+            "policy_id": "pol-001",
+            "policy_name": "Detect Suspicious Shell Execution",
+            "events": [
+              {
+                "timestamp": "2026-03-18T09:55:00Z",
+                "type": "process_execution",
+                "description": "bash executed inside container",
+                "data": {
+                  "command": "/bin/bash -c whoami",
+                  "user_name": "root",
+                  "execution_count": 3
+                }
+              }
+            ]
+          }
+        ]
+      }
+  - Name: Non-Runtime Category - Not Matched
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2026-03-18T10:00:00Z",
+        "p_log_type": "Upwind.Detections",
+        "p_row_id": "bb2233dd4455bb2233dd4455bb2233dd",
+        "p_schema_version": 0,
+        "category": "Network Anomaly",
+        "description": "Port scanning detected.",
+        "first_seen_time": "2026-03-18T09:55:00Z",
+        "id": "det-network-001",
+        "last_seen_time": "2026-03-18T10:00:00Z",
+        "occurrence_count": 5,
+        "severity": "HIGH",
+        "status": "open",
+        "title": "Internal Port Scan",
+        "type": "network_threat",
+        "resource": {
+          "cloud_account_id": "123456789012",
+          "name": "scan-pod",
+          "region": "us-east-1",
+          "type": "Pod"
+        },
+        "mitre_attacks": [],
+        "triggers": []
+      }
+  - Name: Compound Category Container Vulnerability - Defers to Vulnerability Rule
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2026-03-18T10:00:00Z",
+        "p_log_type": "Upwind.Detections",
+        "p_row_id": "dd4455ee6677dd4455ee6677dd4455ee",
+        "p_schema_version": 0,
+        "category": "Container Vulnerability",
+        "description": "Critical CVE found in a running container image.",
+        "first_seen_time": "2026-03-18T09:55:00Z",
+        "id": "det-runtime-compound-001",
+        "last_seen_time": "2026-03-18T10:00:00Z",
+        "occurrence_count": 1,
+        "severity": "CRITICAL",
+        "status": "open",
+        "title": "Critical CVE in Container",
+        "type": "vulnerability",
+        "resource": {
+          "cloud_account_id": "123456789012",
+          "name": "api-server-pod",
+          "region": "us-east-1",
+          "type": "Pod"
+        },
+        "mitre_attacks": [],
+        "triggers": []
+      }
+  - Name: Runtime Category with Unknown Severity - Suppressed
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2026-03-18T10:00:00Z",
+        "p_log_type": "Upwind.Detections",
+        "p_row_id": "cc3344ee5566cc3344ee5566cc3344ee",
+        "p_schema_version": 0,
+        "category": "Process Execution",
+        "description": "Informational process event.",
+        "first_seen_time": "2026-03-18T09:55:00Z",
+        "id": "det-runtime-002",
+        "last_seen_time": "2026-03-18T10:00:00Z",
+        "occurrence_count": 1,
+        "severity": "INFO",
+        "status": "open",
+        "title": "Low-Level Process Observed",
+        "type": "runtime_event",
+        "resource": {
+          "cloud_account_id": "123456789012",
+          "name": "worker-pod",
+          "region": "us-east-1",
+          "type": "Pod"
+        },
+        "mitre_attacks": [],
+        "triggers": []
+      }
