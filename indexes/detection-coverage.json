@@ -3781,7 +3781,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects high volume data downloads (>20 per hour) from the control plane which may indicate data exfiltration. Monitors various download actions including query results, notebooks, and models.",
+        "Description": "Detects high volume data downloads from the control plane which may indicate data exfiltration. Monitors download actions including query results, notebooks, and models.",
         "DisplayName": "Databricks Data Downloads From Control Plane",
         "LogTypes": [
             "Databricks.Audit"
@@ -3817,7 +3817,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects high volume destructive activities by a single user (\u226550 delete actions per day) which may indicate malicious data destruction, ransomware, or insider threats.",
+        "Description": "Detects high volume destructive activities by a single user which may indicate malicious data destruction, ransomware, or insider threats.",
         "DisplayName": "Databricks Destructive Activities",
         "LogTypes": [
             "Databricks.Audit"
@@ -3862,7 +3862,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects high-priority security configuration changes including audit logging modifications, IP access list changes, and security-critical workspace settings. Dynamic severity adjusts based on the specific change and whether it was successful (CRITICAL for disabled audit logging, HIGH for deleted IP access lists).",
+        "Description": "Detects high-priority security configuration changes including audit logging modifications, IP access list changes, and security-critical workspace settings. Severity is elevated for successful changes to high-risk settings.",
         "DisplayName": "Databricks High Priority Configuration Changes",
         "LogTypes": [
             "Databricks.Audit"
@@ -3979,7 +3979,7 @@
     },
     {
         "AnalysisType": "Scheduled Rule",
-        "Description": "Detects rapid login events from different public IPs and user agents within a one-hourwindow for the same user. This pattern may indicate session token theft, credentialcompromise, or automated replay of stolen credentials.Detection logic:- Flags hours where a user has 3+ distinct public IPs AND 2+ distinct user agents- Z-score: hourly unique IP count > 2\u03c3 above the user's 30-day baseline mean- Cold-start: alerts on any multi-IP burst for users with no prior baselineRequires: databricks_user_session_baseline_30d lookup table.",
+        "Description": "Detects rapid login events from different public IPs and user agents within a one-hourwindow for the same user. This pattern may indicate session token theft, credentialcompromise, or automated replay of stolen credentials. Uses behavioral baselining tosuppress alerts for users who normally log in from many IPs.Requires: databricks_user_session_baseline_30d lookup table.",
         "DisplayName": "Databricks Session Hijacking - Frequent Logins",
         "LogTypes": [
             "Databricks.Audit"
@@ -4006,7 +4006,7 @@
     },
     {
         "AnalysisType": "Scheduled Rule",
-        "Description": "Detects abnormal spikes in admin-level query activity per user using behavioralz-score analysis against a 30-day baseline. Admin queries include DDL/DCL commands(ALTER, DROP, GRANT, REVOKE, CREATE, UPDATE) on tables, schemas, catalogs, andUnity Catalog objects.Detection logic:- Z-score: daily admin query count > 2\u03c3 above user's baseline mean- Volume spike: daily count > 1.5x baseline mean (for low-variance users)- Historical max: daily count > 2x the user's all-time max- Cold-start: first-time admin activity with > 5 queries (no prior baseline)Requires: databricks_user_query_baseline_30d lookup table.",
+        "Description": "Detects abnormal spikes in admin-level query activity per user against a 30-daybehavioral baseline. Admin queries include DDL/DCL commands (ALTER, DROP, GRANT,REVOKE, CREATE, UPDATE) on tables, schemas, catalogs, and Unity Catalog objects.Requires: databricks_user_query_baseline_30d lookup table.",
         "DisplayName": "Databricks Spike in Table Admin Activity",
         "LogTypes": [
             "Databricks.Audit"
@@ -4033,7 +4033,7 @@
     },
     {
         "AnalysisType": "Scheduled Rule",
-        "Description": "Detects anomalously low activity from API tokens across multiple public IPs, indicatingbrute-force token probing or scanning. Attackers probe stolen or guessed tokens withsingle requests from many IPs to avoid rate limiting and detection.Detection logic:- Per-token: finds tokens with 3+ distinct public IPs AND < 2 events per IP on average- Failure rate: weights severity by the proportion of 401/403 responses- Baseline: compares IP diversity against user's normal patternsRequires: databricks_user_session_baseline_30d lookup table.",
+        "Description": "Detects anomalously low activity from API tokens across multiple public IPs, indicatingbrute-force token probing or scanning. Attackers probe stolen or guessed tokens withsingle requests from many IPs to avoid rate limiting and detection.Requires: databricks_user_session_baseline_30d lookup table.",
         "DisplayName": "Databricks Token Scanning Activity",
         "LogTypes": [
             "Databricks.Audit"
