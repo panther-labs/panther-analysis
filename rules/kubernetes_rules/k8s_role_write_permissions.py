@@ -30,7 +30,7 @@ def rule(event):
 
     # Check if role grants write permissions
     request_object = event.udm("requestObject") or {}
-    rules = request_object.get("rules", [])
+    rules = request_object.get("rules") or []
 
     for rule_entry in rules:
         verbs = rule_entry.get("verbs", [])
@@ -65,7 +65,7 @@ def dedup(event):
 def severity(event):
     """Increase severity for dangerous combinations of write permissions."""
     request_object = event.udm("requestObject") or {}
-    rules = request_object.get("rules", [])
+    rules = request_object.get("rules") or []
     resource = event.udm("resource") or ""
 
     # Check for high-risk resource + write verb combinations
@@ -103,7 +103,7 @@ def severity(event):
 
 def alert_context(event):
     request_object = event.udm("requestObject") or {}
-    rules = request_object.get("rules", [])
+    rules = request_object.get("rules") or []
 
     # Extract only the rules that contain write verbs
     write_rules = []

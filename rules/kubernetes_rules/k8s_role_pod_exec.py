@@ -21,7 +21,7 @@ def rule(event):
 
     # Check if role grants pods/exec permissions
     request_object = event.udm("requestObject") or {}
-    rules = request_object.get("rules", [])
+    rules = request_object.get("rules") or []
 
     for rule_entry in rules:
         resources = rule_entry.get("resources", [])
@@ -67,7 +67,7 @@ def severity(event):
 
 def alert_context(event):
     request_object = event.udm("requestObject") or {}
-    rules = request_object.get("rules", [])
+    rules = request_object.get("rules") or []
 
     # Extract only the rules that grant pods/exec
     exec_rules = []

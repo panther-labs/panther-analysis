@@ -21,7 +21,7 @@ def rule(event):
 
     # Check request object for node/proxy permissions
     request_object = event.udm("requestObject") or {}
-    rules = request_object.get("rules", [])
+    rules = request_object.get("rules") or []
 
     for rule_config in rules:
         resources = rule_config.get("resources", [])
@@ -57,7 +57,7 @@ def dedup(event):
 
 def alert_context(event):
     request_object = event.udm("requestObject") or {}
-    rules = request_object.get("rules", [])
+    rules = request_object.get("rules") or []
 
     # Extract rules with node/proxy permissions
     dangerous_rules = []
