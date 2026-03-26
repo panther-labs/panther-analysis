@@ -16,7 +16,9 @@ def severity(event):
 
     if active_count >= 5:
         return "CRITICAL"
-    return "HIGH"
+    if active_count >= 3:
+        return "HIGH"
+    return "DEFAULT"
 
 
 def dedup(event):
