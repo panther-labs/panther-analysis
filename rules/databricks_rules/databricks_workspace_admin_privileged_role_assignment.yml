@@ -120,6 +120,35 @@ Tests:
         targetUserName: "attacker@example.com"
       response:
         statusCode: 403
+  - Name: Remove Admin Should Not Alert
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "WORKSPACE_LEVEL"
+      serviceName: "accounts"
+      actionName: "removeAdmin"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        targetUserName: "user@example.com"
+      response:
+        statusCode: 200
+  - Name: Remove From Admin Group Should Not Alert
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "WORKSPACE_LEVEL"
+      serviceName: "accounts"
+      actionName: "removePrincipalFromGroup"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        principal: "user@example.com"
+        targetGroupName: "admins"
+      response:
+        statusCode: 200
   - Name: Account-Level Without Workspace Context
     ExpectedResult: false
     Log:

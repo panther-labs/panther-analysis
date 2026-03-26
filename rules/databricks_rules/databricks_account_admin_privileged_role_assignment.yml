@@ -95,6 +95,33 @@ Tests:
         email: "admin@example.com"
       requestParams:
         targetUserName: "user@example.com"
+  - Name: Remove Admin Should Not Alert
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "ACCOUNT_LEVEL"
+      serviceName: "accounts"
+      actionName: "removeAdmin"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        targetUserName: "user@example.com"
+      response:
+        statusCode: 200
+  - Name: Remove From Admin Group Should Not Alert
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "ACCOUNT_LEVEL"
+      serviceName: "accounts"
+      actionName: "removePrincipalFromGroup"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        principal: "user@example.com"
+        targetGroupName: "account-admins"
+      response:
+        statusCode: 200
   - Name: Non-Admin Group
     ExpectedResult: false
     Log:

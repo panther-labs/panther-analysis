@@ -7,13 +7,18 @@ from panther_databricks_helpers import (
     is_admin_privilege_action,
 )
 
+REMOVAL_ACTIONS = ["removeAdmin", "removePrincipalFromGroup"]
+
 
 def rule(event):
     # Must be account-level event
     if event.get("auditLevel") != "ACCOUNT_LEVEL":
         return False
 
-    # Use helper to check for admin privilege actions
+    # Exclude privilege removals — this rule detects grants only
+    if event.get("actionName") in REMOVAL_ACTIONS:
+        return False
+
     return is_admin_privilege_action(event)
 
 

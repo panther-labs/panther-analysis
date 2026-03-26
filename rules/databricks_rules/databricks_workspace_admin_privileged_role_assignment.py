@@ -6,6 +6,8 @@ from panther_databricks_helpers import (
     is_admin_privilege_action,
 )
 
+REMOVAL_ACTIONS = ["removeAdmin", "removePrincipalFromGroup"]
+
 
 def rule(event):
     # Only match workspace-level events to avoid overlap with the
@@ -13,7 +15,10 @@ def rule(event):
     if event.get("auditLevel") != "WORKSPACE_LEVEL":
         return False
 
-    # Use helper to check for admin privilege actions
+    # Exclude privilege removals — this rule detects grants only
+    if event.get("actionName") in REMOVAL_ACTIONS:
+        return False
+
     return is_admin_privilege_action(event)
 
 
@@ -31,7 +36,7 @@ def title(event):
     status = "Granted" if status_code == 200 else "Attempted to grant"
 
     # Check if it's direct admin action or group-based
-    if action in ["setAdmin", "addAdmin", "removeAdmin"]:
+    if action in ["setAdmin", "addAdmin"]:
         return (
             f"{status} workspace admin privileges to {target}"
             f" in workspace {workspace} by {actor}"
