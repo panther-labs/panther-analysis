@@ -30,10 +30,10 @@ def rule(event):
 
     # Check if role grants write permissions
     request_object = event.udm("requestObject") or {}
-    rules = request_object.get("rules", [])
+    rules = request_object.get("rules") or []
 
     for rule_entry in rules:
-        verbs = rule_entry.get("verbs", [])
+        verbs = rule_entry.get("verbs") or []
         # Check if any write verb is present
         if any(verb in WRITE_VERBS for verb in verbs):
             return True
@@ -65,13 +65,13 @@ def dedup(event):
 def severity(event):
     """Increase severity for dangerous combinations of write permissions."""
     request_object = event.udm("requestObject") or {}
-    rules = request_object.get("rules", [])
+    rules = request_object.get("rules") or []
     resource = event.udm("resource") or ""
 
     # Check for high-risk resource + write verb combinations
     for rule_entry in rules:
-        resources_list = rule_entry.get("resources", [])
-        verbs = rule_entry.get("verbs", [])
+        resources_list = rule_entry.get("resources") or []
+        verbs = rule_entry.get("verbs") or []
 
         # Critical: Write access to secrets or RBAC resources
         sensitive_resources = {
@@ -103,12 +103,12 @@ def severity(event):
 
 def alert_context(event):
     request_object = event.udm("requestObject") or {}
-    rules = request_object.get("rules", [])
+    rules = request_object.get("rules") or []
 
     # Extract only the rules that contain write verbs
     write_rules = []
     for rule_entry in rules:
-        verbs = rule_entry.get("verbs", [])
+        verbs = rule_entry.get("verbs") or []
         if any(verb in WRITE_VERBS for verb in verbs):
             write_rules.append(rule_entry)
 
