@@ -2,6 +2,7 @@
 # Unit tests for functions inside global_helpers
 
 # pylint: disable=C0302 (too-many-lines)
+# pylint: disable=R0904 (too-many-public-methods)
 
 import contextlib
 import datetime
@@ -32,6 +33,7 @@ import panther_greynoise_helpers as p_greynoise_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
 import panther_lookuptable_helpers as p_l_h  # pylint: disable=C0413
 import panther_notion_helpers as p_notion_h  # pylint: disable=C0413
+import panther_otx_helpers as p_otx_h  # pylint: disable=C0413
 import panther_snyk_helpers as p_snyk_h  # pylint: disable=C0413
 import panther_tailscale_helpers as p_tscale_h  # pylint: disable=C0413
 import panther_tines_helpers as p_tines_h  # pylint: disable=C0413
@@ -579,6 +581,192 @@ class TestGreyNoiseV3BusinessService(unittest.TestCase):
         """Known business service should return INFO severity"""
         sev = p_greynoise_h.GreyNoiseV3Severity(self.event, "ClientIP")
         self.assertEqual(sev, "INFO")
+
+
+class TestOTXPulseIntelligence(unittest.TestCase):
+    def setUp(self):
+        self.event = PantherEvent(
+            {
+                "p_enrichment": {
+                    "pulses_otx": {
+                        "ClientIP": {
+                            "id": "6141bd9b4e9aaa4bdd26b2a8",
+                            "name": "APT28 Infrastructure",
+                            "description": "Known C2 infrastructure used by APT28.",
+                            "created": "2024-01-15T10:30:00",
+                            "modified": "2024-06-01T08:00:00",
+                            "tags": ["apt28", "c2", "russia"],
+                            "industries": ["government", "defense"],
+                            "malware_families": ["X-Agent", "Sofacy"],
+                            "references": ["https://example.com/apt28-report"],
+                            "tlp": "white",
+                            "adversary": "APT28",
+                            "target_countries": ["US", "DE"],
+                            "attack_ids": ["T1071", "T1059"],
+                            "indicator": "198.51.100.23",
+                            "indicator_type": "IPv4",
+                            "indicator_created": "2024-01-15T10:30:00",
+                            "indicator_expiration": "2025-01-15T10:30:00",
+                        }
+                    }
+                }
+            }
+        )
+
+    def test_otx_object_exists(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertIsNotNone(otx)
+
+    def test_otx_object_none(self):
+        event = PantherEvent({"p_enrichment": {}})
+        otx = p_otx_h.get_otx_object(event)
+        self.assertIsNone(otx)
+
+    def test_indicator(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertEqual(otx.indicator("ClientIP"), "198.51.100.23")
+
+    def test_indicator_type(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertEqual(otx.indicator_type("ClientIP"), "IPv4")
+
+    def test_pulse_id(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertEqual(otx.pulse_id("ClientIP"), "6141bd9b4e9aaa4bdd26b2a8")
+
+    def test_name(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertEqual(otx.name("ClientIP"), "APT28 Infrastructure")
+
+    def test_description(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertEqual(otx.description("ClientIP"), "Known C2 infrastructure used by APT28.")
+
+    def test_adversary(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertEqual(otx.adversary("ClientIP"), "APT28")
+
+    def test_malware_families(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertEqual(otx.malware_families("ClientIP"), ["X-Agent", "Sofacy"])
+
+    def test_malware_families_string(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertEqual(otx.malware_families_string("ClientIP"), "X-Agent, Sofacy")
+
+    def test_tags(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertEqual(otx.tags("ClientIP"), ["apt28", "c2", "russia"])
+
+    def test_tags_string(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertEqual(otx.tags_string("ClientIP"), "apt28, c2, russia")
+
+    def test_industries(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertEqual(otx.industries("ClientIP"), ["government", "defense"])
+
+    def test_references(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertEqual(otx.references("ClientIP"), ["https://example.com/apt28-report"])
+
+    def test_tlp(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertEqual(otx.tlp("ClientIP"), "white")
+
+    def test_target_countries(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertEqual(otx.target_countries("ClientIP"), ["US", "DE"])
+
+    def test_attack_ids(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertEqual(otx.attack_ids("ClientIP"), ["T1071", "T1059"])
+
+    def test_attack_ids_string(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertEqual(otx.attack_ids_string("ClientIP"), "T1071, T1059")
+
+    def test_url(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertEqual(
+            otx.url("ClientIP"),
+            "https://otx.alienvault.com/pulse/6141bd9b4e9aaa4bdd26b2a8",
+        )
+
+    def test_created(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        result = otx.created("ClientIP")
+        self.assertIsNotNone(result)
+        self.assertEqual(result.year, 2024)
+        self.assertEqual(result.month, 1)
+
+    def test_modified(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        result = otx.modified("ClientIP")
+        self.assertIsNotNone(result)
+        self.assertEqual(result.year, 2024)
+        self.assertEqual(result.month, 6)
+
+    def test_indicator_created(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        result = otx.indicator_created("ClientIP")
+        self.assertIsNotNone(result)
+        self.assertEqual(result.year, 2024)
+
+    def test_indicator_expiration(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        result = otx.indicator_expiration("ClientIP")
+        self.assertIsNotNone(result)
+        self.assertEqual(result.year, 2025)
+
+    def test_context(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        context = otx.context("ClientIP")
+        self.assertEqual(context["Indicator"], "198.51.100.23")
+        self.assertEqual(context["IndicatorType"], "IPv4")
+        self.assertEqual(context["PulseName"], "APT28 Infrastructure")
+        self.assertEqual(context["Adversary"], "APT28")
+        self.assertEqual(context["MalwareFamilies"], ["X-Agent", "Sofacy"])
+        self.assertEqual(context["Tags"], ["apt28", "c2", "russia"])
+        self.assertEqual(context["TLP"], "white")
+        self.assertIn("otx.alienvault.com", context["OTX_URL"])
+
+    def test_no_match_field(self):
+        otx = p_otx_h.get_otx_object(self.event)
+        self.assertIsNone(otx.indicator("NonExistentField"))
+
+    def test_severity_adversary_and_malware(self):
+        sev = p_otx_h.otx_severity_from_pulse("APT28", ["X-Agent"])
+        self.assertEqual(sev, "CRITICAL")
+
+    def test_severity_adversary_only(self):
+        sev = p_otx_h.otx_severity_from_pulse("APT28", [])
+        self.assertEqual(sev, "HIGH")
+
+    def test_severity_malware_only(self):
+        sev = p_otx_h.otx_severity_from_pulse("", ["Mirai"])
+        self.assertEqual(sev, "HIGH")
+
+    def test_severity_no_adversary_no_malware(self):
+        sev = p_otx_h.otx_severity_from_pulse("", [])
+        self.assertEqual(sev, "MEDIUM")
+
+    def test_otx_severity_from_event(self):
+        sev = p_otx_h.otx_severity(self.event, "ClientIP")
+        self.assertEqual(sev, "CRITICAL")
+
+    def test_otx_severity_no_enrichment(self):
+        event = PantherEvent({"p_enrichment": {}})
+        sev = p_otx_h.otx_severity(event, "ClientIP")
+        self.assertEqual(sev, "MEDIUM")
+
+    def test_otx_alert_context(self):
+        ctx = p_otx_h.otx_alert_context(self.event, "ClientIP")
+        self.assertEqual(ctx["Indicator"], "198.51.100.23")
+        self.assertEqual(ctx["PulseID"], "6141bd9b4e9aaa4bdd26b2a8")
+        self.assertEqual(ctx["Description"], "Known C2 infrastructure used by APT28.")
+        self.assertIsNotNone(ctx["PulseCreated"])
+        self.assertIsNotNone(ctx["IndicatorCreated"])
 
 
 class TestIpInfoHelpersLocation(unittest.TestCase):

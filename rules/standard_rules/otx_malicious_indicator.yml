@@ -1,0 +1,182 @@
+AnalysisType: rule
+Filename: otx_malicious_indicator.py
+RuleID: "Standard.OTX.MaliciousIndicator"
+DisplayName: "OTX Threat Intelligence Indicator Match"
+Enabled: true
+Status: Experimental
+Severity: High
+Description: >-
+  Detects when an IP address in any log event matches a known threat indicator
+  from AlienVault OTX pulse intelligence. Severity is elevated when the pulse
+  includes a named adversary or known malware families.
+Runbook: |
+  1. Review the alert context and open the OTX Pulse URL to assess the indicator's
+     threat context, associated adversary, malware families, and MITRE ATT&CK mappings.
+  2. Query the data lake for all events involving this indicator to determine what assets
+     or services were contacted and whether any connections were successful.
+  3. If the indicator is confirmed malicious and interaction was observed, block the
+     indicator, isolate affected hosts, and reset any credentials that may have been exposed.
+Reference: https://otx.alienvault.com
+DedupPeriodMinutes: 60
+Reports:
+  MITRE ATT&CK:
+    - TA0043:T1595.001
+Tags:
+  - Reconnaissance:Active Scanning
+  - OTX
+  - Threat Intelligence
+SummaryAttributes:
+  - p_any_ip_addresses
+  - p_source_label
+LogTypes:
+  - Amazon.EKS.Audit
+  - Asana.Audit
+  - Atlassian.Audit
+  - AWS.ALB
+  - AWS.CloudTrail
+  - AWS.VPCFlow
+  - Azure.Audit
+  - Azure.MonitorActivity
+  - Box.Event
+  - Cloudflare.Firewall
+  - Cloudflare.HttpRequest
+  - Crowdstrike.FDREvent
+  - GCP.AuditLog
+  - GSuite.ActivityEvent
+  - Notion.AuditLogs
+  - Okta.SystemLog
+  - OneLogin.Events
+  - OnePassword.SignInAttempt
+  - Zendesk.Audit
+  - Zoom.Activity
+Tests:
+  - Name: "Known Threat IP Detected - With Adversary and Malware"
+    ExpectedResult: true
+    Log:
+      p_any_ip_addresses:
+        - "198.51.100.23"
+      p_log_type: "AWS.CloudTrail"
+      p_enrichment:
+        pulses_otx:
+          "198.51.100.23":
+            id: "6141bd9b4e9aaa4bdd26b2a8"
+            name: "APT28 Infrastructure"
+            description: "Known command and control infrastructure used by APT28."
+            created: "2024-01-15T10:30:00"
+            modified: "2024-06-01T08:00:00"
+            tags:
+              - "apt28"
+              - "c2"
+              - "russia"
+            industries:
+              - "government"
+              - "defense"
+            malware_families:
+              - "X-Agent"
+              - "Sofacy"
+            references:
+              - "https://example.com/apt28-report"
+            tlp: "white"
+            adversary: "APT28"
+            target_countries:
+              - "US"
+              - "DE"
+            attack_ids:
+              - "T1071"
+              - "T1059"
+            indicator: "198.51.100.23"
+            indicator_type: "IPv4"
+            indicator_created: "2024-01-15T10:30:00"
+            indicator_expiration: "2025-01-15T10:30:00"
+  - Name: "Threat IP - No Adversary"
+    ExpectedResult: true
+    Log:
+      p_any_ip_addresses:
+        - "203.0.113.99"
+      p_log_type: "Okta.SystemLog"
+      p_enrichment:
+        pulses_otx:
+          "203.0.113.99":
+            id: "abc123"
+            name: "Scanning Activity"
+            description: "IP observed performing widespread port scanning."
+            created: "2024-03-01T12:00:00"
+            tags:
+              - "scanner"
+            industries: []
+            malware_families: []
+            references: []
+            tlp: "green"
+            adversary: ""
+            target_countries: []
+            attack_ids:
+              - "T1595"
+            indicator: "203.0.113.99"
+            indicator_type: "IPv4"
+            indicator_created: "2024-03-01T12:00:00"
+  - Name: "Benign IP - No Enrichment"
+    ExpectedResult: false
+    Log:
+      p_any_ip_addresses:
+        - "10.0.0.1"
+      p_log_type: "AWS.VPCFlow"
+  - Name: "IP Not in OTX"
+    ExpectedResult: false
+    Log:
+      p_any_ip_addresses:
+        - "192.168.1.1"
+      p_log_type: "Cloudflare.HttpRequest"
+      p_enrichment:
+        pulses_otx:
+          "192.168.1.1":
+            id: ""
+            name: ""
+            indicator: ""
+            indicator_type: ""
+  - Name: "Multiple Threat IPs Detected"
+    ExpectedResult: true
+    Log:
+      p_any_ip_addresses:
+        - "198.51.100.10"
+        - "198.51.100.20"
+      p_log_type: "AWS.ALB"
+      p_enrichment:
+        pulses_otx:
+          "198.51.100.10":
+            id: "pulse001"
+            name: "Botnet C2"
+            description: "Known botnet command and control node."
+            created: "2024-02-01T00:00:00"
+            tags:
+              - "botnet"
+            industries: []
+            malware_families:
+              - "Mirai"
+            references: []
+            tlp: "white"
+            adversary: ""
+            target_countries: []
+            attack_ids: []
+            indicator: "198.51.100.10"
+            indicator_type: "IPv4"
+            indicator_created: "2024-02-01T00:00:00"
+          "198.51.100.20":
+            id: "pulse002"
+            name: "Phishing Infrastructure"
+            description: "Hosting phishing pages targeting financial institutions."
+            created: "2024-04-10T00:00:00"
+            tags:
+              - "phishing"
+            industries:
+              - "finance"
+            malware_families: []
+            references: []
+            tlp: "amber"
+            adversary: "FIN7"
+            target_countries:
+              - "US"
+            attack_ids:
+              - "T1566"
+            indicator: "198.51.100.20"
+            indicator_type: "IPv4"
+            indicator_created: "2024-04-10T00:00:00"
