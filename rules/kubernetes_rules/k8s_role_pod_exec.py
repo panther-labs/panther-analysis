@@ -24,7 +24,7 @@ def rule(event):
     rules = request_object.get("rules") or []
 
     for rule_entry in rules:
-        resources = rule_entry.get("resources", [])
+        resources = rule_entry.get("resources") or []
         # Check for pods/exec subresource
         if "pods/exec" in resources:
             return True
@@ -72,7 +72,7 @@ def alert_context(event):
     # Extract only the rules that grant pods/exec
     exec_rules = []
     for rule_entry in rules:
-        if "pods/exec" in rule_entry.get("resources", []):
+        if "pods/exec" in (rule_entry.get("resources") or []):
             exec_rules.append(rule_entry)
 
     return k8s_alert_context(

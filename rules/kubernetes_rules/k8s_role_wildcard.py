@@ -24,8 +24,8 @@ def rule(event):
     rules = request_object.get("rules") or []
 
     for rule_entry in rules:
-        resources = rule_entry.get("resources", [])
-        verbs = rule_entry.get("verbs", [])
+        resources = rule_entry.get("resources") or []
+        verbs = rule_entry.get("verbs") or []
 
         # Check for wildcard in resources or verbs
         if "*" in resources or "*" in verbs:
@@ -74,8 +74,8 @@ def alert_context(event):
     # Extract only the rules that contain wildcards
     wildcard_rules = []
     for rule_entry in rules:
-        resources = rule_entry.get("resources", [])
-        verbs = rule_entry.get("verbs", [])
+        resources = rule_entry.get("resources") or []
+        verbs = rule_entry.get("verbs") or []
         if "*" in resources or "*" in verbs:
             wildcard_rules.append(rule_entry)
 
