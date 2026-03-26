@@ -8306,6 +8306,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Surfaces all open SOCRadar security incidents as Panther alerts. Severity is mapped dynamically from SOCRadar's alarm_risk_level (CRITICAL/HIGH/MEDIUM/LOW/INFO). SOCRadar performs the underlying threat detection; this rule ensures every open incident is visible in Panther for triage and response.",
+        "DisplayName": "SOCRadar Alert Passthrough",
+        "LogTypes": [
+            "SOCRadar.Incidents"
+        ],
+        "YAMLPath": "rules/socradar_rules/socradar_alert_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects a high number of spam emails received by a single user in a short timeframe. This could indicate the user's email has appeared in data leaks and is being targeted for spam.",
         "DisplayName": "Spam Email Surge",
         "LogTypes": [
