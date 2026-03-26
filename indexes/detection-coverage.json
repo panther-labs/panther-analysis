@@ -3978,42 +3978,6 @@
         "YAMLPath": "rules/databricks_rules/databricks_repeated_unauthorized_uc_requests.yml"
     },
     {
-        "AnalysisType": "Scheduled Rule",
-        "Description": "Detects rapid login events from different public IPs and user agents within a one-hourwindow for the same user. This pattern may indicate session token theft, credentialcompromise, or automated replay of stolen credentials. Uses behavioral baselining tosuppress alerts for users who normally log in from many IPs.Requires: databricks_user_session_baseline_30d lookup table.",
-        "DisplayName": "Databricks Session Hijacking - Frequent Logins",
-        "LogTypes": [
-            "Databricks.Audit"
-        ],
-        "YAMLPath": "rules/databricks_rules/databricks_session_hijacking_frequent_logins.yml"
-    },
-    {
-        "AnalysisType": "Scheduled Rule",
-        "Description": "Detects the same Databricks session ID being used from a different IP address and adifferent device (user agent) within 24 hours. This is a strong indicator of sessiontoken theft, where an attacker replays a stolen session cookie from their own infrastructure.Detection logic:- Per-session: flags sessions with 2+ distinct public IPs AND 2+ distinct user agents- Excludes private IPs and known Databricks service agents- Baseline-aware: includes user's historical IP/agent diversity for triage contextRequires: databricks_user_session_baseline_30d lookup table.",
-        "DisplayName": "Databricks Session Hijacking - Multi Device",
-        "LogTypes": [
-            "Databricks.Audit"
-        ],
-        "YAMLPath": "rules/databricks_rules/databricks_session_hijacking_multi_device.yml"
-    },
-    {
-        "AnalysisType": "Scheduled Rule",
-        "Description": "Detects a single Databricks session ID being used from 3 or more distinct public IPaddresses within a 24-hour period. While a user might occasionally switch networks,a session appearing from many distinct IPs strongly suggests token theft or session replay.Detection logic:- Per-session: flags sessions with 3+ distinct public IPs in 24 hours- Z-score: unique IP count per session > 2\u03c3 above user's baseline mean- Cold-start: alerts on any session with 3+ IPs for users with no prior baselineRequires: databricks_user_session_baseline_30d lookup table.",
-        "DisplayName": "Databricks Session Hijacking - Session Count",
-        "LogTypes": [
-            "Databricks.Audit"
-        ],
-        "YAMLPath": "rules/databricks_rules/databricks_session_hijacking_session_count.yml"
-    },
-    {
-        "AnalysisType": "Scheduled Rule",
-        "Description": "Detects abnormal spikes in admin-level query activity per user against a 30-daybehavioral baseline. Admin queries include DDL/DCL commands (ALTER, DROP, GRANT,REVOKE, CREATE, UPDATE) on tables, schemas, catalogs, and Unity Catalog objects.Requires: databricks_user_query_baseline_30d lookup table.",
-        "DisplayName": "Databricks Spike in Table Admin Activity",
-        "LogTypes": [
-            "Databricks.Audit"
-        ],
-        "YAMLPath": "rules/databricks_rules/databricks_spike_in_table_admin_activity.yml"
-    },
-    {
         "AnalysisType": "Rule",
         "Description": "Detects modifications to single sign-on (SSO) configurations in Databricks. While SSO changes may be part of planned identity provider updates, unauthorized modifications could indicate attempts to tamper with authentication mechanisms. Successful changes are elevated to MEDIUM severity.",
         "DisplayName": "Databricks SSO Configuration Changed",
@@ -4030,15 +3994,6 @@
             "Databricks.Audit"
         ],
         "YAMLPath": "rules/databricks_rules/databricks_terms_of_service_changes.yml"
-    },
-    {
-        "AnalysisType": "Scheduled Rule",
-        "Description": "Detects anomalously low activity from API tokens across multiple public IPs, indicatingbrute-force token probing or scanning. Attackers probe stolen or guessed tokens withsingle requests from many IPs to avoid rate limiting and detection.Requires: databricks_user_session_baseline_30d lookup table.",
-        "DisplayName": "Databricks Token Scanning Activity",
-        "LogTypes": [
-            "Databricks.Audit"
-        ],
-        "YAMLPath": "rules/databricks_rules/databricks_token_scanning_activity.yml"
     },
     {
         "AnalysisType": "Rule",
