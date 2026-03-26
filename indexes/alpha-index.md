@@ -806,6 +806,20 @@
 
 ## AWS WAFWebACL
 
+- [AWS WAF Managed Admin Protection Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_admin_protection.yml)
+  - Detects AWS WAF Admin Protection managed rule group matches. Blocks external access to exposed administrative pages such as /admin, /wp-admin, and similar paths.
+- [AWS WAF Managed Anti-DDoS Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_anti_ddos.yml)
+  - Detects AWS WAF Anti-DDoS managed rule group matches. Rules include ChallengeAllDuringEvent, ChallengeDDoSRequests, and DDoSRequests which activate during detected DDoS events to challenge or block suspicious traffic to protected resources.
+- [AWS WAF Managed Bot Control Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_bot_control.yml)
+  - Detects AWS WAF Bot Control managed rule group matches. Covers automated browser detection, HTTP library user agents, scraping frameworks, known bot data centers, and targeted bot protections including token abuse and coordinated activity.
+- [AWS WAF Managed Core Rule Set Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_core_rule_set.yml)
+  - Detects AWS WAF Core Rule Set (CRS) managed rule group matches. Covers XSS, LFI, RFI, SSRF, size restrictions, restricted extensions, and bad bot user agents across all WAF sources.
+- [AWS WAF Managed IP Reputation Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_ip_reputation.yml)
+  - Detects AWS WAF IP Reputation and Anonymous IP List managed rule group matches. Flags requests from IPs on Amazon threat intelligence lists including known bots, reconnaissance sources, DDoS participants, TOR nodes, temporary proxies, and hosting/cloud provider IPs.
+- [AWS WAF Managed Known Bad Inputs Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_known_bad_inputs.yml)
+  - Detects AWS WAF Known Bad Inputs managed rule group matches. Covers Log4Shell (CVE-2021-44228), Java deserialization RCE, localhost Host header abuse, PROPFIND method, and exploitable paths.
+- [AWS WAF Managed SQL Database Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_sql_database.yml)
+  - Detects AWS WAF SQL Database managed rule group matches. Covers SQL injection patterns in query arguments, request body, cookies, and URI path, including extended patterns not covered by the Core Rule Set.
 - [AWS WAF ReactJS RCE Attempt via Body](../rules/aws_waf_rules/aws_waf_reactjsrce_body.yml)
   - Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating React2Shell (CVE-2025-55182) ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.
 
@@ -2371,7 +2385,7 @@
   - Monitor for malicious IPs interacting with Snowflake as part of ongoing cyber threat activity reported May 31st, 2024
 - [Snowflake Configuration Drift](../queries/snowflake_queries/snowflake_0108977_configuration_drift.yml)
   - Monitor for configuration drift made by malicious actors as part of ongoing cyber threat activity reported May 31st, 2024
-- [Snowflake Data Exfiltration](../correlation_rules/snowflake_data_exfiltration.yml)
+- [Snowflake Data Exfiltration](../correlation_rules/snowflake_data_exfiltration_streaming.yml)
   - Detects multi-step Snowflake data exfiltration by identifying temporary stage creation, table data copied to stage, and file downloads. This technique was used in the April 2024 Snowflake breach (UNC5537) targeting accounts without MFA. The correlation of all three steps provides high-confidence evidence of active data theft beyond legitimate ETL operations.
 - [Snowflake External Data Share](../rules/snowflake_rules/snowflake_stream_external_shares.yml)
   - Detect when an external share has been initiated from one source cloud to another target cloud.
