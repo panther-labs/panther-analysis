@@ -21,10 +21,10 @@ def rule(event):
 
     # Check if role grants pods/exec permissions
     request_object = event.udm("requestObject") or {}
-    rules = request_object.get("rules", [])
+    rules = request_object.get("rules") or []
 
     for rule_entry in rules:
-        resources = rule_entry.get("resources", [])
+        resources = rule_entry.get("resources") or []
         # Check for pods/exec subresource
         if "pods/exec" in resources:
             return True
@@ -67,12 +67,12 @@ def severity(event):
 
 def alert_context(event):
     request_object = event.udm("requestObject") or {}
-    rules = request_object.get("rules", [])
+    rules = request_object.get("rules") or []
 
     # Extract only the rules that grant pods/exec
     exec_rules = []
     for rule_entry in rules:
-        if "pods/exec" in rule_entry.get("resources", []):
+        if "pods/exec" in (rule_entry.get("resources") or []):
             exec_rules.append(rule_entry)
 
     return k8s_alert_context(
