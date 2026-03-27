@@ -36,18 +36,15 @@ Query: |
 
   let primary_country_tbl = base
   | summarize cnt = agg.count() by user_email, country
-  | sort user_email asc, cnt desc
-  | summarize primary_country = agg.take_any(country) by user_email;
+  | summarize primary_country = agg.arg_max(cnt, country) by user_email;
 
   let primary_city_tbl = base
   | summarize cnt = agg.count() by user_email, city
-  | sort user_email asc, cnt desc
-  | summarize primary_city = agg.take_any(city) by user_email;
+  | summarize primary_city = agg.arg_max(cnt, city) by user_email;
 
   let primary_ip_tbl = base
   | summarize cnt = agg.count() by user_email, ip_address
-  | sort user_email asc, cnt desc
-  | summarize primary_ip = agg.take_any(ip_address) by user_email;
+  | summarize primary_ip = agg.arg_max(cnt, ip_address) by user_email;
 
   let ad_agent_hourly = base
   | summarize
@@ -115,6 +112,9 @@ Query: |
       baseline_updated_at = time.now(),
       baseline_window = "90days"
   | sort baseline_total_events desc
+Schedule:
+  RateMinutes: 43200  # 30 days
+  TimeoutMinutes: 10
 Tags:
   - Okta
   - Active Directory
