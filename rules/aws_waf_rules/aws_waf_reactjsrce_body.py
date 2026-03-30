@@ -25,9 +25,9 @@ def rule(event):
 
 
 def title(event):
-    client_ip = event.get("httpRequest", {}).get("clientIp", "unknown")
-    action = event.get("action", "unknown")
-    source = event.get("httpSourceName", "unknown")
+    client_ip = event.deep_get("httpRequest", "clientIp", default="<UNKNOWN_CLIENT_IP>")
+    action = event.get("action", default="<UNKNOWN_ACTION>")
+    source = event.get("httpSourceName", default="<UNKNOWN_SOURCE>")
     return f"AWS WAF {RULE_ID} Match - {action} from {client_ip} via {source}"
 
 
