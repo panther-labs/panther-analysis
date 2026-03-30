@@ -6750,6 +6750,33 @@
         "YAMLPath": "queries/github_queries/nx_supply_chain_s1ngularity_repository_query.yml"
     },
     {
+        "AnalysisType": "Scheduled Query",
+        "Description": "Builds a 180-day behavioral baseline for Okta AD agent authentication events per user. Computes scalar features and hourly statistics (event volume, IP/country/city/device diversity) over a 180-day window (excluding the last 7 days) to support z-score anomaly detection. Output is intended to populate the okta_ad_agent_baseline_180d lookup table.",
+        "DisplayName": "Okta 180 Day AD Pantherflow in Data Explorer",
+        "LogTypes": [
+            "Okta.SystemLog"
+        ],
+        "YAMLPath": "queries/okta_queries/okta_ad_pantherflow_baseline_180day.yml"
+    },
+    {
+        "AnalysisType": "Scheduled Query",
+        "Description": "Builds a 30-day behavioral baseline for Okta AD agent authentication events per user. Computes scalar features and hourly statistics (event volume, IP/country/city/device diversity) over a 30-day window (excluding the last 7 days) to support z-score anomaly detection. Output is intended to populate the okta_ad_agent_baseline_30d lookup table.",
+        "DisplayName": "Okta 30 Day AD Pantherflow in Data Explorer",
+        "LogTypes": [
+            "Okta.SystemLog"
+        ],
+        "YAMLPath": "queries/okta_queries/okta_ad_pantherflow_baseline_30day.yml"
+    },
+    {
+        "AnalysisType": "Scheduled Query",
+        "Description": "Builds a 90-day behavioral baseline for Okta AD agent authentication events per user. Computes scalar features and hourly statistics (event volume, IP/country/city/device diversity) over a 90-day window (excluding the last 7 days) to support z-score anomaly detection. Output is intended to populate the okta_ad_agent_baseline_90d lookup table.",
+        "DisplayName": "Okta 90 Day AD Pantherflow in Data Explorer",
+        "LogTypes": [
+            "Okta.SystemLog"
+        ],
+        "YAMLPath": "queries/okta_queries/okta_ad_pantherflow_baseline_90day.yml"
+    },
+    {
         "AnalysisType": "Scheduled Rule",
         "Description": "Detects potential Okta AD Agent token theft and credential abuse using statistical z-score analysis.This detection uses a lookup table containing 90-day behavioral baselines for each user's AD Agentauthentication patterns, then calculates z-scores to identify suspicious activity in the last 7 days.**PREREQUISITES:**1. Baseline builder query must run first: `Query.Okta.ADAgentBaselineBuilder`2. Lookup table must be configured: `okta_ad_agent_baseline_90d`3. Allow 24 hours for initial baseline to populate**Detection Logic:**- Calculates mean and standard deviation for hourly authentication volume, IP diversity,  country diversity, and device diversity- Alerts when recent activity shows BOTH:  1. Volume spike (z-score > 3 standard deviations)  2. Geographic/IP diversity spike (z-score > 2 standard deviations)**Why This Matters:**Token theft attacks have a distinct signature: stolen credentials are used from multiplelocations/IPs simultaneously or in rapid succession. This creates both a volume spike anda diversity spike that this detection identifies.**Complementary Detection:**This rule complements `Okta.ADAgent.TokenAbuse.Behavioral` which detects admin actions(token creation, agent configuration) from new sources. This rule detects the actual USEof stolen tokens through authentication patterns.",
         "DisplayName": "Okta AD Agent Authentication Anomaly - Z-Score Detection",
@@ -8065,9 +8092,9 @@
         "Description": "Detects multi-step Snowflake data exfiltration by identifying temporary stage creation, table data copied to stage, and file downloads. This technique was used in the April 2024 Snowflake breach (UNC5537) targeting accounts without MFA. The correlation of all three steps provides high-confidence evidence of active data theft beyond legitimate ETL operations.",
         "DisplayName": "Snowflake Data Exfiltration",
         "LogTypes": [
-            "Snowflake.AccountUsage"
+            "Snowflake.QueryHistory"
         ],
-        "YAMLPath": "correlation_rules/snowflake_data_exfiltration.yml"
+        "YAMLPath": "correlation_rules/snowflake_data_exfiltration_streaming.yml"
     },
     {
         "AnalysisType": "Rule",

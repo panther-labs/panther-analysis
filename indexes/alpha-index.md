@@ -2027,6 +2027,12 @@
   - A user has subsequent logins from two geographic locations that are very far apart
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
+- [Okta 180 Day AD Pantherflow in Data Explorer](../queries/okta_queries/okta_ad_pantherflow_baseline_180day.yml)
+  - Builds a 180-day behavioral baseline for Okta AD agent authentication events per user. Computes scalar features and hourly statistics (event volume, IP/country/city/device diversity) over a 180-day window (excluding the last 7 days) to support z-score anomaly detection. Output is intended to populate the okta_ad_agent_baseline_180d lookup table.
+- [Okta 30 Day AD Pantherflow in Data Explorer](../queries/okta_queries/okta_ad_pantherflow_baseline_30day.yml)
+  - Builds a 30-day behavioral baseline for Okta AD agent authentication events per user. Computes scalar features and hourly statistics (event volume, IP/country/city/device diversity) over a 30-day window (excluding the last 7 days) to support z-score anomaly detection. Output is intended to populate the okta_ad_agent_baseline_30d lookup table.
+- [Okta 90 Day AD Pantherflow in Data Explorer](../queries/okta_queries/okta_ad_pantherflow_baseline_90day.yml)
+  - Builds a 90-day behavioral baseline for Okta AD agent authentication events per user. Computes scalar features and hourly statistics (event volume, IP/country/city/device diversity) over a 90-day window (excluding the last 7 days) to support z-score anomaly detection. Output is intended to populate the okta_ad_agent_baseline_90d lookup table.
 - [Okta AD Agent Authentication Anomaly - Z-Score Detection](../rules/okta_rules/okta_ad_agent_auth_zscore_anomaly.yml)
   - Detects potential Okta AD Agent token theft and credential abuse using statistical z-score analysis.This detection uses a lookup table containing 90-day behavioral baselines for each user's AD Agentauthentication patterns, then calculates z-scores to identify suspicious activity in the last 7 days.**PREREQUISITES:**1. Baseline builder query must run first: `Query.Okta.ADAgentBaselineBuilder`2. Lookup table must be configured: `okta_ad_agent_baseline_90d`3. Allow 24 hours for initial baseline to populate**Detection Logic:**- Calculates mean and standard deviation for hourly authentication volume, IP diversity,  country diversity, and device diversity- Alerts when recent activity shows BOTH:  1. Volume spike (z-score > 3 standard deviations)  2. Geographic/IP diversity spike (z-score > 2 standard deviations)**Why This Matters:**Token theft attacks have a distinct signature: stolen credentials are used from multiplelocations/IPs simultaneously or in rapid succession. This creates both a volume spike anda diversity spike that this detection identifies.**Complementary Detection:**This rule complements `Okta.ADAgent.TokenAbuse.Behavioral` which detects admin actions(token creation, agent configuration) from new sources. This rule detects the actual USEof stolen tokens through authentication patterns.
 - [Okta AD Agent Token Abuse - Behavioral](../rules/okta_rules/okta_ad_agent_token_abuse_behavioral.yml)
@@ -2392,7 +2398,7 @@
   - Monitor for malicious IPs interacting with Snowflake as part of ongoing cyber threat activity reported May 31st, 2024
 - [Snowflake Configuration Drift](../queries/snowflake_queries/snowflake_0108977_configuration_drift.yml)
   - Monitor for configuration drift made by malicious actors as part of ongoing cyber threat activity reported May 31st, 2024
-- [Snowflake Data Exfiltration](../correlation_rules/snowflake_data_exfiltration.yml)
+- [Snowflake Data Exfiltration](../correlation_rules/snowflake_data_exfiltration_streaming.yml)
   - Detects multi-step Snowflake data exfiltration by identifying temporary stage creation, table data copied to stage, and file downloads. This technique was used in the April 2024 Snowflake breach (UNC5537) targeting accounts without MFA. The correlation of all three steps provides high-confidence evidence of active data theft beyond legitimate ETL operations.
 - [Snowflake External Data Share](../rules/snowflake_rules/snowflake_stream_external_shares.yml)
   - Detect when an external share has been initiated from one source cloud to another target cloud.
