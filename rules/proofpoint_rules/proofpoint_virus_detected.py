@@ -5,16 +5,8 @@ def rule(event):
     quarantine_rule = event.get("quarantineRule", "")
     quarantine_folder = event.get("quarantineFolder", "")
 
-    # Alert if either virus-related quarantine indicators are present
-    # OR if there's a high malware score (covers edge cases)
-    if quarantine_rule == "notcleaned" or quarantine_folder == "Virus":
-        return True
-
-    # Backup check: also alert on very high malware scores that indicate virus
-    if event.get("malwareScore", 0) >= 95:
-        return True
-
-    return False
+    # Alert only on virus-specific quarantine indicators
+    return quarantine_rule == "notcleaned" or quarantine_folder == "Virus"
 
 
 def severity(event):
