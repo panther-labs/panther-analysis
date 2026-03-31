@@ -6,7 +6,7 @@ def rule(event):
         return False
 
     action = event.get("actionName")
-    return action in ("createUser", "addUser", "add")
+    return action in ("createUser", "addUser")
 
 
 def title(event):
