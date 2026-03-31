@@ -66,6 +66,8 @@
   - This policy ensures that at least one CloudTrail has management (control plane) operations logged.
 - [AWS CloudTrail Password Policy Discovery](../rules/aws_cloudtrail_rules/aws_cloudtrail_password_policy_discovery.yml)
   - This detection looks for *AccountPasswordPolicy events in AWS CloudTrail logs. If these events occur in a short period of time from the same ARN, it could constitute Password Policy reconnaissance.
+- [AWS CloudTrail Password Spraying](../rules/aws_cloudtrail_rules/aws_cloudtrail_password_spraying.yml)
+  - Detects password spraying attacks by alerting when more than 5 distinct usernames fail to authenticate to the AWS console from the same account and region within 60 minutes.
 - [AWS Cloudtrail Region Enabled](../rules/aws_cloudtrail_rules/aws_cloudtrail_region_enabled.yml)
   - Threat actors who successfully compromise a victim's AWS account, whether through stolen credentials,  exposed access keys, exploited IAM misconfigurations, vulnerabilities in third-party applications,  or the absence of Multi-Factor Authentication (MFA), can exploit unused regions as safe zones  for malicious activities. These regions are often overlooked in monitoring and security setups,  making them an attractive target for attackers to operate undetected.
 - [AWS CloudTrail Retention Lifecycle Too Short](../rules/aws_cloudtrail_rules/aws_cloudtrail_short_lifecycle.yml)
@@ -205,8 +207,6 @@
   - A CloudTrail instances were stopped. It makes further changes of instances possible
 - [CloudTrail Event Selectors Disabled](../rules/aws_cloudtrail_rules/aws_cloudtrail_event_selectors_disabled.yml)
   - A CloudTrail Trail was modified to exclude management events for 1 or more resource types.
-- [CloudTrail Password Spraying](../queries/aws_queries/cloudtrail_password_spraying.yml)
-  - Detect password spraying account using a scheduled query
 - [CloudTrail Stopped](../rules/aws_cloudtrail_rules/aws_cloudtrail_stopped.yml)
   - A CloudTrail Trail was modified.
 - [CodeBuild Project made Public](../rules/aws_cloudtrail_rules/aws_codebuild_made_public.yml)
@@ -483,6 +483,8 @@
   - This detection monitors for Roles or ClusterRoles being created with write permissions (create, update, patch, delete, deletecollection). While write permissions are common and often necessary for application operations, tracking role creation helps establish RBAC baselines and identify overly permissive configurations. Severity escalates for write access to sensitive resources like secrets or RBAC objects.
 - [Kubernetes Secret Access Denied](../rules/kubernetes_rules/k8s_secret_access_denied.yml)
   - This detection monitors for failed attempts to read Kubernetes secrets. While occasional failed access attempts may indicate RBAC misconfigurations, repeated failures suggest enumeration or brute-force attempts by compromised accounts. With 15-minute deduplication, 20 or more failed attempts within this window indicates active secret enumeration and should be investigated immediately.
+- [Kubernetes Secret Enumeration by a User](../rules/kubernetes_rules/k8s_secret_enumeration.yml)
+  - Detects when a single user accesses 15 or more distinct secrets within 30 minutes using list, get, or watch verbs. This may indicate secret enumeration to enable lateral or vertical movement and unauthorized access to critical resources. The threshold should be tuned to your environment.
 - [Kubernetes Service Account Token Theft from Pod](../rules/kubernetes_rules/k8s_steal_serviceaccount_token.yml)
   - This detection monitors for commands executed in pods that attempt to read service account tokens from /var/run/secrets/kubernetes.io/serviceaccount/token. Attackers who gain exec access to a pod can steal its service account token to authenticate as that service account to the Kubernetes API server. This enables privilege escalation and lateral movement within the cluster. This is a known attack technique documented by Stratus Red Team.
 - [Kubernetes System Principal Accessed from Non-Cloud Public IP](../rules/kubernetes_rules/k8s_system_principal_public_ip.yml)
@@ -505,8 +507,6 @@
   - This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement.
 - [Privileged Pod Created](../queries/kubernetes_queries/kubernetes_privileged_pod_created_query.yml)
   - This detection monitors for a privileged pod is created either by default or with permissions to run as root. These particular pods have full access to the hosts namespace and devices, ability to exploit the kernel, have dangerous linux capabilities, and can be a powerful launching point for further attacks.
-- [Secret Enumeration by a User](../queries/kubernetes_queries/kubernetes_secret_enumeration_query.yml)
-  - This detection monitors for a large number of secrets requests by a single user. This could potentially indicate secret enumeration, which can potentially enable lateral or vertical movement and unauthorized access to critical resources.
 - [Unauthenticated Kubernetes API Request](../queries/kubernetes_queries/kubernetes_unauthenticated_api_request_query.yml)
   - This detection monitors for any unauthenticated kubernetes api request. Unauthenticated Requests are performed by the anonymous user and have unfederated access to the cluster.
 - [Unauthorized Kubernetes Pod Execution](../queries/kubernetes_queries/kubernetes_unauthorized_pod_execution_query.yml)
@@ -735,8 +735,8 @@
   - VPC Flow Logs observed inbound traffic violating the port blocklist.
 - [VPC Flow Logs Unapproved Outbound DNS Traffic](../rules/aws_vpc_flow_rules/aws_vpc_unapproved_outbound_dns.yml)
   - Alerts if outbound DNS traffic is detected to a non-approved DNS server. DNS is often used as a means to exfiltrate data or perform command and control for compromised hosts. All DNS traffic should be routed through internal DNS servers or trusted 3rd parties.
-- [VPC Flow Port Scanning](../queries/aws_queries/anomalous_vpc_port_activity_query.yml)
-  - Instances of a srcAddr communicating with multiple ports on a dstAddr could indicate port scanning activity.
+- [VPC Flow Port Scanning](../rules/aws_vpc_flow_rules/aws_vpc_port_scanning.yml)
+  - Detects potential port scanning activity by alerting when a single source address communicates with 10 or more distinct destination ports on the same target within 60 minutes. Common ports (80, 443, 53, etc.) are excluded to reduce noise.
 - [Wiz Issue Followed By SSH to EC2 Instance](../correlation_rules/wiz_issue_followed_by_ssh.yml)
   - Wiz detected a security issue with an EC2 instance followed by an SSH connection to the instance. This sequence could indicate a potential security breach.
 
