@@ -102,14 +102,6 @@ GROUP_ACTIONS = {
     "membership": ["addPrincipalToGroup", "addPrincipalsToGroup", "removePrincipalFromGroup"],
 }
 
-# User management actions
-USER_ACTIONS = {
-    "create": ["createUser", "addUser"],
-    "delete": ["delete", "deleteUser", "removeUser"],
-    "modify": ["updateUser", "modifyUser"],
-    "role": ["modifyUserRole", "addUserToAdminGroup"],
-}
-
 # Known system user identities (exclude from alerts)
 SYSTEM_USERS = ["System-User"]
 
