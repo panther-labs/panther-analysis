@@ -9,10 +9,13 @@ def rule(event):
         return False
 
     # Only match user deletions, not other account-level deletes
-    endpoint = event.deep_get("requestParams", "endpoint", default="")
-    return (
-        "user" in endpoint.lower() or event.deep_get("requestParams", "targetUserName") is not None
-    )
+    # Primary check: targetUserName field exists
+    # Fallback: endpoint contains "/users/" or starts with "users"
+    if event.deep_get("requestParams", "targetUserName") is not None:
+        return True
+
+    endpoint = event.deep_get("requestParams", "endpoint", default="").lower()
+    return "/users/" in endpoint or endpoint.startswith("users")
 
 
 def severity(event):

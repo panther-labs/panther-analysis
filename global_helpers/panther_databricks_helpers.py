@@ -312,20 +312,6 @@ def is_login_action(event):
     return action_name in LOGIN_ACTIONS
 
 
-def get_login_type(event):
-    """
-    Get the human-readable login type from the action name.
-
-    Args:
-        event: The Databricks audit event dictionary
-
-    Returns:
-        String describing the login type, or "Unknown Login" if not recognized
-    """
-    action_name = event.get("actionName")
-    return LOGIN_ACTIONS.get(action_name, "Unknown Login")
-
-
 def is_admin_privilege_action(event):
     """
     Check if the event represents an admin privilege modification.
@@ -370,29 +356,6 @@ def is_group_management_action(event, action_category=None):
 
     # Check all categories
     for actions in GROUP_ACTIONS.values():
-        if action_name in actions:
-            return True
-    return False
-
-
-def is_user_management_action(event, action_category=None):
-    """
-    Check if the event represents a user management action.
-
-    Args:
-        event: The Databricks audit event dictionary
-        action_category: Optional specific category to check (create/delete/modify/role)
-
-    Returns:
-        Boolean indicating if this is a user management action
-    """
-    action_name = event.get("actionName")
-
-    if action_category:
-        return action_name in USER_ACTIONS.get(action_category, [])
-
-    # Check all categories
-    for actions in USER_ACTIONS.values():
         if action_name in actions:
             return True
     return False

@@ -1,7 +1,7 @@
 from panther_databricks_helpers import databricks_alert_context
 
 # Keywords that indicate IP-based access denials
-IP_DENIAL_KEYWORDS = ["ip", "address", "network", "cidr", "allowlist", "blocklist"]
+IP_DENIAL_KEYWORDS = ["address", "network", "cidr", "allowlist", "blocklist"]
 
 
 def rule(event):

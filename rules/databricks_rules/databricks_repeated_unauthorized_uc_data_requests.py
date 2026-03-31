@@ -5,8 +5,8 @@ def rule(event):
     action = event.get("actionName", "")
     status_code = event.deep_get("response", "statusCode")
 
-    # Check for credential generation failures
-    if any(cred_action in action for cred_action in TEMP_CREDENTIAL_ACTIONS):
+    # Check for credential generation failures (exact match)
+    if action in TEMP_CREDENTIAL_ACTIONS:
         return status_code in [401, 403]
 
     # Check for Delta Sharing access failures

@@ -21,11 +21,14 @@ def title(event):
 
 def severity(event):
     source_ip = event.get("sourceIPAddress", "")
-    try:
-        if ipaddress.ip_address(source_ip).is_private:
-            return "MEDIUM"
-    except ValueError:
-        pass
+    # Lower severity for scans from private IPs (internal testing)
+    if source_ip:
+        try:
+            if ipaddress.ip_address(source_ip).is_private:
+                return "MEDIUM"
+        except ValueError:
+            # Invalid IP format, treat as public (HIGH severity)
+            pass
     return "HIGH"
 
 

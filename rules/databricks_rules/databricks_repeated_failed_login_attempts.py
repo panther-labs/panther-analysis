@@ -20,7 +20,11 @@ def title(event):
 
 
 def dedup(event):
-    user = event.deep_get("userIdentity", "email") or event.deep_get("requestParams", "user")
+    user = (
+        event.deep_get("userIdentity", "email")
+        or event.deep_get("requestParams", "user")
+        or "unknown"
+    )
     return f"failed_login_{user}"
 
 
