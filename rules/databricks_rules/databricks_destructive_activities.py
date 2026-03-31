@@ -1,7 +1,7 @@
 from panther_databricks_helpers import SYSTEM_USERS, databricks_alert_context
 
 # Destructive action prefixes/names to match
-DESTRUCTIVE_PREFIXES = ["delete", "drop", "trash", "remove", "destroy", "purge"]
+DESTRUCTIVE_PREFIXES = ["delete", "drop", "trash", "destroy", "purge"]
 
 
 def rule(event):

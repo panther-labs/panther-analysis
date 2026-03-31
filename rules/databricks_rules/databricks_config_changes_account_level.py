@@ -18,8 +18,8 @@ def rule(event):
 
 
 def title(event):
-    action = event.get("actionName")
-    service = event.get("serviceName")
+    action = event.get("actionName", "Unknown Action")
+    service = event.get("serviceName", "Unknown Service")
     actor = event.deep_get("userIdentity", "email", default="Unknown Actor")
     status_code = event.deep_get("response", "statusCode")
     status = "Success" if status_code == 200 else "Failed"

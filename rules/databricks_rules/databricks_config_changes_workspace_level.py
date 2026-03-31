@@ -15,7 +15,7 @@ def rule(event):
 
 
 def title(event):
-    action = event.get("actionName")
+    action = event.get("actionName", "Unknown Action")
     actor = event.deep_get("userIdentity", "email", default="Unknown Actor")
     workspace = event.get("workspaceId", "Unknown Workspace")
     status_code = event.deep_get("response", "statusCode")

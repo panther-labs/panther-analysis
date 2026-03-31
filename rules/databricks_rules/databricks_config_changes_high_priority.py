@@ -20,7 +20,7 @@ def rule(event):
 def severity(event):
     status_code = event.deep_get("response", "statusCode")
     success = status_code == 200
-    action = event.get("actionName")
+    action = event.get("actionName", "Unknown Action")
 
     # Determine severity from action type
     #                        Success    Failure
@@ -32,7 +32,7 @@ def severity(event):
 
 
 def title(event):
-    action = event.get("actionName")
+    action = event.get("actionName", "Unknown Action")
     actor = event.deep_get("userIdentity", "email", default="Unknown Actor")
     status_code = event.deep_get("response", "statusCode")
     status = "Successfully" if status_code == 200 else "Attempted to"
