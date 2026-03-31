@@ -17,7 +17,7 @@ Severity: High
 Description: >
   This rule alerts when Proofpoint detects phishing attempts in email.
   It triggers when emails are quarantined with the phish rule, have a
-  high phish score (80+), or contain active phishing threats in the
+  high phish score (90+), or contain active phishing threats in the
   threats map.
 Runbook: |
   1. Check if users clicked on malicious links within the last 4 hours and force password reset immediately if credentials may be compromised
@@ -71,11 +71,9 @@ Tests:
         - "user@company.com"
       subject: "Action Required: Confirm Your Payment"
       malwareScore: 5
-      phishScore: 85
+      phishScore: 90
       spamScore: 30
       impostorScore: 10
-      quarantineFolder: "Phish"
-      quarantineRule: "phish"
       messageID: "<phish456@paypa1.com>"
       headerFrom: "PayPal Support <support@paypa1.com>"
   - Name: Active Phishing Threat in Threats Map
@@ -138,3 +136,21 @@ Tests:
       spamScore: 40
       impostorScore: 0
       messageID: "<newsletter@marketing.com>"
+  - Name: Borderline Phish Score Below Threshold - No Alert
+    ExpectedResult: false
+    Log:
+      messageTime: "2026-01-08T15:30:00Z"
+      sender: "borderline@external.com"
+      senderIP: "198.51.100.75"
+      fromAddress:
+        - "borderline@external.com"
+      toAddresses:
+        - "user@company.com"
+      recipient:
+        - "user@company.com"
+      subject: "Check This Out"
+      malwareScore: 0
+      phishScore: 89
+      spamScore: 20
+      impostorScore: 0
+      messageID: "<borderline89@external.com>"

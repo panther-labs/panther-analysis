@@ -806,6 +806,20 @@
 
 ## AWS WAFWebACL
 
+- [AWS WAF Managed Admin Protection Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_admin_protection.yml)
+  - Detects AWS WAF Admin Protection managed rule group matches. Blocks external access to exposed administrative pages such as /admin, /wp-admin, and similar paths.
+- [AWS WAF Managed Anti-DDoS Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_anti_ddos.yml)
+  - Detects AWS WAF Anti-DDoS managed rule group matches. Rules include ChallengeAllDuringEvent, ChallengeDDoSRequests, and DDoSRequests which activate during detected DDoS events to challenge or block suspicious traffic to protected resources.
+- [AWS WAF Managed Bot Control Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_bot_control.yml)
+  - Detects AWS WAF Bot Control managed rule group matches. Covers automated browser detection, HTTP library user agents, scraping frameworks, known bot data centers, and targeted bot protections including token abuse and coordinated activity.
+- [AWS WAF Managed Core Rule Set Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_core_rule_set.yml)
+  - Detects AWS WAF Core Rule Set (CRS) managed rule group matches. Covers XSS, LFI, RFI, SSRF, size restrictions, restricted extensions, and bad bot user agents across all WAF sources.
+- [AWS WAF Managed IP Reputation Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_ip_reputation.yml)
+  - Detects AWS WAF IP Reputation and Anonymous IP List managed rule group matches. Flags requests from IPs on Amazon threat intelligence lists including known bots, reconnaissance sources, DDoS participants, TOR nodes, temporary proxies, and hosting/cloud provider IPs.
+- [AWS WAF Managed Known Bad Inputs Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_known_bad_inputs.yml)
+  - Detects AWS WAF Known Bad Inputs managed rule group matches. Covers Log4Shell (CVE-2021-44228), Java deserialization RCE, localhost Host header abuse, PROPFIND method, and exploitable paths.
+- [AWS WAF Managed SQL Database Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_sql_database.yml)
+  - Detects AWS WAF SQL Database managed rule group matches. Covers SQL injection patterns in query arguments, request body, cookies, and URI path, including extended patterns not covered by the Core Rule Set.
 - [AWS WAF ReactJS RCE Attempt via Body](../rules/aws_waf_rules/aws_waf_reactjsrce_body.yml)
   - Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating React2Shell (CVE-2025-55182) ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.
 
@@ -2092,6 +2106,12 @@
   - A user has subsequent logins from two geographic locations that are very far apart
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
+- [Okta 180 Day AD Pantherflow in Data Explorer](../queries/okta_queries/okta_ad_pantherflow_baseline_180day.yml)
+  - Builds a 180-day behavioral baseline for Okta AD agent authentication events per user. Computes scalar features and hourly statistics (event volume, IP/country/city/device diversity) over a 180-day window (excluding the last 7 days) to support z-score anomaly detection. Output is intended to populate the okta_ad_agent_baseline_180d lookup table.
+- [Okta 30 Day AD Pantherflow in Data Explorer](../queries/okta_queries/okta_ad_pantherflow_baseline_30day.yml)
+  - Builds a 30-day behavioral baseline for Okta AD agent authentication events per user. Computes scalar features and hourly statistics (event volume, IP/country/city/device diversity) over a 30-day window (excluding the last 7 days) to support z-score anomaly detection. Output is intended to populate the okta_ad_agent_baseline_30d lookup table.
+- [Okta 90 Day AD Pantherflow in Data Explorer](../queries/okta_queries/okta_ad_pantherflow_baseline_90day.yml)
+  - Builds a 90-day behavioral baseline for Okta AD agent authentication events per user. Computes scalar features and hourly statistics (event volume, IP/country/city/device diversity) over a 90-day window (excluding the last 7 days) to support z-score anomaly detection. Output is intended to populate the okta_ad_agent_baseline_90d lookup table.
 - [Okta AD Agent Authentication Anomaly - Z-Score Detection](../rules/okta_rules/okta_ad_agent_auth_zscore_anomaly.yml)
   - Detects potential Okta AD Agent token theft and credential abuse using statistical z-score analysis.This detection uses a lookup table containing 90-day behavioral baselines for each user's AD Agentauthentication patterns, then calculates z-scores to identify suspicious activity in the last 7 days.**PREREQUISITES:**1. Baseline builder query must run first: `Query.Okta.ADAgentBaselineBuilder`2. Lookup table must be configured: `okta_ad_agent_baseline_90d`3. Allow 24 hours for initial baseline to populate**Detection Logic:**- Calculates mean and standard deviation for hourly authentication volume, IP diversity,  country diversity, and device diversity- Alerts when recent activity shows BOTH:  1. Volume spike (z-score > 3 standard deviations)  2. Geographic/IP diversity spike (z-score > 2 standard deviations)**Why This Matters:**Token theft attacks have a distinct signature: stolen credentials are used from multiplelocations/IPs simultaneously or in rapid succession. This creates both a volume spike anda diversity spike that this detection identifies.**Complementary Detection:**This rule complements `Okta.ADAgent.TokenAbuse.Behavioral` which detects admin actions(token creation, agent configuration) from new sources. This rule detects the actual USEof stolen tokens through authentication patterns.
 - [Okta AD Agent Token Abuse - Behavioral](../rules/okta_rules/okta_ad_agent_token_abuse_behavioral.yml)
@@ -2324,13 +2344,13 @@
 - [Proofpoint High Impostor Score Detected](../rules/proofpoint_rules/proofpoint_high_impostor_score.yml)
   - This rule alerts when Proofpoint detects a high impostor score (50+), indicating potential Business Email Compromise (BEC) or impersonation attacks. The impostor score measures the likelihood that the sender is impersonating a trusted entity. Severity is dynamic based on the score: CRITICAL (80+), HIGH (65+), MEDIUM (50+).
 - [Proofpoint Malware Detected](../rules/proofpoint_rules/proofpoint_malware_detected.yml)
-  - This rule alerts when Proofpoint detects malware in an email message. It triggers when emails are quarantined with the malware rule or when the malware score is 85 or higher.
+  - This rule alerts when Proofpoint detects malware in an email message. It triggers when emails are quarantined with the malware rule or when the malware score is 90 or higher. Events quarantined to the Virus folder or with the notcleaned rule are handled by the Virus Detected rule instead.
 - [Proofpoint Multiple Threats Detected](../rules/proofpoint_rules/proofpoint_multiple_threats.yml)
-  - This rule alerts when multiple active threats are detected in a single email message. This could indicate a sophisticated multi-vector attack combining malware, phishing URLs, and malicious attachments. Severity is dynamic: CRITICAL (5+ threats), HIGH (3-4 threats), MEDIUM (2 threats).
+  - This rule alerts when three or more active threats are detected in a single email message. This indicates a sophisticated multi-vector attack combining malware, phishing URLs, and malicious attachments. Severity is dynamic: CRITICAL (5+ threats), HIGH (3-4 threats).
 - [Proofpoint Phishing Email Detected](../rules/proofpoint_rules/proofpoint_phishing_detected.yml)
-  - This rule alerts when Proofpoint detects phishing attempts in email. It triggers when emails are quarantined with the phish rule, have a high phish score (80+), or contain active phishing threats in the threats map.
+  - This rule alerts when Proofpoint detects phishing attempts in email. It triggers when emails are quarantined with the phish rule, have a high phish score (90+), or contain active phishing threats in the threats map.
 - [Proofpoint Virus Detected](../rules/proofpoint_rules/proofpoint_virus_detected.yml)
-  - This rule alerts when Proofpoint detects a virus in an email that cannot be disinfected. It triggers when emails are quarantined to the Virus folder, have the notcleaned quarantine rule applied, or have a malware score of 95+.
+  - This rule alerts when Proofpoint detects a virus in an email that cannot be disinfected. It triggers when emails are quarantined to the Virus folder or have the notcleaned quarantine rule applied.
 
 
 ## PushSecurity
@@ -2355,6 +2375,7 @@
 
 # S
 
+- [SOCRadar](#socradar)
 - [Salesforce](#salesforce)
 - [SentinelOne](#sentinelone)
 - [Slack](#slack)
@@ -2362,6 +2383,12 @@
 - [Snyk](#snyk)
 - [Sublime](#sublime)
 - [Suricata](#suricata)
+
+
+## SOCRadar
+
+- [SOCRadar Alert Passthrough](../rules/socradar_rules/socradar_alert_passthrough.yml)
+  - Surfaces all open SOCRadar security incidents as Panther alerts. Severity is mapped dynamically from SOCRadar's alarm_risk_level (CRITICAL/HIGH/MEDIUM/LOW/INFO). SOCRadar performs the underlying threat detection; this rule ensures every open incident is visible in Panther for triage and response.
 
 
 ## Salesforce
@@ -2450,7 +2477,7 @@
   - Monitor for malicious IPs interacting with Snowflake as part of ongoing cyber threat activity reported May 31st, 2024
 - [Snowflake Configuration Drift](../queries/snowflake_queries/snowflake_0108977_configuration_drift.yml)
   - Monitor for configuration drift made by malicious actors as part of ongoing cyber threat activity reported May 31st, 2024
-- [Snowflake Data Exfiltration](../correlation_rules/snowflake_data_exfiltration.yml)
+- [Snowflake Data Exfiltration](../correlation_rules/snowflake_data_exfiltration_streaming.yml)
   - Detects multi-step Snowflake data exfiltration by identifying temporary stage creation, table data copied to stage, and file downloads. This technique was used in the April 2024 Snowflake breach (UNC5537) targeting accounts without MFA. The correlation of all three steps provides high-confidence evidence of active data theft beyond legitimate ETL operations.
 - [Snowflake External Data Share](../rules/snowflake_rules/snowflake_stream_external_shares.yml)
   - Detect when an external share has been initiated from one source cloud to another target cloud.
