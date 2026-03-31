@@ -6,17 +6,9 @@ def rule(event):
         return False
 
     # Check if IP access list is configured
+    # Alert if IP ACL is missing, empty string, or empty list (all falsy)
     ip_access_list = event.deep_get("requestParams", "ipAccessList")
-
-    # Alert if IP ACL is missing, empty string, or empty list
-    if not ip_access_list:
-        return True
-    if isinstance(ip_access_list, str) and ip_access_list == "":
-        return True
-    if isinstance(ip_access_list, list) and len(ip_access_list) == 0:
-        return True
-
-    return False
+    return not ip_access_list
 
 
 def title(event):
