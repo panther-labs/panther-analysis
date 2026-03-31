@@ -1,0 +1,73 @@
+AnalysisType: rule
+Filename: databricks_repeated_failed_login_attempts.py
+RuleID: "Databricks.Audit.RepeatedFailedLoginAttempts"
+DisplayName: "Databricks Repeated Failed Login Attempts"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Credential Access
+  - Initial Access
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1110 # Brute Force
+    - TA0001:T1078 # Valid Accounts
+Severity: Medium
+Threshold: 5
+DedupPeriodMinutes: 60
+Description: >
+  Detects repeated failed login attempts within a 60-minute window, which may indicate
+  credential stuffing, brute force attacks, or compromised credentials.
+Runbook: |
+  1. Count all failed and successful login attempts for this user in the 6 hours around this alert
+  2. Check if the source IPs match known VPNs, proxies, or are from unexpected geographic locations
+  3. Find if there were successful logins from different IPs immediately after the failed attempts
+Reference: https://github.com/andyweaves/system-tables-audit-logs/blob/main/resources/queries_and_alerts.json
+SummaryAttributes:
+  - login_user
+  - source_ip
+  - login_action
+Tests:
+  - Name: Failed SAML Login
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "accounts"
+      actionName: "samlLogin"
+      sourceIPAddress: "203.0.113.50"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 401
+        errorMessage: "Invalid credentials"
+  - Name: Failed JWT Login
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "accounts"
+      actionName: "jwtLogin"
+      sourceIPAddress: "203.0.113.50"
+      requestParams:
+        user: "admin@example.com"
+      response:
+        statusCode: 403
+  - Name: Successful Login
+    ExpectedResult: false
+    Log:
+      timestamp: 1704067200000
+      serviceName: "accounts"
+      actionName: "login"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 200
+  - Name: Different Action
+    ExpectedResult: false
+    Log:
+      timestamp: 1704067200000
+      serviceName: "accounts"
+      actionName: "createUser"
+      userIdentity:
+        email: "admin@example.com"

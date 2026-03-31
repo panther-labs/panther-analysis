@@ -146,6 +146,13 @@ PackDefinition:
     - AWS.WAF.LoggingConfigured
     - AWS.WAF.WebACLHasAssociatedResources
     - AWS.WAF.ReactJSRCE.Body
+    - AWS.WAF.Managed.CoreRuleSet
+    - AWS.WAF.Managed.AdminProtection
+    - AWS.WAF.Managed.KnownBadInputs
+    - AWS.WAF.Managed.IPReputation
+    - AWS.WAF.Managed.BotControl
+    - AWS.WAF.Managed.AntiDDoS
+    - AWS.WAF.Managed.SQLDatabase
     # Lambda rules
     # Bedrock rules
     - AWS.Bedrock.DeleteModelInvocationLoggingConfiguration
@@ -156,6 +163,9 @@ PackDefinition:
     - AWS.EC2.LaunchUnusualEC2Instances
     - AWS.EC2.ManyPasswordReadAttempts
     - AWS.S3.CopyObject.CrossAccount.Encryption.KMS
+    - AWS.S3.CopyObjectToExternalAccountBucket
+    - AWS.S3.DisableBucketLogging
+    - AWS.S3.SuspendVersioning
     - AWS.S3.DeleteBucketReplication
     - AWS.S3.DisableMfaDelete
     - AWS.S3.RansomwareNoteUpload
@@ -197,6 +207,8 @@ PackDefinition:
     - VPC.DNS.Tunneling
     - AWS.VPC.PortScanning
     # Correlation Rules
+    - AWS.S3.Disable.Security.Controls
+    - AWS.S3.ObjectExfiltration.FOLLOWED-BY.ObjectDeletion
     - AWS.Administrative.IAM.User.Created
     - AWS.Backdoor.Administrative.IAM.Role.Created
     - AWS.Privilege.Escalation.Via.User.Compromise

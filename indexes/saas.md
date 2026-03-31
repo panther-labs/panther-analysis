@@ -40,10 +40,10 @@
   - Dropbox item shared externally
 - [Dropbox Linked Team Application Added](../rules/dropbox_rules/dropbox_linked_team_application_added.yml)
   - An application was linked to your Dropbox Account
-- [Dropbox Many Deletes](../queries/dropbox_queries/Dropbox_Many_Deletes_Query.yml)
-  - Dropbox Many Deletes
-- [Dropbox Many Downloads](../queries/dropbox_queries/Dropbox_Many_Downloads_Query.yml)
-  - Dropbox Many Downloads
+- [Dropbox Many Deletes](../rules/dropbox_rules/dropbox_many_deletes.yml)
+  - Detects when a Dropbox user deletes more than 2 distinct files within 60 minutes. This may indicate accidental or malicious bulk deletion of team files. The threshold should be tuned to your environment.
+- [Dropbox Many Downloads](../rules/dropbox_rules/dropbox_many_downloads.yml)
+  - Detects when a Dropbox user downloads more than 10 distinct files within 60 minutes. This may indicate data exfiltration or unauthorized bulk access to team files. The threshold should be tuned to your environment.
 - [Dropbox User Disabled 2FA](../rules/dropbox_rules/dropbox_user_disabled_2fa.yml)
   - Dropbox user has disabled 2fa login
 
@@ -104,8 +104,8 @@
   - GSuite reported a suspicious activity on a user's device.
 - [GSuite Document External Ownership Transfer](../rules/gsuite_activityevent_rules/gsuite_doc_ownership_transfer.yml)
   - A GSuite document's ownership was transferred to an external party.
-- [GSuite Drive Many Documents Deleted](../queries/gsuite_queries/gsuite_drive_many_docs_deleted.yml)
-  - Scheduled rule for the GSuite Drive Many Documents Deleted query. Looks for users who have deleted more than 10 (tunable) documents the past day.
+- [GSuite Drive Many Documents Deleted](../rules/gsuite_activityevent_rules/gsuite_drive_many_docs_deleted.yml)
+  - Detects when a user moves more than 10 distinct documents to the trash in Google Drive within 60 minutes. This may indicate accidental or malicious bulk deletion of files.
 - [Gsuite Email Bypassed Spam Filter](../rules/gsuite_activityevent_rules/gsuite_bypass_spam_filter_email.yml)
   - Detects if an email received by a user has bypassed the organization's spam filter.
 - [GSuite External Drive Document](../rules/gsuite_reports_rules/gsuite_drive_visibility_change.yml)
@@ -118,8 +118,6 @@
   - A login of a non-approved type was detected for this user.
 - [Gsuite Mail forwarded to external domain](../rules/gsuite_activityevent_rules/gsuite_external_forwarding.yml)
   - A user has configured mail forwarding to an external domain
-- [GSuite Many Docs Deleted Query](../queries/gsuite_queries/GSuite_Many_Docs_Deleted_Query.yml)
-  - Query to search for a user deleting many documents.
 - [GSuite Many Docs Downloaded Query](../queries/gsuite_queries/GSuite_Many_Docs_Downloaded_Query.yml)
   - Query to search high document download counts by users.
 - [GSuite Overly Visible Drive Document](../rules/gsuite_reports_rules/gsuite_drive_overly_visible.yml)
@@ -180,6 +178,12 @@
   - A user has subsequent logins from two geographic locations that are very far apart
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
+- [Okta 180 Day AD Pantherflow in Data Explorer](../queries/okta_queries/okta_ad_pantherflow_baseline_180day.yml)
+  - Builds a 180-day behavioral baseline for Okta AD agent authentication events per user. Computes scalar features and hourly statistics (event volume, IP/country/city/device diversity) over a 180-day window (excluding the last 7 days) to support z-score anomaly detection. Output is intended to populate the okta_ad_agent_baseline_180d lookup table.
+- [Okta 30 Day AD Pantherflow in Data Explorer](../queries/okta_queries/okta_ad_pantherflow_baseline_30day.yml)
+  - Builds a 30-day behavioral baseline for Okta AD agent authentication events per user. Computes scalar features and hourly statistics (event volume, IP/country/city/device diversity) over a 30-day window (excluding the last 7 days) to support z-score anomaly detection. Output is intended to populate the okta_ad_agent_baseline_30d lookup table.
+- [Okta 90 Day AD Pantherflow in Data Explorer](../queries/okta_queries/okta_ad_pantherflow_baseline_90day.yml)
+  - Builds a 90-day behavioral baseline for Okta AD agent authentication events per user. Computes scalar features and hourly statistics (event volume, IP/country/city/device diversity) over a 90-day window (excluding the last 7 days) to support z-score anomaly detection. Output is intended to populate the okta_ad_agent_baseline_90d lookup table.
 - [Okta AD Agent Authentication Anomaly - Z-Score Detection](../rules/okta_rules/okta_ad_agent_auth_zscore_anomaly.yml)
   - Detects potential Okta AD Agent token theft and credential abuse using statistical z-score analysis.This detection uses a lookup table containing 90-day behavioral baselines for each user's AD Agentauthentication patterns, then calculates z-scores to identify suspicious activity in the last 7 days.**PREREQUISITES:**1. Baseline builder query must run first: `Query.Okta.ADAgentBaselineBuilder`2. Lookup table must be configured: `okta_ad_agent_baseline_90d`3. Allow 24 hours for initial baseline to populate**Detection Logic:**- Calculates mean and standard deviation for hourly authentication volume, IP diversity,  country diversity, and device diversity- Alerts when recent activity shows BOTH:  1. Volume spike (z-score > 3 standard deviations)  2. Geographic/IP diversity spike (z-score > 2 standard deviations)**Why This Matters:**Token theft attacks have a distinct signature: stolen credentials are used from multiplelocations/IPs simultaneously or in rapid succession. This creates both a volume spike anda diversity spike that this detection identifies.**Complementary Detection:**This rule complements `Okta.ADAgent.TokenAbuse.Behavioral` which detects admin actions(token creation, agent configuration) from new sources. This rule detects the actual USEof stolen tokens through authentication patterns.
 - [Okta AD Agent Token Abuse - Behavioral](../rules/okta_rules/okta_ad_agent_token_abuse_behavioral.yml)

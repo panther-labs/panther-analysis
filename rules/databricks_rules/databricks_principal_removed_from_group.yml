@@ -1,0 +1,71 @@
+AnalysisType: rule
+Filename: databricks_principal_removed_from_group.py
+RuleID: "Databricks.Audit.PrincipalRemovedFromGroup"
+DisplayName: "Databricks Principal Removed From Group"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Persistence
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098 # Account Manipulation
+Severity: Info
+Description: >
+  Detects when principals (users or service principals) are removed from groups in Databricks accounts.
+  This is often legitimate administrative activity but should be monitored for unauthorized membership changes.
+Runbook: |
+  1. Query audit logs for all group membership changes by the actor in the 24 hours around this event
+  2. Check if the removed principal had active sessions or API calls in the 1 hour before removal
+  3. Find all group membership removals for this group in the past 30 days to identify patterns
+Reference: https://github.com/databricks-solutions/cybersec-workspace-detection-app/blob/main/base/detections/event-based/principal_removed_from_group.py
+Tests:
+  - Name: Principal Removed Successfully
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "removePrincipalFromGroup"
+      userIdentity:
+        email: "admin@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        targetUserName: "user@example.com"
+        targetGroupName: "developers"
+      response:
+        statusCode: 200
+  - Name: Admin Removed from Group
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "removePrincipalFromGroup"
+      userIdentity:
+        email: "admin@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        targetUserName: "power-user@example.com"
+        targetGroupName: "admins"
+      response:
+        statusCode: 200
+  - Name: Wrong Service Name
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "workspace"
+      actionName: "removePrincipalFromGroup"
+      userIdentity:
+        email: "admin@example.com"
+  - Name: Different Action
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "addPrincipalToGroup"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        targetUserName: "user@example.com"
+        targetGroupName: "developers"
