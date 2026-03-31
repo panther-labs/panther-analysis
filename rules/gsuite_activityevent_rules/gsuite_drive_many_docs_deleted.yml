@@ -1,0 +1,64 @@
+AnalysisType: rule
+Filename: gsuite_drive_many_docs_deleted.py
+RuleID: "GSuite.Drive.Many.Documents.Deleted"
+DisplayName: "GSuite Drive Many Documents Deleted"
+Enabled: true
+Severity: Medium
+DedupPeriodMinutes: 60
+Threshold: 11
+LogTypes:
+  - GSuite.ActivityEvent
+Description: >
+  Detects when a user moves more than 10 distinct documents to the trash in Google Drive
+  within 60 minutes. This may indicate accidental or malicious bulk deletion of files.
+Reference: https://support.google.com/drive/answer/2375102
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1485
+Tags:
+  - GSuite
+  - Impact
+  - Data Destruction
+Runbook: |
+  1. Query GSuite.ActivityEvent for all trash events by actor:email in the 2 hours around this alert to identify the full list of parameters:doc_title values deleted and whether they belong to shared drives
+  2. Check parameters:visibility on the deleted documents to determine if externally or internally shared files were affected, and assess the business impact of the deletions
+  3. Search for other suspicious drive activity by this user in the past 24 hours, including bulk downloads, sharing changes, or access to sensitive documents prior to deletion
+Tests:
+  - Name: Document Trashed
+    ExpectedResult: true
+    Log:
+      name: trash
+      actor:
+        email: user@example.com
+      parameters:
+        doc_title: "Q4 Financial Report"
+        doc_type: spreadsheet
+        visibility: shared_internally
+  - Name: Externally Shared Document Trashed - High Severity
+    ExpectedResult: true
+    Log:
+      name: trash
+      actor:
+        email: user@example.com
+      parameters:
+        doc_title: "Partner Contract"
+        doc_type: document
+        visibility: shared_externally
+  - Name: Document Viewed - Not Deletion
+    ExpectedResult: false
+    Log:
+      name: view
+      actor:
+        email: user@example.com
+      parameters:
+        doc_title: "Q4 Financial Report"
+        doc_type: spreadsheet
+  - Name: Document Downloaded - Not Deletion
+    ExpectedResult: false
+    Log:
+      name: download
+      actor:
+        email: user@example.com
+      parameters:
+        doc_title: "Q4 Financial Report"
+        doc_type: spreadsheet

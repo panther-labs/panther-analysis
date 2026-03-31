@@ -1,0 +1,72 @@
+AnalysisType: rule
+Filename: dropbox_many_downloads.py
+RuleID: "Dropbox.Many.Downloads"
+DisplayName: "Dropbox Many Downloads"
+Enabled: false
+Severity: Medium
+DedupPeriodMinutes: 60
+Threshold: 11
+LogTypes:
+  - Dropbox.TeamEvent
+Description: >
+  Detects when a Dropbox user downloads more than 10 distinct files within 60 minutes.
+  This may indicate data exfiltration or unauthorized bulk access to team files.
+  The threshold should be tuned to your environment.
+Reference: https://learn.dropbox.com/video-library/upload-and-download-files
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1567
+Tags:
+  - Dropbox
+  - Exfiltration
+  - Configuration Required
+Runbook: |
+  1. Query Dropbox.TeamEvent for all file_download events by actor:user:email in the 2 hours around this alert to identify the full list of assets[0]:path:contextual values downloaded
+  2. Check involve_non_team_member and the origin:geo_location:ip_address to determine if the downloads originated from an external user or an unexpected location
+  3. Search for other suspicious activity by this user in the past 24 hours, including external sharing events, ownership transfers, or logins from new devices or locations
+Tests:
+  - Name: File Downloaded
+    ExpectedResult: true
+    Log:
+      actor:
+        user:
+          email: alice@company.com
+          _tag: team_member
+      event_type:
+        _tag: file_download
+      assets:
+        - path:
+            contextual: /alice/report.pdf
+      involve_non_team_member: false
+      origin:
+        geo_location:
+          ip_address: 1.2.3.4
+  - Name: File Downloaded - Non-Team Member Involved
+    ExpectedResult: true
+    Log:
+      actor:
+        user:
+          email: alice@company.com
+          _tag: team_member
+      event_type:
+        _tag: file_download
+      assets:
+        - path:
+            contextual: /shared/contract.docx
+      involve_non_team_member: true
+      origin:
+        geo_location:
+          ip_address: 5.6.7.8
+  - Name: Non-Download Event
+    ExpectedResult: false
+    Log:
+      actor:
+        user:
+          email: alice@company.com
+          _tag: team_member
+      event_type:
+        _tag: file_view
+      assets:
+        - path:
+            contextual: /alice/report.pdf
+      involve_non_team_member: false

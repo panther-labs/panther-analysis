@@ -1,0 +1,87 @@
+AnalysisType: rule
+Filename: gsuite_rapid_multi_ip_authentication.py
+RuleID: "Google.Workspace.Rapid.Multi.IP.Authentication"
+DisplayName: "Google Workspace Rapid Multi-IP Authentication"
+Enabled: true
+Severity: Medium
+DedupPeriodMinutes: 360
+Threshold: 3
+LogTypes:
+  - GSuite.ActivityEvent
+Description: |
+  Alerts when a user successfully authenticates from 3 or more distinct IPv4 addresses
+  within 6 hours. This pattern may indicate GAIA credential theft where attackers use
+  stolen OAuth tokens across multiple compromised machines simultaneously. IPv6 addresses
+  are excluded to avoid false positives from dual-stack networking environments.
+Reference: https://businessinsights.bitdefender.com/the-chain-reaction-new-methods-for-extending-local-breaches-in-google-workspace
+Reports:
+  MITRE ATT&CK:
+    - TA0008:T1078.004
+    - TA0006:T1550
+Tags:
+  - GSuite
+  - Lateral Movement
+  - Valid Accounts
+  - GAIA
+  - Credential Theft
+Runbook: |
+  1. Query GSuite.ActivityEvent for all login events by actor:email in the 12 hours before and after the alert to establish the full timeline of authentication activity and identify all source ipAddress values used
+  2. Check if the source IP addresses are associated with cloud providers, VPN services, or proxy networks, and compare geographic locations to identify impossible travel patterns
+  3. Search for other authentication anomalies for this user in the past 7 days, including OAuth token authorizations with privileged scopes, failed login attempts, or account modification events
+SummaryAttributes:
+  - actor:email
+  - ipAddress
+Tests:
+  - Name: Successful Login from IPv4
+    ExpectedResult: true
+    Log:
+      id:
+        applicationName: login
+      name: login_success
+      ipAddress: "1.2.3.4"
+      actor:
+        email: user@example.com
+      parameters:
+        login_type: google_password
+  - Name: Successful Login from IPv4 - Non-Standard Login Type
+    ExpectedResult: true
+    Log:
+      id:
+        applicationName: login
+      name: login_success
+      ipAddress: "5.6.7.8"
+      actor:
+        email: user@example.com
+      parameters:
+        login_type: oauth2
+  - Name: Successful Login from IPv6 - Excluded
+    ExpectedResult: false
+    Log:
+      id:
+        applicationName: login
+      name: login_success
+      ipAddress: "2001:db8::1"
+      actor:
+        email: user@example.com
+      parameters:
+        login_type: google_password
+  - Name: Login Failure - Not Counted
+    ExpectedResult: false
+    Log:
+      id:
+        applicationName: login
+      name: login_failure
+      ipAddress: "1.2.3.4"
+      actor:
+        email: user@example.com
+      parameters:
+        login_type: google_password
+  - Name: Non-Login Application Event
+    ExpectedResult: false
+    Log:
+      id:
+        applicationName: drive
+      name: login_success
+      ipAddress: "1.2.3.4"
+      actor:
+        email: user@example.com

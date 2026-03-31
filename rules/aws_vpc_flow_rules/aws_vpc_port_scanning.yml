@@ -1,0 +1,90 @@
+AnalysisType: rule
+Filename: aws_vpc_port_scanning.py
+RuleID: "AWS.VPC.PortScanning"
+DisplayName: "VPC Flow Port Scanning"
+Enabled: false
+Severity: Medium
+DedupPeriodMinutes: 60
+Threshold: 10
+LogTypes:
+  - AWS.VPCFlow
+Description: >
+  Detects potential port scanning activity by alerting when a single source address
+  communicates with 10 or more distinct destination ports on the same target within 60 minutes.
+  Common ports (80, 443, 53, etc.) are excluded to reduce noise.
+Reports:
+  MITRE ATT&CK:
+    - TA0007:T1046
+Tags:
+  - Discovery:Network Service Discovery
+Runbook: |
+  1. Query VPC Flow logs for all egress traffic from srcAddr in the 1 hour around this alert to identify the full sequence of dstPort values targeted on dstAddr within vpcId
+  2. Check if srcAddr is associated with known vulnerability scanners, corporate IT tooling, or threat intelligence feeds
+  3. Find other alerts involving srcAddr or vpcId in the past 7 days to determine if this is part of ongoing reconnaissance
+Tests:
+  - Name: Egress to Non-Common Port
+    ExpectedResult: true
+    Log:
+      srcAddr: "10.0.0.1"
+      dstAddr: "192.168.1.1"
+      srcPort: 54321
+      dstPort: 8080
+      flowDirection: egress
+      vpcId: vpc-12345678
+      region: us-east-1
+      subNetId: subnet-12345678
+  - Name: Ingress Flow
+    ExpectedResult: false
+    Log:
+      srcAddr: "10.0.0.1"
+      dstAddr: "192.168.1.1"
+      srcPort: 54321
+      dstPort: 8080
+      flowDirection: ingress
+      vpcId: vpc-12345678
+      region: us-east-1
+      subNetId: subnet-12345678
+  - Name: Egress to Common HTTPS Port
+    ExpectedResult: false
+    Log:
+      srcAddr: "10.0.0.1"
+      dstAddr: "192.168.1.1"
+      srcPort: 54321
+      dstPort: 443
+      flowDirection: egress
+      vpcId: vpc-12345678
+      region: us-east-1
+      subNetId: subnet-12345678
+  - Name: Null Source Address
+    ExpectedResult: false
+    Log:
+      srcAddr: "null"
+      dstAddr: "192.168.1.1"
+      srcPort: 54321
+      dstPort: 8080
+      flowDirection: egress
+      vpcId: vpc-12345678
+      region: us-east-1
+      subNetId: subnet-12345678
+  - Name: Egress from External IP - Default Severity
+    ExpectedResult: true
+    Log:
+      srcAddr: "8.8.8.8"
+      dstAddr: "10.0.0.1"
+      srcPort: 54321
+      dstPort: 8080
+      flowDirection: egress
+      vpcId: vpc-12345678
+      region: us-east-1
+      subNetId: subnet-12345678
+  - Name: Egress from Internal IP - High Severity
+    ExpectedResult: true
+    Log:
+      srcAddr: "172.16.0.5"
+      dstAddr: "10.0.0.1"
+      srcPort: 54321
+      dstPort: 8080
+      flowDirection: egress
+      vpcId: vpc-12345678
+      region: us-east-1
+      subNetId: subnet-12345678
