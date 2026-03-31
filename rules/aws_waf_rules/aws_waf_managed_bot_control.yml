@@ -1,0 +1,126 @@
+AnalysisType: rule
+Filename: aws_waf_managed_bot_control.py
+RuleID: "AWS.WAF.Managed.BotControl"
+DisplayName: "AWS WAF Managed Bot Control Passthrough Rule"
+Enabled: true
+LogTypes:
+  - AWS.WAFWebACL
+Tags:
+  - AWS
+  - WAF
+  - Managed Rules
+  - Bot Detection
+  - Reconnaissance
+Reports:
+  MITRE ATT&CK:
+    - TA0043:T1595
+Severity: Info
+Description: >
+  Detects AWS WAF Bot Control managed rule group matches. Covers automated browser detection,
+  HTTP library user agents, scraping frameworks, known bot data centers, and targeted bot
+  protections including token abuse and coordinated activity.
+Runbook: |
+  1. Find all requests from httpRequest:clientIp in the 24 hours before and after this alert to determine request volume and targeted URI patterns
+  2. Check if the user agent string and httpRequest:clientIp are associated with legitimate bot services (search engines, monitoring) or known malicious automation
+  3. Search for other WAF bot control alerts from the same httpRequest:clientIp or user agent in the past 7 days to identify persistent automated activity
+Reference: https://docs.aws.amazon.com/waf/latest/developerguide/aws-managed-rule-groups-bot.html
+Tests:
+  - Name: Blocked bot via terminatingRuleId
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:30:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesBotControlRuleSet"
+      terminatingRuleType: "MANAGED_RULE_GROUP"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.45"
+        country: "US"
+        uri: "/api/data"
+        httpMethod: "GET"
+
+  - Name: Scraping framework in ruleGroupList
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:35:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesBotControlRuleSet"
+      action: "BLOCK"
+      httpSourceName: "CF"
+      httpRequest:
+        clientIp: "198.51.100.22"
+        country: "DE"
+        uri: "/products"
+        httpMethod: "GET"
+        headers:
+          - name: "User-Agent"
+            value: "Scrapy/2.7"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesBotControlRuleSet"
+          terminatingRule:
+            ruleId: "CategoryScrapingFramework"
+            action: "BLOCK"
+
+  - Name: Non-terminating automated browser signal (COUNT mode)
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:40:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "192.0.2.100"
+        country: "US"
+        uri: "/login"
+        httpMethod: "POST"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesBotControlRuleSet"
+          nonTerminatingMatchingRules:
+            - ruleId: "SignalAutomatedBrowser"
+              action: "COUNT"
+
+  - Name: Targeted token abuse detection
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:45:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesBotControlRuleSet"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.99"
+        country: "BR"
+        uri: "/checkout"
+        httpMethod: "POST"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesBotControlRuleSet"
+          terminatingRule:
+            ruleId: "TGT_TokenReuseIpHigh"
+            action: "BLOCK"
+
+  - Name: Different rule group - no alert
+    ExpectedResult: false
+    Log:
+      timestamp: "2024-03-20T10:50:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesCommonRuleSet"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.45"
+
+  - Name: Normal traffic - no alert
+    ExpectedResult: false
+    Log:
+      timestamp: "2024-03-20T10:55:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "198.51.100.10"
+
+DedupPeriodMinutes: 60
+Threshold: 1

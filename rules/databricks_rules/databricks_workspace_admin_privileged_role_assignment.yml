@@ -1,0 +1,175 @@
+AnalysisType: rule
+Filename: databricks_workspace_admin_privileged_role_assignment.py
+RuleID: "Databricks.Audit.WorkspaceAdminPrivilegedRoleAssignment"
+DisplayName: "Databricks Workspace Admin Privileged Role Assignment"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Privilege Escalation
+  - Persistence
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1098 # Account Manipulation
+    - TA0003:T1136 # Create Account
+Severity: Medium
+Description: >
+  Detects when workspace-level admin privileges are granted in Databricks through direct role
+  assignments or administrative group membership. This simplified version detects direct admin
+  grants and additions to admin groups. For nested group resolution (detecting when groups are
+  added to admin groups), consider implementing a correlation rule. Successful grants to the
+  system 'admins' group are elevated to HIGH severity.
+Runbook: |
+  1. Query audit logs for all workspace administrative actions by the target principal in the 24 hours after this privilege grant
+  2. Check if the target principal created clusters, modified notebooks, or accessed sensitive data in the 6 hours after receiving admin rights
+  3. Find all workspace admin grants for this workspace in the past 90 days to establish baseline
+Reference: https://github.com/databricks-solutions/cybersec-workspace-detection-app/blob/main/base/detections/event-based/workspace_admin_privileged_role_assignment.py
+SummaryAttributes:
+  - actor
+  - target_principal
+  - principal_type
+  - target_group
+Tests:
+  - Name: Direct Workspace Admin Grant
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "WORKSPACE_LEVEL"
+      serviceName: "accounts"
+      actionName: "setAdmin"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "admin@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        targetUserName: "newadmin@example.com"
+      response:
+        statusCode: 200
+  - Name: Add to System Admins Group
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "WORKSPACE_LEVEL"
+      serviceName: "accounts"
+      actionName: "addPrincipalToGroup"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        principal: "user@example.com"
+        targetGroupName: "admins"
+      response:
+        statusCode: 200
+  - Name: Add to Workspace Admins Group
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "WORKSPACE_LEVEL"
+      serviceName: "accounts"
+      actionName: "addPrincipalsToGroup"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        targetUserName: "user@example.com"
+        targetGroupName: "workspace-admins"
+      response:
+        statusCode: 200
+  - Name: Service Principal Admin Grant
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "WORKSPACE_LEVEL"
+      serviceName: "accounts"
+      actionName: "addPrincipalToGroup"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        principal: "12345678-1234-1234-1234-123456789012"
+        targetGroupName: "workspace-administrators"
+      response:
+        statusCode: 200
+  - Name: Account-Level Event Should Not Alert
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "ACCOUNT_LEVEL"
+      serviceName: "accounts"
+      actionName: "setAccountAdmin"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        targetUserName: "user@example.com"
+      response:
+        statusCode: 200
+  - Name: Failed Admin Grant
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "WORKSPACE_LEVEL"
+      serviceName: "accounts"
+      actionName: "setAdmin"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "attacker@example.com"
+      requestParams:
+        targetUserName: "attacker@example.com"
+      response:
+        statusCode: 403
+  - Name: Remove Admin Should Not Alert
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "WORKSPACE_LEVEL"
+      serviceName: "accounts"
+      actionName: "removeAdmin"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        targetUserName: "user@example.com"
+      response:
+        statusCode: 200
+  - Name: Remove From Admin Group Should Not Alert
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "WORKSPACE_LEVEL"
+      serviceName: "accounts"
+      actionName: "removePrincipalFromGroup"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        principal: "user@example.com"
+        targetGroupName: "admins"
+      response:
+        statusCode: 200
+  - Name: Account-Level Without Workspace Context
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "ACCOUNT_LEVEL"
+      serviceName: "accounts"
+      actionName: "setAdmin"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        targetUserName: "user@example.com"
+  - Name: Non-Admin Group
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "WORKSPACE_LEVEL"
+      serviceName: "accounts"
+      actionName: "addPrincipalToGroup"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        principal: "user@example.com"
+        targetGroupName: "data-engineers"

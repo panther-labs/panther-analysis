@@ -1,0 +1,125 @@
+AnalysisType: rule
+Filename: aws_waf_managed_core_rule_set.py
+RuleID: "AWS.WAF.Managed.CoreRuleSet"
+DisplayName: "AWS WAF Managed Core Rule Set Passthrough Rule"
+Enabled: true
+LogTypes:
+  - AWS.WAFWebACL
+Tags:
+  - AWS
+  - WAF
+  - Managed Rules
+  - Initial Access:Exploit Public-Facing Application
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1190
+Severity: Medium
+Description: >
+  Detects AWS WAF Core Rule Set (CRS) managed rule group matches. Covers XSS, LFI, RFI, SSRF,
+  size restrictions, restricted extensions, and bad bot user agents across all WAF sources.
+Runbook: |
+  1. Find all WAF log entries from httpRequest:clientIp in the 6 hours before and after this alert to identify attack patterns or scanning behavior
+  2. Check if httpRequest:clientIp appears in threat intelligence feeds or is associated with known proxy/VPN services
+  3. Search for other WAF alerts targeting the same httpRequest:uri or httpSourceId in the past 7 days to determine if this is part of a broader campaign
+Reference: https://docs.aws.amazon.com/waf/latest/developerguide/aws-managed-rule-groups-baseline.html#aws-managed-rule-groups-baseline-crs
+Tests:
+  - Name: Blocked via terminatingRuleId
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:30:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesCommonRuleSet"
+      terminatingRuleType: "MANAGED_RULE_GROUP"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.45"
+        country: "US"
+        uri: "/api/endpoint"
+        httpMethod: "POST"
+
+  - Name: Match in ruleGroupList terminating rule
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:35:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesCommonRuleSet"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "198.51.100.22"
+        country: "CN"
+        uri: "/etc/passwd"
+        httpMethod: "GET"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesCommonRuleSet"
+          terminatingRule:
+            ruleId: "GenericLFI_URIPATH"
+            action: "BLOCK"
+
+  - Name: Non-terminating match in rule group (COUNT mode)
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:40:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "CF"
+      httpRequest:
+        clientIp: "192.0.2.100"
+        country: "RU"
+        uri: "/search?q=<script>alert(1)</script>"
+        httpMethod: "GET"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesCommonRuleSet"
+          nonTerminatingMatchingRules:
+            - ruleId: "CrossSiteScripting_QUERYARGUMENTS"
+              action: "COUNT"
+
+  - Name: CloudFront SSRF detection
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:45:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesCommonRuleSet"
+      action: "BLOCK"
+      httpSourceName: "CF"
+      httpRequest:
+        clientIp: "203.0.113.45"
+        uri: "/proxy?url=http://169.254.169.254/latest/meta-data/"
+        httpMethod: "GET"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesCommonRuleSet"
+          terminatingRule:
+            ruleId: "EC2MetaDataSSRF_QUERYARGUMENTS"
+            action: "BLOCK"
+
+  - Name: Different rule group - no alert
+    ExpectedResult: false
+    Log:
+      timestamp: "2024-03-20T10:50:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesKnownBadInputsRuleSet"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.45"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesKnownBadInputsRuleSet"
+          terminatingRule:
+            ruleId: "Log4JRCE_BODY"
+            action: "BLOCK"
+
+  - Name: Normal traffic - no alert
+    ExpectedResult: false
+    Log:
+      timestamp: "2024-03-20T10:55:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "198.51.100.10"
+
+DedupPeriodMinutes: 60
+Threshold: 1
