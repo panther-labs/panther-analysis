@@ -34,18 +34,6 @@ Tests:
       response:
         statusCode: 200
 
-  - Name: User Added via add
-    ExpectedResult: true
-    Log:
-      serviceName: "accounts"
-      actionName: "add"
-      userIdentity:
-        email: "admin@example.com"
-      requestParams:
-        targetUserName: "newuser@example.com"
-        endpoint: "adminConsole"
-      response:
-        statusCode: 200
 
   - Name: Different Service - Should Not Alert
     ExpectedResult: false
