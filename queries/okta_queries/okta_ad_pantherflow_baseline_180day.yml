@@ -1,0 +1,123 @@
+AnalysisType: scheduled_query
+QueryName: "Okta 180 Day AD Pantherflow in Data Explorer"
+Enabled: false
+Description: >
+  Builds a 180-day behavioral baseline for Okta AD agent authentication events per user.
+  Computes scalar features and hourly statistics (event volume, IP/country/city/device diversity)
+  over a 180-day window (excluding the last 7 days) to support z-score anomaly detection.
+  Output is intended to populate the okta_ad_agent_baseline_180d lookup table.
+Query: |
+  --pragma: pantherflow
+  let base = panther_logs.public.okta_systemlog
+  | where p_event_time > time.ago(187d) and p_event_time < time.ago(7d)
+  | where strings.ilike(actor.alternateId, "%@%")
+  | where eventType == "user.authentication.auth_via_AD_agent"
+  | where outcome.result == "SUCCESS"
+  | project
+      user_email = actor.alternateId,
+      country = client.geographicalContext.country,
+      city = client.geographicalContext.city,
+      ip_address = client.ipAddress,
+      asn = securityContext.asNumber,
+      device_fingerprint = debugContext.debugData.deviceFingerprint,
+      event_date = snowflake.func('DATE', p_event_time),
+      event_hour = time.trunc('hour', p_event_time);
+
+  let scalar_features = base
+  | summarize
+      total_ad_agent_events = agg.count(),
+      country_diversity = agg.count_distinct(country),
+      city_diversity = agg.count_distinct(city),
+      ip_diversity = agg.count_distinct(ip_address),
+      device_fingerprint_diversity = agg.count_distinct(device_fingerprint),
+      asn_diversity = agg.count_distinct(asn),
+      active_days_count = agg.count_distinct(event_date)
+    by user_email;
+
+  let primary_country_tbl = base
+  | summarize cnt = agg.count() by user_email, country
+  | summarize primary_country = agg.arg_max(cnt, country) by user_email;
+
+  let primary_city_tbl = base
+  | summarize cnt = agg.count() by user_email, city
+  | summarize primary_city = agg.arg_max(cnt, city) by user_email;
+
+  let primary_ip_tbl = base
+  | summarize cnt = agg.count() by user_email, ip_address
+  | summarize primary_ip = agg.arg_max(cnt, ip_address) by user_email;
+
+  let ad_agent_hourly = base
+  | summarize
+      hourly_total_events = agg.count(),
+      hourly_ip_diversity = agg.count_distinct(ip_address),
+      hourly_country_diversity = agg.count_distinct(country),
+      hourly_city_diversity = agg.count_distinct(city),
+      hourly_asn_diversity = agg.count_distinct(asn),
+      hourly_device_diversity = agg.count_distinct(device_fingerprint)
+    by user_email, event_hour;
+
+  let ad_agent_stats = ad_agent_hourly
+  | extend event_date_hr = snowflake.func('DATE', event_hour)
+  | summarize
+      total_events = agg.sum(hourly_total_events),
+      active_days = agg.count_distinct(event_date_hr),
+      mean_events_per_hour = agg.avg(hourly_total_events),
+      stddev_events_per_hour = agg.stddev(hourly_total_events),
+      mean_ip_diversity_per_hour = agg.avg(hourly_ip_diversity),
+      stddev_ip_diversity_per_hour = agg.stddev(hourly_ip_diversity),
+      mean_country_diversity_per_hour = agg.avg(hourly_country_diversity),
+      stddev_country_diversity_per_hour = agg.stddev(hourly_country_diversity),
+      mean_city_diversity_per_hour = agg.avg(hourly_city_diversity),
+      stddev_city_diversity_per_hour = agg.stddev(hourly_city_diversity),
+      mean_device_diversity_per_hour = agg.avg(hourly_device_diversity),
+      stddev_device_diversity_per_hour = agg.stddev(hourly_device_diversity),
+      hours_with_activity = agg.count(),
+      first_event = agg.min(event_hour),
+      last_event = agg.max(event_hour)
+    by user_email
+  | where total_events >= 10;
+
+  scalar_features
+  | join kind=inner stats=(ad_agent_stats) on $left.user_email == $right.user_email
+  | join kind=leftouter pc=(primary_country_tbl) on $left.user_email == $right.user_email
+  | join kind=leftouter pci=(primary_city_tbl) on $left.user_email == $right.user_email
+  | join kind=leftouter pi=(primary_ip_tbl) on $left.user_email == $right.user_email
+  | project
+      user_email,
+      total_ad_agent_events,
+      active_days_count,
+      country_diversity,
+      city_diversity,
+      ip_diversity,
+      device_fingerprint_diversity,
+      asn_diversity,
+      primary_country = pc.primary_country,
+      primary_city = pci.primary_city,
+      primary_ip = pi.primary_ip,
+      baseline_total_events = stats.total_events,
+      baseline_active_days = stats.active_days,
+      baseline_mean_events_per_hour = math.round(stats.mean_events_per_hour, 4),
+      baseline_stddev_events_per_hour = math.round(stats.stddev_events_per_hour, 4),
+      baseline_mean_ip_diversity_per_hour = math.round(stats.mean_ip_diversity_per_hour, 4),
+      baseline_stddev_ip_diversity_per_hour = math.round(stats.stddev_ip_diversity_per_hour, 4),
+      baseline_mean_country_diversity_per_hour = math.round(stats.mean_country_diversity_per_hour, 4),
+      baseline_stddev_country_diversity_per_hour = math.round(stats.stddev_country_diversity_per_hour, 4),
+      baseline_mean_city_diversity_per_hour = math.round(stats.mean_city_diversity_per_hour, 4),
+      baseline_stddev_city_diversity_per_hour = math.round(stats.stddev_city_diversity_per_hour, 4),
+      baseline_mean_device_diversity_per_hour = math.round(stats.mean_device_diversity_per_hour, 4),
+      baseline_stddev_device_diversity_per_hour = math.round(stats.stddev_device_diversity_per_hour, 4),
+      baseline_hours_with_activity = stats.hours_with_activity,
+      baseline_first_event = stats.first_event,
+      baseline_last_event = stats.last_event,
+      baseline_updated_at = time.now(),
+      baseline_window = "180days"
+  | sort baseline_total_events desc
+Schedule:
+  RateMinutes: 43200  # 30 days
+  TimeoutMinutes: 10
+Tags:
+  - Okta
+  - Active Directory
+  - Baseline
+  - PantherFlow
+  - Behavioral Analytics

@@ -1,0 +1,74 @@
+AnalysisType: rule
+Filename: databricks_config_changes_account_level.py
+RuleID: "Databricks.Audit.ConfigChangesAccountLevel"
+DisplayName: "Databricks Account-Level Configuration Changes"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Persistence
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098 # Account Manipulation
+Severity: Info
+Description: >
+  Detects configuration changes at the Databricks account level, including account settings,
+  metastore configurations, and SSO settings. Account-level changes affect all workspaces and
+  should be monitored for unauthorized modifications.
+Runbook: |
+  1. Query audit logs for all account-level changes by the actor in the 24 hours around this event
+  2. Check if this configuration change affected multiple workspaces based on activity in the 6 hours after the change
+  3. Find all account-level configuration changes in the past 30 days to identify patterns
+Reference: https://github.com/databricks-solutions/cybersec-workspace-detection-app/blob/main/base/detections/event-based/configuration_changes_account_level.py
+Tests:
+  - Name: Account Settings Updated
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "ACCOUNT_LEVEL"
+      serviceName: "accounts"
+      actionName: "updateAccountSettings"
+      userIdentity:
+        email: "admin@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        setting: "defaultWorkspaceRegion"
+        value: "us-west-2"
+      response:
+        statusCode: 200
+  - Name: SSO Configuration Created
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "ACCOUNT_LEVEL"
+      serviceName: "ssoConfigBackend"
+      actionName: "create"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        provider: "okta"
+        status: "enabled"
+      response:
+        statusCode: 200
+  - Name: Workspace-Level Change
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "WORKSPACE_LEVEL"
+      serviceName: "workspace"
+      actionName: "workspaceConfEdit"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        workspaceConfKeys: "displayName"
+  - Name: Non-Config Action
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      auditLevel: "ACCOUNT_LEVEL"
+      serviceName: "accounts"
+      actionName: "login"
+      userIdentity:
+        email: "user@example.com"

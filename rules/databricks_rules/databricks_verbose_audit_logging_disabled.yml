@@ -1,0 +1,96 @@
+AnalysisType: rule
+Filename: databricks_verbose_audit_logging_disabled.py
+RuleID: "Databricks.Audit.VerboseAuditLoggingDisabled"
+DisplayName: "Databricks Verbose Audit Logging Disabled"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Defense Evasion
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562.008 # Impair Defenses: Disable or Modify Cloud Logs
+Severity: High
+Description: >
+  Detects when verbose audit logging is disabled in a Databricks workspace. Disabling verbose
+  audit logging significantly reduces the visibility of security-relevant events and is a common
+  technique used by attackers to hide malicious activity. Successful disabling is elevated to
+  CRITICAL severity.
+Runbook: |
+  1. Query audit logs for all actions by the actor (userIdentity.email) in the 6 hours before and after disabling audit logging
+  2. Check if there were suspicious data access, deletion, or privilege escalation actions in the 24 hours around this change
+  3. Find all other high-risk configuration changes by this actor in the past 7 days
+Reference: https://github.com/databricks-solutions/cybersec-workspace-detection-app/blob/main/base/detections/event-based/verbose_audit_logging_disabled.py
+SummaryAttributes:
+  - actor
+  - source_ip
+  - config_status
+Tests:
+  - Name: Verbose Audit Logging Successfully Disabled
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "workspace"
+      actionName: "workspaceConfEdit"
+      userIdentity:
+        email: "admin@example.com"
+      sourceIPAddress: "198.51.100.1"
+      userAgent: "Mozilla/5.0"
+      requestParams:
+        workspaceConfKeys: "enableVerboseAuditLogs"
+        workspaceConfValues: "false"
+      response:
+        statusCode: 200
+      auditLevel: "WORKSPACE_LEVEL"
+  - Name: Verbose Audit Logging Disable Attempt Failed
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "workspace"
+      actionName: "workspaceConfEdit"
+      userIdentity:
+        email: "attacker@example.com"
+      sourceIPAddress: "203.0.113.50"
+      requestParams:
+        workspaceConfKeys: "enableVerboseAuditLogs"
+        workspaceConfValues: "false"
+      response:
+        statusCode: 403
+      auditLevel: "WORKSPACE_LEVEL"
+  - Name: Verbose Audit Logging Enabled
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "workspace"
+      actionName: "workspaceConfEdit"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        workspaceConfKeys: "enableVerboseAuditLogs"
+        workspaceConfValues: "true"
+      response:
+        statusCode: 200
+  - Name: Different Config Key
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "workspace"
+      actionName: "workspaceConfEdit"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        workspaceConfKeys: "someOtherConfig"
+        workspaceConfValues: "false"
+  - Name: Wrong Service
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "workspaceConfEdit"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        workspaceConfKeys: "enableVerboseAuditLogs"
+        workspaceConfValues: "false"

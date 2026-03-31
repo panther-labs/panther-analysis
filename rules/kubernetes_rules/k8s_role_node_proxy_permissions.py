@@ -21,11 +21,11 @@ def rule(event):
 
     # Check request object for node/proxy permissions
     request_object = event.udm("requestObject") or {}
-    rules = request_object.get("rules", [])
+    rules = request_object.get("rules") or []
 
     for rule_config in rules:
-        resources = rule_config.get("resources", [])
-        verbs = rule_config.get("verbs", [])
+        resources = rule_config.get("resources") or []
+        verbs = rule_config.get("verbs") or []
 
         # Check for nodes/proxy or nodes/* permissions
         # These allow accessing the kubelet API through the API server proxy
@@ -57,12 +57,12 @@ def dedup(event):
 
 def alert_context(event):
     request_object = event.udm("requestObject") or {}
-    rules = request_object.get("rules", [])
+    rules = request_object.get("rules") or []
 
     # Extract rules with node/proxy permissions
     dangerous_rules = []
     for rule_config in rules:
-        resources = rule_config.get("resources", [])
+        resources = rule_config.get("resources") or []
         if "nodes/proxy" in resources or "nodes/*" in resources or "nodes" in resources:
             dangerous_rules.append(rule_config)
 
