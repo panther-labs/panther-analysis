@@ -1,0 +1,72 @@
+AnalysisType: rule
+Filename: databricks_group_deleted.py
+RuleID: "Databricks.Audit.GroupDeleted"
+DisplayName: "Databricks Group Deleted"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Impact
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1531 # Account Access Removal
+Severity: Low
+Description: >
+  Detects group deletions in Databricks accounts. While often part of normal cleanup processes,
+  unauthorized group deletions could indicate access control dismantling. Successful deletions
+  are elevated to HIGH severity.
+Runbook: |
+  1. Query audit logs for all members who were in this group in the 24 hours before deletion
+  2. Check if this group had admin privileges or access to sensitive resources based on past 30 days of activity
+  3. Find all group deletions by this actor in the past 30 days to identify bulk deletion patterns
+Reference: https://github.com/databricks-solutions/cybersec-workspace-detection-app/blob/main/base/detections/event-based/group_deleted.py
+Tests:
+  - Name: Successful Group Deletion
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "removeGroup"
+      userIdentity:
+        email: "admin@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        targetGroupId: "group-123"
+      response:
+        statusCode: 200
+  - Name: Group Deletion from Permission Assignment
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "removeGroup"
+      userIdentity:
+        email: "admin@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        endpoint: "permissionAssignment"
+        targetUserName: "developers-group"
+      response:
+        statusCode: 200
+  - Name: Failed Group Deletion
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "removeGroup"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        targetGroupId: "group-456"
+      response:
+        statusCode: 403
+  - Name: Wrong Service
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "workspace"
+      actionName: "removeGroup"
+      userIdentity:
+        email: "admin@example.com"

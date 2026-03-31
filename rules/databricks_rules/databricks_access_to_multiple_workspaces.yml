@@ -1,0 +1,49 @@
+AnalysisType: rule
+Filename: databricks_access_to_multiple_workspaces.py
+RuleID: "Databricks.Audit.AccessToMultipleWorkspaces"
+DisplayName: "Databricks Access to Multiple Workspaces"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Lateral Movement
+  - Reconnaissance
+Reports:
+  MITRE ATT&CK:
+    - TA0008:T1021 # Remote Services
+Severity: Medium
+Threshold: 5
+DedupPeriodMinutes: 1440
+Description: >
+  Detects users accessing 5 or more distinct workspaces within 24 hours, which may indicate
+  lateral movement, reconnaissance, or compromised credentials.
+Runbook: |
+  1. Query audit logs for all workspace access by this user in the past 7 days to establish normal patterns
+  2. Check if the user performed unusual actions (data downloads, permission changes) across multiple workspaces
+  3. Find all users accessing multiple workspaces in the past 30 days to establish baseline
+Reference: https://github.com/andyweaves/system-tables-audit-logs/blob/main/resources/queries_and_alerts.json
+SummaryAttributes:
+  - actor
+Tests:
+  - Name: Workspace Access
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "accounts"
+      actionName: "login"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 200
+  - Name: System User
+    ExpectedResult: false
+    Log:
+      timestamp: 1704067200000
+      serviceName: "accounts"
+      actionName: "login"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "System-User"

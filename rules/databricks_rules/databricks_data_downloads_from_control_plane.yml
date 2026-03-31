@@ -1,0 +1,39 @@
+AnalysisType: rule
+Filename: databricks_data_downloads_from_control_plane.py
+RuleID: "Databricks.Audit.DataDownloadsFromControlPlane"
+DisplayName: "Databricks Data Downloads From Control Plane"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Exfiltration
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1567 # Exfiltration Over Web Service
+Severity: Medium
+Threshold: 21
+DedupPeriodMinutes: 60
+Description: >
+  Detects high volume data downloads from the control plane which may indicate
+  data exfiltration. Monitors download actions including query results, notebooks, and models.
+Runbook: |
+  1. Query audit logs for all download actions by this user in the past 24 hours to calculate total volume
+  2. Check if the downloaded data contains sensitive classifications or PII in the 6 hours around this alert
+  3. Find all users with high download rates in the past 30 days to establish baseline
+Reference: https://github.com/andyweaves/system-tables-audit-logs/blob/main/resources/queries_and_alerts.json
+Tests:
+  - Name: Preview Results Download
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "sql"
+      actionName: "downloadPreviewResults"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 200
+
+SummaryAttributes:
+  - actor

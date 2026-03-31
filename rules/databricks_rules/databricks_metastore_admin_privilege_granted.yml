@@ -1,0 +1,85 @@
+AnalysisType: rule
+Filename: databricks_metastore_admin_privilege_granted.py
+RuleID: "Databricks.Audit.MetastoreAdminPrivilegeGranted"
+DisplayName: "Databricks Metastore Admin Privilege Granted"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Privilege Escalation
+  - Unity Catalog
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1098 # Account Manipulation
+Severity: Medium
+Description: >
+  Detects when metastore admin privileges are granted in Databricks through direct metastore
+  ownership changes or addition to metastore admin groups. Metastore admins have extensive
+  control over data access and governance policies in Unity Catalog.
+Runbook: |
+  1. Query Unity Catalog audit logs for all metastore operations by the target principal in the 24 hours after this privilege grant
+  2. Check if the target principal accessed sensitive catalogs or tables in the 6 hours after receiving admin rights
+  3. Find all metastore admin grants in the past 90 days to identify unusual patterns
+Reference: https://github.com/databricks-solutions/cybersec-workspace-detection-app/blob/main/base/detections/event-based/metastore_admin_privilege_granted.py
+Tests:
+  - Name: Metastore Ownership Changed
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "unityCatalog"
+      actionName: "updateMetastore"
+      userIdentity:
+        email: "admin@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        metastoreId: "metastore-123"
+        owner: "newadmin@example.com"
+      response:
+        statusCode: 200
+  - Name: Added to Metastore Admin Group
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "addPrincipalToGroup"
+      userIdentity:
+        email: "admin@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        principal: "user@example.com"
+        targetGroupName: "metastore-admins"
+  - Name: Added to Unity Catalog Admin Group
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "addPrincipalsToGroup"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        targetUserName: "user@example.com"
+        targetGroupName: "unity-catalog-admins"
+  - Name: Metastore Update Without Owner Change
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "unityCatalog"
+      actionName: "updateMetastore"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        metastoreId: "metastore-123"
+        name: "Production Metastore"
+  - Name: Added to Non-Admin Group
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "addPrincipalToGroup"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        principal: "user@example.com"
+        targetGroupName: "metastore-users"
