@@ -7,7 +7,7 @@ def rule(event):
         return True
 
     # Check for high phish score
-    if event.get("phishScore", 0) >= 80:
+    if event.get("phishScore", 0) >= 90:
         return True
 
     # Check threats map for phishing classification
@@ -23,7 +23,7 @@ def severity(event):
 
     if phish_score >= 95:
         return "CRITICAL"
-    if phish_score >= 80:
+    if phish_score >= 90:
         return "HIGH"
     return "DEFAULT"
 

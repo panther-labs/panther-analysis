@@ -1,0 +1,179 @@
+AnalysisType: rule
+Filename: aws_waf_managed_ip_reputation.py
+RuleID: "AWS.WAF.Managed.IPReputation"
+DisplayName: "AWS WAF Managed IP Reputation Passthrough Rule"
+Enabled: true
+LogTypes:
+  - AWS.WAFWebACL
+Tags:
+  - AWS
+  - WAF
+  - Managed Rules
+  - Initial Access:Exploit Public-Facing Application
+  - Reconnaissance
+  - Defense Evasion
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1190
+    - TA0043:T1595
+    - TA0005:T1090
+Severity: Low
+Description: >
+  Detects AWS WAF IP Reputation and Anonymous IP List managed rule group matches. Flags requests
+  from IPs on Amazon threat intelligence lists including known bots, reconnaissance sources, DDoS
+  participants, TOR nodes, temporary proxies, and hosting/cloud provider IPs.
+Runbook: |
+  1. Find all requests from httpRequest:clientIp across all WAF sources in the 24 hours before and after this alert to assess the scope of activity
+  2. Check if httpRequest:clientIp is associated with known threat actors, botnets, or DDoS infrastructure in threat intelligence feeds
+  3. Search for other alerts from httpRequest:clientIp across all detection rules in the past 7 days to identify correlated malicious behavior
+Reference: https://docs.aws.amazon.com/waf/latest/developerguide/aws-managed-rule-groups-ip-rep.html
+Tests:
+  - Name: Blocked reputation IP via terminatingRuleId
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:30:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesAmazonIpReputationList"
+      terminatingRuleType: "MANAGED_RULE_GROUP"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.45"
+        country: "US"
+        uri: "/"
+        httpMethod: "GET"
+
+  - Name: Reconnaissance list match in ruleGroupList
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:35:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesAmazonIpReputationList"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "198.51.100.22"
+        country: "CN"
+        uri: "/api/v1/users"
+        httpMethod: "GET"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesAmazonIpReputationList"
+          terminatingRule:
+            ruleId: "AWSManagedReconnaissanceList"
+            action: "BLOCK"
+
+  - Name: Non-terminating IP reputation match (COUNT mode)
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:40:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "CF"
+      httpRequest:
+        clientIp: "192.0.2.100"
+        country: "RU"
+        uri: "/index.html"
+        httpMethod: "GET"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesAmazonIpReputationList"
+          nonTerminatingMatchingRules:
+            - ruleId: "AWSManagedIPReputationList"
+              action: "COUNT"
+
+  - Name: DDoS list match
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:45:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesAmazonIpReputationList"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.99"
+        country: "BR"
+        uri: "/"
+        httpMethod: "GET"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesAmazonIpReputationList"
+          terminatingRule:
+            ruleId: "AWSManagedIPDDoSList"
+            action: "BLOCK"
+
+  - Name: Anonymous IP blocked via terminatingRuleId
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:47:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesAnonymousIpList"
+      terminatingRuleType: "MANAGED_RULE_GROUP"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.50"
+        country: "NL"
+        uri: "/api/login"
+        httpMethod: "POST"
+
+  - Name: AnonymousIPList match in ruleGroupList
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:48:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesAnonymousIpList"
+      action: "BLOCK"
+      httpSourceName: "CF"
+      httpRequest:
+        clientIp: "198.51.100.55"
+        country: "DE"
+        uri: "/api/data"
+        httpMethod: "GET"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesAnonymousIpList"
+          terminatingRule:
+            ruleId: "AnonymousIPList"
+            action: "BLOCK"
+
+  - Name: HostingProviderIPList non-terminating (COUNT mode)
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:49:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "192.0.2.200"
+        country: "US"
+        uri: "/index.html"
+        httpMethod: "GET"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesAnonymousIpList"
+          nonTerminatingMatchingRules:
+            - ruleId: "HostingProviderIPList"
+              action: "COUNT"
+
+  - Name: Different rule group - no alert
+    ExpectedResult: false
+    Log:
+      timestamp: "2024-03-20T10:50:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesCommonRuleSet"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.45"
+
+  - Name: Normal traffic - no alert
+    ExpectedResult: false
+    Log:
+      timestamp: "2024-03-20T10:55:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "198.51.100.10"
+
+DedupPeriodMinutes: 60
+Threshold: 1
