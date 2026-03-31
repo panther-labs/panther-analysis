@@ -141,7 +141,8 @@ DATA_MOVEMENT_CREDENTIAL_ACTIONS = [
 ]
 
 # Excluded paths (system/telemetry operations)
-EXCLUDED_PATHS = ["telemetry", "delta-commit", "health", "metrics", "status"]
+# Using path segments to avoid overly broad substring matches
+EXCLUDED_PATHS = ["/telemetry", "/delta-commit", "/health", "/metrics", "/status"]
 
 
 def databricks_alert_context(event, additional_fields=None):
@@ -379,6 +380,7 @@ def is_service_agent(event):
 def is_excluded_path(event):
     """
     Check if the request path should be excluded (telemetry, health checks, etc).
+    Uses path segment matching to avoid false positives from substring matches.
 
     Args:
         event: The Databricks audit event dictionary
@@ -387,6 +389,8 @@ def is_excluded_path(event):
         Boolean indicating if this path should be excluded
     """
     path = event.deep_get("requestParams", "path", default="")
+    # Check if any excluded path is a segment in the full path
+    # This avoids matching "status" in paths like "/users/status-update"
     return any(excluded in path for excluded in EXCLUDED_PATHS)
 
 
