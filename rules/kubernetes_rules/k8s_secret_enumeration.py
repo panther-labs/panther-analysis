@@ -25,7 +25,7 @@ def dedup(event):
 
 
 def unique(event):
-    return event.udm("name") or ""
+    return event.udm("name") or None
 
 
 def severity(event):
