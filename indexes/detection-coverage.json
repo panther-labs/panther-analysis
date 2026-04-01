@@ -6500,7 +6500,9 @@
         "Description": "Detects when a single user accesses 15 or more distinct secrets within 30 minutes using list, get, or watch verbs. This may indicate secret enumeration to enable lateral or vertical movement and unauthorized access to critical resources. The threshold should be tuned to your environment.",
         "DisplayName": "Kubernetes Secret Enumeration by a User",
         "LogTypes": [
-            "Amazon.EKS.Audit"
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
         ],
         "YAMLPath": "rules/kubernetes_rules/k8s_secret_enumeration.yml"
     },
