@@ -20,7 +20,7 @@ def title(event):
 
 def dedup(event):
     username = event.udm("username") or ""
-    user_agent = event.get("userAgent", "")
+    user_agent = event.udm("userAgent") or ""
     return f"{username}:{user_agent}"
 
 
@@ -40,6 +40,6 @@ def alert_context(event):
         extra_fields={
             "secret_name": event.udm("name"),
             "verb": event.udm("verb"),
-            "user_agent": event.get("userAgent"),
+            "user_agent": event.udm("userAgent"),
         },
     )
