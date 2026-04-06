@@ -19,9 +19,7 @@ def title(event):
 
 
 def dedup(event):
-    username = event.udm("username") or ""
-    user_agent = event.udm("userAgent") or ""
-    return f"{username}:{user_agent}"
+    return event.udm("username") or "<UNKNOWN_USER>"
 
 
 def unique(event):
