@@ -25,7 +25,20 @@ def dedup(event):
 
 
 def unique(event):
-    return event.udm("name") or None
+    secret_name = event.udm("name")
+    if secret_name:
+        return secret_name
+
+    # List requests target secret collections and often omit objectRef.name.
+    if event.udm("verb") == "list":
+        namespace = event.udm("namespace")
+        if namespace:
+            return f"list:{namespace}"
+        request_uri = event.udm("requestURI")
+        if request_uri:
+            return f"list:{request_uri}"
+        return "list"
+    return None
 
 
 def severity(event):
