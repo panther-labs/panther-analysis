@@ -29,15 +29,16 @@ def unique(event):
     if secret_name:
         return secret_name
 
-    # List requests target secret collections and often omit objectRef.name.
-    if event.udm("verb") == "list":
+    # List/watch requests target secret collections and often omit objectRef.name.
+    verb = event.udm("verb")
+    if verb in ("list", "watch"):
         namespace = event.udm("namespace")
         if namespace:
-            return f"list:{namespace}"
+            return f"{verb}:{namespace}"
         request_uri = event.udm("requestURI")
         if request_uri:
-            return f"list:{request_uri}"
-        return "list"
+            return f"{verb}:{request_uri}"
+        return verb
     return None
 
 
