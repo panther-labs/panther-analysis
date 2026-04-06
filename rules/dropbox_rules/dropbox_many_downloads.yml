@@ -19,7 +19,6 @@ Reports:
 Tags:
   - Dropbox
   - Exfiltration
-  - Configuration Required
 Runbook: |
   1. Query Dropbox.TeamEvent for all file_download events by actor:user:email in the 2 hours around this alert to identify the full list of assets[0]:path:contextual values downloaded
   2. Check involve_non_team_member and the origin:geo_location:ip_address to determine if the downloads originated from an external user or an unexpected location

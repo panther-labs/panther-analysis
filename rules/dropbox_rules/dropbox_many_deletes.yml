@@ -20,7 +20,6 @@ Tags:
   - Dropbox
   - Impact
   - Data Destruction
-  - Configuration Required
 Runbook: |
   1. Query Dropbox.TeamEvent for all file_delete events by actor:user:email in the 2 hours around this alert to identify the full list of assets[0]:path:contextual values deleted
   2. Check involve_non_team_member and origin:geo_location:ip_address to determine if the deletions originated from an unexpected user or location, and assess whether the deleted files were shared with external parties

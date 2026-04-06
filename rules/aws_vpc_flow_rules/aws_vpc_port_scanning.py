@@ -9,8 +9,6 @@ def rule(event):
     src_addr = event.get("srcAddr", "")
     if not src_addr or src_addr == "null":
         return False
-    if event.get("srcPort") in COMMON_PORTS:
-        return False
     if event.get("dstPort") in COMMON_PORTS:
         return False
     return True
@@ -32,7 +30,8 @@ def dedup(event):
 
 
 def unique(event):
-    return str(event.get("dstPort", ""))
+    port = event.get("dstPort")
+    return str(port) if port is not None else None
 
 
 def severity(event):
