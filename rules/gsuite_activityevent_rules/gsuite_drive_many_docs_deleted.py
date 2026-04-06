@@ -12,7 +12,7 @@ def dedup(event):
 
 
 def unique(event):
-    return event.deep_get("parameters", "doc_title", default="")
+    return event.deep_get("parameters", "doc_id") or None
 
 
 def severity(event):

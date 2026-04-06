@@ -14,8 +14,8 @@ def dedup(event):
 def unique(event):
     assets = event.get("assets", [])
     if assets:
-        return assets[0].get("path", {}).get("contextual", "")
-    return ""
+        return assets[0].get("path", {}).get("contextual") or None
+    return None
 
 
 def severity(event):
