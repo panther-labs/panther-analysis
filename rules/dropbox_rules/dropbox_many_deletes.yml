@@ -5,11 +5,11 @@ DisplayName: "Dropbox Many Deletes"
 Enabled: false
 Severity: Medium
 DedupPeriodMinutes: 60
-Threshold: 3
+Threshold: 11
 LogTypes:
   - Dropbox.TeamEvent
 Description: >
-  Detects when a Dropbox user deletes more than 2 distinct files within 60 minutes.
+  Detects when a Dropbox user deletes more than 10 distinct files within 60 minutes.
   This may indicate accidental or malicious bulk deletion of team files.
   The threshold should be tuned to your environment.
 Reference: https://help.dropbox.com/delete-restore/delete-files
