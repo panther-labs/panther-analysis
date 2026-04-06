@@ -40,10 +40,10 @@
   - Dropbox item shared externally
 - [Dropbox Linked Team Application Added](../rules/dropbox_rules/dropbox_linked_team_application_added.yml)
   - An application was linked to your Dropbox Account
-- [Dropbox Many Deletes](../rules/dropbox_rules/dropbox_many_deletes.yml)
-  - Detects when a Dropbox user deletes more than 2 distinct files within 60 minutes. This may indicate accidental or malicious bulk deletion of team files. The threshold should be tuned to your environment.
-- [Dropbox Many Downloads](../rules/dropbox_rules/dropbox_many_downloads.yml)
-  - Detects when a Dropbox user downloads more than 10 distinct files within 60 minutes. This may indicate data exfiltration or unauthorized bulk access to team files. The threshold should be tuned to your environment.
+- [Dropbox Many Deletes](../queries/dropbox_queries/Dropbox_Many_Deletes_Query.yml)
+  - Dropbox Many Deletes
+- [Dropbox Many Downloads](../queries/dropbox_queries/Dropbox_Many_Downloads_Query.yml)
+  - Dropbox Many Downloads
 - [Dropbox User Disabled 2FA](../rules/dropbox_rules/dropbox_user_disabled_2fa.yml)
   - Dropbox user has disabled 2fa login
 
@@ -118,6 +118,8 @@
   - A login of a non-approved type was detected for this user.
 - [Gsuite Mail forwarded to external domain](../rules/gsuite_activityevent_rules/gsuite_external_forwarding.yml)
   - A user has configured mail forwarding to an external domain
+- [GSuite Many Docs Deleted Query](../queries/gsuite_queries/GSuite_Many_Docs_Deleted_Query.yml)
+  - Query to search for a user deleting many documents.
 - [GSuite Many Docs Downloaded Query](../queries/gsuite_queries/GSuite_Many_Docs_Downloaded_Query.yml)
   - Query to search high document download counts by users.
 - [GSuite Overly Visible Drive Document](../rules/gsuite_reports_rules/gsuite_drive_overly_visible.yml)

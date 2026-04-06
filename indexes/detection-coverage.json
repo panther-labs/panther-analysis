@@ -3481,6 +3481,15 @@
         "YAMLPath": "rules/aws_cloudtrail_rules/aws_cloudtrail_event_selectors_disabled.yml"
     },
     {
+        "AnalysisType": "Scheduled Rule",
+        "Description": "Detect password spraying account using a scheduled query",
+        "DisplayName": "CloudTrail Password Spraying",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "queries/aws_queries/cloudtrail_password_spraying.yml"
+    },
+    {
         "AnalysisType": "Rule",
         "Description": "A CloudTrail Trail was modified.",
         "DisplayName": "CloudTrail Stopped",
@@ -4305,22 +4314,22 @@
         "YAMLPath": "rules/dropbox_rules/dropbox_linked_team_application_added.yml"
     },
     {
-        "AnalysisType": "Rule",
-        "Description": "Detects when a Dropbox user deletes more than 2 distinct files within 60 minutes. This may indicate accidental or malicious bulk deletion of team files. The threshold should be tuned to your environment.",
+        "AnalysisType": "Scheduled Query",
+        "Description": "Dropbox Many Deletes",
         "DisplayName": "Dropbox Many Deletes",
         "LogTypes": [
             "Dropbox.TeamEvent"
         ],
-        "YAMLPath": "rules/dropbox_rules/dropbox_many_deletes.yml"
+        "YAMLPath": "queries/dropbox_queries/Dropbox_Many_Deletes_Query.yml"
     },
     {
-        "AnalysisType": "Rule",
-        "Description": "Detects when a Dropbox user downloads more than 10 distinct files within 60 minutes. This may indicate data exfiltration or unauthorized bulk access to team files. The threshold should be tuned to your environment.",
+        "AnalysisType": "Scheduled Query",
+        "Description": "Dropbox Many Downloads",
         "DisplayName": "Dropbox Many Downloads",
         "LogTypes": [
             "Dropbox.TeamEvent"
         ],
-        "YAMLPath": "rules/dropbox_rules/dropbox_many_downloads.yml"
+        "YAMLPath": "queries/dropbox_queries/Dropbox_Many_Downloads_Query.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -5880,6 +5889,15 @@
             "GSuite.ActivityEvent"
         ],
         "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_external_forwarding.yml"
+    },
+    {
+        "AnalysisType": "Scheduled Query",
+        "Description": "Query to search for a user deleting many documents.",
+        "DisplayName": "GSuite Many Docs Deleted Query",
+        "LogTypes": [
+            "GSuite.ActivityEvent"
+        ],
+        "YAMLPath": "queries/gsuite_queries/GSuite_Many_Docs_Deleted_Query.yml"
     },
     {
         "AnalysisType": "Scheduled Query",
@@ -8079,6 +8097,15 @@
         "YAMLPath": "rules/salesforce_rules/salesforce_third_party_integration.yml"
     },
     {
+        "AnalysisType": "Scheduled Query",
+        "Description": "This detection monitors for a large number of secrets requests by a single user. This could potentially indicate secret enumeration, which can potentially enable lateral or vertical movement and unauthorized access to critical resources.",
+        "DisplayName": "Secret Enumeration by a User",
+        "LogTypes": [
+            "Amazon.EKS.Audit"
+        ],
+        "YAMLPath": "queries/kubernetes_queries/kubernetes_secret_enumeration_query.yml"
+    },
+    {
         "AnalysisType": "Correlation Rule",
         "Description": "The rule detects when a GitHub Secret Scan detects an exposed secret, which is not followed by the expected quarantine operation in AWS.  When you make a repository public, or push changes to a public repository, GitHub always scans the code for secrets that match partner patterns. Public packages on the npm registry are also scanned. If secret scanning detects a potential secret, we notify the service provider who issued the secret. The service provider validates the string and then decides whether they should revoke the secret, issue a new secret, or contact you directly. Their action will depend on the associated risks to you or them.",
         "DisplayName": "Secret Exposed and not Quarantined",
@@ -9100,13 +9127,13 @@
         "YAMLPath": "rules/aws_vpc_flow_rules/aws_vpc_unapproved_outbound_dns.yml"
     },
     {
-        "AnalysisType": "Rule",
-        "Description": "Detects potential port scanning activity by alerting when a single source address communicates with 10 or more distinct destination ports on the same target within 60 minutes. Common ports (80, 443, 53, etc.) are excluded to reduce noise.",
+        "AnalysisType": "Scheduled Query",
+        "Description": "Instances of a srcAddr communicating with multiple ports on a dstAddr could indicate port scanning activity.",
         "DisplayName": "VPC Flow Port Scanning",
         "LogTypes": [
             "AWS.VPCFlow"
         ],
-        "YAMLPath": "rules/aws_vpc_flow_rules/aws_vpc_port_scanning.yml"
+        "YAMLPath": "queries/aws_queries/anomalous_vpc_port_activity_query.yml"
     },
     {
         "AnalysisType": "Rule",

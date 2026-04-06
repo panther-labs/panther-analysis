@@ -207,6 +207,8 @@
   - A CloudTrail instances were stopped. It makes further changes of instances possible
 - [CloudTrail Event Selectors Disabled](../rules/aws_cloudtrail_rules/aws_cloudtrail_event_selectors_disabled.yml)
   - A CloudTrail Trail was modified to exclude management events for 1 or more resource types.
+- [CloudTrail Password Spraying](../queries/aws_queries/cloudtrail_password_spraying.yml)
+  - Detect password spraying account using a scheduled query
 - [CloudTrail Stopped](../rules/aws_cloudtrail_rules/aws_cloudtrail_stopped.yml)
   - A CloudTrail Trail was modified.
 - [CodeBuild Project made Public](../rules/aws_cloudtrail_rules/aws_codebuild_made_public.yml)
@@ -507,6 +509,8 @@
   - This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration or unauthorized file access. It is very rare to see this being a pod requirement.
 - [Privileged Pod Created](../queries/kubernetes_queries/kubernetes_privileged_pod_created_query.yml)
   - This detection monitors for a privileged pod is created either by default or with permissions to run as root. These particular pods have full access to the hosts namespace and devices, ability to exploit the kernel, have dangerous linux capabilities, and can be a powerful launching point for further attacks.
+- [Secret Enumeration by a User](../queries/kubernetes_queries/kubernetes_secret_enumeration_query.yml)
+  - This detection monitors for a large number of secrets requests by a single user. This could potentially indicate secret enumeration, which can potentially enable lateral or vertical movement and unauthorized access to critical resources.
 - [Unauthenticated Kubernetes API Request](../queries/kubernetes_queries/kubernetes_unauthenticated_api_request_query.yml)
   - This detection monitors for any unauthenticated kubernetes api request. Unauthenticated Requests are performed by the anonymous user and have unfederated access to the cluster.
 - [Unauthorized Kubernetes Pod Execution](../queries/kubernetes_queries/kubernetes_unauthorized_pod_execution_query.yml)
@@ -735,8 +739,8 @@
   - VPC Flow Logs observed inbound traffic violating the port blocklist.
 - [VPC Flow Logs Unapproved Outbound DNS Traffic](../rules/aws_vpc_flow_rules/aws_vpc_unapproved_outbound_dns.yml)
   - Alerts if outbound DNS traffic is detected to a non-approved DNS server. DNS is often used as a means to exfiltrate data or perform command and control for compromised hosts. All DNS traffic should be routed through internal DNS servers or trusted 3rd parties.
-- [VPC Flow Port Scanning](../rules/aws_vpc_flow_rules/aws_vpc_port_scanning.yml)
-  - Detects potential port scanning activity by alerting when a single source address communicates with 10 or more distinct destination ports on the same target within 60 minutes. Common ports (80, 443, 53, etc.) are excluded to reduce noise.
+- [VPC Flow Port Scanning](../queries/aws_queries/anomalous_vpc_port_activity_query.yml)
+  - Instances of a srcAddr communicating with multiple ports on a dstAddr could indicate port scanning activity.
 - [Wiz Issue Followed By SSH to EC2 Instance](../correlation_rules/wiz_issue_followed_by_ssh.yml)
   - Wiz detected a security issue with an EC2 instance followed by an SSH connection to the instance. This sequence could indicate a potential security breach.
 

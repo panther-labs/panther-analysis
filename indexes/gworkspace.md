@@ -68,6 +68,8 @@
   - A login of a non-approved type was detected for this user.
 - [Gsuite Mail forwarded to external domain](../rules/gsuite_activityevent_rules/gsuite_external_forwarding.yml)
   - A user has configured mail forwarding to an external domain
+- [GSuite Many Docs Deleted Query](../queries/gsuite_queries/GSuite_Many_Docs_Deleted_Query.yml)
+  - Query to search for a user deleting many documents.
 - [GSuite Many Docs Downloaded Query](../queries/gsuite_queries/GSuite_Many_Docs_Downloaded_Query.yml)
   - Query to search high document download counts by users.
 - [GSuite Overly Visible Drive Document](../rules/gsuite_reports_rules/gsuite_drive_overly_visible.yml)
