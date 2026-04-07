@@ -1,4 +1,4 @@
-from panther_aws_helpers import aws_rds_context
+from panther_aws_helpers import aws_rule_context
 
 
 def rule(event):
@@ -29,6 +29,11 @@ def title(event):
 
 
 def alert_context(event):
-    context = aws_rds_context(event)
+    context = aws_rule_context(event)
+    context["resource_identifier"] = (
+        event.deep_get("requestParameters", "dBInstanceIdentifier")
+        or event.deep_get("requestParameters", "dBClusterIdentifier")
+        or event.deep_get("requestParameters", "dBShardGroupIdentifier", default="N/A")
+    )
     context["force_failover"] = event.deep_get("requestParameters", "forceFailover", default="N/A")
     return context
