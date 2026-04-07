@@ -24,7 +24,14 @@ def title(event):
     )
     include_public = deep_get(event, "requestParameters", "includePublic", default=False)
     include_shared = deep_get(event, "requestParameters", "includeShared", default=False)
-    scope = "Public" if include_public else "Shared" if include_shared else "Unknown"
+    if include_public and include_shared:
+        scope = "Public and Shared"
+    elif include_public:
+        scope = "Public"
+    elif include_shared:
+        scope = "Shared"
+    else:
+        scope = "Unknown"
     resource_type = "Snapshots" if event_name == "DescribeDBSnapshots" else "Cluster Snapshots"
     return f"RDS {resource_type} Enumeration: {scope} snapshots queried by [{user}]"
 
