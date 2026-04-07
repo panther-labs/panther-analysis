@@ -1,4 +1,4 @@
-from panther_aws_helpers import aws_rds_context
+from panther_aws_helpers import aws_rule_context
 
 
 def rule(event):
@@ -40,7 +40,7 @@ def dedup(event):
 
 
 def alert_context(event):
-    context = aws_rds_context(event)
+    context = aws_rule_context(event)
     context["source_snapshot_identifier"] = event.deep_get(
         "requestParameters", "sourceDBSnapshotIdentifier"
     ) or event.deep_get("requestParameters", "sourceDBClusterSnapshotIdentifier", default="N/A")

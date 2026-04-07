@@ -1,4 +1,4 @@
-from panther_aws_helpers import aws_rds_context
+from panther_aws_helpers import aws_rule_context
 
 
 def rule(event):
@@ -34,7 +34,7 @@ def dedup(event):
 
 
 def alert_context(event):
-    context = aws_rds_context(event)
+    context = aws_rule_context(event)
     context["dbi_resource_id"] = event.deep_get("requestParameters", "dbiResourceId", default="N/A")
     context["db_cluster_resource_id"] = event.deep_get(
         "requestParameters", "dbClusterResourceId", default="N/A"

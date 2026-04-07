@@ -1,4 +1,4 @@
-from panther_aws_helpers import aws_rds_context
+from panther_aws_helpers import aws_rule_context
 
 
 def rule(event):
@@ -27,7 +27,10 @@ def dedup(event):
 
 
 def alert_context(event):
-    context = aws_rds_context(event)
+    context = aws_rule_context(event)
+    context["db_instance_identifier"] = event.deep_get(
+        "requestParameters", "dBInstanceIdentifier", default="N/A"
+    )
     context["log_file_name"] = event.deep_get("requestParameters", "logFileName", default="N/A")
     context["marker"] = event.deep_get("requestParameters", "marker", default="N/A")
     context["number_of_lines"] = event.deep_get("requestParameters", "numberOfLines", default="N/A")
