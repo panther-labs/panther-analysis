@@ -41,6 +41,17 @@ def aws_rule_context(event):
     }
 
 
+def aws_rds_context(event):
+    context = aws_rule_context(event)
+    context["db_identifier"] = event.deep_get(
+        "requestParameters", "dBInstanceIdentifier"
+    ) or event.deep_get("requestParameters", "dBClusterIdentifier", default="N/A")
+    context["db_instance_arn"] = event.deep_get(
+        "responseElements", "dBInstanceArn"
+    ) or event.deep_get("responseElements", "dBClusterArn", default="N/A")
+    return context
+
+
 def aws_guardduty_context(event):
     return {
         "description": event.get("description", "<MISSING DESCRIPTION>"),

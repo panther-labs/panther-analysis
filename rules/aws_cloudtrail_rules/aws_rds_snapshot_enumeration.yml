@@ -1,0 +1,150 @@
+AnalysisType: rule
+Filename: aws_rds_snapshot_enumeration.py
+RuleID: "AWS.RDS.SnapshotEnumeration"
+DisplayName: "AWS RDS Snapshot Enumeration with Public or Shared Flag"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Discovery
+  - Cloud Infrastructure Discovery
+  - Reconnaissance
+  - RDS
+Severity: Low
+Description: >
+  Detects when RDS snapshots are queried with includePublic or includeShared flags.
+  This indicates reconnaissance for publicly accessible or shared snapshots that may
+  contain sensitive data and be exploitable by attackers.
+Runbook: |
+  1. Find all snapshot enumeration events by the user ARN in the past 6 hours to identify systematic patterns
+  2. Check if the source IP address is associated with known VPN or proxy services
+  3. Look for snapshot copy or restore operations from this user in the 24 hours after the enumeration
+Reference: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ListSnapshots.html
+Reports:
+  MITRE ATT&CK:
+    - TA0007:T1580  # Cloud Infrastructure Discovery
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - eventName
+  - userIdentity:principalId
+  - requestParameters:includePublic
+  - requestParameters:includeShared
+  - sourceIPAddress
+  - p_any_aws_account_ids
+Threshold: 1
+Tests:
+  - Name: Snapshot Enumeration with Public Flag
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/researcher"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: researcher
+      eventTime: "2024-01-18T05:00:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: DescribeDBSnapshots
+      awsRegion: us-east-1
+      sourceIPAddress: "185.220.101.75"
+      userAgent: "Boto3/1.26.0 Python/3.9.0"
+      requestParameters:
+        includePublic: true
+        maxRecords: 100
+      responseElements: null
+      requestID: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      eventID: "f1e2d3c4-b5a6-7890-1234-567890abcdef"
+      readOnly: true
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Cluster Snapshot Enumeration with Shared Flag
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:user"
+        arn: "arn:aws:sts::123456789012:assumed-role/SecurityAuditor/user"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+      eventTime: "2024-01-18T05:00:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: DescribeDBClusterSnapshots
+      awsRegion: us-west-2
+      sourceIPAddress: "203.0.113.150"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        includeShared: true
+        maxRecords: 50
+      responseElements: null
+      requestID: "b2c3d4e5-f6a7-8901-bcde-f1234567890a"
+      eventID: "g2f3e4d5-c6b7-8901-2345-678901bcdefg"
+      readOnly: true
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Normal Snapshot Query - No Public or Shared Flag
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:admin"
+        arn: "arn:aws:sts::123456789012:assumed-role/DBARole/admin"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+      eventTime: "2024-01-18T05:00:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: DescribeDBSnapshots
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.1.100"
+      userAgent: "console.amazonaws.com"
+      requestParameters:
+        dBInstanceIdentifier: "my-database"
+        maxRecords: 20
+      responseElements: null
+      requestID: "c3d4e5f6-a7b8-9012-cdef-1234567890ab"
+      eventID: "h3g4f5e6-d7c8-9012-3456-789012cdefgh"
+      readOnly: true
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Query Failed
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/developer"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: developer
+      eventTime: "2024-01-18T05:00:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: DescribeDBSnapshots
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.2.100"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        includePublic: true
+      errorCode: AccessDenied
+      errorMessage: "User is not authorized to perform: rds:DescribeDBSnapshots"
+      requestID: "d4e5f6a7-b8c9-0123-def0-1234567890bc"
+      eventID: "i4h5g6f7-e8d9-0123-4567-890123defghi"
+      readOnly: true
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management

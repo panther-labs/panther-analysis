@@ -1,0 +1,158 @@
+AnalysisType: rule
+Filename: aws_rds_automated_backup_deleted.py
+RuleID: "AWS.RDS.AutomatedBackupDeleted"
+DisplayName: "AWS RDS Automated Backup Deleted"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Impact
+  - Defense Evasion
+  - Data Destruction
+  - Inhibit System Recovery
+  - Ransomware
+  - RDS
+Severity: Critical
+Description: >
+  Detects deletion of RDS automated backups. This is a classic ransomware tactic where
+  attackers delete automated backups before encrypting or destroying databases to prevent
+  recovery. Any automated backup deletion should be investigated immediately.
+Runbook: |
+  1. Find all automated backup deletion events by the user ARN in the past 24 hours to identify bulk deletion patterns
+  2. Check if this user has deleted automated backups in the past 90 days to determine if this is normal behavior
+  3. Look for database deletion or modification events from this user in the 6 hours after this backup deletion
+Reference: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1485  # Data Destruction
+    - TA0040:T1490  # Inhibit System Recovery
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - eventName
+  - userIdentity:principalId
+  - requestParameters:dbiResourceId
+  - requestParameters:dbClusterResourceId
+  - p_any_aws_account_ids
+Threshold: 1
+Tests:
+  - Name: Automated Backup Deleted
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:attacker"
+        arn: "arn:aws:sts::123456789012:assumed-role/CompromisedRole/attacker"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+      eventTime: "2024-01-16T10:00:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: DeleteDBInstanceAutomatedBackup
+      awsRegion: us-east-1
+      sourceIPAddress: "185.220.101.50"
+      userAgent: "python-requests/2.28.0"
+      requestParameters:
+        dbiResourceId: "db-ABCDEF1234567890"
+      responseElements:
+        dBInstanceAutomatedBackupArn: "arn:aws:rds:us-east-1:123456789012:auto-backup:ab-1234567890abcdef"
+        dbiResourceId: "db-ABCDEF1234567890"
+        status: "deleting"
+        allocatedStorage: 100
+        engine: "mysql"
+        engineVersion: "8.0.35"
+      requestID: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      eventID: "f1e2d3c4-b5a6-7890-1234-567890abcdef"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Cluster Automated Backup Deleted
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/malicious-user"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: malicious-user
+      eventTime: "2024-01-16T10:00:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: DeleteDBClusterAutomatedBackup
+      awsRegion: us-west-2
+      sourceIPAddress: "198.51.100.200"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        dbClusterResourceId: "cluster-GHIJKL9876543210"
+      responseElements:
+        dBClusterAutomatedBackupArn: "arn:aws:rds:us-west-2:123456789012:cluster-auto-backup:cab-9876543210fedcba"
+        dbClusterResourceId: "cluster-GHIJKL9876543210"
+        status: "deleting"
+        engine: "aurora-mysql"
+        engineVersion: "8.0.mysql_aurora.3.04.0"
+      requestID: "b2c3d4e5-f6a7-8901-bcde-f1234567890a"
+      eventID: "g2f3e4d5-c6b7-8901-2345-678901bcdefg"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Automated Backup Deletion Failed
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/developer"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: developer
+      eventTime: "2024-01-16T10:00:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: DeleteDBInstanceAutomatedBackup
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.1.100"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        dbiResourceId: "db-ABCDEF1234567890"
+      errorCode: AccessDenied
+      errorMessage: "User is not authorized to perform: rds:DeleteDBInstanceAutomatedBackup"
+      requestID: "c3d4e5f6-a7b8-9012-cdef-1234567890ab"
+      eventID: "h3g4f5e6-d7c8-9012-3456-789012cdefgh"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Different RDS Event
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:user"
+        arn: "arn:aws:sts::123456789012:assumed-role/Admin/user"
+        accountId: "123456789012"
+      eventTime: "2024-01-16T10:00:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: CreateDBInstanceReadReplica
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.1.100"
+      requestParameters:
+        dBInstanceIdentifier: "replica-instance"
+        sourceDBInstanceIdentifier: "primary-instance"
+      requestID: "d4e5f6a7-b8c9-0123-def0-1234567890bc"
+      eventID: "i4h5g6f7-e8d9-0123-4567-890123defghi"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
