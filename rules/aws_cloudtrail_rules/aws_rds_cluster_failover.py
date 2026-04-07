@@ -24,7 +24,7 @@ def title(event):
 
 def alert_context(event):
     context = aws_rds_context(event)
-    context["target_db_instance_identifier"] = event.deep_get(
-        "requestParameters", "targetDBInstanceIdentifier", default="N/A"
-    )
+    context["target_identifier"] = event.deep_get(
+        "requestParameters", "targetDBInstanceIdentifier"
+    ) or event.deep_get("requestParameters", "targetDbClusterIdentifier", default="N/A")
     return context

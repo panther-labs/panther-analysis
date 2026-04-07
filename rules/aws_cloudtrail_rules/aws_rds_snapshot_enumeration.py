@@ -1,3 +1,4 @@
+from panther_aws_helpers import aws_rule_context
 from panther_base_helpers import deep_get
 
 
@@ -36,15 +37,8 @@ def dedup(event):
 
 
 def alert_context(event):
-    return {
-        "eventName": event.get("eventName", "<MISSING_EVENT_NAME>"),
-        "eventSource": event.get("eventSource", "<MISSING_ACCOUNT_ID>"),
-        "awsRegion": event.get("awsRegion", "<MISSING_AWS_REGION>"),
-        "recipientAccountId": event.get("recipientAccountId", "<MISSING_ACCOUNT_ID>"),
-        "sourceIPAddress": event.get("sourceIPAddress", "<MISSING_SOURCE_IP>"),
-        "userAgent": event.get("userAgent", "<MISSING_USER_AGENT>"),
-        "userIdentity": event.get("userIdentity", "<MISSING_USER_IDENTITY>"),
-        "include_public": deep_get(event, "requestParameters", "includePublic", default="N/A"),
-        "include_shared": deep_get(event, "requestParameters", "includeShared", default="N/A"),
-        "max_records": deep_get(event, "requestParameters", "maxRecords", default="N/A"),
-    }
+    context = aws_rule_context(event)
+    context["include_public"] = deep_get(event, "requestParameters", "includePublic", default="N/A")
+    context["include_shared"] = deep_get(event, "requestParameters", "includeShared", default="N/A")
+    context["max_records"] = deep_get(event, "requestParameters", "maxRecords", default="N/A")
+    return context
