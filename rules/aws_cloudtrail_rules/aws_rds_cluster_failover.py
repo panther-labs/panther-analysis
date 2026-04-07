@@ -1,4 +1,4 @@
-from panther_aws_helpers import aws_rds_context
+from panther_aws_helpers import aws_rule_context
 
 
 def rule(event):
@@ -23,7 +23,10 @@ def title(event):
 
 
 def alert_context(event):
-    context = aws_rds_context(event)
+    context = aws_rule_context(event)
+    context["cluster_identifier"] = event.deep_get(
+        "requestParameters", "dBClusterIdentifier"
+    ) or event.deep_get("requestParameters", "globalClusterIdentifier", default="N/A")
     context["target_identifier"] = event.deep_get(
         "requestParameters", "targetDBInstanceIdentifier"
     ) or event.deep_get("requestParameters", "targetDbClusterIdentifier", default="N/A")
