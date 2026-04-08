@@ -7,14 +7,16 @@ Status: Experimental
 LogTypes:
   - AWS.CloudTrail
 Severity: High
-Threshold: 3
+Threshold: 2
 DedupPeriodMinutes: 90
 Description: >
-  Detects the disabling of multiple S3 security controls (logging, versioning and MFA delete protection)
-  on the same bucket within a short timeframe. This pattern is a strong indicator of preparation
-  for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms
-  before encrypting or deleting data. Alerting on this activity enables early intervention before
-  actual data loss occurs.
+  Detects the disabling of 2 or more distinct S3 security controls (logging, versioning, and MFA
+  delete protection) on the same bucket by the same actor within a short timeframe. Threshold is
+  set to 2 rather than 3 because versioning and MFA delete can be disabled together in a single
+  PutBucketVersioning API call, which produces only one unique value — making a threshold of 3
+  structurally unreachable in that scenario. This pattern is a strong indicator of preparation for
+  ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before
+  encrypting or deleting data.
 Runbook: |
   1. Query CloudTrail for all S3 API calls by the actor ARN on the affected bucket in the 24 hours before and after the bucket logging was disabled to identify if this is part of a larger attack pattern
   2. Check for subsequent suspicious activities on the same bucket including DeleteObject, DeleteObjects, PutBucketEncryption, or GetObject events in the 6 hours after all three security controls were disabled

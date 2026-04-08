@@ -28,10 +28,10 @@ def unique(event):
     if event.get("eventName") == "PutBucketLogging":
         return "logging_disabled"
 
-    # PutBucketVersioning — both fields can be set in a single API call.
-    # If so, this event contributes only one unique value toward the threshold of 3.
-    # In practice, logging disable is always a separate API call, so this edge case
-    # rarely affects detection coverage.
+    # PutBucketVersioning — both versioning and MFA delete can be disabled in a single API call.
+    # When that happens this event contributes only one unique value, capping the maximum
+    # distinct values at 2 (this + logging_disabled). Threshold is set to 2 so the rule
+    # fires correctly even when all three controls are disabled via just two API calls.
     status = event.deep_get("requestParameters", "VersioningConfiguration", "Status", default="")
     mfa_delete = event.deep_get(
         "requestParameters", "VersioningConfiguration", "MfaDelete", default=""
