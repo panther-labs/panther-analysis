@@ -1,10 +1,13 @@
 AnalysisType: rule
 RuleID: "GCP.K8S.Pod.Create.Or.Modify.Host.Path.Volume.Mount"
 DisplayName: "GCP K8S Pod Create Or Modify Host Path Volume Mount"
-Enabled: true
+Enabled: false
+Status: Deprecated
 LogTypes:
   - GCP.AuditLog
 Severity: High
+Tags:
+  - Deprecated
 Description: >
   This detection monitors for pod creation with a hostPath volume mount. The attachment to a node's volume can allow
   for privilege escalation through underlying vulnerabilities or it can open up possibilities for data exfiltration
