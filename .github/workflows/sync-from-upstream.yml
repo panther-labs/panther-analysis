@@ -43,7 +43,7 @@ jobs:
               process.env['GITHUB_OUTPUT'],
               'latest-release=' +  upstreamLatest.data.tag_name + '\n');
       ## CREATE A BRANCH
-      - uses: peterjgrainger/action-create-branch@10c7d268152480ae859347db45dc69086cef1d9c #v3.0.0
+      - uses: peterjgrainger/action-create-branch@4b81ce657e255acd677cc6c55c9c763654be3aef #v4.0.0
         id: create_a_branch
         env:
           GITHUB_TOKEN: ${{ steps.set_token.outputs.token }}
