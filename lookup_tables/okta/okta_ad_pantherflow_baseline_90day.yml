@@ -1,11 +1,12 @@
-AnalysisType: scheduled_query
-QueryName: "Okta 90 Day AD Pantherflow in Data Explorer"
+AnalysisType: lookup_table
+LookupName: okta_ad_pantherflow_baseline_90d
 Enabled: false
+Refresh:
+  PeriodMinutes: 1440
 Description: >
   Builds a 90-day behavioral baseline for Okta AD agent authentication events per user.
   Computes scalar features and hourly statistics (event volume, IP/country/city/device diversity)
   over a 90-day window (excluding the last 7 days) to support z-score anomaly detection.
-  Output is intended to populate the okta_ad_agent_baseline_90d lookup table.
 Query: |
   --pragma: pantherflow
   let base = panther_logs.public.okta_systemlog
@@ -112,12 +113,9 @@ Query: |
       baseline_updated_at = time.now(),
       baseline_window = "90days"
   | sort baseline_total_events desc
-Schedule:
-  RateMinutes: 43200  # 30 days
-  TimeoutMinutes: 10
-Tags:
-  - Okta
-  - Active Directory
-  - Baseline
-  - PantherFlow
-  - Behavioral Analytics
+LogTypeMap:
+  PrimaryKey: user_email
+  AssociatedLogTypes:
+    - LogType: Okta.SystemLog
+      Selectors:
+        - "$.actor.alternateId"
