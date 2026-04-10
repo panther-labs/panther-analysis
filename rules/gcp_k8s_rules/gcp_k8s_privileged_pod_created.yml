@@ -1,10 +1,13 @@
 AnalysisType: rule
 RuleID: "GCP.K8S.Privileged.Pod.Created"
 DisplayName: "GCP K8S Privileged Pod Created"
-Enabled: true
+Enabled: false
+Status: Deprecated
 LogTypes:
   - GCP.AuditLog
 Severity: High
+Tags:
+  - Deprecated
 Filename: gcp_k8s_privileged_pod_created.py
 Description: >
   Alerts when a user creates privileged pod. These particular pods have full access to the host’s namespace and
