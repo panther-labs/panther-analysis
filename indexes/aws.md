@@ -67,7 +67,7 @@
 - [AWS CloudTrail Password Policy Discovery](../rules/aws_cloudtrail_rules/aws_cloudtrail_password_policy_discovery.yml)
   - This detection looks for *AccountPasswordPolicy events in AWS CloudTrail logs. If these events occur in a short period of time from the same ARN, it could constitute Password Policy reconnaissance.
 - [AWS CloudTrail Password Spraying](../rules/aws_cloudtrail_rules/aws_cloudtrail_password_spraying.yml)
-  - Detects password spraying attacks by alerting when more than 5 distinct usernames fail to authenticate to the AWS console from the same account and region within 60 minutes.
+  - Detects password spraying attacks by alerting when more than 9 distinct usernames fail to authenticate to the AWS console from the same account and region within 60 minutes.
 - [AWS Cloudtrail Region Enabled](../rules/aws_cloudtrail_rules/aws_cloudtrail_region_enabled.yml)
   - Threat actors who successfully compromise a victim's AWS account, whether through stolen credentials,  exposed access keys, exploited IAM misconfigurations, vulnerabilities in third-party applications,  or the absence of Multi-Factor Authentication (MFA), can exploit unused regions as safe zones  for malicious activities. These regions are often overlooked in monitoring and security setups,  making them an attractive target for attackers to operate undetected.
 - [AWS CloudTrail Retention Lifecycle Too Short](../rules/aws_cloudtrail_rules/aws_cloudtrail_short_lifecycle.yml)

@@ -118,7 +118,7 @@
 - [AWS CloudTrail Password Policy Discovery](../rules/aws_cloudtrail_rules/aws_cloudtrail_password_policy_discovery.yml)
   - This detection looks for *AccountPasswordPolicy events in AWS CloudTrail logs. If these events occur in a short period of time from the same ARN, it could constitute Password Policy reconnaissance.
 - [AWS CloudTrail Password Spraying](../rules/aws_cloudtrail_rules/aws_cloudtrail_password_spraying.yml)
-  - Detects password spraying attacks by alerting when more than 5 distinct usernames fail to authenticate to the AWS console from the same account and region within 60 minutes.
+  - Detects password spraying attacks by alerting when more than 9 distinct usernames fail to authenticate to the AWS console from the same account and region within 60 minutes.
 - [AWS Cloudtrail Region Enabled](../rules/aws_cloudtrail_rules/aws_cloudtrail_region_enabled.yml)
   - Threat actors who successfully compromise a victim's AWS account, whether through stolen credentials,  exposed access keys, exploited IAM misconfigurations, vulnerabilities in third-party applications,  or the absence of Multi-Factor Authentication (MFA), can exploit unused regions as safe zones  for malicious activities. These regions are often overlooked in monitoring and security setups,  making them an attractive target for attackers to operate undetected.
 - [AWS CloudTrail Retention Lifecycle Too Short](../rules/aws_cloudtrail_rules/aws_cloudtrail_short_lifecycle.yml)
@@ -1882,8 +1882,8 @@
   - GSuite reported a suspicious activity on a user's device.
 - [GSuite Document External Ownership Transfer](../rules/gsuite_activityevent_rules/gsuite_doc_ownership_transfer.yml)
   - A GSuite document's ownership was transferred to an external party.
-- [GSuite Drive Many Documents Deleted](../rules/gsuite_activityevent_rules/gsuite_drive_many_docs_deleted.yml)
-  - Detects when a user moves more than 10 distinct documents to the trash in Google Drive within 60 minutes. This may indicate accidental or malicious bulk deletion of files.
+- [GSuite Drive Many Documents Deleted](../queries/gsuite_queries/gsuite_drive_many_docs_deleted.yml)
+  - Scheduled rule for the GSuite Drive Many Documents Deleted query. Looks for users who have deleted more than 10 (tunable) documents the past day.
 - [Gsuite Email Bypassed Spam Filter](../rules/gsuite_activityevent_rules/gsuite_bypass_spam_filter_email.yml)
   - Detects if an email received by a user has bypassed the organization's spam filter.
 - [GSuite External Drive Document](../rules/gsuite_reports_rules/gsuite_drive_visibility_change.yml)

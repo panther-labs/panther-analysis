@@ -788,7 +788,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects password spraying attacks by alerting when more than 5 distinct usernames fail to authenticate to the AWS console from the same account and region within 60 minutes.",
+        "Description": "Detects password spraying attacks by alerting when more than 9 distinct usernames fail to authenticate to the AWS console from the same account and region within 60 minutes.",
         "DisplayName": "AWS CloudTrail Password Spraying",
         "LogTypes": [
             "AWS.CloudTrail"
@@ -5828,13 +5828,13 @@
         "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_doc_ownership_transfer.yml"
     },
     {
-        "AnalysisType": "Rule",
-        "Description": "Detects when a user moves more than 10 distinct documents to the trash in Google Drive within 60 minutes. This may indicate accidental or malicious bulk deletion of files.",
+        "AnalysisType": "Scheduled Rule",
+        "Description": "Scheduled rule for the GSuite Drive Many Documents Deleted query. Looks for users who have deleted more than 10 (tunable) documents the past day.",
         "DisplayName": "GSuite Drive Many Documents Deleted",
         "LogTypes": [
             "GSuite.ActivityEvent"
         ],
-        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_drive_many_docs_deleted.yml"
+        "YAMLPath": "queries/gsuite_queries/gsuite_drive_many_docs_deleted.yml"
     },
     {
         "AnalysisType": "Rule",
