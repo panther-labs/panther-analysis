@@ -3135,15 +3135,6 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects bulk blob re-encryption attacks against Azure Storage by tracking the number of distinct blob paths successfully overwritten via PutBlob from the same storage account and caller IP address within a short timeframe. Ransomware actors use Customer-Provided Key (CPK) encryption to overwrite many blobs in rapid succession, holding data hostage while only they possess the decryption key. This rule provides early-warning detection before legitimate users trigger CPK access errors, complementing Azure.Storage.BlobUpload.FOLLOWED-BY.CPKEncryptionError which requires the victim-side error to confirm the attack.",
-        "DisplayName": "Azure Storage Bulk CPK Blob Upload",
-        "LogTypes": [
-            "Azure.MonitorActivity"
-        ],
-        "YAMLPath": "rules/azure_activity_rules/azure_storage_bulk_cpk_blob_upload.yml"
-    },
-    {
-        "AnalysisType": "Rule",
         "Description": "Detects when Azure storage account container soft delete is disabled. Disabling container soft delete removes protection against accidental deletion and may indicate preparation for data destruction.",
         "DisplayName": "Azure Storage Container Soft Delete Disabled",
         "LogTypes": [
