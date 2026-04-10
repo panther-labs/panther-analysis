@@ -218,7 +218,7 @@ Query: |
           CURRENT_TIMESTAMP AS detection_timestamp
 
       FROM recent_stats r
-      LEFT JOIN panther_lookups.public.okta_ad_agent_baseline_90d b
+      LEFT JOIN panther_lookups.public.okta_ad_pantherflow_baseline_90d b
           ON r.user_email = b.user_email
       WHERE r.recent_total_events >= 5  -- Minimum recent activity threshold
   )
