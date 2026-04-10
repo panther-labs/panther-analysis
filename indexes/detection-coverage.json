@@ -2050,7 +2050,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects the disabling of multiple S3 security controls (logging, versioning and MFA delete protection) on the same bucket within a short timeframe. This pattern is a strong indicator of preparation for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before encrypting or deleting data. Alerting on this activity enables early intervention before actual data loss occurs.",
+        "Description": "Detects the disabling of 2 or more distinct S3 security controls (logging, versioning, and MFA delete protection) on the same bucket by the same actor within a short timeframe. Threshold is set to 2 rather than 3 because versioning and MFA delete can be disabled together in a single PutBucketVersioning API call, which produces only one unique value \u2014 making a threshold of 3 structurally unreachable in that scenario. This pattern is a strong indicator of preparation for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before encrypting or deleting data.",
         "DisplayName": "AWS S3 Security Control Disabling",
         "LogTypes": [
             "AWS.CloudTrail"
