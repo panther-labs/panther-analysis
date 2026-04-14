@@ -2,11 +2,14 @@ AnalysisType: rule
 RuleID: "GCP.K8s.New.Daemonset.Deployed"
 DisplayName: "GCP K8s New Daemonset Deployed"
 Description: "Detects Daemonset creation in GCP Kubernetes clusters."
-Enabled: true
+Enabled: false
+Status: Deprecated
 Filename: gcp_k8s_new_daemonset_deployed.py
 LogTypes:
   - GCP.AuditLog
 Severity: Medium
+Tags:
+  - Deprecated
 DedupPeriodMinutes: 60
 Threshold: 1
 Reference: https://medium.com/snowflake/from-logs-to-detection-using-snowflake-and-panther-to-detect-k8s-threats-d72f70a504d7
