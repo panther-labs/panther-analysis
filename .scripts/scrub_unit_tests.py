@@ -7,11 +7,22 @@ import subprocess
 import sys
 from pathlib import Path
 
-from loganon import Anonymizer, all_rules_list
-from ruamel.yaml import YAML
+MISSING_OPTIONAL_DEPENDENCIES = False
+try:
+    from loganon import Anonymizer, all_rules_list
+except ModuleNotFoundError:
+    MISSING_OPTIONAL_DEPENDENCIES = True
+    Anonymizer = None
+    all_rules_list = None
 
-yaml = YAML(typ="rt")
-anonymizer = Anonymizer(all_rules_list())
+try:
+    from ruamel.yaml import YAML
+except ModuleNotFoundError:
+    MISSING_OPTIONAL_DEPENDENCIES = True
+    YAML = None
+
+yaml = YAML(typ="rt") if YAML is not None else None
+anonymizer = Anonymizer(all_rules_list()) if Anonymizer and all_rules_list else None
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -54,6 +65,9 @@ def validate_file_path(file_path: str) -> Path:
 
 
 def get_unit_tests(raw_text: str) -> dict[str, tuple[int, int]]:
+    if yaml is None:
+        raise RuntimeError("ruamel.yaml is required to scrub unit tests")
+
     # Parse the YAML content
     spec = yaml.load(raw_text)
     if not spec or spec.get("AnalysisType") == "correlation_rule":
@@ -191,6 +205,10 @@ def get_files_edited_in_commit():
 def main(mode: str = "cli"):
     """Main function. Has 2 modes: cli and commit; the former is when the script is invoked from
     the command line, and the later is when the script is used from inside a precommit hood."""
+    if MISSING_OPTIONAL_DEPENDENCIES:
+        logging.warning("Skipping scrub_unit_tests.py because optional dependencies are not installed")
+        return
+
     logging.info(f"Running in {mode} mode")
     files = sys.argv[1:]
     if mode == "commit":
