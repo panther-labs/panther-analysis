@@ -1,5 +1,6 @@
 import datetime
 from collections.abc import Sequence
+from typing import Union
 
 from panther_lookuptable_helpers import LookupTableMatches
 
@@ -12,11 +13,11 @@ class TorExitNodes(LookupTableMatches):
     def has_exit_nodes(self):
         return bool(self.lut_matches)
 
-    def ip_address(self, match_field) -> list or str:
+    def ip_address(self, match_field) -> Union[list, str]:
         """Enrich an ip address"""
         return self._lookup(match_field, "ip")
 
-    def url(self, match_field) -> list or str:
+    def url(self, match_field) -> Union[list, str]:
         """Return link to Tor database"""
         today = datetime.datetime.today().strftime("%Y-%m-%d")
         ip_address = self.ip_address(match_field)
