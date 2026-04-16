@@ -102,22 +102,22 @@ Query: |
       SELECT
           r.account_id,
 
-          -- Baseline metrics (from lookup table; all fields nested under data:)
-          b.data:baseline_total_bytes::bigint        AS baseline_total_bytes,
-          b.data:baseline_total_flows::bigint        AS baseline_total_flows,
-          b.data:baseline_active_days::int           AS baseline_active_days,
-          b.data:baseline_mean_bytes_per_hour::float AS baseline_mean_bytes_per_hour,
-          b.data:baseline_stddev_bytes_per_hour::float AS baseline_stddev_bytes_per_hour,
-          b.data:baseline_mean_flows_per_hour::float AS baseline_mean_flows_per_hour,
-          b.data:baseline_stddev_flows_per_hour::float AS baseline_stddev_flows_per_hour,
-          b.data:baseline_mean_dst_ip_diversity_per_hour::float AS baseline_mean_dst_ip_diversity_per_hour,
-          b.data:baseline_stddev_dst_ip_diversity_per_hour::float AS baseline_stddev_dst_ip_diversity_per_hour,
-          b.data:baseline_mean_dst_port_diversity_per_hour::float AS baseline_mean_dst_port_diversity_per_hour,
-          b.data:baseline_stddev_dst_port_diversity_per_hour::float AS baseline_stddev_dst_port_diversity_per_hour,
-          b.data:baseline_mean_src_ip_diversity_per_hour::float AS baseline_mean_src_ip_diversity_per_hour,
-          b.data:baseline_stddev_src_ip_diversity_per_hour::float AS baseline_stddev_src_ip_diversity_per_hour,
-          b.data:primary_dst_ip::string              AS primary_dst_ip,
-          b.data:baseline_updated_at::string         AS baseline_updated_at,
+          -- Baseline metrics (from lookup table)
+          b.baseline_total_bytes,
+          b.baseline_total_flows,
+          b.baseline_active_days,
+          b.baseline_mean_bytes_per_hour,
+          b.baseline_stddev_bytes_per_hour,
+          b.baseline_mean_flows_per_hour,
+          b.baseline_stddev_flows_per_hour,
+          b.baseline_mean_dst_ip_diversity_per_hour,
+          b.baseline_stddev_dst_ip_diversity_per_hour,
+          b.baseline_mean_dst_port_diversity_per_hour,
+          b.baseline_stddev_dst_port_diversity_per_hour,
+          b.baseline_mean_src_ip_diversity_per_hour,
+          b.baseline_stddev_src_ip_diversity_per_hour,
+          b.primary_dst_ip,
+          b.baseline_updated_at,
 
           -- Recent activity metrics
           r.recent_total_bytes,
@@ -140,65 +140,65 @@ Query: |
 
           -- Z-SCORES (avg-based: compare recent hourly averages against baseline distribution)
           ROUND(
-              (r.recent_avg_bytes_per_hour - b.data:baseline_mean_bytes_per_hour::float) /
-              NULLIF(b.data:baseline_stddev_bytes_per_hour::float, 0),
+              (r.recent_avg_bytes_per_hour - b.baseline_mean_bytes_per_hour) /
+              NULLIF(b.baseline_stddev_bytes_per_hour, 0),
               2
           ) AS z_score_bytes,
 
           ROUND(
-              (r.recent_avg_flows_per_hour - b.data:baseline_mean_flows_per_hour::float) /
-              NULLIF(b.data:baseline_stddev_flows_per_hour::float, 0),
+              (r.recent_avg_flows_per_hour - b.baseline_mean_flows_per_hour) /
+              NULLIF(b.baseline_stddev_flows_per_hour, 0),
               2
           ) AS z_score_flows,
 
           ROUND(
-              (r.recent_avg_dst_ip_diversity_per_hour - b.data:baseline_mean_dst_ip_diversity_per_hour::float) /
-              NULLIF(b.data:baseline_stddev_dst_ip_diversity_per_hour::float, 0),
+              (r.recent_avg_dst_ip_diversity_per_hour - b.baseline_mean_dst_ip_diversity_per_hour) /
+              NULLIF(b.baseline_stddev_dst_ip_diversity_per_hour, 0),
               2
           ) AS z_score_dst_ip_diversity,
 
           ROUND(
-              (r.recent_avg_dst_port_diversity_per_hour - b.data:baseline_mean_dst_port_diversity_per_hour::float) /
-              NULLIF(b.data:baseline_stddev_dst_port_diversity_per_hour::float, 0),
+              (r.recent_avg_dst_port_diversity_per_hour - b.baseline_mean_dst_port_diversity_per_hour) /
+              NULLIF(b.baseline_stddev_dst_port_diversity_per_hour, 0),
               2
           ) AS z_score_dst_port_diversity,
 
           ROUND(
-              (r.recent_avg_src_ip_diversity_per_hour - b.data:baseline_mean_src_ip_diversity_per_hour::float) /
-              NULLIF(b.data:baseline_stddev_src_ip_diversity_per_hour::float, 0),
+              (r.recent_avg_src_ip_diversity_per_hour - b.baseline_mean_src_ip_diversity_per_hour) /
+              NULLIF(b.baseline_stddev_src_ip_diversity_per_hour, 0),
               2
           ) AS z_score_src_ip_diversity,
 
           -- Anomaly severity score (sum of positive z-scores across all dimensions)
           ROUND(
-              GREATEST(COALESCE((r.recent_avg_bytes_per_hour - b.data:baseline_mean_bytes_per_hour::float) /
-                  NULLIF(b.data:baseline_stddev_bytes_per_hour::float, 0), 0), 0) +
-              GREATEST(COALESCE((r.recent_avg_flows_per_hour - b.data:baseline_mean_flows_per_hour::float) /
-                  NULLIF(b.data:baseline_stddev_flows_per_hour::float, 0), 0), 0) +
-              GREATEST(COALESCE((r.recent_avg_dst_ip_diversity_per_hour - b.data:baseline_mean_dst_ip_diversity_per_hour::float) /
-                  NULLIF(b.data:baseline_stddev_dst_ip_diversity_per_hour::float, 0), 0), 0) +
-              GREATEST(COALESCE((r.recent_avg_dst_port_diversity_per_hour - b.data:baseline_mean_dst_port_diversity_per_hour::float) /
-                  NULLIF(b.data:baseline_stddev_dst_port_diversity_per_hour::float, 0), 0), 0) +
-              GREATEST(COALESCE((r.recent_avg_src_ip_diversity_per_hour - b.data:baseline_mean_src_ip_diversity_per_hour::float) /
-                  NULLIF(b.data:baseline_stddev_src_ip_diversity_per_hour::float, 0), 0), 0),
+              GREATEST(COALESCE((r.recent_avg_bytes_per_hour - b.baseline_mean_bytes_per_hour) /
+                  NULLIF(b.baseline_stddev_bytes_per_hour, 0), 0), 0) +
+              GREATEST(COALESCE((r.recent_avg_flows_per_hour - b.baseline_mean_flows_per_hour) /
+                  NULLIF(b.baseline_stddev_flows_per_hour, 0), 0), 0) +
+              GREATEST(COALESCE((r.recent_avg_dst_ip_diversity_per_hour - b.baseline_mean_dst_ip_diversity_per_hour) /
+                  NULLIF(b.baseline_stddev_dst_ip_diversity_per_hour, 0), 0), 0) +
+              GREATEST(COALESCE((r.recent_avg_dst_port_diversity_per_hour - b.baseline_mean_dst_port_diversity_per_hour) /
+                  NULLIF(b.baseline_stddev_dst_port_diversity_per_hour, 0), 0), 0) +
+              GREATEST(COALESCE((r.recent_avg_src_ip_diversity_per_hour - b.baseline_mean_src_ip_diversity_per_hour) /
+                  NULLIF(b.baseline_stddev_src_ip_diversity_per_hour, 0), 0), 0),
               2
           ) AS anomaly_severity_score,
 
           -- Multi-dimensional anomaly flag
           CASE
-              WHEN b.data:account_id IS NULL THEN FALSE  -- No baseline; cold-start handled below
+              WHEN b.account_id IS NULL THEN FALSE  -- No baseline; cold-start handled below
               WHEN (
                   -- Sustained byte volume spike (z > 3)
-                  (r.recent_avg_bytes_per_hour - b.data:baseline_mean_bytes_per_hour::float) /
-                      NULLIF(b.data:baseline_stddev_bytes_per_hour::float, 0) > 3
+                  COALESCE((r.recent_avg_bytes_per_hour - b.baseline_mean_bytes_per_hour) /
+                      NULLIF(b.baseline_stddev_bytes_per_hour, 0), 0) > 3
                   AND (
                       -- AND at least one diversity dimension spike (z > 2)
-                      (r.recent_avg_dst_ip_diversity_per_hour - b.data:baseline_mean_dst_ip_diversity_per_hour::float) /
-                          NULLIF(b.data:baseline_stddev_dst_ip_diversity_per_hour::float, 0) > 2
-                      OR (r.recent_avg_dst_port_diversity_per_hour - b.data:baseline_mean_dst_port_diversity_per_hour::float) /
-                          NULLIF(b.data:baseline_stddev_dst_port_diversity_per_hour::float, 0) > 2
-                      OR (r.recent_avg_src_ip_diversity_per_hour - b.data:baseline_mean_src_ip_diversity_per_hour::float) /
-                          NULLIF(b.data:baseline_stddev_src_ip_diversity_per_hour::float, 0) > 2
+                      COALESCE((r.recent_avg_dst_ip_diversity_per_hour - b.baseline_mean_dst_ip_diversity_per_hour) /
+                          NULLIF(b.baseline_stddev_dst_ip_diversity_per_hour, 0), 0) > 2
+                      OR COALESCE((r.recent_avg_dst_port_diversity_per_hour - b.baseline_mean_dst_port_diversity_per_hour) /
+                          NULLIF(b.baseline_stddev_dst_port_diversity_per_hour, 0), 0) > 2
+                      OR COALESCE((r.recent_avg_src_ip_diversity_per_hour - b.baseline_mean_src_ip_diversity_per_hour) /
+                          NULLIF(b.baseline_stddev_src_ip_diversity_per_hour, 0), 0) > 2
                   )
               ) THEN TRUE
               ELSE FALSE
@@ -207,7 +207,7 @@ Query: |
           -- Cold-start: no baseline yet, but raw thresholds indicate suspicious activity
           -- >= 1 GB/hour to >= 10 unique external destinations with no prior baseline
           CASE
-              WHEN b.data:account_id IS NULL
+              WHEN b.account_id IS NULL
                   AND r.recent_max_bytes_per_hour >= 1073741824
                   AND r.recent_max_dst_ip_diversity_per_hour >= 10
               THEN TRUE
@@ -218,7 +218,7 @@ Query: |
 
       FROM recent_stats r
       LEFT JOIN panther_lookups.public.vpc_flow_data_exfil_baseline_90d b
-          ON r.account_id = b.data:account_id::string
+          ON r.account_id = b.account_id
       WHERE r.recent_total_flows >= 50  -- Minimum recent activity threshold
   )
 
