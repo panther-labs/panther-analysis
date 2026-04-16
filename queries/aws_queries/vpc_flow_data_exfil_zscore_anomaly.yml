@@ -276,7 +276,7 @@ Query: |
 
   FROM anomaly_detection
   WHERE is_anomalous = TRUE OR is_cold_start_anomaly = TRUE
-  ORDER BY anomaly_severity_score DESC
+  ORDER BY is_cold_start_anomaly DESC, anomaly_severity_score DESC
   LIMIT 100
 
 Schedule:
