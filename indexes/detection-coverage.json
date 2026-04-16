@@ -9050,6 +9050,15 @@
         "YAMLPath": "rules/aws_cloudtrail_rules/aws_vpce_access_denied.yml"
     },
     {
+        "AnalysisType": "Scheduled Rule",
+        "Description": "Detects potential data exfiltration via anomalous outbound VPC flow log traffic using z-scorestatistical analysis.This detection uses a lookup table containing 90-day behavioral baselines for each AWS account'soutbound traffic patterns, then calculates z-scores to identify suspicious activity in the last7 days.**PREREQUISITES:**1. Baseline builder lookup table must be configured: `vpc_flow_data_exfil_baseline_90d`2. VPC flow logs v5+ required for the flowDirection field3. Allow 24 hours for initial baseline to populate**Detection Logic:**Baselines hourly outbound bytes, flow count, destination IP diversity, destination portdiversity, and source IP diversity per AWS account. Alerts when recent activity shows BOTH:1. Byte volume spike (z-score > 3 standard deviations above baseline)2. At least one diversity spike (z-score > 2): destination IP, destination port, or source IP**Why This Matters:**Data exfiltration has a distinct signature: large volumes sent to many new/unusual destinations,or suddenly initiated from many internal hosts simultaneously. Volume alone (e.g., a legitimatescheduled backup) is less suspicious; the combination of volume AND diversity anomalies is ahigh-fidelity exfil indicator that filters out routine high-bandwidth activity.**Complementary Detections:**- `AWS.VPCFlow.UnapprovedOutboundDNS` detects DNS tunneling as an exfil channel- CloudTrail S3 bulk download rules for object-level exfil patterns",
+        "DisplayName": "VPC Flow Log Data Exfiltration Anomaly - Z-Score Detection",
+        "LogTypes": [
+            "AWS.VPCFlow"
+        ],
+        "YAMLPath": "rules/aws_vpc_flow_rules/aws_vpc_flow_data_exfil_zscore_anomaly.yml"
+    },
+    {
         "AnalysisType": "Rule",
         "Description": "VPC Flow Logs observed inbound traffic violating the port allowlist.",
         "DisplayName": "VPC Flow Logs Inbound Port Allowlist",
