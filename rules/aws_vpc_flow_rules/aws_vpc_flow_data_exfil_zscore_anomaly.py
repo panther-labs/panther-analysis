@@ -27,14 +27,15 @@ def severity(event):
     severity_score = event.get("anomaly_severity_score") or 0
     z_bytes = event.get("z_score_bytes") or 0
     z_dst_ip = event.get("z_score_dst_ip_diversity") or 0
+    z_dst_port = event.get("z_score_dst_port_diversity") or 0
     z_src_ip = event.get("z_score_src_ip_diversity") or 0
 
     # Critical: Extreme anomaly (severity score > 15 or any key z-score > 5)
-    if severity_score > 15 or max(z_bytes, z_dst_ip, z_src_ip) > 5:
+    if severity_score > 15 or max(z_bytes, z_dst_ip, z_dst_port, z_src_ip) > 5:
         return "CRITICAL"
 
     # High: Strong anomaly (severity score > 10 or any key z-score > 4)
-    if severity_score > 10 or max(z_bytes, z_dst_ip, z_src_ip) > 4:
+    if severity_score > 10 or max(z_bytes, z_dst_ip, z_dst_port, z_src_ip) > 4:
         return "HIGH"
 
     # Medium: Moderate anomaly (default for detections that passed threshold)
