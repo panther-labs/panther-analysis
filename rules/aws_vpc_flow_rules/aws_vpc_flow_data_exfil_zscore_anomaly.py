@@ -87,7 +87,7 @@ def alert_context(event):
 
 
 def dedup_key(event):
-    # Deduplicate by account and first anomaly hour to avoid alert spam during active attacks.
+    # Deduplicate by account only; DedupPeriodMinutes controls the suppression window.
+    # Using first_anomaly_hour would shift every 6 hours for active accounts, defeating suppression.
     account = event.get("account_id", "unknown")
-    first_hour = str(event.get("first_anomaly_hour", "unknown"))
-    return f"vpc_flow_data_exfil_zscore_{account}_{first_hour}"
+    return f"vpc_flow_data_exfil_zscore_{account}"
