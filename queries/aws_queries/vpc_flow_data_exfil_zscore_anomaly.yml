@@ -1,0 +1,290 @@
+AnalysisType: scheduled_query
+QueryName: "Query.AWS.VPCFlow.DataExfilZScoreAnomaly"
+Enabled: false
+Description: |
+  Detects anomalous outbound data transfer patterns in VPC flow logs using z-score statistical
+  analysis. Reads behavioral baseline from lookup table and alerts when recent activity shows
+  byte volume spikes combined with destination IP, destination port, or source IP diversity
+  anomalies — indicators of data exfiltration.
+
+  PREREQUISITE: Requires the baseline builder lookup table (vpc_flow_data_exfil_baseline_90d)
+  to be populated first. Requires VPC flow logs v5+ for the flowDirection field.
+Query: |
+  -- VPC FLOW LOG DATA EXFILTRATION ANOMALY DETECTION (Z-SCORE)
+  -- Uses lookup table baseline for efficient anomaly detection
+  -- Detects: Byte volume spike + diversity spike = potential exfiltration
+
+  WITH recent_outbound AS (
+      SELECT
+          "account"::string                AS account_id,
+          srcAddr::string                  AS src_ip,
+          dstAddr::string                  AS dst_ip,
+          dstPort::bigint                  AS dst_port,
+          bytes::bigint                    AS bytes,
+          packets::bigint                  AS packets,
+          DATE_TRUNC('hour', p_event_time) AS event_hour
+      FROM panther_logs.public.aws_vpcflow
+      WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
+        AND action::string = 'ACCEPT'
+        AND flowDirection::string = 'egress'
+        AND dstAddr IS NOT NULL
+        AND dstAddr::string != '-'
+        AND NOT REGEXP_LIKE(dstAddr::string,
+              '^(10\.|172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.|127\.|169\.254\.).*')
+        AND "account" IS NOT NULL
+  ),
+
+  -- Recent activity aggregated by account and hour
+  recent_hourly AS (
+      SELECT
+          account_id,
+          event_hour,
+          SUM(bytes)               AS hourly_bytes,
+          SUM(packets)             AS hourly_packets,
+          COUNT(*)                 AS hourly_flow_count,
+          COUNT(DISTINCT dst_ip)   AS hourly_dst_ip_diversity,
+          COUNT(DISTINCT dst_port) AS hourly_dst_port_diversity,
+          COUNT(DISTINCT src_ip)   AS hourly_src_ip_diversity,
+          ARRAY_AGG(DISTINCT dst_ip) AS sample_dst_ips
+      FROM recent_outbound
+      GROUP BY account_id, event_hour
+  ),
+
+  -- Recent activity summary statistics per account
+  recent_stats_agg AS (
+      SELECT
+          account_id,
+          SUM(hourly_bytes)                      AS recent_total_bytes,
+          SUM(hourly_flow_count)                 AS recent_total_flows,
+          COUNT(DISTINCT DATE(event_hour))       AS recent_active_days,
+
+          -- Max per hour (analyst context)
+          MAX(hourly_bytes)                      AS recent_max_bytes_per_hour,
+          MAX(hourly_flow_count)                 AS recent_max_flows_per_hour,
+          MAX(hourly_dst_ip_diversity)           AS recent_max_dst_ip_diversity_per_hour,
+          MAX(hourly_dst_port_diversity)         AS recent_max_dst_port_diversity_per_hour,
+          MAX(hourly_src_ip_diversity)           AS recent_max_src_ip_diversity_per_hour,
+
+          -- Average per hour (used for z-score gating)
+          AVG(hourly_bytes)::FLOAT               AS recent_avg_bytes_per_hour,
+          AVG(hourly_packets)::FLOAT             AS recent_avg_packets_per_hour,
+          AVG(hourly_flow_count)::FLOAT          AS recent_avg_flows_per_hour,
+          AVG(hourly_dst_ip_diversity)::FLOAT    AS recent_avg_dst_ip_diversity_per_hour,
+          AVG(hourly_dst_port_diversity)::FLOAT  AS recent_avg_dst_port_diversity_per_hour,
+          AVG(hourly_src_ip_diversity)::FLOAT    AS recent_avg_src_ip_diversity_per_hour,
+
+          -- Temporal context
+          MIN(event_hour)                        AS first_anomaly_hour,
+          MAX(event_hour)                        AS last_anomaly_hour
+      FROM recent_hourly
+      GROUP BY account_id
+  ),
+
+  -- Collect unique destination IPs across all hourly windows (separate flatten to avoid cartesian product)
+  recent_dst_ips AS (
+      SELECT
+          account_id,
+          ARRAY_AGG(DISTINCT ip.value::string) AS all_recent_dst_ips
+      FROM recent_hourly
+      CROSS JOIN LATERAL FLATTEN(input => sample_dst_ips) AS ip
+      GROUP BY account_id
+  ),
+
+  -- Join aggregates with IP collection
+  recent_stats AS (
+      SELECT a.*, i.all_recent_dst_ips
+      FROM recent_stats_agg a
+      LEFT JOIN recent_dst_ips i ON a.account_id = i.account_id
+  ),
+
+  -- Join with baseline from lookup table and calculate z-scores
+  anomaly_detection AS (
+      SELECT
+          r.account_id,
+
+          -- Baseline metrics (from lookup table; all fields nested under data:)
+          b.data:baseline_total_bytes::bigint        AS baseline_total_bytes,
+          b.data:baseline_total_flows::bigint        AS baseline_total_flows,
+          b.data:baseline_active_days::int           AS baseline_active_days,
+          b.data:baseline_mean_bytes_per_hour::float AS baseline_mean_bytes_per_hour,
+          b.data:baseline_stddev_bytes_per_hour::float AS baseline_stddev_bytes_per_hour,
+          b.data:baseline_mean_flows_per_hour::float AS baseline_mean_flows_per_hour,
+          b.data:baseline_stddev_flows_per_hour::float AS baseline_stddev_flows_per_hour,
+          b.data:baseline_mean_dst_ip_diversity_per_hour::float AS baseline_mean_dst_ip_diversity_per_hour,
+          b.data:baseline_stddev_dst_ip_diversity_per_hour::float AS baseline_stddev_dst_ip_diversity_per_hour,
+          b.data:baseline_mean_dst_port_diversity_per_hour::float AS baseline_mean_dst_port_diversity_per_hour,
+          b.data:baseline_stddev_dst_port_diversity_per_hour::float AS baseline_stddev_dst_port_diversity_per_hour,
+          b.data:baseline_mean_src_ip_diversity_per_hour::float AS baseline_mean_src_ip_diversity_per_hour,
+          b.data:baseline_stddev_src_ip_diversity_per_hour::float AS baseline_stddev_src_ip_diversity_per_hour,
+          b.data:primary_dst_ip::string              AS primary_dst_ip,
+          b.data:baseline_updated_at::string         AS baseline_updated_at,
+
+          -- Recent activity metrics
+          r.recent_total_bytes,
+          r.recent_total_flows,
+          r.recent_active_days,
+          r.recent_max_bytes_per_hour,
+          r.recent_max_flows_per_hour,
+          r.recent_max_dst_ip_diversity_per_hour,
+          r.recent_max_dst_port_diversity_per_hour,
+          r.recent_max_src_ip_diversity_per_hour,
+          r.recent_avg_bytes_per_hour,
+          r.recent_avg_packets_per_hour,
+          r.recent_avg_flows_per_hour,
+          r.recent_avg_dst_ip_diversity_per_hour,
+          r.recent_avg_dst_port_diversity_per_hour,
+          r.recent_avg_src_ip_diversity_per_hour,
+          r.all_recent_dst_ips,
+          r.first_anomaly_hour,
+          r.last_anomaly_hour,
+
+          -- Z-SCORES (avg-based: compare recent hourly averages against baseline distribution)
+          ROUND(
+              (r.recent_avg_bytes_per_hour - b.data:baseline_mean_bytes_per_hour::float) /
+              NULLIF(b.data:baseline_stddev_bytes_per_hour::float, 0),
+              2
+          ) AS z_score_bytes,
+
+          ROUND(
+              (r.recent_avg_flows_per_hour - b.data:baseline_mean_flows_per_hour::float) /
+              NULLIF(b.data:baseline_stddev_flows_per_hour::float, 0),
+              2
+          ) AS z_score_flows,
+
+          ROUND(
+              (r.recent_avg_dst_ip_diversity_per_hour - b.data:baseline_mean_dst_ip_diversity_per_hour::float) /
+              NULLIF(b.data:baseline_stddev_dst_ip_diversity_per_hour::float, 0),
+              2
+          ) AS z_score_dst_ip_diversity,
+
+          ROUND(
+              (r.recent_avg_dst_port_diversity_per_hour - b.data:baseline_mean_dst_port_diversity_per_hour::float) /
+              NULLIF(b.data:baseline_stddev_dst_port_diversity_per_hour::float, 0),
+              2
+          ) AS z_score_dst_port_diversity,
+
+          ROUND(
+              (r.recent_avg_src_ip_diversity_per_hour - b.data:baseline_mean_src_ip_diversity_per_hour::float) /
+              NULLIF(b.data:baseline_stddev_src_ip_diversity_per_hour::float, 0),
+              2
+          ) AS z_score_src_ip_diversity,
+
+          -- Anomaly severity score (sum of positive z-scores across all dimensions)
+          ROUND(
+              GREATEST(COALESCE((r.recent_avg_bytes_per_hour - b.data:baseline_mean_bytes_per_hour::float) /
+                  NULLIF(b.data:baseline_stddev_bytes_per_hour::float, 0), 0), 0) +
+              GREATEST(COALESCE((r.recent_avg_flows_per_hour - b.data:baseline_mean_flows_per_hour::float) /
+                  NULLIF(b.data:baseline_stddev_flows_per_hour::float, 0), 0), 0) +
+              GREATEST(COALESCE((r.recent_avg_dst_ip_diversity_per_hour - b.data:baseline_mean_dst_ip_diversity_per_hour::float) /
+                  NULLIF(b.data:baseline_stddev_dst_ip_diversity_per_hour::float, 0), 0), 0) +
+              GREATEST(COALESCE((r.recent_avg_dst_port_diversity_per_hour - b.data:baseline_mean_dst_port_diversity_per_hour::float) /
+                  NULLIF(b.data:baseline_stddev_dst_port_diversity_per_hour::float, 0), 0), 0) +
+              GREATEST(COALESCE((r.recent_avg_src_ip_diversity_per_hour - b.data:baseline_mean_src_ip_diversity_per_hour::float) /
+                  NULLIF(b.data:baseline_stddev_src_ip_diversity_per_hour::float, 0), 0), 0),
+              2
+          ) AS anomaly_severity_score,
+
+          -- Multi-dimensional anomaly flag
+          CASE
+              WHEN b.data:account_id IS NULL THEN FALSE  -- No baseline; cold-start handled below
+              WHEN (
+                  -- Sustained byte volume spike (z > 3)
+                  (r.recent_avg_bytes_per_hour - b.data:baseline_mean_bytes_per_hour::float) /
+                      NULLIF(b.data:baseline_stddev_bytes_per_hour::float, 0) > 3
+                  AND (
+                      -- AND at least one diversity dimension spike (z > 2)
+                      (r.recent_avg_dst_ip_diversity_per_hour - b.data:baseline_mean_dst_ip_diversity_per_hour::float) /
+                          NULLIF(b.data:baseline_stddev_dst_ip_diversity_per_hour::float, 0) > 2
+                      OR (r.recent_avg_dst_port_diversity_per_hour - b.data:baseline_mean_dst_port_diversity_per_hour::float) /
+                          NULLIF(b.data:baseline_stddev_dst_port_diversity_per_hour::float, 0) > 2
+                      OR (r.recent_avg_src_ip_diversity_per_hour - b.data:baseline_mean_src_ip_diversity_per_hour::float) /
+                          NULLIF(b.data:baseline_stddev_src_ip_diversity_per_hour::float, 0) > 2
+                  )
+              ) THEN TRUE
+              ELSE FALSE
+          END AS is_anomalous,
+
+          -- Cold-start: no baseline yet, but raw thresholds indicate suspicious activity
+          -- >= 1 GB/hour to >= 10 unique external destinations with no prior baseline
+          CASE
+              WHEN b.data:account_id IS NULL
+                  AND r.recent_max_bytes_per_hour >= 1073741824
+                  AND r.recent_max_dst_ip_diversity_per_hour >= 10
+              THEN TRUE
+              ELSE FALSE
+          END AS is_cold_start_anomaly,
+
+          CURRENT_TIMESTAMP AS detection_timestamp
+
+      FROM recent_stats r
+      LEFT JOIN panther_lookups.public.vpc_flow_data_exfil_baseline_90d b
+          ON r.account_id = b.data:account_id::string
+      WHERE r.recent_total_flows >= 50  -- Minimum recent activity threshold
+  )
+
+  SELECT
+      account_id,
+
+      -- Baseline context
+      baseline_total_bytes,
+      baseline_total_flows,
+      baseline_active_days,
+      baseline_mean_bytes_per_hour,
+      baseline_stddev_bytes_per_hour,
+      baseline_mean_flows_per_hour,
+      baseline_stddev_flows_per_hour,
+      baseline_mean_dst_ip_diversity_per_hour,
+      baseline_stddev_dst_ip_diversity_per_hour,
+      baseline_mean_dst_port_diversity_per_hour,
+      baseline_stddev_dst_port_diversity_per_hour,
+      baseline_mean_src_ip_diversity_per_hour,
+      baseline_stddev_src_ip_diversity_per_hour,
+      primary_dst_ip,
+      baseline_updated_at,
+
+      -- Recent activity context
+      recent_total_bytes,
+      recent_total_flows,
+      recent_active_days,
+      recent_max_bytes_per_hour,
+      recent_max_flows_per_hour,
+      recent_max_dst_ip_diversity_per_hour,
+      recent_max_dst_port_diversity_per_hour,
+      recent_max_src_ip_diversity_per_hour,
+      recent_avg_bytes_per_hour,
+      recent_avg_packets_per_hour,
+      recent_avg_flows_per_hour,
+      recent_avg_dst_ip_diversity_per_hour,
+      recent_avg_dst_port_diversity_per_hour,
+      recent_avg_src_ip_diversity_per_hour,
+      all_recent_dst_ips,
+      first_anomaly_hour,
+      last_anomaly_hour,
+
+      -- Z-scores and anomaly metrics
+      z_score_bytes,
+      z_score_flows,
+      z_score_dst_ip_diversity,
+      z_score_dst_port_diversity,
+      z_score_src_ip_diversity,
+      anomaly_severity_score,
+
+      -- Detection metadata
+      detection_timestamp,
+      is_anomalous,
+      is_cold_start_anomaly
+
+  FROM anomaly_detection
+  WHERE is_anomalous = TRUE OR is_cold_start_anomaly = TRUE
+  ORDER BY anomaly_severity_score DESC
+  LIMIT 100
+
+Schedule:
+  RateMinutes: 360  # Run every 6 hours
+  TimeoutMinutes: 10
+Tags:
+  - AWS
+  - VPC
+  - Data Exfiltration
+  - Anomaly Detection
+  - Statistical Analysis

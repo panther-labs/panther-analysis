@@ -1,0 +1,204 @@
+AnalysisType: lookup_table
+LookupName: vpc_flow_data_exfil_baseline_90d
+Enabled: false
+Refresh:
+  PeriodMinutes: 1440  # Refresh daily
+Description: >
+  Builds a 90-day behavioral baseline for outbound VPC flow log traffic per AWS account.
+  Computes hourly statistics (bytes, packets, flow count, destination IP diversity,
+  destination port diversity, source IP diversity) over a 90-day window (excluding the
+  last 7 days) to support z-score anomaly detection for data exfiltration.
+
+  Filters to ACCEPT-action egress flows to non-RFC-1918 destinations.
+  Requires VPC flow logs v5+ for the flowDirection field.
+
+  PREREQUISITE: VPC flow logs must be enabled and ingested into Panther.
+Query: |
+  WITH outbound_flows AS (
+      SELECT
+          "account"::string                AS account_id,
+          srcAddr::string                  AS src_ip,
+          dstAddr::string                  AS dst_ip,
+          dstPort::bigint                  AS dst_port,
+          bytes::bigint                    AS bytes,
+          packets::bigint                  AS packets,
+          DATE_TRUNC('hour', p_event_time) AS event_hour,
+          DATE(p_event_time)               AS event_date
+      FROM panther_logs.public.aws_vpcflow
+      WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '97 days'
+        AND p_event_time <  CURRENT_TIMESTAMP - INTERVAL '7 days'
+        AND action::string = 'ACCEPT'
+        AND flowDirection::string = 'egress'
+        AND dstAddr IS NOT NULL
+        AND dstAddr::string != '-'
+        AND NOT REGEXP_LIKE(dstAddr::string,
+              '^(10\.|172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.|127\.|169\.254\.).*')
+        AND "account" IS NOT NULL
+  ),
+
+  hourly_stats AS (
+      SELECT
+          account_id,
+          event_hour,
+          SUM(bytes)               AS hourly_bytes,
+          SUM(packets)             AS hourly_packets,
+          COUNT(*)                 AS hourly_flow_count,
+          COUNT(DISTINCT dst_ip)   AS hourly_dst_ip_diversity,
+          COUNT(DISTINCT dst_port) AS hourly_dst_port_diversity,
+          COUNT(DISTINCT src_ip)   AS hourly_src_ip_diversity
+      FROM outbound_flows
+      GROUP BY account_id, event_hour
+  ),
+
+  baseline_stats AS (
+      SELECT
+          account_id,
+          SUM(hourly_bytes)                          AS baseline_total_bytes,
+          SUM(hourly_packets)                        AS baseline_total_packets,
+          SUM(hourly_flow_count)                     AS baseline_total_flows,
+          COUNT(DISTINCT DATE(event_hour))           AS baseline_active_days,
+          COUNT(*)                                   AS baseline_hours_with_activity,
+          AVG(hourly_bytes)::FLOAT                   AS baseline_mean_bytes_per_hour,
+          STDDEV(hourly_bytes)::FLOAT                AS baseline_stddev_bytes_per_hour,
+          AVG(hourly_packets)::FLOAT                 AS baseline_mean_packets_per_hour,
+          STDDEV(hourly_packets)::FLOAT              AS baseline_stddev_packets_per_hour,
+          AVG(hourly_flow_count)::FLOAT              AS baseline_mean_flows_per_hour,
+          STDDEV(hourly_flow_count)::FLOAT           AS baseline_stddev_flows_per_hour,
+          AVG(hourly_dst_ip_diversity)::FLOAT        AS baseline_mean_dst_ip_diversity_per_hour,
+          STDDEV(hourly_dst_ip_diversity)::FLOAT     AS baseline_stddev_dst_ip_diversity_per_hour,
+          AVG(hourly_dst_port_diversity)::FLOAT      AS baseline_mean_dst_port_diversity_per_hour,
+          STDDEV(hourly_dst_port_diversity)::FLOAT   AS baseline_stddev_dst_port_diversity_per_hour,
+          AVG(hourly_src_ip_diversity)::FLOAT        AS baseline_mean_src_ip_diversity_per_hour,
+          STDDEV(hourly_src_ip_diversity)::FLOAT     AS baseline_stddev_src_ip_diversity_per_hour,
+          MIN(event_hour)                            AS baseline_first_event,
+          MAX(event_hour)                            AS baseline_last_event
+      FROM hourly_stats
+      GROUP BY account_id
+      HAVING SUM(hourly_flow_count) >= 100
+  ),
+
+  -- Most common external destination IP
+  primary_dst_ip AS (
+      SELECT account_id, dst_ip AS primary_dst_ip
+      FROM (
+          SELECT account_id, dst_ip, COUNT(*) AS cnt
+          FROM outbound_flows
+          GROUP BY account_id, dst_ip
+      )
+      QUALIFY ROW_NUMBER() OVER (PARTITION BY account_id ORDER BY cnt DESC) = 1
+  ),
+
+  -- Most common internal source IP
+  primary_src_ip AS (
+      SELECT account_id, src_ip AS primary_src_ip
+      FROM (
+          SELECT account_id, src_ip, COUNT(*) AS cnt
+          FROM outbound_flows
+          GROUP BY account_id, src_ip
+      )
+      QUALIFY ROW_NUMBER() OVER (PARTITION BY account_id ORDER BY cnt DESC) = 1
+  ),
+
+  -- Most common destination port
+  primary_dst_port AS (
+      SELECT account_id, dst_port AS primary_dst_port
+      FROM (
+          SELECT account_id, dst_port, COUNT(*) AS cnt
+          FROM outbound_flows
+          GROUP BY account_id, dst_port
+      )
+      QUALIFY ROW_NUMBER() OVER (PARTITION BY account_id ORDER BY cnt DESC) = 1
+  ),
+
+  -- Top 100 external destination IPs with flow counts (analyst context for triage)
+  dst_ip_dist AS (
+      SELECT account_id, OBJECT_AGG(dst_ip, cnt) AS dst_ip_distribution
+      FROM (
+          SELECT account_id, dst_ip, COUNT(*) AS cnt
+          FROM outbound_flows
+          GROUP BY account_id, dst_ip
+          QUALIFY ROW_NUMBER() OVER (PARTITION BY account_id ORDER BY cnt DESC) <= 100
+      )
+      GROUP BY account_id
+  ),
+
+  -- Top 50 internal source IPs with flow counts
+  src_ip_dist AS (
+      SELECT account_id, OBJECT_AGG(src_ip, cnt) AS src_ip_distribution
+      FROM (
+          SELECT account_id, src_ip, COUNT(*) AS cnt
+          FROM outbound_flows
+          GROUP BY account_id, src_ip
+          QUALIFY ROW_NUMBER() OVER (PARTITION BY account_id ORDER BY cnt DESC) <= 50
+      )
+      GROUP BY account_id
+  ),
+
+  -- Top 50 destination ports with flow counts
+  dst_port_dist AS (
+      SELECT account_id, OBJECT_AGG(dst_port::string, cnt) AS dst_port_distribution
+      FROM (
+          SELECT account_id, dst_port, COUNT(*) AS cnt
+          FROM outbound_flows
+          GROUP BY account_id, dst_port
+          QUALIFY ROW_NUMBER() OVER (PARTITION BY account_id ORDER BY cnt DESC) <= 50
+      )
+      GROUP BY account_id
+  )
+
+  SELECT
+      b.account_id,
+
+      -- Scalar totals
+      b.baseline_total_bytes,
+      b.baseline_total_packets,
+      b.baseline_total_flows,
+      b.baseline_active_days,
+      b.baseline_hours_with_activity,
+
+      -- Hourly mean/stddev stats (used for z-score computation)
+      ROUND(b.baseline_mean_bytes_per_hour, 2)                AS baseline_mean_bytes_per_hour,
+      ROUND(b.baseline_stddev_bytes_per_hour, 2)              AS baseline_stddev_bytes_per_hour,
+      ROUND(b.baseline_mean_packets_per_hour, 2)              AS baseline_mean_packets_per_hour,
+      ROUND(b.baseline_stddev_packets_per_hour, 2)            AS baseline_stddev_packets_per_hour,
+      ROUND(b.baseline_mean_flows_per_hour, 2)                AS baseline_mean_flows_per_hour,
+      ROUND(b.baseline_stddev_flows_per_hour, 2)              AS baseline_stddev_flows_per_hour,
+      ROUND(b.baseline_mean_dst_ip_diversity_per_hour, 4)     AS baseline_mean_dst_ip_diversity_per_hour,
+      ROUND(b.baseline_stddev_dst_ip_diversity_per_hour, 4)   AS baseline_stddev_dst_ip_diversity_per_hour,
+      ROUND(b.baseline_mean_dst_port_diversity_per_hour, 4)   AS baseline_mean_dst_port_diversity_per_hour,
+      ROUND(b.baseline_stddev_dst_port_diversity_per_hour, 4) AS baseline_stddev_dst_port_diversity_per_hour,
+      ROUND(b.baseline_mean_src_ip_diversity_per_hour, 4)     AS baseline_mean_src_ip_diversity_per_hour,
+      ROUND(b.baseline_stddev_src_ip_diversity_per_hour, 4)   AS baseline_stddev_src_ip_diversity_per_hour,
+
+      -- Primary (most common) values
+      p.primary_dst_ip,
+      ps.primary_src_ip,
+      pp.primary_dst_port,
+
+      -- Distribution objects (analyst triage context)
+      di.dst_ip_distribution,
+      si.src_ip_distribution,
+      dp.dst_port_distribution,
+
+      b.baseline_first_event,
+      b.baseline_last_event,
+      CURRENT_TIMESTAMP AS baseline_updated_at,
+      '90days'          AS baseline_window
+  FROM baseline_stats b
+  LEFT JOIN primary_dst_ip  p  ON b.account_id = p.account_id
+  LEFT JOIN primary_src_ip  ps ON b.account_id = ps.account_id
+  LEFT JOIN primary_dst_port pp ON b.account_id = pp.account_id
+  LEFT JOIN dst_ip_dist      di ON b.account_id = di.account_id
+  LEFT JOIN src_ip_dist      si ON b.account_id = si.account_id
+  LEFT JOIN dst_port_dist    dp ON b.account_id = dp.account_id
+  ORDER BY b.baseline_total_bytes DESC
+
+LogTypeMap:
+  PrimaryKey: account_id
+  AssociatedLogTypes:
+    - LogType: AWS.VPCFlow
+      Selectors:
+        - "$.account"       # VPCFlow uses 'account' (no underscore)
+    - LogType: AWS.VPCDns
+      Selectors:
+        - "$.account_id"    # VPCDns uses 'account_id' (with underscore)
