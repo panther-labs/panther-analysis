@@ -1,4 +1,5 @@
 from collections.abc import Mapping, Sequence
+from typing import Union
 
 from panther_base_helpers import deep_get
 
@@ -15,7 +16,7 @@ class LookupTableMatches:
     def _register(self, event, lookuptable_name: str):
         self.lut_matches = event.deep_get(ENRICHMENT_KEY, lookuptable_name)
 
-    def _lookup(self, match_field: str, *keys) -> list or str:
+    def _lookup(self, match_field: str, *keys) -> Union[list, str]:
         match = deep_get(self.lut_matches, match_field)
         if not match:
             return None
