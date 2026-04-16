@@ -29,6 +29,16 @@ def severity(event):
     z_dst_ip = event.get("z_score_dst_ip_diversity") or 0
     z_dst_port = event.get("z_score_dst_port_diversity") or 0
     z_src_ip = event.get("z_score_src_ip_diversity") or 0
+    is_cold_start = event.get("is_cold_start_anomaly") or False
+
+    # Cold-start: no baseline, escalate on raw traffic magnitude
+    if is_cold_start:
+        max_bytes_per_hour = event.get("recent_max_bytes_per_hour") or 0
+        max_dst_ip_diversity = event.get("recent_max_dst_ip_diversity_per_hour") or 0
+        # Critical: >= 10 GB/hour or >= 100 unique destinations (10x cold-start threshold)
+        if max_bytes_per_hour >= 10737418240 or max_dst_ip_diversity >= 100:
+            return "CRITICAL"
+        return "HIGH"
 
     # Critical: Extreme anomaly (severity score > 15 or any key z-score > 5)
     if severity_score > 15 or max(z_bytes, z_dst_ip, z_dst_port, z_src_ip) > 5:
