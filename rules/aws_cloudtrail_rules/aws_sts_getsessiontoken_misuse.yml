@@ -1,0 +1,109 @@
+AnalysisType: rule
+Filename: aws_sts_getsessiontoken_misuse.py
+RuleID: "AWS.STS.GetSessionToken.Misuse"
+DisplayName: "AWS STS GetSessionToken by IAM User"
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - AWS STS
+  - Lateral Movement:Use Alternate Authentication Material
+  - Privilege Escalation:Abuse Elevation Control Mechanism
+Reports:
+  MITRE ATT&CK:
+    - TA0008:T1550.001
+    - TA0004:T1548
+Status: Experimental
+Severity: Low
+Description: >
+  Detects an IAM user calling STS GetSessionToken to obtain temporary credentials.
+  Attackers who have compromised long-term IAM credentials may use GetSessionToken
+  to generate short-lived session tokens for lateral movement or to bypass IP-based
+  policies that apply only to long-term credentials.
+Runbook: |
+  1. Query CloudTrail for all API calls by userIdentity:arn in the 6 hours before and after this alert to establish what the session token was used for
+  2. Check if sourceIPAddress is associated with known corporate network ranges, VPN endpoints, or cloud provider IP ranges
+  3. Find other alerts for this userIdentity:userName in the past 30 days to determine if GetSessionToken usage is part of normal workflow
+Reference: https://docs.aws.amazon.com/STS/latest/APIReference/API_GetSessionToken.html
+SummaryAttributes:
+  - userAgent
+  - sourceIpAddress
+  - recipientAccountId
+  - p_any_aws_arns
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+  - Name: GetSessionToken by IAM User
+    ExpectedResult: true
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "eventID": "abc-123",
+        "eventName": "GetSessionToken",
+        "eventSource": "sts.amazonaws.com",
+        "eventTime": "2024-01-15T10:30:00Z",
+        "eventType": "AwsApiCall",
+        "eventVersion": "1.08",
+        "recipientAccountId": "123456789012",
+        "requestID": "req-123",
+        "sourceIPAddress": "203.0.113.50",
+        "userAgent": "aws-cli/2.15.0",
+        "userIdentity": {
+          "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+          "accountId": "123456789012",
+          "arn": "arn:aws:iam::123456789012:user/example-user",
+          "principalId": "AIDACKCEVSQ6C2EXAMPLE",
+          "type": "IAMUser",
+          "userName": "example-user"
+        }
+      }
+  - Name: GetSessionToken Failed
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "errorCode": "AccessDenied",
+        "eventName": "GetSessionToken",
+        "eventSource": "sts.amazonaws.com",
+        "eventTime": "2024-01-15T10:30:00Z",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+        "sourceIPAddress": "203.0.113.50",
+        "userIdentity": {
+          "type": "IAMUser",
+          "userName": "example-user"
+        }
+      }
+  - Name: GetSessionToken by Assumed Role
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "eventName": "GetSessionToken",
+        "eventSource": "sts.amazonaws.com",
+        "eventTime": "2024-01-15T10:30:00Z",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+        "sourceIPAddress": "10.0.0.1",
+        "userIdentity": {
+          "type": "AssumedRole",
+          "arn": "arn:aws:sts::123456789012:assumed-role/MyRole/session"
+        }
+      }
+  - Name: Unrelated STS Event
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "eventName": "AssumeRole",
+        "eventSource": "sts.amazonaws.com",
+        "eventTime": "2024-01-15T10:30:00Z",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+        "sourceIPAddress": "10.0.0.1",
+        "userIdentity": {
+          "type": "IAMUser",
+          "userName": "example-user"
+        }
+      }
