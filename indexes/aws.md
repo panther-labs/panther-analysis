@@ -87,6 +87,8 @@
   - An AWS Config Recorder or Delivery Channel was created
 - [AWS Config Service Disabled](../rules/aws_cloudtrail_rules/aws_config_service_disabled_deleted.yml)
   - An AWS Config Recorder or Delivery Channel was disabled or deleted
+- [AWS Console GetSigninToken Potential Abuse](../rules/aws_cloudtrail_rules/aws_console_getsignintoken.yml)
+  - Detects GetSigninToken calls from non-SSO user agents. An adversary can use tools like aws_consoler to convert compromised CLI credentials into a federated console session, bypassing MFA requirements and obscuring the original access key. The GetSigninToken API creates temporary console access from STS temporary credentials.
 - [AWS Console Login](../rules/aws_cloudtrail_rules/aws_console_login.yml)
 - [AWS Console Sign-In NOT PRECEDED BY Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
   - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta and both log sources configured.
@@ -122,6 +124,8 @@
   - This alert occurs when AWS has detected exposed credentials. It attaches a policy to deny certain actions, effectively quarantining those credentials, and is accompanied by a support case with instructions for detaching the policy.
 - [AWS IAM Group Read Only Events](../rules/aws_cloudtrail_rules/aws_iam_group_read_only_events.yml)
   - This rule captures multiple read/list events related to IAM group management in AWS Cloudtrail.
+- [AWS IMDS Credential Usage Outside Expected Services](../rules/aws_cloudtrail_rules/aws_imds_credential_exfiltration.yml)
+  - Detects when an EC2 instance identity (credentials obtained via IMDS) is used to make API calls outside of expected internal AWS services like SSM. This indicates that IMDS credentials may have been exfiltrated from a compromised instance and are being used externally for lateral movement or privilege escalation.
 - [AWS Macie Disabled/Updated](../rules/aws_cloudtrail_rules/aws_macie_evasion.yml)
   - Amazon Macie is a data security and data privacy service to discover and protect sensitive data. Security teams use Macie to detect open S3 Buckets that could have potentially sensitive data in it along with policy violations, such as missing Encryption. If an attacker disables Macie, it could potentially hide data exfiltration.
 - [AWS Modify Cloud Compute Infrastructure](../rules/aws_cloudtrail_rules/aws_modify_cloud_compute_infrastructure.yml)
@@ -181,6 +185,10 @@
   - Returns StartSession events by users who triggered more than 2 StartSession events over the past hour.
 - [AWS SSO Access Token Retrieved by Unauthenticated IP](../correlation_rules/aws_sso_access_token_retrieved_by_unauthenticated_ip.yml)
   - When using AWS in an enterprise environment, best practices dictate to use a single sign-on service for identity and access management. AWS SSO is a popular solution, integrating with third-party providers such as Okta and allowing to centrally manage roles and permissions in multiple AWS accounts.In this post, we demonstrate that AWS SSO is vulnerable by design to device code authentication phishing – just like any identity provider implementing OpenID Connect device code authentication. This technique was first demonstrated by Dr. Nestori Syynimaa for Azure AD. The feature provides a powerful phishing vector for attackers, rendering ineffective controls such as MFA (including Yubikeys) or IP allow-listing at the IdP level.
+- [AWS STS GetCallerIdentity via TruffleHog](../rules/aws_cloudtrail_rules/aws_sts_getcalleridentity_trufflehog.yml)
+  - Detects AWS STS GetCallerIdentity calls made by TruffleHog, a credential scanning tool. Threat actors use TruffleHog to validate whether leaked or stolen AWS access keys are still active. A GetCallerIdentity call with a TruffleHog user agent indicates that credentials from this account have been discovered externally and are being tested for validity.
+- [AWS STS GetSessionToken by IAM User](../rules/aws_cloudtrail_rules/aws_sts_getsessiontoken_misuse.yml)
+  - Detects an IAM user calling STS GetSessionToken to obtain temporary credentials. Attackers who have compromised long-term IAM credentials may use GetSessionToken to generate short-lived session tokens for lateral movement or to bypass IP-based policies that apply only to long-term credentials.
 - [AWS Trusted IPSet Modified](../rules/aws_cloudtrail_rules/aws_ipset_modified.yml)
   - Detects creation and updates of the list of trusted IPs used by GuardDuty and WAF. Potentially to disable security alerts against malicious IPs.
 - [AWS Unsuccessful MFA attempt](../rules/aws_cloudtrail_rules/aws_cloudtrail_unsuccessful_mfa_attempt.yml)
