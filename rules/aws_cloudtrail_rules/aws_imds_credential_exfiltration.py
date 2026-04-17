@@ -13,6 +13,14 @@ INTERNAL_EVENTS = {"RegisterManagedInstance"}
 INTERNAL_IPS = {"AWS Internal"}
 
 
+def _is_valid_ip(ip_str):
+    try:
+        ipaddress.ip_address(ip_str)
+        return True
+    except ValueError:
+        return False
+
+
 def _is_private_ip(ip_str):
     try:
         return ipaddress.ip_address(ip_str).is_private
@@ -29,9 +37,12 @@ def rule(event):
         return False
     if event.get("eventName") in INTERNAL_EVENTS:
         return False
-    if event.get("sourceIPAddress") in INTERNAL_IPS:
-        return False
-    return True
+    # Only alert when credentials are used from a public IP.
+    # Filters out "AWS Internal", service hostnames, and private VPC IPs.
+    source_ip = event.get("sourceIPAddress", "")
+    return (
+        source_ip not in INTERNAL_IPS and _is_valid_ip(source_ip) and not _is_private_ip(source_ip)
+    )
 
 
 def title(event):
@@ -42,13 +53,6 @@ def title(event):
         f"IMDS instance credential [{arn}] used from [{ip_addr}] "
         f"to call [{event.get('eventSource', '')}:{action}]"
     )
-
-
-def severity(event):
-    ip_addr = event.get("sourceIPAddress", "")
-    if ip_addr and not _is_private_ip(ip_addr):
-        return "HIGH"
-    return "MEDIUM"
 
 
 def alert_context(event):
