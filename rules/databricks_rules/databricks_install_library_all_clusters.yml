@@ -1,0 +1,80 @@
+AnalysisType: rule
+Filename: databricks_install_library_all_clusters.py
+RuleID: "Databricks.Audit.InstallLibraryAllClusters"
+DisplayName: "Databricks Install Library on All Clusters"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Execution
+  - Persistence
+Reports:
+  MITRE ATT&CK:
+    - TA0002:T1203 # Exploitation for Client Execution
+    - TA0003:T1543 # Create or Modify System Process
+Severity: Medium
+Description: >
+  Detects use of the deprecated installLibraryOnAllClusters action. This anti-pattern can
+  introduce security risks by installing potentially malicious libraries across the entire
+  environment without proper review or controls.
+Runbook: |
+  1. Query audit logs for the library installation details and identify what library was installed
+  2. Check if this library has been used in notebook or job execution in the 24 hours after installation
+  3. Find all library installations by this user in the past 30 days to identify patterns
+Reference: https://github.com/andyweaves/system-tables-audit-logs/blob/main/resources/queries_and_alerts.json
+SummaryAttributes:
+  - actor
+  - workspace_id
+Tests:
+  - Name: Library Installed on All Clusters
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "clusters"
+      actionName: "installLibraryOnAllClusters"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "developer@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        library:
+          pypi:
+            package: "suspicious-package"
+      response:
+        statusCode: 200
+  - Name: Maven Library Installed
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "clusters"
+      actionName: "installLibraryOnAllClusters"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        library:
+          maven:
+            coordinates: "com.example:lib:1.0"
+  - Name: Normal Library Install
+    ExpectedResult: false
+    Log:
+      timestamp: 1704067200000
+      serviceName: "clusters"
+      actionName: "installLibrary"
+      userIdentity:
+        email: "user@example.com"
+      requestParams:
+        clusterId: "cluster-123"
+        library:
+          pypi:
+            package: "pandas"
+  - Name: Uninstall Action
+    ExpectedResult: false
+    Log:
+      timestamp: 1704067200000
+      serviceName: "clusters"
+      actionName: "uninstallLibrary"
+      userIdentity:
+        email: "user@example.com"

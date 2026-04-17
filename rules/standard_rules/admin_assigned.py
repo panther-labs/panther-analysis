@@ -8,9 +8,10 @@ def rule(event):
 
 def title(event):
     # use unified data model field in title
+    recipient = event.udm("user") or event.get("team") or "USER_OR_TEAM_NOT_FOUND"
     return (
         f"{event.get('p_log_type')}: [{event.udm('actor_user')}] assigned admin privileges "
-        f"[{event.udm('assigned_admin_role')}] to [{event.udm('user')}]"
+        f"[{event.udm('assigned_admin_role')}] to [{recipient}]"
     )
 
 

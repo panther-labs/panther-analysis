@@ -1,44 +1,118 @@
-## Drive and Docs 
-[ External GSuite File Share](../rules/gsuite_reports_rules/gsuite_drive_external_share.py)
+## Google Workspace
 
-[ GSuite Document External Ownership Transfer](../rules/gsuite_activityevent_rules/gsuite_doc_ownership_transfer.py)
+- [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
+  - Assigning an admin role manually could be a sign of privilege escalation
+- [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
+  - An actor user was denied login access more times than the configured threshold.
+- [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
+  - An actor user was denied login access more times than the configured threshold.
+- [External GSuite File Share](../rules/gsuite_reports_rules/gsuite_drive_external_share.yml)
+  - An employee shared a sensitive file externally with another organization
+- [GAIA GCPW Credential Theft Attack Chain](../correlation_rules/gaia_credential_theft_attack_chain.yml)
+  - Detects the GAIA (Google Account Information and Authentication) credential theftattack chain: credential dumping tool execution on Windows followed by anomalous GoogleWorkspace authentication. This pattern indicates an attacker has extracted OAuth refreshtokens from a Windows machine and is using them to authenticate to Google Workspace.
+- [Gmail Malicious SMTP Response](../rules/gsuite_activityevent_rules/gsuite_malicious_smtp_response.yml)
+  - Detects when Gmail blocks or rejects emails due to malicious SMTP response reasons including malware detection, spam/phishing links, low sender reputation, RBL listings, or denial of service attempts. This rule monitors inbound SMTP connections for security threats that Gmail's filters identify.
+- [Gmail Potential Spoofed Email Delivered](../rules/gsuite_activityevent_rules/gsuite_potential_spoofed_email.yml)
+  - Detects when a potentially spoofed email was successfully delivered to a user's inbox despite failing email authentication checks. This rule triggers when:1. DMARC authentication fails, OR 2. Both SPF and DKIM authentication fail simultaneouslyThese authentication failures indicate the sender may be impersonating a legitimate domain, which is a common tactic in phishing and business email compromise (BEC) attacks.
+- [Google Accessed a GSuite Resource](../rules/gsuite_activityevent_rules/gsuite_google_access.yml)
+  - Google accessed one of your GSuite resources directly, most likely in response to a support incident.
+- [Google Drive High Download Count](../queries/gsuite_queries/gsuite_drive_many_docs_downloaded.yml)
+  - Scheduled rule for the High Google Drive Download Count query which looks for incidents of more than 10 (tunable) downloads by a user in the past day.
+- [Google Workspace Admin Custom Role](../rules/gsuite_activityevent_rules/google_workspace_admin_custom_role.yml)
+  - A Google Workspace administrator created a new custom administrator role.
+- [Google Workspace Advanced Protection Program](../rules/gsuite_activityevent_rules/google_workspace_advanced_protection_program.yml)
+  - Your organization's Google Workspace Advanced Protection Program settings were modified.
+- [Google Workspace Apps Marketplace Allowlist](../rules/gsuite_activityevent_rules/google_workspace_apps_marketplace_allowlist.yml)
+  - Google Workspace Marketplace application allowlist settings were modified.
+- [Google Workspace Apps Marketplace New Domain Application](../rules/gsuite_activityevent_rules/google_workspace_apps_marketplace_new_domain_application.yml)
+  - A Google Workspace User configured a new domain application from the Google Workspace Apps Marketplace.
+- [Google Workspace Apps New Mobile App Installed](../rules/gsuite_activityevent_rules/google_workspace_apps_new_mobile_app_installed.yml)
+  - A new mobile application was added to your organization's mobile apps whitelist in Google Workspace Apps.
+- [Google Workspace Login Type Anomaly](../queries/gsuite_queries/GSuite_Login_Type_Anomaly_Query.yml)
+  - Detects users authenticating with login types they haven't used in the past 30 days.May indicate GAIA credential theft where attackers use stolen tokens with differentauthentication methods than the victim's normal pattern (e.g., google_password instead of SAML).
+- [Google Workspace Many Docs Downloaded](../rules/gsuite_activityevent_rules/google_workspace_many_docs_downloaded.yml)
+  - Checks whether a user has downloaded a large number of documents from Google Drive within a 5-minute period.
+- [Google Workspace OAuth Anomalous Privileged Request](../queries/gsuite_queries/GSuite_OAuth_Anomalous_Scope_Patterns_Query.yml)
+  - Detects new OAuth applications authorized with privileged scopes in Google Workspace.Uses anomaly detection to identify users authorizing OAuth apps they haven't used inthe past 7 days.
+- [Google Workspace OAuth Application Authorized with Privileged Scopes](../rules/gsuite_activityevent_rules/gsuite_oauth_privileged_scopes.yml)
+  - Detects when a user authorizes an OAuth application with privileged scopes in Google Workspace. Privileged scopes grant broad access to sensitive data and administrative functions.
+- [Google Workspace OAuth Token Requests from New IP](../queries/gsuite_queries/gsuite_oauth_token_new_ip_rule.yml)
+  - Alerts when users request OAuth tokens from IP addresses they haven't used in the past 30 days,with 3+ requests indicating active usage. This may indicate GAIA credential theft where attackersuse stolen refresh tokens to request access tokens from their infrastructure.
+- [Google Workspace OAuth Token Requests from New IPs](../queries/gsuite_queries/GSuite_OAuth_Token_New_IP_Query.yml)
+  - Detects users requesting OAuth tokens from IPv4 addresses they haven't used in the past 30 days,with 3+ requests indicating active usage. May indicate GAIA credential theft where attackers usestolen refresh tokens from their infrastructure.
+- [Google Workspace OAuthLogin Scope Anomalous Application Access](../queries/gsuite_queries/GSuite_OAuth_Login_Scope_Anomalous_Access_Query.yml)
+  - Detects apps requesting OAuth tokens with the OAuthLogin scope when they haven't requestedthis scope in the previous 14 days. This scope can be used to access Google's device passwordescrow endpoint for GAIA credential theft.
+- [Google Workspace Rapid Multi-IP Authentication](../queries/gsuite_queries/GSuite_Rapid_Multi_IP_Authentication_Query.yml)
+  - Detects users authenticating from 3+ distinct IPv4 addresses within 6 hours.May indicate GAIA credential theft where stolen OAuth tokens are used acrossmultiple compromised machines simultaneously. IPv6 addresses are excluded toavoid false positives from dual-stack networking.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [Gsuite Attachments Downloaded from Spam Email](../rules/gsuite_activityevent_rules/gsuite_attachments_downloaded_from_spam_email.yml)
+  - Detects when a user downloads or saves to Google Drive one or more attachments that are classified as spam.
+- [GSuite Calendar Has Been Made Public](../rules/gsuite_activityevent_rules/gsuite_calendar_made_public.yml)
+  - A User or Admin Has Modified A Calendar To Be Public
+- [GSuite Device Suspicious Activity](../rules/gsuite_activityevent_rules/gsuite_mobile_device_suspicious_activity.yml)
+  - GSuite reported a suspicious activity on a user's device.
+- [GSuite Document External Ownership Transfer](../rules/gsuite_activityevent_rules/gsuite_doc_ownership_transfer.yml)
+  - A GSuite document's ownership was transferred to an external party.
+- [GSuite Drive Many Documents Deleted](../queries/gsuite_queries/gsuite_drive_many_docs_deleted.yml)
+  - Scheduled rule for the GSuite Drive Many Documents Deleted query. Looks for users who have deleted more than 10 (tunable) documents the past day.
+- [Gsuite Email Bypassed Spam Filter](../rules/gsuite_activityevent_rules/gsuite_bypass_spam_filter_email.yml)
+  - Detects if an email received by a user has bypassed the organization's spam filter.
+- [GSuite External Drive Document](../rules/gsuite_reports_rules/gsuite_drive_visibility_change.yml)
+  - A Google drive resource became externally accessible.
+- [GSuite Government Backed Attack](../rules/gsuite_activityevent_rules/gsuite_gov_attack.yml)
+  - Detects Google Workspace warnings of government-backed attacks targeting user accounts, issued only when indicators match nation-state threat actors or APT groups. These sophisticated attacks target high-value individuals using advanced tactics including zero-day exploits, spear-phishing, and social engineering. Successful compromise can lead to persistent access, intellectual property theft, and supply chain attacks.
+- [Gsuite Link Clicked in Spam Email](../rules/gsuite_activityevent_rules/gsuite_links_clicked_in_spam_email.yml)
+  - Detects when a user click links contained in a received email that is classified as spam.
+- [GSuite Login Type](../rules/gsuite_activityevent_rules/gsuite_login_type.yml)
+  - A login of a non-approved type was detected for this user.
+- [Gsuite Mail forwarded to external domain](../rules/gsuite_activityevent_rules/gsuite_external_forwarding.yml)
+  - A user has configured mail forwarding to an external domain
+- [GSuite Many Docs Deleted Query](../queries/gsuite_queries/GSuite_Many_Docs_Deleted_Query.yml)
+  - Query to search for a user deleting many documents.
+- [GSuite Many Docs Downloaded Query](../queries/gsuite_queries/GSuite_Many_Docs_Downloaded_Query.yml)
+  - Query to search high document download counts by users.
+- [GSuite Overly Visible Drive Document](../rules/gsuite_reports_rules/gsuite_drive_overly_visible.yml)
+  - A Google drive resource that is overly visible has been modified.
+- [GSuite Passthrough Rule Triggered](../rules/gsuite_activityevent_rules/gsuite_passthrough_rule.yml)
+  - A GSuite rule was triggered.
+- [GSuite User Advanced Protection Change](../rules/gsuite_activityevent_rules/gsuite_advanced_protection.yml)
+  - A user disabled advanced protection for themselves.
+- [GSuite User Banned from Group](../rules/gsuite_activityevent_rules/gsuite_group_banned_user.yml)
+  - A GSuite user was banned from an enterprise group by moderator action.
+- [GSuite User Device Compromised](../rules/gsuite_activityevent_rules/gsuite_mobile_device_compromise.yml)
+  - GSuite reported a user's device has been compromised.
+- [GSuite User Device Unlock Failures](../rules/gsuite_activityevent_rules/gsuite_mobile_device_screen_unlock_fail.yml)
+  - Someone failed to unlock a user's device multiple times in quick succession.
+- [GSuite User Password Leaked](../rules/gsuite_activityevent_rules/gsuite_leaked_password.yml)
+  - GSuite reported a user's password has been compromised, so they disabled the account.
+- [GSuite User Suspended](../rules/gsuite_activityevent_rules/gsuite_user_suspended.yml)
+  - A GSuite user was suspended, the account may have been compromised by a spam network.
+- [GSuite User Two Step Verification Change](../rules/gsuite_activityevent_rules/gsuite_two_step_verification.yml)
+  - A user disabled two step verification for themselves.
+- [GSuite Workspace Calendar External Sharing Setting Change](../rules/gsuite_activityevent_rules/gsuite_workspace_calendar_external_sharing.yml)
+  - A Workspace Admin Changed The Sharing Settings for Primary Calendars
+- [GSuite Workspace Data Export Has Been Created](../rules/gsuite_activityevent_rules/gsuite_workspace_data_export_created.yml)
+  - A Workspace Admin Has Created a Data Export
+- [GSuite Workspace Gmail Default Routing Rule Modified](../rules/gsuite_activityevent_rules/gsuite_workspace_gmail_default_routing_rule.yml)
+  - A Workspace Admin Has Modified A Default Routing Rule In Gmail
+- [GSuite Workspace Gmail Pre-Delivery Message Scanning Disabled](../rules/gsuite_activityevent_rules/gsuite_workspace_gmail_enhanced_predelivery_scanning.yml)
+  - A Workspace Admin Has Disabled Pre-Delivery Scanning For Gmail.
+- [GSuite Workspace Gmail Security Sandbox Disabled](../rules/gsuite_activityevent_rules/gsuite_workspace_gmail_security_sandbox_disabled.yml)
+  - A Workspace Admin Has Disabled The Security Sandbox
+- [GSuite Workspace Password Reuse Has Been Enabled](../rules/gsuite_activityevent_rules/gsuite_workspace_password_reuse_enabled.yml)
+  - A Workspace Admin Has Enabled Password Reuse
+- [GSuite Workspace Strong Password Enforcement Has Been Disabled](../rules/gsuite_activityevent_rules/gsuite_workspace_password_enforce_strong_disabled.yml)
+  - A Workspace Admin Has Disabled The Enforcement Of Strong Passwords
+- [GSuite Workspace Trusted Domain Allowlist Modified](../rules/gsuite_activityevent_rules/gsuite_workspace_trusted_domains_allowlist.yml)
+  - A Workspace Admin Has Modified The Trusted Domains List
+- [Malware Detected in Email](../rules/gsuite_activityevent_rules/gsuite_malware_in_email.yml)
+  - Detects when malware is found in an email received by a user. Identifies different malware families including known malicious programs, viruses, worms, harmful content, and unwanted content. Severity is dynamically assigned based on the malware type, with known malicious programs and viruses triggering high-severity alerts.
+- [Spam Email Surge](../rules/gsuite_activityevent_rules/gsuite_spam_email.yml)
+  - Detects a high number of spam emails received by a single user in a short timeframe. This could indicate the user's email has appeared in data leaks and is being targeted for spam.
+- [Suspicious GSuite Login](../rules/gsuite_activityevent_rules/gsuite_suspicious_logins.yml)
+  - GSuite reported a suspicious login for this user.
+- [Suspicious is_suspicious tag](../rules/gsuite_activityevent_rules/gsuite_is_suspicious_tag.yml)
+  - GSuite reported a suspicious activity for this user.
 
-[ GSuite External Drive Document](../rules/gsuite_reports_rules/gsuite_drive_visibility_change.py)
 
-[ GSuite Overly Visible Drive Document](../rules/gsuite_reports_rules/gsuite_drive_overly_visible.py)
-
-## User Specific 
-
-[ GSuite Device Suspicious Activity](../rules/gsuite_activityevent_rules/gsuite_mobile_device_suspicious_activity.py)
-
-[ GSuite User Advanced Protection Change](../rules/gsuite_activityevent_rules/gsuite_advanced_protection.py)
-
-[ GSuite User Banned from Group](../rules/gsuite_activityevent_rules/gsuite_group_banned_user.py)
-
-[ GSuite User Device Compromised](../rules/gsuite_activityevent_rules/gsuite_mobile_device_compromise.py)
-
-[ GSuite User Device Unlock Failures](../rules/gsuite_activityevent_rules/gsuite_mobile_device_screen_unlock_fail.py)
-
-[ GSuite User Password Leaked](../rules/gsuite_activityevent_rules/gsuite_leaked_password.py)
-
-[ GSuite User Suspended](../rules/gsuite_activityevent_rules/gsuite_user_suspended.py)
-
-[ GSuite User Two Step Verification Change](../rules/gsuite_activityevent_rules/gsuite_two_step_verification.py)
-
-[ Gsuite Mail forwarded to external domain](../rules/gsuite_activityevent_rules/gsuite_external_forwarding.py)
-
-[ Suspicious GSuite Login](../rules/gsuite_activityevent_rules/gsuite_suspicious_logins.py)
-
-[ GSuite Unapproved Login Type](../rules/gsuite_activityevent_rules/gsuite_login_type.py)
-
-## Account Alerts
-
-[ GSuite Government Backed Attack](../rules/gsuite_activityevent_rules/gsuite_gov_attack.py)
-
-[ GSuite Low Severity Rule Triggered](../rules/gsuite_activityevent_rules/gsuite_low_severity_rule.py)
-
-[ GSuite Medium Severity Rule Triggered](../rules/gsuite_activityevent_rules/gsuite_medium_severity_rule.py)
-
-[ GSuite High Severity Rule Triggered](../rules/gsuite_activityevent_rules/gsuite_high_severity_rule.py)
-
-[ Google Accessed a GSuite Resource](../rules/gsuite_activityevent_rules/gsuite_google_access.py)

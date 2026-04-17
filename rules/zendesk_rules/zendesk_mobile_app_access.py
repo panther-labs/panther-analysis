@@ -1,4 +1,4 @@
-from panther_base_helpers import ZENDESK_CHANGE_DESCRIPTION
+from panther_zendesk_helpers import ZENDESK_CHANGE_DESCRIPTION
 
 MOBILE_APP_ACTIONS = {"create", "update"}
 

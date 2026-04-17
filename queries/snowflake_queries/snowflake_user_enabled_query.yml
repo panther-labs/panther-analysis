@@ -1,17 +1,15 @@
 AnalysisType: scheduled_query
-QueryName: Query.Snowflake.UserEnabled
+QueryName: "Query.Snowflake.UserEnabled"
 Enabled: false
 Description: >
   Monitor for users that are being re-enabled.
-AthenaQuery: >
-  /* athena query not supported */
-  SELECT count(1)
-SnowflakeQuery: >
+Query: |
   --return enable user events
 
   --this was adapted from a Security Feature Checklist query
 
   SELECT
+    start_time as p_event_time,
     end_time,
     query_type,
     query_text,
@@ -19,7 +17,7 @@ SnowflakeQuery: >
     role_name
   FROM snowflake.account_usage.query_history
     WHERE
-      p_occurs_since('24 h', start_time)
+      p_occurs_since('1 day')
       AND execution_status = 'SUCCESS'
       AND query_type = 'ALTER_USER'
       AND (query_text ILIKE '%alter user%set disabled = false%'
@@ -28,5 +26,5 @@ SnowflakeQuery: >
           OR query_text ILIKE '%alter user%set disabled=false%')
   ORDER BY end_time desc
 Schedule:
-  CronExpression: "0 6 * * *"
-  TimeoutMinutes: 1
+  CronExpression: "0 0 * * *"
+  TimeoutMinutes: 3

@@ -1,21 +1,91 @@
 import json
 
-from panther import aws_cloudtrail_success
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
+from panther_base_helpers import deep_get
 from policyuniverse.policy import Policy
 
 
-# Check that the IAM policy allows resource accessibility via the Internet
-def policy_is_internet_accessible(json_policy):
-    if json_policy is None:
+def _has_organization_condition(statement):
+    """
+    Check if a policy statement has organization ID conditions that restrict access.
+
+    Args:
+        statement: A policyuniverse Statement object
+
+    Returns:
+        bool: True if organization conditions are found, False otherwise
+    """
+    # Check both the policyuniverse category and specific AWS condition keys
+    for condition in statement.condition_entries:
+        # Check policyuniverse category
+        if condition.category == "organization":
+            return True
+
+        # Also check for specific AWS organization condition keys
+        # These include aws:PrincipalOrgID, aws:SourceOrgID, aws:PrincipalOrgPaths, etc.
+        condition_key = getattr(condition, "key", "").lower()
+        if "orgid" in condition_key or "orgpath" in condition_key:
+            return True
+
+    # Alternative: Check raw conditions in the statement if condition_entries doesn't work
+    if hasattr(statement, "statement"):
+        raw_conditions = statement.statement.get("Condition", {})
+        for conditions in raw_conditions.values():
+            for key in conditions.keys():
+                # Check for organization-related condition keys
+                if any(
+                    org_key in key.lower()
+                    for org_key in ["principalorgid", "sourceorgid", "principalorgpaths"]
+                ):
+                    return True
+
+    return False
+
+
+# Check if a policy (string or JSON) allows resource accessibility via the Internet
+def policy_is_internet_accessible(policy):
+    """
+    Check if a policy (string or JSON) allows resource accessibility via the Internet.
+
+    Args:
+        policy: A policy object that can be either a string or a JSON object
+
+    Returns:
+        bool: True if the policy allows internet access, False otherwise
+    """
+    # Handle empty policies (None, empty strings, empty dicts, etc.)
+    if not policy:
         return False
-    return Policy(json_policy).is_internet_accessible()
+
+    # Handle string policies by converting to JSON
+    if isinstance(policy, str):
+        try:
+            policy = json.loads(policy)
+        except json.JSONDecodeError:
+            return False
+
+    # Check if the policy has a wildcard principal but also has organization ID restrictions
+    # which should not be considered internet accessible
+    policy_obj = Policy(policy)
+
+    # If policyuniverse thinks it's not internet accessible, trust that
+    if not policy_obj.is_internet_accessible():
+        return False
+
+    # For policies with multiple statements, we need to check each statement individually
+    # If ANY statement is truly internet accessible, the policy is internet accessible
+    for statement in policy_obj.statements:
+        if statement.effect != "Allow" or "*" not in statement.principals:
+            continue
+
+        # If this statement has a wildcard principal but no organization ID restrictions,
+        # it's truly internet accessible
+        if not _has_organization_condition(statement):
+            return True
+
+    return False
 
 
-# Normally this check helps avoid overly complex functions that are doing too many things,
-# but in this case we explicitly want to handle 10 different cases in 10 different ways.
-# Any solution that avoids too many return statements only increases the complexity of this rule.
-# pylint: disable=too-many-return-statements, too-complex
 def rule(event):
     if not aws_cloudtrail_success(event):
         return False
@@ -25,53 +95,47 @@ def rule(event):
     if not parameters:
         return False
 
-    policy = ""
+    event_name = event.get("eventName", "")
 
-    # S3
-    if event["eventName"] == "PutBucketPolicy":
-        return policy_is_internet_accessible(parameters.get("bucketPolicy"))
+    # Special case for SNS topic attributes that need additional attribute name check
+    if event_name == "SetTopicAttributes" and parameters.get("attributeName", "") == "Policy":
+        policy_value = parameters.get("attributeValue", {})
+        return policy_is_internet_accessible(policy_value)
 
-    # ECR
-    if event["eventName"] == "SetRepositoryPolicy":
-        policy = parameters.get("policyText", {})
+    # Map of event names to policy locations in parameters
+    policy_location_map = {
+        # S3
+        "PutBucketPolicy": lambda p: p.get("bucketPolicy", {}),
+        # ECR
+        "SetRepositoryPolicy": lambda p: p.get("policyText", {}),
+        # Elasticsearch
+        "CreateElasticsearchDomain": lambda p: p.get("accessPolicies", {}),
+        "UpdateElasticsearchDomainConfig": lambda p: p.get("accessPolicies", {}),
+        # KMS
+        "CreateKey": lambda p: p.get("policy", {}),
+        "PutKeyPolicy": lambda p: p.get("policy", {}),
+        # S3 Glacier
+        "SetVaultAccessPolicy": lambda p: deep_get(p, "policy", "policy", default={}),
+        # SNS & SQS
+        "SetQueueAttributes": lambda p: deep_get(p, "attributes", "Policy", default={}),
+        "CreateTopic": lambda p: deep_get(p, "attributes", "Policy", default={}),
+        # SecretsManager
+        "PutResourcePolicy": lambda p: p.get("resourcePolicy", {}),
+    }
 
-    # Elasticsearch
-    if event["eventName"] in ["CreateElasticsearchDomain", "UpdateElasticsearchDomainConfig"]:
-        policy = parameters.get("accessPolicies", {})
-
-    # KMS
-    if event["eventName"] in ["CreateKey", "PutKeyPolicy"]:
-        policy = parameters.get("policy", {})
-
-    # S3 Glacier
-    if event["eventName"] == "SetVaultAccessPolicy":
-        policy = deep_get(parameters, "policy", "policy", default={})
-
-    # SNS & SQS
-    if event["eventName"] in ["SetQueueAttributes", "CreateTopic"]:
-        policy = deep_get(parameters, "attributes", "Policy", default={})
-
-    # SNS
-    if (
-        event["eventName"] == "SetTopicAttributes"
-        and parameters.get("attributeName", "") == "Policy"
-    ):
-        policy = parameters.get("attributeValue", {})
-
-    # SecretsManager
-    if event["eventName"] == "PutResourcePolicy":
-        policy = parameters.get("resourcePolicy", {})
-
-    if not policy:
+    # Get the policy extraction function for this event name
+    policy_extractor = policy_location_map.get(event_name)
+    if not policy_extractor:
         return False
 
-    return policy_is_internet_accessible(json.loads(policy))
+    # Extract the policy using the appropriate function
+    policy = policy_extractor(parameters)
+    return policy_is_internet_accessible(policy)
 
 
 def title(event):
     # TODO(): Update this rule to use data models
-    user = deep_get(event, "userIdentity", "userName") or deep_get(
-        event,
+    user = event.deep_get("userIdentity", "userName") or event.deep_get(
         "userIdentity",
         "sessionContext",
         "sessionIssuer",

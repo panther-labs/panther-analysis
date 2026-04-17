@@ -1,0 +1,267 @@
+AnalysisType: rule
+RuleID: "Kubernetes.Role.NodeProxyPermissions"
+DisplayName: "Kubernetes Role With Node Proxy Permissions Created"
+Enabled: true
+Status: Experimental
+Filename: k8s_role_node_proxy_permissions.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Privilege Escalation
+  - RBAC
+  - Stratus Red Team
+  - Unified Detection
+Severity: High
+Description: >
+  This detection monitors for Roles or ClusterRoles being created with permissions to access node proxy endpoints
+  (nodes/proxy or nodes/*). These permissions allow users to access the kubelet API through the Kubernetes API server
+  proxy, enabling privilege escalation by executing commands on nodes, accessing container logs and filesystems, and
+  potentially escaping to the underlying host. This technique is documented by Stratus Red Team as a privilege
+  escalation vector.
+Runbook: |
+  1. Query all RBAC operations by the username in the 2 hours before and after the alert to identify the scope of role creation activity
+  2. Find all RoleBindings or ClusterRoleBindings that reference this role name in the 24 hours after creation to determine who was granted these permissions
+  3. Search for API operations to nodes/proxy endpoints from the p_source_label cluster in the past 7 days to identify if these permissions have been exploited
+Reports:
+  Stratus Red Team:
+    - k8s.privilege-escalation.nodes-proxy
+  MITRE ATT&CK:
+    - TA0004:T1078.004 # Privilege Escalation: Valid Accounts - Cloud Accounts
+    - TA0005:T1562.001 # Defense Evasion: Impair Defenses - Disable or Modify Tools
+Reference: https://stratus-red-team.cloud/attack-techniques/kubernetes/k8s.privilege-escalation.nodes-proxy/
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - username
+  - resource
+  - name
+  - p_source_label
+Tests:
+  - Name: EKS ClusterRole with nodes/proxy permission
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "attacker@example.com"},
+        "sourceIPs": ["203.0.113.42"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "node-accessor",
+          "apiGroup": "rbac.authorization.k8s.io",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "ClusterRole",
+          "metadata": {"name": "node-accessor"},
+          "rules": [
+            {
+              "apiGroups": [""],
+              "resources": ["nodes/proxy"],
+              "verbs": ["get", "list", "create"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS ClusterRole with nodes/* permission
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"malicious-user@example.com\"},\"sourceIPs\":[\"1.2.3.4\"],\"objectRef\":{\"resource\":\"clusterroles\",\"name\":\"node-admin\",\"apiGroup\":\"rbac.authorization.k8s.io\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"kind\":\"ClusterRole\",\"metadata\":{\"name\":\"node-admin\"},\"rules\":[{\"apiGroups\":[\"\"],\"resources\":[\"nodes/*\"],\"verbs\":[\"*\"]}]}}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GKE ClusterRole with nodes proxy access
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.rbac.v1.clusterroles.create",
+            "resource": "rbac.authorization.k8s.io/v1/clusterroles/node-proxy-role"
+          }],
+          "methodName": "io.k8s.rbac.v1.clusterroles.create",
+          "requestMetadata": {"callerIP": "8.8.8.8"},
+          "resourceName": "rbac.authorization.k8s.io/v1/clusterroles/node-proxy-role",
+          "serviceName": "k8s.io",
+          "request": {
+            "kind": "ClusterRole",
+            "metadata": {"name": "node-proxy-role"},
+            "rules": [
+              {
+                "apiGroups": [""],
+                "resources": ["nodes/proxy", "nodes/log"],
+                "verbs": ["get", "create"]
+              }
+            ]
+          }
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: EKS Role with nodes wildcard
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "suspicious-user@example.com"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "node-reader",
+          "apiGroup": "rbac.authorization.k8s.io"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "ClusterRole",
+          "rules": [
+            {
+              "apiGroups": [""],
+              "resources": ["nodes", "*"],
+              "verbs": ["get", "list"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: Role with only node list permission (no proxy)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "node-viewer",
+          "apiGroup": "rbac.authorization.k8s.io"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "ClusterRole",
+          "rules": [
+            {
+              "apiGroups": [""],
+              "resources": ["nodes"],
+              "verbs": ["get", "list"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Role with pod permissions (not nodes)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "roles",
+          "namespace": "default",
+          "name": "pod-admin",
+          "apiGroup": "rbac.authorization.k8s.io"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Role",
+          "rules": [
+            {
+              "apiGroups": [""],
+              "resources": ["pods", "pods/log"],
+              "verbs": ["get", "list", "create"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: System principal creating role (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "system:serviceaccount:kube-system:operator"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "system-role"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "ClusterRole",
+          "rules": [
+            {
+              "apiGroups": [""],
+              "resources": ["nodes/proxy"],
+              "verbs": ["get"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Failed request (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "attacker@example.com"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "node-proxy-role"
+        },
+        "responseStatus": {"code": 403},
+        "requestObject": {
+          "kind": "ClusterRole",
+          "rules": [
+            {
+              "apiGroups": [""],
+              "resources": ["nodes/proxy"],
+              "verbs": ["get", "create"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Updating existing role (not creating)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "update",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "existing-role"
+        },
+        "responseStatus": {"code": 200},
+        "requestObject": {
+          "kind": "ClusterRole",
+          "rules": [
+            {
+              "apiGroups": [""],
+              "resources": ["nodes/proxy"],
+              "verbs": ["get"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }

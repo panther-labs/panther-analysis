@@ -1,0 +1,114 @@
+AnalysisType: rule
+Filename: azure_vscode_oauth_phishing.py
+RuleID: "Azure.Audit.VSCodeOAuthPhishing"
+DisplayName: "Azure VS Code OAuth Phishing"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Azure.Audit
+Severity: Medium
+Description: >
+  Detects OAuth authorization flows where Visual Studio Code successfully authenticates to
+  Microsoft Graph. While legitimate for developers, this pattern is commonly abused in
+  phishing campaigns where attackers use the trusted VS Code client ID to trick users into
+  granting OAuth tokens.
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1566
+    - TA0006:T1528
+Runbook: |
+  1. Query Azure.Audit sign-in logs for all VS Code OAuth events by properties:userPrincipalName in the 24 hours before and after the alert to identify usage patterns
+  2. Check if callerIpAddress is associated with known VPN services or matches the user's typical geographic locations and corporate network ranges
+  3. Find other OAuth consent grants or application authentications for this user in the past 7 days to determine if multiple suspicious OAuth flows are occurring
+Reference: https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-token-protection
+SummaryAttributes:
+  - properties:userPrincipalName
+  - callerIpAddress
+  - properties:appDisplayName
+  - properties:resourceDisplayName
+  - properties:userAgent
+Tests:
+  - Name: VS Code to Microsoft Graph
+    ExpectedResult: true
+    Log:
+      {
+        "callerIpAddress": "9.9.9.9",
+        "category": "NonInteractiveUserSignInLogs",
+        "correlationId": "vscode-123-456-789",
+        "durationMs": 200,
+        "Level": "4",
+        "location": "US",
+        "operationName": "Sign-in activity",
+        "operationVersion": "1.0",
+        "p_event_time": "2025-01-15 14:30:25.123",
+        "p_log_type": "Azure.Audit",
+        "properties":
+          {
+            "userId": "user-abc-123",
+            "userPrincipalName": "sam@lotr.com",
+            "appId": "aebc6443-996d-45c2-90f0-388ff96faa56",
+            "appDisplayName": "Visual Studio Code",
+            "authenticationProtocol": "oAuth2",
+            "conditionalAccessStatus": "notApplied",
+            "correlationId": "vscode-123-456-789",
+            "createdDateTime": "2025-01-15T14:30:25.1234567Z",
+            "ipAddress": "9.9.9.9",
+            "isInteractive": false,
+            "location":
+              {
+                "city": "Seattle",
+                "countryOrRegion": "US",
+                "geoCoordinates": { "latitude": 47.6062, "longitude": -122.3321 },
+                "state": "Washington",
+              },
+            "resourceDisplayName": "Microsoft Graph",
+            "resourceId": "00000003-0000-0000-c000-111111111111",
+            "status": { "errorCode": 0 },
+            "tokenIssuerType": "AzureAD",
+            "clientAppUsed": "Mobile Apps and Desktop clients",
+            "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Visual Studio Code/1.75.0 Chrome/102.0.5005.167 Electron/19.1.9 Safari/537.36",
+          },
+        "resourceId": "/tenants/tenant-123/providers/Microsoft.aadiam",
+        "resultSignature": "SUCCESS",
+        "resultType": "0",
+        "tenantId": "tenant-123",
+        "time": "2025-01-15 14:30:25.123",
+      }
+  - Name: VS Code to Different Resource
+    ExpectedResult: false
+    Log:
+      {
+        "callerIpAddress": "1.2.3.4",
+        "category": "NonInteractiveUserSignInLogs",
+        "correlationId": "vscode-345-678-901",
+        "durationMs": 120,
+        "Level": "4",
+        "location": "US",
+        "operationName": "Sign-in activity",
+        "operationVersion": "1.0",
+        "p_event_time": "2025-01-15 16:20:35.789",
+        "p_log_type": "Azure.Audit",
+        "properties":
+          {
+            "userId": "user-ghi-789",
+            "userPrincipalName": "dyoung@lotr.com",
+            "appId": "aebc6443-996d-45c2-90f0-388ff96faa56",
+            "appDisplayName": "Visual Studio Code",
+            "authenticationProtocol": "oAuth2",
+            "conditionalAccessStatus": "notApplied",
+            "correlationId": "vscode-345-678-901",
+            "createdDateTime": "2025-01-15T16:20:35.7890123Z",
+            "ipAddress": "1.2.3.4",
+            "isInteractive": false,
+            "resourceDisplayName": "Azure DevOps",
+            "resourceId": "499b84ac-1321-427f-aa17-267ca6975798",
+            "status": { "errorCode": 0 },
+            "tokenIssuerType": "AzureAD",
+            "clientAppUsed": "Mobile Apps and Desktop clients",
+          },
+        "resourceId": "/tenants/tenant-789/providers/Microsoft.aadiam",
+        "resultSignature": "SUCCESS",
+        "resultType": "0",
+        "tenantId": "tenant-789",
+        "time": "2025-01-15 16:20:35.789",
+      }

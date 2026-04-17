@@ -1,5 +1,3 @@
-from panther_base_helpers import deep_get
-
 SUSPICIOUS_LOGIN_TYPES = {
     "suspicious_login",
     "suspicious_login_less_secure_app",
@@ -8,14 +6,17 @@ SUSPICIOUS_LOGIN_TYPES = {
 
 
 def rule(event):
-    if deep_get(event, "id", "applicationName") != "login":
+    if event.deep_get("id", "applicationName") != "login":
         return False
 
-    return bool(event.get("name") in SUSPICIOUS_LOGIN_TYPES)
+    if event.get("name") in SUSPICIOUS_LOGIN_TYPES:
+        return True
+
+    return False
 
 
 def title(event):
-    user = deep_get(event, "parameters", "affected_email_address")
-    if not user:
-        user = "<UNKNOWN_USER>"
+    user = event.deep_get("actor", "email") or event.deep_get(
+        "parameters", "affected_email_address", default="<UNKNOWN_USER>"
+    )
     return f"A suspicious login was reported for user [{user}]"

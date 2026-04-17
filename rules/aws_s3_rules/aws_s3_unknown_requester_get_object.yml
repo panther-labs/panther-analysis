@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: aws_s3_unknown_requester_get_object.py
-RuleID: AWS.S3.ServerAccess.UnknownRequester
-DisplayName: AWS S3 Unknown Requester
+RuleID: "AWS.S3.ServerAccess.UnknownRequester"
+DisplayName: "AWS S3 Unknown Requester"
 DedupPeriodMinutes: 60 # 1 hour
 Enabled: false
 LogTypes:
@@ -19,6 +19,7 @@ Reports:
 Severity: Low
 Description: Validates that proper IAM entities are accessing sensitive data buckets.
 Runbook: If the S3 access is not expected for this bucket, investigate the requester's other traffic.
+Reference: https://docs.aws.amazon.com/AmazonS3/latest/userguide/walkthrough1.html
 SummaryAttributes:
   - bucket
   - key
@@ -29,8 +30,7 @@ SummaryAttributes:
   - p_any_aws_arns
   - p_any_aws_account_ids
 Tests:
-  -
-    Name: Expected Access
+  - Name: Expected Access
     ExpectedResult: false
     Log:
       {
@@ -53,10 +53,9 @@ Tests:
         "ciphersuite": "ECDHE-RSA-AES128-SHA",
         "authenticationtype": "AuthHeader",
         "hostheader": "cloudtrail.s3.us-east-1.amazonaws.com",
-        "tlsVersion": "TLSv1.2"
+        "tlsVersion": "TLSv1.2",
       }
-  -
-    Name: Unexpected Access
+  - Name: Unexpected Access
     ExpectedResult: true
     Log:
       {
@@ -79,10 +78,9 @@ Tests:
         "ciphersuite": "ECDHE-RSA-AES128-SHA",
         "authenticationtype": "AuthHeader",
         "hostheader": "cloudtrail.s3.us-east-1.amazonaws.com",
-        "tlsVersion": "TLSv1.2"
+        "tlsVersion": "TLSv1.2",
       }
-  -
-    Name: Failed Request
+  - Name: Failed Request
     ExpectedResult: false
     Log:
       {
@@ -105,12 +103,11 @@ Tests:
         "ciphersuite": "ECDHE-RSA-AES128-SHA",
         "authenticationtype": "AuthHeader",
         "hostheader": "cloudtrail.s3.us-east-1.amazonaws.com",
-        "tlsVersion": "TLSv1.2"
+        "tlsVersion": "TLSv1.2",
       }
-  - 
-    Name: Snowflake Request
+  - Name: Snowflake Request
     ExpectedResult: false
-    Log: 
+    Log:
       {
         "authenticationtype": "AuthHeader",
         "bucket": "panther-bootstrap-processeddata-AF1341JAK",
@@ -129,5 +126,5 @@ Tests:
         "tlsVersion": "TLSv1.2",
         "totaltime": 10,
         "turnaroundtime": 9,
-        "useragent": "snowflake/1.0"
+        "useragent": "snowflake/1.0",
       }

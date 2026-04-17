@@ -1,0 +1,125 @@
+AnalysisType: rule
+Filename: k8s_multiple_403_public_ip.py
+RuleID: "Kubernetes.API.Multiple403.PublicIP"
+DisplayName: "Kubernetes API Multiple 403 Responses from Single Public IP"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Security Control
+  - Container and Resource Discovery
+  - Unified Detection
+Reports:
+  MITRE ATT&CK:
+    - TA0007:T1613 # Container and Resource Discovery
+Reference: https://aws.github.io/aws-eks-best-practices/security/docs/detective/
+Severity: Info
+Description: >
+  This detection identifies when a public source IP generates multiple 403 (Forbidden)
+  responses from the Kubernetes API server. This pattern may indicate reconnaissance
+  attempts, permission enumeration, brute force attacks, or misconfigured access.
+  Private IPs are excluded as they typically represent legitimate internal traffic.
+Runbook: |
+  1. Find all API requests from the sourceIPs address in the 1 hour before and after the alert to identify attempted operations
+  2. Identify which API resources or operations the source IP attempted to access to determine if this is systematic probing or random scanning
+  3. Check if the same source IP has generated 403 errors against other Kubernetes clusters in the past 24 hours to assess campaign scope
+DedupPeriodMinutes: 30
+Threshold: 10
+SummaryAttributes:
+  - username
+  - p_any_ip_addresses
+  - p_source_label
+Tests:
+  - Name: EKS 403 from Public IP
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "auditID": "abc-123",
+        "verb": "watch",
+        "user": {"username": "system:serviceaccount:kube-system:coredns"},
+        "sourceIPs": ["5.5.5.5"],
+        "objectRef": {
+          "apiGroup": "discovery.k8s.io",
+          "apiVersion": "v1",
+          "resource": "endpointslices"
+        },
+        "responseStatus": {"code": 403},
+        "stage": "ResponseComplete",
+        "userAgent": "Go-http-client/2.0",
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster",
+        "p_any_ip_addresses": ["5.5.5.5"]
+      }
+  - Name: AKS 403 from Public IP
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"get\",\"user\":{\"username\":\"test-user\"},\"sourceIPs\":[\"8.8.8.8\"],\"objectRef\":{\"resource\":\"pods\",\"namespace\":\"default\"},\"responseStatus\":{\"code\":403},\"stage\":\"ResponseComplete\"}"
+        },
+        "p_source_label": "aks-cluster",
+        "p_any_ip_addresses": ["8.8.8.8"]
+      }
+  - Name: GCP GKE 403 from Public IP
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@example.com"},
+          "methodName": "io.k8s.core.v1.pods.list",
+          "requestMetadata": {
+            "callerIP": "1.2.3.4",
+            "callerSuppliedUserAgent": "kubectl/v1.27.0"
+          },
+          "resourceName": "core/v1/namespaces/default/pods",
+          "serviceName": "k8s.io",
+          "status": {"code": 7, "message": "Forbidden"}
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster",
+        "p_any_ip_addresses": ["1.2.3.4"]
+      }
+  - Name: 403 from Private IP (Excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "watch",
+        "user": {"username": "system:serviceaccount:kube-system:coredns"},
+        "sourceIPs": ["10.0.27.115"],
+        "responseStatus": {"code": 403},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: 200 Response (Not 403)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "get",
+        "sourceIPs": ["5.5.5.5"],
+        "responseStatus": {"code": 200},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: No Source IP
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "get",
+        "sourceIPs": [],
+        "responseStatus": {"code": 403},
+        "p_log_type": "Amazon.EKS.Audit"
+      }

@@ -1,4 +1,4 @@
-from panther_oss_helpers import get_string_set, put_string_set
+from panther_detection_helpers.caching import get_string_set, put_string_set
 
 CODE_ACCESS_ACTIONS = [
     "git.clone",
@@ -8,12 +8,16 @@ CODE_ACCESS_ACTIONS = [
 
 
 def rule(event):
+
     # if the actor field is empty, short circuit the rule
-    if not event.udm("actor_user"):
+    # Excluding secret scanning bots
+    allowed_users = ["secret-scanning[bot]"]
+    actor = event.udm("actor_user")
+
+    if not actor or any(allowed_user in actor for allowed_user in allowed_users):
         return False
 
     if event.get("action") in CODE_ACCESS_ACTIONS and not event.get("repository_public"):
-
         # Compute unique entry for this user + repo
         key = get_key(event)
         previous_access = get_string_set(key)

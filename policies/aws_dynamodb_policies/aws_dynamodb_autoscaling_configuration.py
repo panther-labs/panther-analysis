@@ -24,7 +24,7 @@ def policy(resource):
     if deep_get(resource, "BillingModeSummary", "BillingMode") != "PROVISIONED":
         return True
 
-    # Check if application auto scaling is configued at all
+    # Check if application auto scaling is configured at all
     if resource["AutoScalingDescriptions"] is None:
         return False
 

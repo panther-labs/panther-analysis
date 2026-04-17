@@ -1,0 +1,75 @@
+AnalysisType: rule
+Filename: databricks_sso_config_changed.py
+RuleID: "Databricks.Audit.SSOConfigChanged"
+DisplayName: "Databricks SSO Configuration Changed"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Credential Access
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1556 # Modify Authentication Process
+Severity: Low
+Description: >
+  Detects modifications to single sign-on (SSO) configurations in Databricks. While SSO changes
+  may be part of planned identity provider updates, unauthorized modifications could indicate
+  attempts to tamper with authentication mechanisms. Successful changes are elevated to MEDIUM severity.
+Runbook: |
+  1. Query audit logs for all SSO configuration changes in the 48 hours before and after this event
+  2. Check if there were successful logins using the new SSO configuration in the 6 hours after the change
+  3. Find all authentication failures or unusual login patterns in the 24 hours after the SSO change
+Reference: https://github.com/databricks-solutions/cybersec-workspace-detection-app/blob/main/base/detections/event-based/sso_config_changed.py
+Tests:
+  - Name: SSO Config Created Successfully
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "ssoConfigBackend"
+      actionName: "create"
+      userIdentity:
+        email: "admin@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        status: "enabled"
+        config:
+          provider: "okta"
+      response:
+        statusCode: 200
+  - Name: SSO Config Updated
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "ssoConfigBackend"
+      actionName: "update"
+      userIdentity:
+        email: "admin@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        status: "active"
+        config:
+          provider: "azure-ad"
+      response:
+        statusCode: 200
+  - Name: Failed SSO Change
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "ssoConfigBackend"
+      actionName: "update"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        status: "enabled"
+      response:
+        statusCode: 403
+  - Name: Wrong Service
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "update"
+      userIdentity:
+        email: "admin@example.com"

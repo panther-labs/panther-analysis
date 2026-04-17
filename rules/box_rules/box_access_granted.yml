@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: box_access_granted.py
-RuleID: Box.Access.Granted
-DisplayName: Box Access Granted
+RuleID: "Box.Access.Granted"
+DisplayName: "Box Access Granted"
 Enabled: true
 LogTypes:
   - Box.Event
@@ -10,45 +10,46 @@ Tags:
 Severity: Low
 Description: >
   A user granted access to their box account to Box technical support from account settings.
-Reference: https://developer.box.com/reference/resources/event/
+Reference: https://support.box.com/hc/en-us/articles/7039943421715-Enabling-and-Disabling-Access-for-Box-Support
 Runbook: >
-  Investigate whether the user purposefully granted access to their account. 
+  Investigate whether the user purposefully granted access to their account.
 SummaryAttributes:
   - p_any_ip_addresses
 Tests:
-  -
-    Name: Regular Event
+  - Name: Regular Event
     ExpectedResult: false
     Log:
       {
         "type": "event",
         "additional_details": '{"key": "value"}',
-        "created_by": {
-          "id": "12345678",
-          "type": "user",
-          "login": "cat@example",
-          "name": "Bob Cat"
-        },
+        "created_by":
+          {
+            "id": "12345678",
+            "type": "user",
+            "login": "cat@example",
+            "name": "Bob Cat",
+          },
         "event_type": "DELETE",
       }
-  -
-    Name: Access Granted
+  - Name: Access Granted
     ExpectedResult: true
     Log:
       {
         "type": "event",
         "additional_details": '{"key": "value"}',
-        "created_by": {
-          "id": "12345678",
-          "type": "user",
-          "login": "cat@example",
-          "name": "Bob Cat"
-        },
+        "created_by":
+          {
+            "id": "12345678",
+            "type": "user",
+            "login": "cat@example",
+            "name": "Bob Cat",
+          },
         "event_type": "ACCESS_GRANTED",
-        "source": {
-          "id": "12345678",
-          "type": "user",
-          "login": "user@example",
-          "name": "Bob Cat",
-        }
+        "source":
+          {
+            "id": "12345678",
+            "type": "user",
+            "login": "user@example",
+            "name": "Bob Cat",
+          },
       }

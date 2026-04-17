@@ -1,4 +1,10 @@
-IGNORED = {}
+# if you want to enforce any of the password policies below, leave them commented.
+IGNORED = {
+    # "RequireUppercaseCharacters",
+    # "RequireLowercaseCharacters",
+    # "RequireSymbols",
+    # "RequireNumbers",
+}
 
 
 def policy(resource):

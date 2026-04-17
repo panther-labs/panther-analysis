@@ -1,0 +1,25 @@
+AnalysisType: saved_query
+QueryName: "Snowflake User Daily Query Volume Spike - Threat Hunting"
+Description: This query returns the most voluminous queries executed by a specific
+  user over the past 48 hours.
+Tags:
+  - Snowflake
+  - Threat Hunting
+Query: |-
+  -- pragma: template
+  -- Adjust 'username' and 'source_label' values as needed
+  {% set username = 'PANTHER_AUDIT_VIEW_USER' %}
+  {% set source_label = 'SF-Ben' %}
+
+  select
+      p_event_time,
+      BYTES_WRITTEN_TO_RESULT,
+      QUERY_TEXT,
+      QUERY_TAG,
+      EXECUTION_STATUS,
+      QUERY_ID,
+  from panther_logs.public.snowflake_queryhistory
+  where p_occurs_since('48h')
+  and USER_NAME = '{{username}}'
+  and p_source_label = '{{source_label}}'
+  order by BYTES_WRITTEN_TO_RESULT desc

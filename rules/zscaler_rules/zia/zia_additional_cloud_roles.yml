@@ -1,0 +1,327 @@
+AnalysisType: rule
+RuleID: ZIA.Additional.Cloud.Roles
+Description: This rule detects when an additional cloud role was created.
+DisplayName: ZIA Additional Cloud Roles
+Runbook: Verify that this change was planned. If not, revert the change and ensure this doesn't happen again.
+Reference: https://help.zscaler.com/zia/about-role-management
+Enabled: true
+Filename: zia_additional_cloud_roles.py
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098.003 # Persistence: Additional Cloud Roles
+    - TA0004:T1098.003 # Priv Escalation: Additional Cloud Roles
+LogTypes:
+  - Zscaler.ZIA.AdminAuditLog
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+  - Name: Administration > User Management > Add User, assign to Service Admin group
+    ExpectedResult: false
+    Log:
+      {
+        "event": {
+          "action": "UPDATE",
+          "adminid": "admin@16991311.zscalerbeta.net",
+          "auditlogtype": "ZIA",
+          "category": "USER_MANAGEMENT",
+          "clientip": "123.123.123.123",
+          "errorcode": "None",
+          "interface": "UI",
+          "postaction": {
+            "adminUser": false,
+            "department": {
+              "id": 19752838,
+              "isDeleted": false,
+              "isForUnauthenticatedUser": false,
+              "isNonEditable": false,
+              "name": "test"
+            },
+            "email": "johndoe@dev-company.com",
+            "groups": [
+              {
+                "id": 16991312,
+                "isNonEditable": true,
+                "name": "Service Admin"
+              },
+              {
+                "id": 19631231,
+                "isNonEditable": false,
+                "name": "test"
+              }
+            ],
+            "id": 19752821,
+            "isNonEditable": false,
+            "miscflags": 0,
+            "name": "johndoe",
+            "systemDefinedGroups": [ ]
+          },
+          "preaction": {
+            "adminUser": false,
+            "authType": "SAFECHANNEL_DIR",
+            "department": {
+              "id": 19752838,
+              "isDeleted": false,
+              "isForUnauthenticatedUser": false,
+              "isNonEditable": false,
+              "name": "test"
+            },
+            "email": "johndoe@dev-company.com",
+            "groups": [
+              {
+                "id": 19631231,
+                "isNonEditable": false,
+                "name": "test"
+              }
+            ],
+            "id": 19752821,
+            "miscflags": 268435456,
+            "name": "johndoe"
+          },
+          "recordid": "325",
+          "resource": "johndoe",
+          "result": "SUCCESS",
+          "subcategory": "USER",
+          "time": "2024-10-22 22:02:29.000000000"
+        },
+        "sourcetype": "zscalernss-audit"
+      }
+  - Name: Administration > Role Management > Add Administrator Role, all permissions
+    ExpectedResult: true
+    Log:
+      {
+        "event": {
+          "action": "CREATE",
+          "adminid": "admin@16991311.zscalerbeta.net",
+          "auditlogtype": "ZIA",
+          "category": "ROLE_MANAGEMENT",
+          "clientip": "123.123.123.123",
+          "errorcode": "None",
+          "interface": "UI",
+          "postaction": {
+            "adminAcctAccess": "READ_WRITE",
+            "alertingAccess": "READ_WRITE",
+            "analysisAccess": "READ_ONLY",
+            "dashboardAccess": "READ_WRITE",
+            "deviceInfoAccess": "READ_ONLY",
+            "id": 32780,
+            "logsLimit": "Unrestricted",
+            "name": "mega admin",
+            "permissions": [
+              "ADVANCED_SETTINGS",
+              "COMPLY",
+              "FIREWALL_DNS",
+              "NSS_CONFIGURATION",
+              "SECURE",
+              "SSL_POLICY",
+              "VZEN_CONFIGURATION",
+              "PARTNER_INTEGRATION",
+              "REMOTE_ASSISTANCE_MANAGEMENT",
+              "LOCATIONS",
+              "VPN_CREDENTIALS",
+              "HOSTED_PAC_FILES",
+              "EZ_AGENT_CONFIGURATIONS",
+              "SECURE_AGENT_NOTIFICATIONS",
+              "PROXY_GATEWAY",
+              "STATIC_IPS",
+              "GRE_TUNNELS",
+              "SUBCLOUDS",
+              "AUTHENTICATION_SETTINGS",
+              "USER_MANAGEMENT",
+              "IDENTITY_PROXY_SETTINGS",
+              "APIKEY_MANAGEMENT",
+              "POLICY_RESOURCE_MANAGEMENT",
+              "CLIENT_CONNECTOR_PORTAL",
+              "CUSTOM_URL_CAT",
+              "OVERRIDE_EXISTING_CAT",
+              "TENANT_PROFILE_MANAGEMENT"
+            ],
+            "policyAccess": "READ_WRITE",
+            "rank": 7,
+            "reportAccess": "READ_WRITE",
+            "reportTimeDuration": -1,
+            "roleType": "EXEC_INSIGHT_AND_ORG_ADMIN",
+            "usernameAccess": "READ_ONLY"
+          },
+          "preaction": {
+            "adminAcctAccess": "READ_WRITE",
+            "alertingAccess": "READ_WRITE",
+            "analysisAccess": "READ_ONLY",
+            "dashboardAccess": "READ_WRITE",
+            "deviceInfoAccess": "READ_ONLY",
+            "id": 0,
+            "isAuditor": false,
+            "isNonEditable": false,
+            "logsLimit": "Unrestricted",
+            "name": "mega admin",
+            "permissions": [
+              "ADVANCED_SETTINGS",
+              "COMPLY",
+              "FIREWALL_DNS",
+              "NSS_CONFIGURATION",
+              "SECURE",
+              "SSL_POLICY",
+              "VZEN_CONFIGURATION",
+              "PARTNER_INTEGRATION",
+              "REMOTE_ASSISTANCE_MANAGEMENT",
+              "LOCATIONS",
+              "VPN_CREDENTIALS",
+              "HOSTED_PAC_FILES",
+              "EZ_AGENT_CONFIGURATIONS",
+              "SECURE_AGENT_NOTIFICATIONS",
+              "PROXY_GATEWAY",
+              "STATIC_IPS",
+              "GRE_TUNNELS",
+              "SUBCLOUDS",
+              "AUTHENTICATION_SETTINGS",
+              "USER_MANAGEMENT",
+              "IDENTITY_PROXY_SETTINGS",
+              "APIKEY_MANAGEMENT",
+              "POLICY_RESOURCE_MANAGEMENT",
+              "CLIENT_CONNECTOR_PORTAL",
+              "CUSTOM_URL_CAT",
+              "OVERRIDE_EXISTING_CAT",
+              "TENANT_PROFILE_MANAGEMENT"
+            ],
+            "policyAccess": "READ_WRITE",
+            "rank": 7,
+            "reportAccess": "READ_WRITE",
+            "reportTimeDuration": -1,
+            "roleType": "EXEC_INSIGHT_AND_ORG_ADMIN",
+            "usernameAccess": "READ_ONLY"
+          },
+          "recordid": "341",
+          "resource": "mega admin",
+          "result": "SUCCESS",
+          "subcategory": "ADMINISTRATOR_ROLE",
+          "time": "2024-10-22 22:19:57.000000000"
+        },
+        "sourcetype": "zscalernss-audit"
+      }
+  - Name: Administration > Role Management > Add SD-WAN Partner API Role, all permissions
+    ExpectedResult: true
+    Log:
+      {
+        "event": {
+          "action": "CREATE",
+          "adminid": "admin@16991311.zscalerbeta.net",
+          "auditlogtype": "ZIA",
+          "category": "ROLE_MANAGEMENT",
+          "clientip": "123.123.123.123",
+          "errorcode": "None",
+          "interface": "UI",
+          "postaction": {
+            "adminAcctAccess": "NONE",
+            "alertingAccess": "READ_ONLY",
+            "analysisAccess": "NONE",
+            "dashboardAccess": "NONE",
+            "deviceInfoAccess": "NONE",
+            "id": 32781,
+            "name": "wanny",
+            "permissions": [
+              "LOCATIONS",
+              "VPN_CREDENTIALS",
+              "STATIC_IPS",
+              "GRE_TUNNELS"
+            ],
+            "policyAccess": "READ_WRITE",
+            "rank": 7,
+            "reportAccess": "NONE",
+            "reportTimeDuration": -1,
+            "roleType": "SDWAN",
+            "usernameAccess": "NONE"
+          },
+          "preaction": {
+            "id": 0,
+            "name": "wanny",
+            "policyAccess": "READ_WRITE",
+            "rank": 7,
+            "reportTimeDuration": -1,
+            "roleType": "SDWAN"
+          },
+          "recordid": "343",
+          "resource": "wanny",
+          "result": "SUCCESS",
+          "subcategory": "ADMINISTRATOR_ROLE",
+          "time": "2024-10-22 22:31:46.000000000"
+        },
+        "sourcetype": "zscalernss-audit"
+      }
+  - Name: Administration > Role Management > Add API Role, all permissions
+    ExpectedResult: true
+    Log:
+      {
+        "event": {
+          "action": "CREATE",
+          "adminid": "admin@16991311.zscalerbeta.net",
+          "auditlogtype": "ZIA",
+          "category": "ROLE_MANAGEMENT",
+          "clientip": "123.123.123.123",
+          "errorcode": "None",
+          "interface": "UI",
+          "postaction": {
+            "adminAcctAccess": "READ_WRITE",
+            "alertingAccess": "NONE",
+            "analysisAccess": "NONE",
+            "dashboardAccess": "NONE",
+            "deviceInfoAccess": "NONE",
+            "id": 32782,
+            "logsLimit": "Unrestricted",
+            "name": "bad API",
+            "permissions": [
+              "ADVANCED_SETTINGS",
+              "COMPLY",
+              "FIREWALL_DNS",
+              "SECURE",
+              "SSL_POLICY",
+              "LOCATIONS",
+              "VPN_CREDENTIALS",
+              "STATIC_IPS",
+              "GRE_TUNNELS",
+              "USER_MANAGEMENT",
+              "POLICY_RESOURCE_MANAGEMENT",
+              "CUSTOM_URL_CAT",
+              "OVERRIDE_EXISTING_CAT"
+            ],
+            "policyAccess": "READ_WRITE",
+            "rank": 7,
+            "reportAccess": "NONE",
+            "reportTimeDuration": -1,
+            "roleType": "PUBLIC_API",
+            "usernameAccess": "NONE"
+          },
+          "preaction": {
+            "adminAcctAccess": "READ_WRITE",
+            "id": 0,
+            "isAuditor": false,
+            "isNonEditable": false,
+            "logsLimit": "Unrestricted",
+            "name": "bad API",
+            "permissions": [
+              "ADVANCED_SETTINGS",
+              "COMPLY",
+              "FIREWALL_DNS",
+              "SECURE",
+              "SSL_POLICY",
+              "LOCATIONS",
+              "VPN_CREDENTIALS",
+              "STATIC_IPS",
+              "GRE_TUNNELS",
+              "USER_MANAGEMENT",
+              "POLICY_RESOURCE_MANAGEMENT",
+              "CUSTOM_URL_CAT",
+              "OVERRIDE_EXISTING_CAT"
+            ],
+            "policyAccess": "READ_WRITE",
+            "rank": 7,
+            "reportTimeDuration": -1,
+            "roleType": "PUBLIC_API"
+          },
+          "recordid": "344",
+          "resource": "bad API",
+          "result": "SUCCESS",
+          "subcategory": "ADMINISTRATOR_ROLE",
+          "time": "2024-10-22 22:34:34.000000000"
+        },
+        "sourcetype": "zscalernss-audit"
+      }

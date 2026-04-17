@@ -1,0 +1,157 @@
+AnalysisType: scheduled_rule
+Filename: okta_ad_agent_token_abuse_behavioral.py
+RuleID: "Okta.ADAgent.TokenAbuse.Behavioral"
+DisplayName: "Okta AD Agent Token Abuse - Behavioral"
+Enabled: true
+ScheduledQueries:
+  - Query.Okta.ADAgentTokenAbuseBehavioral
+Severity: High
+Status: Experimental
+Tags:
+  - Identity & Access Management
+  - Okta
+  - Active Directory
+  - Credential Access:Steal Application Access Token
+  - Persistence:Account Manipulation
+  - Anomaly Detection
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1528
+    - TA0003:T1098
+Description: |
+  Detects potential Okta AD Agent token theft and abuse using behavioral analysis.
+  Instead of relying on hardcoded service account patterns, this detection identifies
+  when AD agent-related activities (API token creation, agent registration, config changes)
+  occur from previously unseen IP addresses or user agents. This behavioral approach
+  adapts to your environment and catches anomalous access patterns that may indicate
+  compromised credentials or unauthorized token generation.
+
+  **What This Detection Catches:**
+  - API token creation from new IPs or user agents
+  - New AD agent registrations from unexpected sources
+  - AD agent configuration changes from new locations
+
+  **Complementary Detection:**
+  Use alongside `Okta.ADAgent.AuthenticationAnomaly.ZScore` which detects the actual
+  USE of stolen tokens through authentication pattern anomalies.
+
+Reference: https://www.varonis.com/blog/okta-attack-vectors
+Runbook: |
+  1. Query Okta SystemLog for all events by actorId in the 24 hours before and after the alert, focusing on system.api_token.create, system.agent.ad.agent_instance_added, and system.agent.ad.config_change_detected events to establish the full scope of activity
+  2. Verify whether sourceIP and userAgent have been seen for actorId in the past 30 days, and check if sourceIP is associated with known corporate or administrative network ranges
+  3. Search for other alerts from actorId or sourceIP in the past 7 days, including Okta.ADAgent.AuthenticationAnomaly.ZScore detections that may indicate a stolen token is actively being used
+
+DedupPeriodMinutes: 1440  # 24 hours — matches dedup_key anchor (actor + event_date)
+SummaryAttributes:
+  - eventType
+  - anomaly_type
+  - actorId
+Tests:
+  # Positive Tests - Should Alert
+  - Name: New IP for Token Creation - High Severity
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-01-15 14:23:45.123",
+        "actorId": "admin@company.com",
+        "actorName": "Admin User",
+        "eventType": "system.api_token.create",
+        "sourceIP": "203.0.113.50",
+        "userAgent": "Mozilla/5.0",
+        "result": "SUCCESS",
+        "target": [{"displayName": "ad-agent-token"}],
+        "anomaly_type": "New IP Address"
+      }
+  - Name: New User Agent for Agent Instance Added - Critical Severity
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-01-15 15:30:22.456",
+        "actorId": "svc-oktasync@company.com",
+        "actorName": "Okta Sync Service",
+        "eventType": "system.agent.ad.agent_instance_added",
+        "sourceIP": "10.0.0.50",
+        "userAgent": "python-requests/2.28.0",
+        "result": "SUCCESS",
+        "target": [{"displayName": "AD-AGENT-01"}],
+        "anomaly_type": "New User Agent"
+      }
+  - Name: New IP for Config Change - Medium Severity
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-01-15 16:45:00.000",
+        "actorId": "admin@company.com",
+        "actorName": "Admin User",
+        "eventType": "system.agent.ad.config_change_detected",
+        "sourceIP": "198.51.100.25",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0)",
+        "result": "SUCCESS",
+        "target": [{"displayName": "AD Agent Config"}],
+        "anomaly_type": "New IP Address"
+      }
+  - Name: New IP for Agent Registration - Critical Severity
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-01-15 18:15:00.000",
+        "actorId": "attacker@company.com",
+        "actorName": "Attacker",
+        "eventType": "system.agent.ad.agent_instance_added",
+        "sourceIP": "203.0.113.200",
+        "userAgent": "curl/7.68.0",
+        "result": "SUCCESS",
+        "target": [{"displayName": "ROGUE-AGENT"}],
+        "anomaly_type": "New IP Address"
+      }
+  # Edge Cases
+  - Name: Empty Target Array
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-01-15 19:00:00.000",
+        "actorId": "admin@company.com",
+        "actorName": "Admin",
+        "eventType": "system.api_token.create",
+        "sourceIP": "203.0.113.100",
+        "userAgent": "Mozilla/5.0",
+        "result": "SUCCESS",
+        "target": [],
+        "anomaly_type": "New IP Address"
+      }
+  - Name: Missing Optional Fields
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-01-15 20:00:00.000",
+        "actorId": "svc@company.com",
+        "eventType": "system.agent.ad.config_change_detected",
+        "sourceIP": "10.0.0.100",
+        "result": "SUCCESS",
+        "anomaly_type": "New User Agent"
+      }
+  - Name: Unknown Event Type - Medium Severity (fallback)
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-01-15 21:00:00.000",
+        "actorId": "user@company.com",
+        "actorName": "User",
+        "eventType": "system.agent.ad.unknown_event",
+        "sourceIP": "203.0.113.150",
+        "userAgent": "Mozilla/5.0",
+        "result": "SUCCESS",
+        "target": [{"displayName": "Something"}],
+        "anomaly_type": "New IP Address"
+      }
+  # Negative Tests - Should Not Alert
+  - Name: Malformed Row - Missing Actor ID
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2024-01-15 22:00:00.000",
+        "eventType": "system.api_token.create",
+        "sourceIP": "203.0.113.50",
+        "result": "SUCCESS",
+        "anomaly_type": "New IP Address"
+      }

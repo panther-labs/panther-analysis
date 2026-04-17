@@ -1,0 +1,77 @@
+AnalysisType: scheduled_query
+QueryName: "Snowflake User Daily Query Volume Spike"
+Enabled: false
+Description: >
+  Returns instances where a user's cumulative daily query volume is much larger than
+  normal. Could indicate exfiltration attempts.
+Query: |
+  with t as (
+    select
+      dateadd('day', -1-seq4(), p_current_timestamp()) as tstart,
+      dateadd('day', -seq4(), p_current_timestamp()) as tend
+    from table(generator(rowcount => 90))
+    ),
+  data as (
+    select
+      user_name,
+      end_time as t,
+      bytes_written_to_result as n_bytes,
+      p_source_id,
+      p_source_label
+    from panther_logs.public.snowflake_queryhistory
+    where p_occurs_since('90d', , end_time)
+  ),
+  dimensions as (
+    select distinct user_name, p_source_id from data
+  ),
+  axes as (
+    select * from t cross join dimensions
+  ),
+  histogram as (
+    select
+      sum(data.n_bytes) as daily_bytes,
+      data.p_source_label,
+      axes.tstart,
+      axes.tend,
+      axes.user_name,
+      axes.p_source_id
+    from data join axes
+    on
+      p_occurs_between(axes.tstart, axes.tend, data, t)
+      and data.user_name = axes.user_name
+      and data.p_source_id = axes.p_source_id
+    group by (
+      axes.p_source_id,
+      data.p_source_label,
+      axes.tstart,
+      axes.tend,
+      axes.user_name
+    )
+  ),
+  stats as (
+    select
+      avg(daily_bytes) as mean,
+      stddev(daily_bytes) as std_dev,
+      user_name,
+      p_source_id,
+      p_source_label
+    from histogram
+    group by
+      p_source_id,
+      p_source_label,
+      user_name
+  )
+  select
+    abs(histogram.daily_bytes - stats.mean) / COALESCE(NULLIF(stats.std_dev, 0), 1) as zscore,
+    histogram.*,
+    stats.mean,
+    stats.std_dev
+  from histogram join stats on
+    histogram.user_name = stats.user_name and
+    histogram.p_source_id = stats.p_source_id,
+  where p_occurs_since('12h', histogram, tend)
+    and zscore > 3
+    and histogram.daily_bytes > 1000000 -- Minimum 1MB threshold
+Schedule:
+  CronExpression: "0 0 * * *"
+  TimeoutMinutes: 3

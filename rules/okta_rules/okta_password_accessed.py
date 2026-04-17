@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get, get_val_from_list
+from panther_base_helpers import get_val_from_list
 
 # pylint: disable=global-variable-undefined
 
@@ -11,18 +11,18 @@ def rule(event):
         return False
 
     # event['target'] = [{...}, {...}, {...}]
-    TARGET_USERS = get_val_from_list(event.get("target", [{}]), "alternateId", "type", "AppUser")
+    TARGET_USERS = get_val_from_list(event.get("target", [{}]), "alternateId", "type", "User")
     TARGET_APP_NAMES = get_val_from_list(
         event.get("target", [{}]), "alternateId", "type", "AppInstance"
     )
 
-    if deep_get(event, "actor", "alternateId") not in TARGET_USERS:
+    if event.deep_get("actor", "alternateId") not in TARGET_USERS:
         return True
     return False
 
 
 def dedup(event):
-    dedup_str = deep_get(event, "actor", "alternateId")
+    dedup_str = event.deep_get("actor", "alternateId")
 
     if TARGET_USERS:
         dedup_str += ":" + str(TARGET_USERS)
@@ -33,7 +33,7 @@ def dedup(event):
 
 def title(event):
     return (
-        f"A user {deep_get(event, 'actor', 'alternateId')} accessed another user's "
+        f"A user {event.deep_get('actor', 'alternateId')} accessed another user's "
         f"{TARGET_USERS} "
         f"{TARGET_APP_NAMES} password"
     )

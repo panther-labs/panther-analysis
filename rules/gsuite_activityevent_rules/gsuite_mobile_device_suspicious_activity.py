@@ -1,8 +1,5 @@
-from panther_base_helpers import deep_get
-
-
 def rule(event):
-    if deep_get(event, "id", "applicationName") != "mobile":
+    if event.deep_get("id", "applicationName") != "mobile":
         return False
 
     return bool(event.get("name") == "SUSPICIOUS_ACTIVITY_EVENT")
@@ -10,6 +7,6 @@ def rule(event):
 
 def title(event):
     return (
-        f"User [{deep_get(event, 'actor', 'email', default='<UNKNOWN_USER>')}]"
+        f"User [{event.deep_get('actor', 'email', default='<UNKNOWN_USER>')}]"
         f"'s device was compromised"
     )

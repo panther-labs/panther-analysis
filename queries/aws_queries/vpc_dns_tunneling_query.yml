@@ -1,18 +1,15 @@
 AnalysisType: scheduled_query
-QueryName: Query.VPC.DNS.Tunneling
+QueryName: "Query.VPC.DNS.Tunneling"
 Enabled: false
 Description: >
   Detect activity similar to DNS tunneling traffic in AWS VPC Logs
-AthenaQuery: >
-  /* athena query not supported */ 
-  SELECT count(1)
-SnowflakeQuery: >
+Query: |
   SELECT
     account_id,
     region,
     vpc_id,
     srcAddr, -- outside
-    srcIds:instance, -- inside
+    srcIds:instance as instance, -- inside
 
     COUNT(1) as message_count,
     ARRAY_AGG(DISTINCT query_name) as query_names

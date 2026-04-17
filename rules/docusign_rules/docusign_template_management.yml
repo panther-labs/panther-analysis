@@ -1,0 +1,91 @@
+AnalysisType: rule
+Filename: docusign_template_management.py
+RuleID: "Docusign.Connect.TemplateManagement"
+DisplayName: "DocuSign Template Management Activity"
+Enabled: true
+LogTypes:
+  - Docusign.Connect
+Tags:
+  - DocuSign
+  - Template
+  - Administrative
+Severity: Medium
+Description: >
+  Detects DocuSign template management activities including creation, modification, and deletion.
+  Template changes can affect business processes and should be monitored for unauthorized modifications.
+  Deletions are particularly critical as they may indicate data destruction or process disruption.
+Runbook: |
+  1. Review the template changes and verify they are authorized
+  2. Check if the user has appropriate permissions for template management
+  3. For deletions, verify if this was intentional and documented
+  4. For modifications, review what specific changes were made
+  5. Monitor for patterns of excessive template changes
+  6. Ensure proper approval workflow was followed for template changes
+Reference: https://developer.docusign.com/docs/connect/events/
+SummaryAttributes:
+  - event
+  - data.templateId
+  - data.userId
+  - data.email
+Tests:
+  - Name: "Template Created Event"
+    ExpectedResult: true
+    Log:
+      event: "template-created"
+      uri: "/api/v2/accounts/12345/templates/template123"
+      retryCount: 0
+      configurationId: "config123"
+      apiVersion: "v2.1"
+      generatedDateTime: "2024-01-15T10:30:00.000Z"
+      data:
+        accountId: "12345"
+        userId: "user123"
+        templateId: "template123"
+        name: "Contract Template"
+        email: "peregrin@lotr.com"
+        templates:
+          - templateId: "template123"
+            name: "Contract Template"
+            shared: true
+  - Name: "Template Modified Event"
+    ExpectedResult: true
+    Log:
+      event: "template-modified"
+      uri: "/api/v2/accounts/12345/templates/template123"
+      retryCount: 0
+      configurationId: "config123"
+      apiVersion: "v2.1"
+      generatedDateTime: "2024-01-15T10:30:00.000Z"
+      data:
+        accountId: "12345"
+        userId: "user123"
+        templateId: "template123"
+        name: "Updated Contract Template"
+        email: "admin@example.com"
+  - Name: "Template Deleted Event"
+    ExpectedResult: true
+    Log:
+      event: "template-deleted"
+      uri: "/api/v2/accounts/12345/templates/template123"
+      retryCount: 0
+      configurationId: "config123"
+      apiVersion: "v2.1"
+      generatedDateTime: "2024-01-15T10:30:00.000Z"
+      data:
+        accountId: "12345"
+        userId: "user123"
+        templateId: "template123"
+        name: "Contract Template"
+        email: "admin@example.com"
+  - Name: "Non-Template Event"
+    ExpectedResult: false
+    Log:
+      event: "envelope-sent"
+      uri: "/api/v2/accounts/12345/envelopes/abc123"
+      retryCount: 0
+      configurationId: "config123"
+      apiVersion: "v2.1"
+      generatedDateTime: "2024-01-15T10:30:00.000Z"
+      data:
+        accountId: "12345"
+        envelopeId: "envelope123"

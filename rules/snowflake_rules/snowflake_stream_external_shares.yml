@@ -1,0 +1,43 @@
+AnalysisType: rule
+Filename: snowflake_stream_external_shares.py
+RuleID: Snowflake.Stream.ExternalShares
+DisplayName: Snowflake External Data Share
+Enabled: true
+LogTypes:
+  - Snowflake.DataTransferHistory
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1537
+Description: Detect when an external share has been initiated from one source cloud
+  to another target cloud.
+Runbook: Determine if this occurred as a result of a valid business request.
+Tags:
+  - Snowflake
+  - '[MITRE] Exfiltration'
+  - '[MITRE] Transfer Data to Cloud Account'
+Tests:
+  - Name: Zero byte transfer
+    ExpectedResult: false
+    Log:
+      {
+        "REGION": "US-EAST-2",
+        "SOURCE_CLOUD": "AWS",
+        "SOURCE_REGION": "US-EAST-2",
+        "TARGET_CLOUD": "AWS",
+        "TARGET_REGION": "EU-WEST-1",
+        "BYTES_TRANSFERRED": 0,
+        "TRANSFER_TYPE": "COPY"
+      }
+  - Name: Disallowed Share
+    ExpectedResult: true
+    Log:
+      {
+        "REGION": "US-EAST-2",
+        "SOURCE_CLOUD": "AWS",
+        "SOURCE_REGION": "US-EAST-2",
+        "TARGET_CLOUD": "AWS",
+        "TARGET_REGION": "EU-WEST-1",
+        "BYTES_TRANSFERRED": 61235879,
+        "TRANSFER_TYPE": "COPY"
+      }

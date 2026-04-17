@@ -1,7 +1,5 @@
 from fnmatch import fnmatch
 
-from panther_base_helpers import deep_get
-
 # sip protects against writing malware into the paths below.
 # additional apps can be added to this list based on your environments.
 #
@@ -24,11 +22,11 @@ def rule(event):
     if event.get("action") != "added":
         return False
 
-    process_path = deep_get(event, "columns", "path", default="")
+    process_path = event.deep_get("columns", "path", default="")
     if process_path == "":
         return False
 
-    if deep_get(event, "columns", "name") in APPROVED_APPLICATION_NAMES:
+    if event.deep_get("columns", "name") in APPROVED_APPLICATION_NAMES:
         return False
 
     # Alert if the process is running outside any of the approved paths

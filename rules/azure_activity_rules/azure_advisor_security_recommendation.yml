@@ -1,0 +1,78 @@
+AnalysisType: rule
+Filename: azure_advisor_security_recommendation.py
+RuleID: "Azure.MonitorActivity.Advisor.SecurityRecommendation"
+DisplayName: "Azure Advisor Security Recommendation Available"
+Enabled: true
+LogTypes:
+  - Azure.MonitorActivity
+Severity: Info
+Status: Experimental
+Description: >
+  Detects when Azure Advisor generates a new security recommendation for a resource.
+  Azure Advisor analyzes your resource configurations and usage telemetry to recommend solutions
+  that can help improve security, cost effectiveness, performance, reliability, and operational excellence.
+Runbook: |
+  1. Query Azure Monitor Activity logs for all operations on the resourceId in the 48 hours before the alert to identify recent configuration changes
+  2. Check if this recommendationType has been triggered for other resources in the tenantId in the past 30 days to identify patterns
+  3. Review the recommendationImpact and recommendationName to assess priority and determine if immediate remediation is required
+Reference: https://learn.microsoft.com/en-us/azure/advisor/advisor-overview
+SummaryAttributes:
+  - resourceId
+  - properties.recommendationName
+  - properties.recommendationImpact
+Tests:
+  - Name: Security Recommendation Available
+    ExpectedResult: true
+    Log:
+      {
+        "time": "2025-12-22T08:46:29.678707300Z",
+        "resourceId": "/SUBSCRIPTIONS/00000000-0000-0000-0000-111111111111/RESOURCEGROUPS/EXAMPLE-RG/PROVIDERS/MICROSOFT.STORAGE/STORAGEACCOUNTS/EXAMPLESTORAGE",
+        "operationName": "Microsoft.Advisor/recommendations/available/action",
+        "operationVersion": "2017-03-31",
+        "category": "Recommendation",
+        "resultType": "Active",
+        "resultDescription": "A new recommendation is available.",
+        "resultSignature": "Succeeded",
+        "callerIpAddress": "0.0.0.0",
+        "correlationId": "00000000-0000-0000-0000-111111111111",
+        "level": "Informational",
+        "location": "global",
+        "identity": {
+          "claims": {
+            "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress": "Microsoft.Advisor"
+          }
+        },
+        "properties": {
+          "recommendationCategory": "Security",
+          "recommendationImpact": "Medium",
+          "recommendationName": "Storage accounts should restrict network access using virtual network rules",
+          "recommendationResourceLink": "https://portal.azure.com/#blade/Microsoft_Azure_Expert/RecommendationListBlade/source/ActivityLog",
+          "recommendationSchemaVersion": "1.0",
+          "recommendationType": "00000000-0000-0000-0000-111111111111"
+        },
+        "tenantId": "00000000-0000-0000-0000-111111111111"
+      }
+  - Name: Different Recommendation
+    ExpectedResult: false
+    Log:
+      {
+        "time": "2025-12-22T09:00:00.000000000Z",
+        "resourceId": "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/example-rg/providers/Microsoft.Storage/storageAccounts/examplestorage",
+        "operationName": "Microsoft.Advisor/recommendations/available/action",
+        "operationVersion": "2017-03-31",
+        "category": "Recommendation",
+        "resultType": "Active",
+        "resultDescription": "A new recommendation is available.",
+        "callerIpAddress": "0.0.0.0",
+        "correlationId": "11111111-1111-1111-1111-111111111111",
+        "level": "Informational",
+        "location": "westus",
+        "properties": {
+          "recommendationCategory": "Cost",
+          "recommendationImpact": "Medium",
+          "recommendationName": "Right-size underutilized storage accounts",
+          "recommendationResourceLink": "https://portal.azure.com/#blade/Microsoft_Azure_Expert/RecommendationListBlade",
+          "recommendationType": "11111111-1111-1111-1111-111111111111"
+        },
+        "tenantId": "11111111-1111-1111-1111-111111111111"
+      }

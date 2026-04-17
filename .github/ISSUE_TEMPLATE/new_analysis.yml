@@ -1,0 +1,41 @@
+name: "New Analysis Request"
+description: "Request a new rule, policy, or helper to be added to the Panther platform."
+title: "[New] Name of Rule, Policy, or Helper"
+labels: ["enhancement"]
+
+body:
+  - type: textarea
+    attributes:
+      label: "Description"
+      description: "Provide a detailed description of the rule, policy, or helper."
+      placeholder: "Detailed description..."
+
+  - type: dropdown
+    attributes:
+      label: "Analysis Type"
+      description: "Select the type of analysis."
+      options:
+        - rule
+        - policy
+        - global_helper
+        - data_model
+        - scheduled_query
+        - correlation_rule
+
+  - type: input
+    attributes:
+      label: "Log Source"
+      description: "Provide the relevant log source (optional)."
+      placeholder: "AWS.CloudTrail"
+
+  - type: textarea
+    attributes:
+      label: "References"
+      description: "Provide any reference links (optional)."
+      placeholder: "References..."
+
+  - type: textarea
+    attributes:
+      label: "Example Log Data (redacted)."
+      description: "Provide an example log that would trigger this rule. Please make sure to redact any sensitive information."
+      placeholder: "Example JSON data..."

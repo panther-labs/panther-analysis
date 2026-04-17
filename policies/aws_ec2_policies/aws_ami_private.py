@@ -1,3 +1,4 @@
+# Add owners as desired
 APPROVED_OWNERS = [
     "amazon",
     "microsoft",

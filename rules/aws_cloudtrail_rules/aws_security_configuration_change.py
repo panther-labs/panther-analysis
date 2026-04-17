@@ -1,7 +1,8 @@
+import json
 from fnmatch import fnmatch
+from unittest.mock import MagicMock
 
-from panther import aws_cloudtrail_success
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 
 SECURITY_CONFIG_ACTIONS = {
     "DeleteAccountPublicAccessBlock",
@@ -18,18 +19,21 @@ SECURITY_CONFIG_ACTIONS = {
 
 ALLOW_LIST = [
     # Add expected events and users here to suppress alerts
-    {"userName": "ExampleUser", "eventName": "ExampleEvent"},
+    # {"userName": "ExampleUser", "eventName": "DeleteRule"},
 ]
 
 
 def rule(event):
+    global ALLOW_LIST  # pylint: disable=global-statement
+    if isinstance(ALLOW_LIST, MagicMock):
+        ALLOW_LIST = json.loads(ALLOW_LIST())  # pylint: disable=not-callable
+
     if not aws_cloudtrail_success(event):
         return False
 
     for entry in ALLOW_LIST:
         if fnmatch(
-            deep_get(
-                event,
+            event.deep_get(
                 "userIdentity",
                 "sessionContext",
                 "sessionIssuer",
@@ -42,17 +46,13 @@ def rule(event):
                 return False
 
     if event.get("eventName") == "UpdateDetector":
-        return not deep_get(event, "requestParameters", "enable", default=True)
+        return not event.deep_get("requestParameters", "enable", default=True)
 
     return event.get("eventName") in SECURITY_CONFIG_ACTIONS
 
 
 def title(event):
-    user = deep_get(event, "userIdentity", "userName") or deep_get(
-        event, "userIdentity", "sessionContext", "sessionIssuer", "userName"
-    )
-
-    return f"Sensitive AWS API call {event.get('eventName')} made by {user}"
+    return f"Sensitive AWS API call {event.get('eventName')} made by {event.udm('actor_user')}"
 
 
 def alert_context(event):

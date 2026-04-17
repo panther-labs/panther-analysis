@@ -1,0 +1,180 @@
+AnalysisType: rule
+RuleID: "Kubernetes.CronJob.CreatedOrModified"
+DisplayName: "Kubernetes CronJob Created or Modified"
+Enabled: true
+Status: Experimental
+Filename: k8s_cronjob_created_or_modified.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Security Control
+  - Persistence
+  - Scheduled Task
+  - Unified Detection
+Severity: Info
+Description: >
+  This detection monitors for creation or modification of CronJobs in Kubernetes clusters.
+  Attackers may create or modify scheduled jobs to achieve cluster persistence, execute
+  malicious code on a schedule, or maintain backdoor access to compromised clusters.
+  This detection works across AWS EKS, Azure AKS, and GCP GKE clusters.
+Runbook: |
+  1. Query all CronJob creation and modification events by username in the 24 hours before the alert to establish deployment patterns
+  2. Analyze the CronJob schedule specification and container image from requestObject to identify suspicious commands or known malicious patterns
+  3. Search for other CronJobs created by this user in the past 30 days to determine if this represents established activity or anomalous behavior
+Reference: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1053.003 # Persistence: Scheduled Task/Job - Cron
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - username
+  - namespace
+  - p_source_label
+Tests:
+  - Name: EKS CronJob Created
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "auditID": "abc-123",
+        "verb": "create",
+        "user": {"username": "admin@example.com"},
+        "sourceIPs": ["1.2.3.4"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "cronjobs",
+          "namespace": "default",
+          "name": "backup-job",
+          "apiVersion": "batch/v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestURI": "/apis/batch/v1/namespaces/default/cronjobs",
+        "requestObject": {
+          "kind": "CronJob",
+          "metadata": {"name": "backup-job", "namespace": "default"},
+          "spec": {
+            "schedule": "0 2 * * *",
+            "jobTemplate": {
+              "spec": {
+                "template": {
+                  "spec": {
+                    "containers": [{
+                      "name": "backup",
+                      "image": "backup:latest"
+                    }]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS CronJob Updated
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"update\",\"user\":{\"username\":\"admin@example.com\"},\"sourceIPs\":[\"10.0.0.1\"],\"objectRef\":{\"resource\":\"cronjobs\",\"namespace\":\"production\",\"name\":\"nightly-job\"},\"responseStatus\":{\"code\":200},\"requestURI\":\"/apis/batch/v1/namespaces/production/cronjobs/nightly-job\"}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GCP GKE CronJob Created
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.batch.v1.cronjobs.create",
+            "resource": "batch/v1/namespaces/default/cronjobs/backup-job"
+          }],
+          "methodName": "io.k8s.batch.v1.cronjobs.create",
+          "requestMetadata": {
+            "callerIP": "1.2.3.4",
+            "callerSuppliedUserAgent": "kubectl/v1.27.0"
+          },
+          "resourceName": "batch/v1/namespaces/default/cronjobs/backup-job",
+          "serviceName": "k8s.io",
+          "request": {
+            "kind": "CronJob",
+            "metadata": {"name": "backup-job"},
+            "spec": {"schedule": "0 2 * * *"}
+          }
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: CronJob Creation Failed
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {
+          "resource": "cronjobs",
+          "namespace": "default",
+          "name": "test-job"
+        },
+        "responseStatus": {"code": 403, "status": "Failure"},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Pod Creation (Not CronJob)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "default"
+        },
+        "responseStatus": {"code": 201},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: CronJob Get (Not Create/Update)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "get",
+        "objectRef": {
+          "resource": "cronjobs",
+          "namespace": "default",
+          "name": "existing-job"
+        },
+        "responseStatus": {"code": 200},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: System controller creating CronJob in kube-system (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "system:serviceaccount:kube-system:cronjob-controller"},
+        "sourceIPs": ["10.0.0.1"],
+        "objectRef": {
+          "resource": "cronjobs",
+          "namespace": "kube-system",
+          "name": "system-cleanup",
+          "apiVersion": "batch/v1"
+        },
+        "responseStatus": {"code": 201},
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }

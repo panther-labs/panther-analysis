@@ -1,0 +1,259 @@
+AnalysisType: rule
+Filename: github_workflow_skip_commits.py
+RuleID: "GitHub.Webhook.WorkflowSkipCommits"
+DisplayName: "GitHub Commits Skipping Workflows"
+Enabled: true
+LogTypes:
+  - GitHub.Webhook
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195.002  # Supply Chain Compromise: Compromise Software Supply Chain
+    - TA0005:T1622  # Defense Evasion: Debugger Evasion
+Tags:
+  - CI/CD
+  - Workflow
+Severity: Medium
+Description: >
+  Detects commits from cross-fork scenarios that contain workflow skip directives, which bypass GitHub Actions workflows.
+  These skip patterns ([skip ci], [ci skip], [no ci], [skip actions], [actions skip], skip-checks:true)
+  can be used to avoid security checks and CI/CD processes. This rule only alerts on commits to public forkable repositories.
+Runbook: >
+  1. Review the commit message and author to determine if the workflow skip was intentional and authorized
+  2. Verify that skipping workflows is appropriate for the type of changes made
+  3. Check if the repository has policies requiring workflow runs for certain changes
+  4. Consider if the skip bypasses important security or quality checks
+  5. Monitor for patterns of excessive workflow skipping that might indicate policy circumvention
+Reference: https://docs.github.com/en/actions/managing-workflow-runs/skipping-workflow-runs
+Tests:
+  - Name: Public Forkable Repo with Skip CI Pattern
+    ExpectedResult: true
+    Log:
+      {
+        "pusher": {
+          "name": "Developer",
+          "email": "dev@example.com"
+        },
+        "ref": "refs/heads/main",
+        "repository": {
+          "id": 123456789,
+          "name": "test-repo",
+          "full_name": "org/test-repo",
+          "private": false,
+          "allow_forking": true,
+          "owner": {
+            "login": "org"
+          }
+        },
+        "commits": [
+          {
+            "id": "abc123",
+            "message": "Fix documentation [skip ci]",
+            "author": {
+              "name": "Developer",
+              "email": "dev@example.com"
+            }
+          }
+        ],
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Public Forkable Repo with Case Insensitive Skip Pattern
+    ExpectedResult: true
+    Log:
+      {
+        "pusher": {
+          "name": "Developer",
+          "email": "dev@example.com"
+        },
+        "ref": "refs/heads/feature",
+        "repository": {
+          "id": 123456789,
+          "name": "test-repo",
+          "full_name": "org/test-repo", 
+          "private": false,
+          "allow_forking": true
+        },
+        "commits": [
+          {
+            "id": "def456",
+            "message": "Update config [SKIP CI]"
+          }
+        ],
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Public Forkable Repo with Multiple Skip Patterns
+    ExpectedResult: true
+    Log:
+      {
+        "pusher": {
+          "name": "Developer",
+          "email": "dev@example.com"
+        },
+        "ref": "refs/heads/main",
+        "repository": {
+          "private": false,
+          "allow_forking": true,
+          "full_name": "org/test-repo"
+        },
+        "commits": [
+          {
+            "id": "ghi789",
+            "message": "Regular commit"
+          },
+          {
+            "id": "jkl012",
+            "message": "Minor fix [ci skip]"
+          }
+        ],
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Private Repo with Skip CI Pattern (Should Not Alert)
+    ExpectedResult: false
+    Log:
+      {
+        "pusher": {
+          "name": "Developer",
+          "email": "dev@example.com"
+        },
+        "ref": "refs/heads/main",
+        "repository": {
+          "private": true,
+          "allow_forking": true,
+          "full_name": "org/private-repo"
+        },
+        "commits": [
+          {
+            "id": "private123",
+            "message": "Internal change [skip ci]"
+          }
+        ],
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Public Repo with Forking Disabled and Skip CI (Should Not Alert)
+    ExpectedResult: false
+    Log:
+      {
+        "pusher": {
+          "name": "Developer",
+          "email": "dev@example.com"
+        },
+        "ref": "refs/heads/main",
+        "repository": {
+          "private": false,
+          "allow_forking": false,
+          "full_name": "org/no-fork-repo"
+        },
+        "commits": [
+          {
+            "id": "nofork123",
+            "message": "Change [skip ci]"
+          }
+        ],
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Public Forkable Repo without Skip Patterns (Should Not Alert)
+    ExpectedResult: false
+    Log:
+      {
+        "pusher": {
+          "name": "Developer",
+          "email": "dev@example.com"
+        },
+        "ref": "refs/heads/main",
+        "repository": {
+          "private": false,
+          "allow_forking": true,
+          "full_name": "org/test-repo"
+        },
+        "commits": [
+          {
+            "id": "clean123",
+            "message": "Add new feature with tests"
+          }
+        ],
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Non-Push Event with Skip Pattern (Should Not Alert)
+    ExpectedResult: false
+    Log:
+      {
+        "pusher": {
+          "name": "Developer",
+          "email": "dev@example.com"
+        },
+        "pull_request": {
+          "id": 123,
+          "title": "Fix bug [skip ci]"
+        },
+        "repository": {
+          "private": false,
+          "allow_forking": true,
+          "full_name": "org/test-repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Public Forkable Repo with Skip Actions Pattern
+    ExpectedResult: true
+    Log:
+      {
+        "pusher": {
+          "name": "Developer",
+          "email": "dev@example.com"
+        },
+        "ref": "refs/heads/main",
+        "repository": {
+          "private": false,
+          "allow_forking": true,
+          "full_name": "org/test-repo"
+        },
+        "commits": [
+          {
+            "id": "actions123",
+            "message": "Update README [skip actions]"
+          }
+        ],
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Public Forkable Repo with Skip Checks Trailer
+    ExpectedResult: true
+    Log:
+      {
+        "pusher": {
+          "name": "Developer",
+          "email": "dev@example.com"
+        },
+        "ref": "refs/heads/main",
+        "repository": {
+          "private": false,
+          "allow_forking": true,
+          "full_name": "org/test-repo"
+        },
+        "commits": [
+          {
+            "id": "trailer123",
+            "message": "Minor typo fix\n\nskip-checks: true"
+          }
+        ],
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Public Forkable Repo with No CI Pattern
+    ExpectedResult: true
+    Log:
+      {
+        "pusher": {
+          "name": "Developer",
+          "email": "dev@example.com"
+        },
+        "ref": "refs/heads/main",
+        "repository": {
+          "private": false,
+          "allow_forking": true,
+          "full_name": "org/test-repo"
+        },
+        "commits": [
+          {
+            "id": "noci123",
+            "message": "Documentation update [no ci]"
+          }
+        ],
+        "p_log_type": "GitHub.Webhook"
+      }

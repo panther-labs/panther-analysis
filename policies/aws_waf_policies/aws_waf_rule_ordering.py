@@ -21,7 +21,7 @@ def policy(resource):
 
     # Confirm that each rule is ordered correctly
     for web_acl_rule in web_acl_rules:
-        # Rules are not neccessarily listed in their priority order in the rules list.
+        # Rules are not necessarily listed in their priority order in the rules list.
         # This determines their priority order, and offsets by one to be indexed starting at 0.
         priority_order = web_acl_rule["Priority"] - 1
         if web_acl_rule["RuleId"] != ORDERING[resource["WebACLId"]][priority_order]:

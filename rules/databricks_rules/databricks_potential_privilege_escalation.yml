@@ -1,0 +1,78 @@
+AnalysisType: rule
+Filename: databricks_potential_privilege_escalation.py
+RuleID: "Databricks.Audit.PotentialPrivilegeEscalation"
+DisplayName: "Databricks Potential Privilege Escalation"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Privilege Escalation
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1078 # Valid Accounts
+Severity: High
+Threshold: 25
+DedupPeriodMinutes: 60
+Description: >
+  Detects potential privilege escalation through high volume permission modifications (≥25 per hour) by the same user.
+  Monitors various permission-related actions across account, workspace, and Unity Catalog.
+Runbook: |
+  1. Query audit logs for all permission modifications by this user in the past 24 hours
+  2. Check if the user performed high-privilege actions immediately after the permission changes
+  3. Find all users with high permission modification rates in the past 7 days
+Reference: https://github.com/andyweaves/system-tables-audit-logs/blob/main/resources/queries_and_alerts.json
+Tests:
+  - Name: Add Principal to Group
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "accounts"
+      actionName: "addPrincipalToGroup"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        targetGroupName: "developers"
+  - Name: Grant Permission
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "unityCatalog"
+      actionName: "grant"
+      userIdentity:
+        email: "admin@example.com"
+  - Name: Update Permissions
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "unityCatalog"
+      actionName: "updatePermissions"
+      userIdentity:
+        email: "admin@example.com"
+  - Name: Change Owner
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "unityCatalog"
+      actionName: "changeOwner"
+      userIdentity:
+        email: "admin@example.com"
+  - Name: Non-Privilege Action
+    ExpectedResult: false
+    Log:
+      timestamp: 1704067200000
+      serviceName: "unityCatalog"
+      actionName: "getTable"
+      userIdentity:
+        email: "user@example.com"
+  - Name: Login Action
+    ExpectedResult: false
+    Log:
+      timestamp: 1704067200000
+      serviceName: "accounts"
+      actionName: "login"
+      userIdentity:
+        email: "user@example.com"
+SummaryAttributes:
+  - actor

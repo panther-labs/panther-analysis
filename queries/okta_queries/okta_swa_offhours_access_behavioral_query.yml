@@ -1,0 +1,258 @@
+AnalysisType: scheduled_query
+QueryName: "Query.Okta.SWAOffHoursAccessBehavioral"
+Enabled: false
+Description: |
+  Detects Okta SWA credential access during time windows that are unusual for the specific user,
+  using per-user UTC hour slot behavioral analysis. Reads pre-computed 90-day baselines from the
+  okta_baseline_90d lookup table which stores each user's historically active UTC hour-of-week slots.
+
+  DETECTION LOGIC:
+  - Inactive hour: Recent credential access in UTC hour slots the user is not historically active in
+  - Cold-start: Any credential access when no baseline exists (>= 3 events)
+  - Compound: Geographic shift combined with any credential access
+
+  UTC hour slots are encoded as DAYOFWEEK * 24 + HOUR (0-167), capturing per-user schedules
+  regardless of timezone. A slot is considered active if the user had activity in it on >= 3
+  distinct days during the 90-day baseline window.
+
+  PREREQUISITE: okta_baseline_90d lookup table must be populated.
+Query: |
+  -- OKTA SWA OFF-HOURS CREDENTIAL ACCESS BEHAVIORAL DETECTION
+  -- Reads 90-day baseline from lookup table; scans only last 7 days of raw logs
+  -- Flags: activity in UTC hour slots outside the user's historical active schedule
+
+  WITH recent_credential_access AS (
+      SELECT
+          actor:alternateId::string AS admin_email,
+          published,
+          target[0]:alternateId::string AS victim_email,
+          client:geographicalContext:country::string AS country,
+          client:geographicalContext:city::string AS city,
+          DATE_TRUNC('hour', published) AS event_hour,
+          -- Encode as DAYOFWEEK * 24 + HOUR (0-167) for per-user schedule comparison
+          DAYOFWEEK(published) * 24 + HOUR(published) AS utc_hour_slot
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND eventType = 'application.user_membership.change_username'
+          AND actor:alternateId::string LIKE '%@%'
+  ),
+
+  -- Early join with baseline to classify each event as active or inactive slot for this user
+  recent_classified AS (
+      SELECT
+          r.admin_email,
+          r.published,
+          r.victim_email,
+          r.country,
+          r.city,
+          r.event_hour,
+          r.utc_hour_slot,
+          CASE
+              WHEN b.active_utc_hour_slots IS NULL THEN NULL  -- no baseline yet
+              WHEN ARRAY_CONTAINS(r.utc_hour_slot::VARIANT, b.active_utc_hour_slots) THEN 0
+              ELSE 1
+          END AS is_inactive_slot
+      FROM recent_credential_access r
+      LEFT JOIN panther_lookups.public.okta_baseline_90d b ON r.admin_email = b.user_email
+  ),
+
+  recent_hourly AS (
+      SELECT
+          admin_email,
+          event_hour,
+          COUNT(*) AS hourly_credential_access,
+          SUM(CASE WHEN is_inactive_slot = 1 THEN 1 ELSE 0 END) AS hourly_inactive_slot_events,
+          COUNT(DISTINCT victim_email) AS hourly_victim_diversity,
+          COUNT(DISTINCT country) AS hourly_country_diversity
+      FROM recent_classified
+      GROUP BY admin_email, event_hour
+  ),
+
+  recent_stats AS (
+      SELECT
+          admin_email,
+          SUM(hourly_credential_access) AS recent_total_credential_access,
+          COUNT(DISTINCT DATE(event_hour)) AS recent_active_days,
+          MAX(hourly_credential_access) AS recent_max_per_hour,
+          AVG(hourly_credential_access)::FLOAT AS recent_avg_per_hour,
+          SUM(hourly_inactive_slot_events) AS recent_inactive_slot_events,
+          SUM(hourly_inactive_slot_events)::FLOAT /
+              NULLIF(SUM(hourly_credential_access), 0) AS recent_inactive_slot_ratio,
+          AVG(hourly_inactive_slot_events::FLOAT / NULLIF(hourly_credential_access, 0)) AS recent_avg_inactive_slot_ratio_per_hour,
+          MAX(hourly_victim_diversity) AS recent_max_victim_diversity_per_hour,
+          MIN(event_hour) AS recent_first_event,
+          MAX(event_hour) AS recent_last_event
+      FROM recent_hourly
+      GROUP BY admin_email
+  ),
+
+  recent_geo AS (
+      SELECT
+          admin_email,
+          COUNT(DISTINCT country) AS recent_country_diversity,
+          COUNT(DISTINCT city) AS recent_city_diversity,
+          MODE(country) AS recent_primary_country,
+          MODE(city) AS recent_primary_city
+      FROM recent_credential_access
+      GROUP BY admin_email
+  ),
+
+  admin_anomalies AS (
+      SELECT
+          r.admin_email,
+
+          -- BASELINE from lookup table
+          COALESCE(b.baseline_total_credential_access, 0) AS baseline_total_credential_access,
+          COALESCE(b.baseline_active_days, 0) AS baseline_active_days,
+          COALESCE(b.baseline_hours_with_activity, 0) AS baseline_hours_with_activity,
+          ROUND(COALESCE(b.mean_credential_access_per_hour, 0), 2) AS baseline_mean_credential_access_per_hour,
+          ROUND(COALESCE(b.stddev_credential_access_per_hour, 0), 2) AS baseline_stddev_credential_access_per_hour,
+          b.active_utc_hour_slots,
+          COALESCE(b.active_slot_count, 0) AS baseline_active_slot_count,
+
+          -- Baseline geographic from lookup table
+          b.primary_country AS baseline_primary_country,
+          b.primary_city AS baseline_primary_city,
+
+          -- RECENT ACTIVITY
+          COALESCE(r.recent_total_credential_access, 0) AS recent_total_credential_access,
+          COALESCE(r.recent_active_days, 0) AS recent_active_days,
+          COALESCE(r.recent_max_per_hour, 0) AS recent_max_per_hour,
+          ROUND(COALESCE(r.recent_avg_per_hour, 0), 2) AS recent_avg_per_hour,
+          COALESCE(r.recent_inactive_slot_events, 0) AS recent_inactive_slot_events,
+          ROUND(COALESCE(r.recent_inactive_slot_ratio, 0), 4) AS recent_inactive_slot_ratio,
+          ROUND(COALESCE(r.recent_avg_inactive_slot_ratio_per_hour, 0), 4) AS recent_avg_inactive_slot_ratio_per_hour,
+          COALESCE(rg.recent_country_diversity, 0) AS recent_country_diversity,
+          COALESCE(rg.recent_city_diversity, 0) AS recent_city_diversity,
+          rg.recent_primary_country,
+          rg.recent_primary_city,
+          r.recent_first_event,
+          r.recent_last_event,
+
+          -- Z-SCORE: inactive-slot ratio vs baseline distribution
+          ROUND(
+              (COALESCE(r.recent_avg_inactive_slot_ratio_per_hour, 0) - b.mean_inactive_slot_ratio_per_hour) /
+              NULLIF(b.stddev_inactive_slot_ratio_per_hour, 0),
+              2
+          ) AS z_score_inactive_slot_ratio,
+
+          -- GEOGRAPHIC SHIFT FLAG
+          CASE
+              WHEN b.primary_country IS NOT NULL
+                  AND rg.recent_primary_country IS NOT NULL
+                  AND b.primary_country != rg.recent_primary_country
+              THEN TRUE
+              ELSE FALSE
+          END AS is_geographic_shift,
+
+          -- INACTIVE HOUR FLAG: inactive-slot ratio is statistically anomalous (z > 3)
+          CASE
+              WHEN b.active_utc_hour_slots IS NOT NULL
+                  AND b.stddev_inactive_slot_ratio_per_hour IS NOT NULL
+                  AND (COALESCE(r.recent_avg_inactive_slot_ratio_per_hour, 0) - b.mean_inactive_slot_ratio_per_hour) /
+                      NULLIF(b.stddev_inactive_slot_ratio_per_hour, 0) > 3
+              THEN TRUE ELSE FALSE
+          END AS is_inactive_hour_anomaly,
+
+          -- COLD START FLAG: no baseline exists yet
+          CASE
+              WHEN b.active_utc_hour_slots IS NULL
+                  AND r.recent_total_credential_access >= 3
+              THEN TRUE ELSE FALSE
+          END AS is_cold_start,
+
+          -- OVERALL ANOMALY FLAG
+          CASE
+              WHEN (
+                  -- Inactive-slot ratio is statistically anomalous (z > 3)
+                  (b.active_utc_hour_slots IS NOT NULL
+                      AND b.stddev_inactive_slot_ratio_per_hour IS NOT NULL
+                      AND (COALESCE(r.recent_avg_inactive_slot_ratio_per_hour, 0) - b.mean_inactive_slot_ratio_per_hour) /
+                          NULLIF(b.stddev_inactive_slot_ratio_per_hour, 0) > 3)
+                  OR
+                  -- Cold start: credential access with no baseline
+                  (b.active_utc_hour_slots IS NULL
+                      AND r.recent_total_credential_access >= 3)
+                  OR
+                  -- Geographic shift with any credential access
+                  (b.primary_country IS NOT NULL
+                      AND rg.recent_primary_country IS NOT NULL
+                      AND b.primary_country != rg.recent_primary_country)
+              ) THEN TRUE
+              ELSE FALSE
+          END AS is_anomalous,
+
+          -- ANOMALY SEVERITY SCORE
+          ROUND(
+              -- Weight inactive slot events (more events in unusual hours = higher score)
+              COALESCE(r.recent_inactive_slot_events, 0) * 2 +
+              -- Geographic shift adds flat weight
+              CASE
+                  WHEN b.primary_country IS NOT NULL
+                      AND rg.recent_primary_country IS NOT NULL
+                      AND b.primary_country != rg.recent_primary_country THEN 5
+                  ELSE 0
+              END +
+              -- Cold start: weight by total events
+              CASE
+                  WHEN b.active_utc_hour_slots IS NULL
+                  THEN COALESCE(r.recent_total_credential_access, 0) * 0.5
+                  ELSE 0
+              END,
+              2
+          ) AS anomaly_severity_score
+
+      FROM recent_stats r
+      LEFT JOIN recent_geo rg ON r.admin_email = rg.admin_email
+      LEFT JOIN panther_lookups.public.okta_baseline_90d b ON r.admin_email = b.user_email
+  )
+
+  SELECT
+      admin_email,
+
+      -- Baseline context
+      baseline_total_credential_access,
+      baseline_active_days,
+      baseline_hours_with_activity,
+      baseline_mean_credential_access_per_hour,
+      baseline_stddev_credential_access_per_hour,
+      baseline_active_slot_count,
+      baseline_primary_country,
+      baseline_primary_city,
+
+      -- Recent activity
+      recent_total_credential_access,
+      recent_active_days,
+      recent_max_per_hour,
+      recent_avg_per_hour,
+      recent_inactive_slot_events,
+      recent_inactive_slot_ratio,
+      recent_avg_inactive_slot_ratio_per_hour,
+      z_score_inactive_slot_ratio,
+      recent_country_diversity,
+      recent_city_diversity,
+      recent_primary_country,
+      recent_primary_city,
+      recent_first_event,
+      recent_last_event,
+
+      -- Anomaly flags
+      is_inactive_hour_anomaly,
+      is_cold_start,
+      is_geographic_shift,
+      is_anomalous,
+      anomaly_severity_score
+
+  FROM admin_anomalies
+  WHERE is_anomalous = TRUE
+  ORDER BY anomaly_severity_score DESC
+  LIMIT 100
+Schedule:
+  RateMinutes: 1440  # Run once per day
+  TimeoutMinutes: 10
+Tags:
+  - Okta
+  - SWA
+  - Credential Access
+  - Anomaly Detection
+  - Statistical Analysis

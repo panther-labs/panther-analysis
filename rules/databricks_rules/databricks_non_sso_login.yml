@@ -1,0 +1,91 @@
+AnalysisType: rule
+Filename: databricks_non_sso_login.py
+RuleID: "Databricks.Audit.NonSSOLogin"
+DisplayName: "Databricks Non-SSO Login Detected"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Initial Access
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078 # Valid Accounts
+Severity: Info
+Description: >
+  Detects successful logins that bypass SSO (SAML). In organizations that enforce SSO,
+  non-SAML logins may indicate credential compromise, misconfigured service accounts,
+  or unauthorized access methods.
+Runbook: |
+  1. Verify whether the user is expected to use non-SSO authentication
+  2. Check if this is a service account or automation that legitimately bypasses SSO
+  3. Review the authentication_method in alert context
+Reference: https://github.com/databricks-solutions/cybersec-workspace-detection-app/tree/main/base/detections/behavioral
+Tests:
+  - Name: Non-SSO Login - Token Auth
+    ExpectedResult: true
+    Log:
+      serviceName: "accounts"
+      actionName: "tokenLogin"
+      userIdentity:
+        email: "user@example.com"
+      requestParams:
+        authentication_method: "TOKEN"
+      response:
+        statusCode: 200
+
+  - Name: SSO Login - Should Not Alert
+    ExpectedResult: false
+    Log:
+      serviceName: "accounts"
+      actionName: "samlLogin"
+      userIdentity:
+        email: "user@example.com"
+      requestParams:
+        authentication_method: "BROWSER_BYO_IDP_SAML"
+      response:
+        statusCode: 200
+
+  - Name: Failed Login - Should Not Alert
+    ExpectedResult: false
+    Log:
+      serviceName: "accounts"
+      actionName: "tokenLogin"
+      userIdentity:
+        email: "user@example.com"
+      requestParams:
+        authentication_method: "TOKEN"
+      response:
+        statusCode: 401
+
+  - Name: No Auth Method - Non-SAML Action Should Alert
+    ExpectedResult: true
+    Log:
+      serviceName: "accounts"
+      actionName: "tokenLogin"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 200
+  - Name: No Auth Method - SAML Action Should Not Alert
+    ExpectedResult: false
+    Log:
+      serviceName: "accounts"
+      actionName: "samlLogin"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 200
+
+  - Name: Non-Login Action - Should Not Alert
+    ExpectedResult: false
+    Log:
+      serviceName: "accounts"
+      actionName: "createUser"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        authentication_method: "TOKEN"
+      response:
+        statusCode: 200

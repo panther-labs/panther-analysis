@@ -1,4 +1,4 @@
-from panther_base_helpers import ZENDESK_CHANGE_DESCRIPTION
+from panther_zendesk_helpers import ZENDESK_CHANGE_DESCRIPTION
 
 USER_SUSPENSION_ACTIONS = {
     "create",
@@ -25,4 +25,4 @@ def title(event):
 def severity(event):
     if event.get(ZENDESK_CHANGE_DESCRIPTION, "").lower() == "suspended":
         return "INFO"
-    return "HIGH"
+    return "DEFAULT"

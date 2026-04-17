@@ -1,8 +1,8 @@
 AnalysisType: rule
 Filename: new_aws_account_logging.py
-RuleID: Standard.NewAWSAccountCreated
-DisplayName: New AWS Account Created
-Enabled: false
+RuleID: "Standard.NewAWSAccountCreated"
+DisplayName: "New AWS Account Created"
+Enabled: true
 LogTypes:
   - AWS.CloudTrail
 Tags:
@@ -15,11 +15,11 @@ Reports:
     - TA0003:T1136
 Description: A new AWS account was created
 Runbook: A new AWS account was created, ensure it was created through standard practice and is for a valid purpose.
+Reference: https://docs.aws.amazon.com/organizations/latest/userguide/orgs_security_incident-response.html#:~:text=AWS%20Organizations%20information%20in%20CloudTrail
 SummaryAttributes:
   - p_any_aws_account_ids
 Tests:
-  -
-    Name: AWS Account created
+  - Name: AWS Account created
     ExpectedResult: true
     Mocks:
       - objectName: put_string_set
@@ -35,19 +35,14 @@ Tests:
         "eventVersion": "1.08",
         "managementEvent": true,
         "p_log_type": "AWS.CloudTrail",
-        "p_any_aws_account_ids": [
-          "111111111111",
-          "222222222222"
-          ],
+        "p_any_aws_account_ids": ["111111111111", "222222222222"],
         "p_event_time": "2021-05-20 15:53:47Z",
         "readOnly": false,
         "recipientAccountId": "292442345278",
         "serviceEventDetails": "{\n  \"createAccountStatus\": {\n    \"accountId\": \"1111111111111111\",\n    \"accountName\": \"****\",\n    \"completedTimestamp\": \"May 20, 2021 3:53:47 PM\",\n    \"id\": \"car-aaaaaaaaaaaaaaaaaaaaaaaaaaa\",\n    \"requestedTimestamp\": \"May 20, 2021 3:53:44 PM\",\n    \"state\": \"SUCCEEDED\"\n  }\n}",
       }
 
-
-  -
-    Name: Non-Account-Creation Event
+  - Name: Non-Account-Creation Event
     ExpectedResult: false
     Mocks:
       - objectName: put_string_set
@@ -66,8 +61,5 @@ Tests:
         "sourceIPAddress": "72.177.120.134",
         "p_event_time": "2020-11-05 21:21:46Z",
         "p_log_type": "AWS.CloudTrail",
-        "p_any_aws_account_ids": [
-        "222222222222"
-        ],
-    }
-
+        "p_any_aws_account_ids": ["222222222222"],
+      }

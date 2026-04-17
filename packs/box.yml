@@ -5,8 +5,6 @@ PackDefinition:
   IDs:
     - Box.Access.Granted
     - Box.Shield.Anomalous.Download
-    - Box.Event.Triggered.Externally
-    - Box.Item.Shared.Externally
     - Box.Malicious.Content
     - Box.New.Login
     - Box.Content.Workflow.Policy.Violation
@@ -17,4 +15,7 @@ PackDefinition:
     # Globals used in these detections
     - panther_base_helpers
     - panther_box_helpers
-DisplayName: Panther Box Pack
+    - panther_event_type_helpers
+    # Data Models
+    - Standard.Box.Event
+DisplayName: "Panther Box Pack"

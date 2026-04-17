@@ -1,13 +1,14 @@
 AnalysisType: rule
 Filename: aws_unused_region.py
-RuleID: AWS.UnusedRegion
-DisplayName: Unused AWS Region
+RuleID: "AWS.UnusedRegion"
+DisplayName: "Unused AWS Region"
 Enabled: false
 LogTypes:
   - AWS.CloudTrail
 Tags:
   - AWS
   - Defense Evasion:Unused/Unsupported Cloud Regions
+  - Configuration Required
 Reports:
   MITRE ATT&CK:
     - TA0005:T1535
@@ -18,7 +19,7 @@ Reference: https://attack.mitre.org/techniques/T1535/
 SummaryAttributes:
   - eventSource
   - eventName
-  - accountId
+  - recipientAccountId
   - awsRegion
   - p_any_aws_arns
 Tests:

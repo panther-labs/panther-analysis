@@ -1,0 +1,85 @@
+AnalysisType: rule
+RuleID: ZIA.Golden.Restore.Point.Dropped
+Description: This rule detects when ZIA goldenRestorePoint was dropped. 
+  It means that some piece of information that was impossible to delete before, now is deletable
+DisplayName: ZIA Golden Restore Point Dropped
+Runbook: Verify that this change was planned. If not, revert the change.
+Reference: https://help.zscaler.com/zia/about-backup-and-restore
+Enabled: true
+Filename: zia_golden_restore_point_dropped.py
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562.008 # Disable or Modify Cloud Logs
+LogTypes:
+  - Zscaler.ZIA.AdminAuditLog
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+  - Name: goldenRestorePoint dropped
+    ExpectedResult: true
+    Log:
+      {
+        "event": {
+          "action": "UPDATE",
+          "adminid": "admin@test.zscalerbeta.net",
+          "auditlogtype": "ZIA",
+          "category": "BACKUP_AND_RESTORE",
+          "clientip": "1.2.3.4",
+          "errorcode": "None",
+          "interface": "UI",
+          "postaction": {
+            "adminLogin": "admin@test.zscalerbeta.net",
+            "goldenRestorePoint": false,
+            "id": 163371,
+            "name": "test-restore",
+            "time": 1730737915000
+          },
+          "preaction": {
+            "adminLogin": "admin@test.zscalerbeta.net",
+            "goldenRestorePoint": true,
+            "id": 163371,
+            "name": "test-restore",
+            "time": 1730737915000
+          },
+          "recordid": "367",
+          "resource": "test-restore",
+          "result": "SUCCESS",
+          "subcategory": "BACKUP_AND_RESTORE",
+          "time": "2024-11-04 16:32:28.000000000"
+        },
+        "sourcetype": "zscalernss-audit"
+      }
+  - Name: Backup created
+    ExpectedResult: false
+    Log:
+      {
+        "event": {
+          "action": "CREATE",
+          "adminid": "admin@test.zscalerbeta.net",
+          "auditlogtype": "ZIA",
+          "category": "BACKUP_AND_RESTORE",
+          "clientip": "1.2.3.4",
+          "errorcode": "None",
+          "interface": "UI",
+          "postaction": {
+            "adminLogin": "admin@test.zscalerbeta.net",
+            "goldenRestorePoint": false,
+            "id": 163372,
+            "name": "test-restore-2",
+            "time": 1730737925000
+          },
+          "preaction": {
+            "goldenRestorePoint": false,
+            "id": 0,
+            "name": "test-restore-2",
+            "time": 0
+          },
+          "recordid": "365",
+          "resource": "test-restore-2",
+          "result": "SUCCESS",
+          "subcategory": "BACKUP_AND_RESTORE",
+          "time": "2024-11-04 16:32:05.000000000"
+        },
+        "sourcetype": "zscalernss-audit"
+      }

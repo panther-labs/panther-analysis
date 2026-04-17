@@ -1,14 +1,13 @@
-from panther import aws_cloudtrail_success, lookup_aws_account_name
-from panther_base_helpers import deep_get
+from panther_aws_helpers import aws_cloudtrail_success
 
 EVENT_ALLOW_LIST = {"CreateServiceLinkedRole"}
 
 
 def rule(event):
     return (
-        deep_get(event, "userIdentity", "type") == "Root"
+        event.deep_get("userIdentity", "type") == "Root"
         and aws_cloudtrail_success(event)
-        and deep_get(event, "userIdentity", "invokedBy") is None
+        and event.deep_get("userIdentity", "invokedBy") is None
         and event.get("eventType") != "AwsServiceEvent"
         and event.get("eventName") not in EVENT_ALLOW_LIST
     )
@@ -18,7 +17,7 @@ def dedup(event):
     return (
         event.get("sourceIPAddress", "<UNKNOWN_IP>")
         + ":"
-        + lookup_aws_account_name(event.get("recipientAccountId"))
+        + event.get("recipientAccountId")
         + ":"
         + str(event.get("readOnly"))
     )
@@ -29,17 +28,17 @@ def title(event):
         "AWS root user activity "
         f"[{event.get('eventName')}] "
         "in account "
-        f"[{lookup_aws_account_name(event.get('recipientAccountId'))}]"
+        f"[{event.get('recipientAccountId')}]"
     )
 
 
 def alert_context(event):
     return {
         "sourceIPAddress": event.get("sourceIPAddress"),
-        "userIdentityAccountId": deep_get(event, "userIdentity", "accountId"),
-        "userIdentityArn": deep_get(event, "userIdentity", "arn"),
+        "userIdentityAccountId": event.deep_get("userIdentity", "accountId"),
+        "userIdentityArn": event.deep_get("userIdentity", "arn"),
         "eventTime": event.get("eventTime"),
-        "mfaUsed": deep_get(event, "additionalEventData", "MFAUsed"),
+        "mfaUsed": event.deep_get("additionalEventData", "MFAUsed"),
     }
 
 

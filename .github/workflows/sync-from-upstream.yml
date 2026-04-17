@@ -1,68 +1,121 @@
-name: sync-panther-analysis-from-upstream
+name: Sync Panther Analysis from Upstream
+
 on:
   schedule:
-    # 15:00Z, every Monday
-    - cron: "00 15 * * 1"
-  workflow_dispatch: # or on button click  
+    # 15:00Z, every Wednesday
+    - cron: "00 15 * * 3"
+  workflow_dispatch: # or on button click
+
+env:
+  YOUR_REPO_PRIMARY_BRANCH_NAME: "main"
 
 jobs:
   check_upstream:
-    ## Change the false in this if statement to true in order to run this workflow
-    if: | 
-      github.repository != 'panther-labs/panther-analysis' &&
-      false
+    if: |
+      github.repository != 'panther-labs/panther-analysis'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
+      - name: Set token
+        id: set_token
+        run: |
+          # Check if PANTHER_SYNC_UPSTREAM secret is available by trying to substitute it
+          PANTHER_SYNC_UPSTREAM="${{ secrets.PANTHER_SYNC_UPSTREAM }}"
+          if [ -n "$PANTHER_SYNC_UPSTREAM" ]; then
+            echo "Using PANTHER_SYNC_UPSTREAM for authentication"
+            echo "token=${{ secrets.PANTHER_SYNC_UPSTREAM }}" >> $GITHUB_OUTPUT
+          else
+            echo "PANTHER_SYNC_UPSTREAM not found, using default GITHUB_TOKEN"
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd #v8.0.0
         id: set_upstream
         name: Check Upstream
         with:
+          github-token: ${{ steps.set_token.outputs.token }}
           script: |
+            const fs = require('fs');
             const upstreamLatest = await github.rest.repos.getLatestRelease({
               owner: 'panther-labs',
               repo: 'panther-analysis'
             })
-            console.log("::set-output name=latest-release::" +  upstreamLatest.data.tag_name)
+            fs.appendFileSync(
+              process.env['GITHUB_OUTPUT'],
+              'latest-release=' +  upstreamLatest.data.tag_name + '\n');
       ## CREATE A BRANCH
-      - uses: peterjgrainger/action-create-branch@v2.2.0
+      - uses: peterjgrainger/action-create-branch@10c7d268152480ae859347db45dc69086cef1d9c #v3.0.0
         id: create_a_branch
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.set_token.outputs.token }}
         with:
-          branch: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}'
+          branch: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
       # Checkout this repo into the branch
-      - name: Checkout your repo
-        uses: actions/checkout@v2
+      - name: Checkout your local repo in PR branch
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
         with:
-        #  # optional: set the branch to checkout,
-        #  # sync action checks out your 'target_sync_branch' anyway
-          ref: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}'
+          ref: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
+          token: ${{ steps.set_token.outputs.token }}
       # Sync this branch with upstream
-      - name: Sync upstream changes
+      - name: Sync upstream changes into PR branch
         id: sync
-        uses: aormsby/Fork-Sync-With-Upstream-action@v3.2
+        uses: aormsby/Fork-Sync-With-Upstream-action@1090e365224fc834e7e1de521c417ded2d6fcb53 #v3.4.1
         with:
           # target_sync_branch == the branch in your fork that you want to sync to upstream
-          target_sync_branch: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}'
+          target_sync_branch: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
           # REQUIRED 'target_repo_token' exactly like this!
-          target_repo_token: ${{ secrets.GITHUB_TOKEN }}
-          #  NOTE NOTE NOTE NOTE
-          # If you want to run this job and sync to upstream's master instead of releases
-          #  change the usptream_sync_branch to master
-          upstream_sync_branch: ${{steps.set_upstream.outputs.latest-release}}
+          target_repo_token: ${{ steps.set_token.outputs.token }}
+          # Sync from upstream's main branch
+          upstream_sync_branch: main
           upstream_sync_repo: panther-labs/panther-analysis
-          #test_mode: true  
-      # Create a PR from this branch back to this fork's primary branch ( hardcoded to master ) 
-      - uses: actions/github-script@v6
+          #test_mode: true
+          upstream_pull_args: "--allow-unrelated-histories"
+      # Create a PR from this branch back to this fork's primary branch
+      - uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd #v8.0.0
         id: create_pr
-        name: Create a PR from this branch to the local primary
+        name: Create a PR to bring upstream changes into the local repo primary branch
+        if: steps.sync.outputs.has_new_commits == 'true'
         with:
+          github-token: ${{ steps.set_token.outputs.token }}
+          result-encoding: string
           script: |
-            const upstreamLatest = await github.rest.pulls.create({
-              owner: '${{github.repository_owner}}',
-              repo: '${{  github.event.repository.name }}',
-              title: 'sync this fork to panther-labs/panther-analysis ${{steps.set_upstream.outputs.latest-release}}',
-              head: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}',
-              base: 'master',
-            })
-            console.log("::set-output name=latest-release::" +  upstreamLatest.data.tag_name)
+            const fs = require('fs');
+            try {
+              const response = await github.rest.pulls.create({
+                owner: '${{github.repository_owner}}',
+                repo: '${{  github.event.repository.name }}',
+                title: 'sync this fork to panther-labs/panther-analysis ${{steps.set_upstream.outputs.latest-release}}',
+                head: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}',
+                base: '${{env.YOUR_REPO_PRIMARY_BRANCH_NAME}}',
+              });
+            } catch(e) {
+              if (e.response && e.response.data && e.response.data.errors && e.response.data.errors.length > 0 && e.response.data.errors[0].message && e.response.data.errors[0].message.includes('No commits between')) {
+                fs.appendFileSync(
+                  process.env['GITHUB_OUTPUT'],
+                  'pr_state=no-updates\n');
+              } else if (e.response && e.response.data && e.response.data.errors && e.response.data.errors.length > 0 && e.response.data.errors[0].message && e.response.data.errors[0].message.includes('A pull request already exists for')) {
+                fs.appendFileSync(
+                  process.env['GITHUB_OUTPUT'],
+                  'pr_state=update-pr-already-exists\n');
+              } else {
+                fs.appendFileSync(
+                  process.env['GITHUB_OUTPUT'],
+                  'pr_state=error\n');
+                console.log(e);
+              }
+            }
+      - id: pr_not_needed_already_exists
+        name: PR for latest release already exists
+        if: ${{ steps.create_pr.outputs.pr_state == 'update-pr-already-exists' }}
+        run: |
+          echo "PR for latest release was previously created and is not closed"
+      - id: pr_not_needed_in_sync
+        name: Local repo already synced to latest release
+        if: ${{ steps.create_pr.outputs.pr_state == 'no-updates' }}
+        run: |
+          echo "Local repo in sync with latest upstream release"
+      - id: pr_create_error
+        name: Create PR step had an error
+        if: ${{ steps.create_pr.outputs.pr_state == 'error' }}
+        run: |
+          echo "unhandled exception in PR create step. Check output of that step."
+          exit 128

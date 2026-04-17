@@ -1,0 +1,28 @@
+AnalysisType: scheduled_query
+QueryName: "Google Workspace OAuthLogin Scope Anomalous Application Access"
+Description: |
+  Detects apps requesting OAuth tokens with the OAuthLogin scope when they haven't requested
+  this scope in the previous 14 days. This scope can be used to access Google's device password
+  escrow endpoint for GAIA credential theft.
+Enabled: false
+Query: |
+  -- pragma: template
+  {% import 'anomalies' new_unique_values %}
+
+  WITH subquery AS (
+    SELECT
+      parameters:app_name AS app_name,
+      parameters:client_id AS client_id,
+      actor:email AS user_email,
+      ipAddress,
+      p_event_time
+    FROM panther_logs.public.gsuite_activityevent
+    WHERE p_occurs_since('14 days')
+      AND id:applicationName = 'token'
+      AND name = 'authorize'
+      AND ARRAY_TO_STRING(parameters:scope, ',') ILIKE '%accounts/OAuthLogin%'
+  ),
+  {{ new_unique_values('subquery', 'app_name', 'user_email', '1 day') }}
+Schedule:
+  RateMinutes: 360
+  TimeoutMinutes: 3

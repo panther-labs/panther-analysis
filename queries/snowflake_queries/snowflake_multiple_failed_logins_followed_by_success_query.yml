@@ -1,0 +1,50 @@
+AnalysisType: scheduled_query
+QueryName: "Query.Snowflake.Multiple.Logins.Followed.By.Success"
+Enabled: false
+Description: >
+  Monitor for brute force user activity.
+Query: |
+  --return multiple failed logins followed by a success
+
+  WITH login_attempts as (
+  SELECT
+      user_name,
+      client_ip,
+      reported_client_type,
+      error_code,
+      error_message,
+      event_id,
+      event_timestamp as p_event_time
+    FROM snowflake.account_usage.login_history
+    WHERE
+      p_occurs_since('1 day')
+      AND event_type = 'LOGIN'
+      AND client_ip != '0.0.0.0' -- filtering out unnecessary 'elided' snowflake entries
+  )
+  SELECT
+  *
+  FROM login_attempts
+  MATCH_RECOGNIZE(
+      PARTITION BY client_ip, user_name
+      ORDER BY p_event_time DESC -- backwards in time
+      MEASURES
+        match_number() as match_number,
+        first(p_event_time) as successful_login_time,
+        last(p_event_time) as start_of_unsuccessful_logins_time,
+        count(*) as rows_in_sequence,
+        count(row_with_success.*) as num_successes,
+        count(row_with_fail.*) as num_fails,
+        ARRAY_AGG(DISTINCT error_code) as error_codes,
+        ARRAY_AGG(DISTINCT error_message) as error_messages
+      ONE ROW PER MATCH
+      AFTER MATCH SKIP TO LAST row_with_fail
+      -- a success with fails following
+      PATTERN(row_with_success row_with_fail+)
+      DEFINE
+        row_with_success AS error_message is null,
+        row_with_fail AS error_message is not null
+    )
+  HAVING num_fails >= 5 -- changeable per environment
+Schedule:
+  CronExpression: "0 0 * * *"
+  TimeoutMinutes: 3

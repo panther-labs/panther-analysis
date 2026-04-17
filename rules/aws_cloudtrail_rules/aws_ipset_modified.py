@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context
+from panther_aws_helpers import aws_rule_context
 
 IPSET_ACTIONS = ["CreateIPSet", "UpdateIPSet"]
 
@@ -14,7 +14,7 @@ def rule(event):
 
 
 def title(event):
-    return "IPSet was modified in " f"[{event.get('recepientAccountId','')}]"
+    return "IPSet was modified in " f"[{event.get('recipientAccountId','')}]"
 
 
 def alert_context(event):

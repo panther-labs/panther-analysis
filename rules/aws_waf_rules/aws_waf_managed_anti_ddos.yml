@@ -1,0 +1,123 @@
+AnalysisType: rule
+Filename: aws_waf_managed_anti_ddos.py
+RuleID: "AWS.WAF.Managed.AntiDDoS"
+DisplayName: "AWS WAF Managed Anti-DDoS Passthrough Rule"
+Enabled: true
+LogTypes:
+  - AWS.WAFWebACL
+Tags:
+  - AWS
+  - WAF
+  - Managed Rules
+  - DDoS
+  - Impact:Endpoint Denial of Service
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1499
+Severity: Low
+Description: >
+  Detects AWS WAF Anti-DDoS managed rule group matches. Rules include ChallengeAllDuringEvent,
+  ChallengeDDoSRequests, and DDoSRequests which activate during detected DDoS events to challenge
+  or block suspicious traffic to protected resources.
+Runbook: |
+  1. Find all requests from httpRequest:clientIp and its /24 CIDR range in the 1 hour before and after this alert to assess traffic volume and patterns
+  2. Correlate with AWS Shield Advanced events and other anti-DDoS alerts targeting the same httpSourceId in the past 6 hours to determine if this is part of an active DDoS event
+  3. Check if httpRequest:clientIp appears in threat intelligence feeds associated with known DDoS botnets or attack tools
+Reference: https://docs.aws.amazon.com/waf/latest/developerguide/aws-managed-rule-groups-anti-ddos.html
+Tests:
+  - Name: Blocked DDoS tool via terminatingRuleId
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:30:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesAntiDDoSRuleSet"
+      terminatingRuleType: "MANAGED_RULE_GROUP"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.45"
+        country: "US"
+        uri: "/"
+        httpMethod: "GET"
+
+  - Name: DDoSRequests blocked in ruleGroupList
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:35:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesAntiDDoSRuleSet"
+      action: "BLOCK"
+      httpSourceName: "CF"
+      httpRequest:
+        clientIp: "198.51.100.22"
+        country: "CN"
+        uri: "/"
+        httpMethod: "GET"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesAntiDDoSRuleSet"
+          terminatingRule:
+            ruleId: "DDoSRequests"
+            action: "BLOCK"
+
+  - Name: ChallengeDDoSRequests non-terminating (COUNT mode)
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:40:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "192.0.2.100"
+        country: "RU"
+        uri: "/"
+        httpMethod: "GET"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesAntiDDoSRuleSet"
+          nonTerminatingMatchingRules:
+            - ruleId: "ChallengeDDoSRequests"
+              action: "COUNT"
+
+  - Name: ChallengeAllDuringEvent in ruleGroupList
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:45:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.99"
+        country: "BR"
+        uri: "/api/health"
+        httpMethod: "GET"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesAntiDDoSRuleSet"
+          nonTerminatingMatchingRules:
+            - ruleId: "ChallengeAllDuringEvent"
+              action: "COUNT"
+
+  - Name: Different rule group - no alert
+    ExpectedResult: false
+    Log:
+      timestamp: "2024-03-20T10:50:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesCommonRuleSet"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.45"
+
+  - Name: Normal traffic - no alert
+    ExpectedResult: false
+    Log:
+      timestamp: "2024-03-20T10:55:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "198.51.100.10"
+
+DedupPeriodMinutes: 60
+Threshold: 1

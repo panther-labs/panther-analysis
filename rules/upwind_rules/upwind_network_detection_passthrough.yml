@@ -1,0 +1,133 @@
+AnalysisType: rule
+RuleID: Upwind.Detection.Network.Passthrough
+DisplayName: Upwind Network Detection Passthrough
+Description: >
+  Re-raises Upwind network security detections in Panther. Covers port scans, DoS activity,
+  DNS anomalies, DNS-over-HTTPS abuse, and other anomalous network behaviors.
+Runbook: |
+  1. Query Upwind.Detections for all network detections against resource.name in the 24 hours before this alert to determine if this is isolated or part of a sustained pattern
+  2. Check whether resource.internet_exposure.ingress.active_communication is true and correlate with cloud network flow logs for the affected resource.region and resource.cloud_account_id to identify external actors involved
+  3. Search for other HIGH or CRITICAL alerts from the same resource.cloud_account_id in the past 7 days to determine whether this network anomaly is associated with broader threat activity
+Reference: https://docs.upwind.io/restapi/v1/get-threat-detection
+Enabled: true
+Filename: upwind_network_detection_passthrough.py
+Severity: Medium
+Status: Experimental
+LogTypes:
+  - Upwind.Detections
+DedupPeriodMinutes: 720
+Threshold: 1
+Reports:
+  MITRE ATT&CK:
+    - TA0007:T1046  # Discovery: Network Service Discovery
+Tags:
+  - Upwind
+  - Passthrough
+  - Network
+  - Discovery
+  - Network Service Discovery
+Tests:
+  - Name: High Network Detection
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2026-03-18T08:00:00Z",
+        "p_log_type": "Upwind.Detections",
+        "p_row_id": "bb1122cc3344bb1122cc3344bb1122cc",
+        "p_schema_version": 0,
+        "category": "Network Anomaly",
+        "description": "Port scanning activity detected originating from a pod.",
+        "first_seen_time": "2026-03-18T07:50:00Z",
+        "id": "det-network-001",
+        "last_seen_time": "2026-03-18T08:00:00Z",
+        "occurrence_count": 10,
+        "severity": "HIGH",
+        "status": "open",
+        "title": "Internal Port Scan Detected",
+        "type": "network_threat",
+        "upwind_console_link": "https://console.upwind.io/detections/det-network-001",
+        "resource": {
+          "cloud_account_id": "123456789012",
+          "cloud_account_name": "prod-aws",
+          "cloud_provider": "AWS",
+          "name": "scan-pod",
+          "namespace": "default",
+          "region": "us-east-1",
+          "type": "Pod",
+          "upwind_asset_id": "asset-net-001",
+          "internet_exposure": {
+            "ingress": {
+              "active_communication": true
+            }
+          }
+        },
+        "mitre_attacks": [
+          {
+            "tactic_id": "TA0007",
+            "tactic_name": "Discovery",
+            "technique_id": "T1046",
+            "technique_name": "Network Service Discovery"
+          }
+        ],
+        "triggers": [
+          {
+            "policy_id": "pol-net-001",
+            "policy_name": "Detect Internal Port Scanning",
+            "events": []
+          }
+        ]
+      }
+  - Name: Non-Network Category - Not Matched
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2026-03-18T08:00:00Z",
+        "p_log_type": "Upwind.Detections",
+        "p_row_id": "cc2233ee4455cc2233ee4455cc2233ee",
+        "p_schema_version": 0,
+        "category": "Container Execution",
+        "description": "Suspicious process execution.",
+        "first_seen_time": "2026-03-18T07:50:00Z",
+        "id": "det-runtime-002",
+        "last_seen_time": "2026-03-18T08:00:00Z",
+        "occurrence_count": 1,
+        "severity": "HIGH",
+        "status": "open",
+        "title": "Shell Spawned in Container",
+        "type": "runtime_threat",
+        "resource": {
+          "cloud_account_id": "123456789012",
+          "name": "worker-pod",
+          "region": "us-east-1",
+          "type": "Pod"
+        },
+        "mitre_attacks": [],
+        "triggers": []
+      }
+  - Name: Network Category with Unknown Severity - Suppressed
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2026-03-18T08:00:00Z",
+        "p_log_type": "Upwind.Detections",
+        "p_row_id": "dd3344ff5566dd3344ff5566dd3344ff",
+        "p_schema_version": 0,
+        "category": "Network Anomaly",
+        "description": "Minor DNS lookup volume increase.",
+        "first_seen_time": "2026-03-18T07:50:00Z",
+        "id": "det-network-002",
+        "last_seen_time": "2026-03-18T08:00:00Z",
+        "occurrence_count": 2,
+        "severity": "INFO",
+        "status": "open",
+        "title": "Elevated DNS Query Volume",
+        "type": "dns_anomaly",
+        "resource": {
+          "cloud_account_id": "123456789012",
+          "name": "dns-service",
+          "region": "eu-west-1",
+          "type": "Service"
+        },
+        "mitre_attacks": [],
+        "triggers": []
+      }

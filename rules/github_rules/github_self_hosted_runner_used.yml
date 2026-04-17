@@ -1,0 +1,146 @@
+AnalysisType: rule
+Filename: github_self_hosted_runner_used.py
+RuleID: "GitHub.Webhook.SelfHostedRunnerUsed"
+DisplayName: "GitHub Workflow Using Self-Hosted Runner"
+Enabled: true
+LogTypes:
+  - GitHub.Webhook
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195.002  # Supply Chain Compromise: Compromise Software Supply Chain
+    - TA0002:T1072  # Execution: Software Deployment Tools
+    - TA0008:T1021  # Lateral Movement: Remote Services
+Tags:
+  - CI/CD
+  - Workflow
+  - Self-Hosted
+  - Infrastructure
+CreateAlert: false
+Severity: Info
+DedupPeriodMinutes: 60
+Description: Detects when a GitHub Actions workflow runs on a self-hosted runner.
+Reference: https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners#self-hosted-runner-security
+Tests:
+  - Name: "Self-hosted runner on public repository"
+    ExpectedResult: true
+    Log:
+      action: "completed"
+      workflow_job:
+        id: 52841003143
+        name: "Build"
+        status: "completed"
+        conclusion: "success"
+        run_url: "https://github.com/example-org/example-repo/actions/runs/12345678/job/52841003143"
+        head_branch: "main"
+        head_sha: "abc123"
+        run_id: 12345678
+        runner_group_id: 1
+        runner_group_name: "Default"
+        runner_id: 42
+        runner_name: "my-runner-01"
+        started_at: "2025-10-15T18:31:06Z"
+        completed_at: "2025-10-15T18:41:54Z"
+        steps:
+          - name: "Setup"
+            status: "completed"
+            conclusion: "success"
+      repository:
+        id: 123456789
+        full_name: "example-org/example-repo"
+        private: false
+        visibility: "public"
+        allow_forking: true
+      sender:
+        login: "developer"
+
+  - Name: "Self-hosted runner on private forkable repository"
+    ExpectedResult: true
+    Log:
+      action: "completed"
+      workflow_job:
+        id: 52841003144
+        name: "Deploy"
+        status: "completed"
+        conclusion: "success"
+        run_id: 12345679
+        runner_group_id: 2
+        runner_group_name: "Production"
+        runner_id: 43
+        runner_name: "prod-runner-vm-02"
+      repository:
+        id: 123456790
+        full_name: "example-org/private-repo"
+        private: true
+        visibility: "private"
+        allow_forking: true
+      sender:
+        login: "developer"
+
+  - Name: "Self-hosted runner on private non-forkable repository"
+    ExpectedResult: true
+    Log:
+      action: "completed"
+      workflow_job:
+        id: 52841003145
+        name: "Test"
+        status: "completed"
+        conclusion: "success"
+        run_id: 12345680
+        runner_group_id: 1
+        runner_group_name: "Default"
+        runner_id: 44
+        runner_name: "internal-runner"
+      repository:
+        id: 123456791
+        full_name: "example-org/internal-repo"
+        private: true
+        visibility: "private"
+        allow_forking: false
+      sender:
+        login: "developer"
+
+  - Name: "GitHub-hosted runner (not self-hosted)"
+    ExpectedResult: false
+    Log:
+      action: "completed"
+      workflow_job:
+        id: 52841003146
+        name: "Lint"
+        status: "completed"
+        conclusion: "success"
+        run_id: 12345681
+        runner_group_id: 0
+        runner_group_name: "GitHub Actions"
+        runner_id: 1000000001
+        runner_name: "GitHub Actions 1000000001"
+      repository:
+        id: 123456792
+        full_name: "example-org/example-repo"
+        private: true
+
+  - Name: "Workflow job in progress (not completed)"
+    ExpectedResult: false
+    Log:
+      action: "in_progress"
+      workflow_job:
+        id: 52841003147
+        name: "Build"
+        status: "in_progress"
+        run_id: 12345682
+        runner_name: "my-runner-01"
+      repository:
+        id: 123456793
+        full_name: "example-org/example-repo"
+
+  - Name: "Self-hosted runner with empty name"
+    ExpectedResult: false
+    Log:
+      action: "completed"
+      workflow_job:
+        id: 52841003148
+        status: "completed"
+        run_id: 12345683
+        runner_name: ""
+      repository:
+        id: 123456794
+        full_name: "example-org/example-repo"

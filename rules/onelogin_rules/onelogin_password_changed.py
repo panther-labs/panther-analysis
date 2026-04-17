@@ -1,9 +1,8 @@
 def rule(event):
-
     # check that this is a password change event;
     # event id 11 is actor_user changed password for user
     # Normally, admin's may change a user's password (event id 211)
-    return event.get("event_type_id") == 11
+    return str(event.get("event_type_id")) == "11"
 
 
 def title(event):

@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: domain_blocked.py
-RuleID: CiscoUmbrella.DNS.Blocked
-DisplayName: Cisco Umbrella Domain Blocked
+RuleID: "CiscoUmbrella.DNS.Blocked"
+DisplayName: "Cisco Umbrella Domain Blocked"
 Enabled: true
 DedupPeriodMinutes: 480 # 8 hours
 LogTypes:
@@ -11,6 +11,7 @@ Tags:
 Severity: Low
 Description: Monitor blocked domains
 Runbook: Inspect the blocked domain and lookup for malware
+Reference: https://support.umbrella.com/hc/en-us/articles/230563627-How-to-determine-if-a-domain-or-resource-is-being-blocked-using-Chrome-Net-Internals
 SummaryAttributes:
   - action
   - internalIp
@@ -18,8 +19,7 @@ SummaryAttributes:
   - domain
   - responseCode
 Tests:
-  -
-    Name: Domain Blocked
+  - Name: Domain Blocked
     ExpectedResult: true
     Log:
       {
@@ -28,10 +28,9 @@ Tests:
         "externalIp": "136.24.229.58",
         "timestamp": "2020-05-21 19:20:25.000",
         "responseCode": "NOERROR",
-        "domain": "malware.gvt2.com."
+        "domain": "malware.gvt2.com.",
       }
-  -
-    Name: Action Allowed
+  - Name: Action Allowed
     ExpectedResult: false
     Log:
       {
@@ -40,5 +39,5 @@ Tests:
         "externalIp": "136.24.229.58",
         "timestamp": "2020-05-21 19:20:25.000",
         "responseCode": "NOERROR",
-        "domain": "beacons3.gvt2.com."
+        "domain": "beacons3.gvt2.com.",
       }

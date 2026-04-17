@@ -1,0 +1,42 @@
+AnalysisType: scheduled_query
+QueryName: "AWS S3 Large Download"
+Enabled: false
+Description: >
+  Returns S3 GetObject events where a user has downloaded more than the configured threshold 
+  of data within the specified time window. Supports filtering by bucket patterns and user types.
+Tags:
+  - Beta
+  - Data Exfiltration
+Query: |-
+  SELECT 
+    userIdentity:arn as user_arn,
+    COALESCE(userIdentity:userName, userIdentity:sessionContext:sessionIssuer:userName, 'unknown') as user_name,
+    userIdentity:type as user_type,
+    requestParameters:bucketName as bucket_name,
+    sourceIPAddress as source_ip,
+    userAgent as user_agent,
+    SUM(COALESCE(additionalEventData:bytesTransferredOut::int, 0)) as total_bytes_downloaded,
+    COUNT(*) as object_count,
+    MIN(p_event_time) as first_download_time,
+    MAX(p_event_time) as last_download_time,
+    ARRAY_AGG(DISTINCT requestParameters:key) as sample_objects
+  FROM panther_logs.public.aws_cloudtrail
+  WHERE eventName = 'GetObject'
+    AND eventSource = 's3.amazonaws.com'
+    AND userIdentity:type IN ('IAMUser', 'AssumedRole', 'FederatedUser')
+    AND errorCode IS NULL
+    AND p_event_time >= DATEADD(minute, -10, CURRENT_TIMESTAMP())
+    AND userIdentity:arn NOT LIKE '%panther-snowflake-api%'
+    -- AND (requestParameters:bucketName LIKE '%sensitive%' OR requestParameters:bucketName LIKE '%prod%')
+  GROUP BY 
+    userIdentity:arn,
+    COALESCE(userIdentity:userName, userIdentity:sessionContext:sessionIssuer:userName, 'unknown'),
+    userIdentity:type,
+    requestParameters:bucketName,
+    sourceIPAddress,
+    userAgent
+  HAVING SUM(COALESCE(additionalEventData:bytesTransferredOut::int, 0)) >= 52428800  -- 50MB default
+  ORDER BY total_bytes_downloaded DESC
+Schedule:
+  RateMinutes: 10
+  TimeoutMinutes: 3

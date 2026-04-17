@@ -1,0 +1,246 @@
+AnalysisType: rule
+RuleID: "Kubernetes.Pod.SystemNamespace"
+DisplayName: "Kubernetes Pod Created in System Namespace"
+Enabled: true
+Status: Experimental
+Filename: k8s_pod_created_in_system_namespace.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Privilege Escalation
+  - Persistence
+  - Defense Evasion
+  - Unified Detection
+Severity: Medium
+Description: >
+  This detection monitors for pods being created in system namespaces like kube-system, kube-public, gke-system,
+  or kube-node-lease. These namespaces are reserved for Kubernetes control plane components and cluster infrastructure.
+  Attackers who gain cluster access may create malicious pods in system namespaces to hide among legitimate system
+  workloads, gain elevated privileges, or establish persistence mechanisms that are less likely to be noticed.
+Runbook: |
+  1. Review the pod specification to identify the container images being deployed and determine if this is a legitimate system component or malicious workload
+  2. Identify all API operations by the creating user in the 2 hours before and after the alert to establish intent
+  3. If unauthorized, immediately delete the pod and search for other suspicious pod creations or RBAC changes across all clusters in the past 7 days
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1611 # Privilege Escalation: Escape to Host
+    - TA0003:T1525 # Persistence: Implant Internal Image
+    - TA0005:T1578.002 # Defense Evasion: Modify Cloud Compute Infrastructure
+Reference: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - username
+  - namespace
+  - name
+  - p_source_label
+Tests:
+  - Name: EKS pod created in kube-system
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "attacker@example.com"},
+        "sourceIPs": ["203.0.113.42"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "kube-system",
+          "name": "malicious-pod",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Pod",
+          "metadata": {"name": "malicious-pod", "namespace": "kube-system"},
+          "spec": {
+            "containers": [
+              {
+                "name": "backdoor",
+                "image": "attacker/backdoor:latest"
+              }
+            ]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS pod created in kube-public
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"malicious-user@example.com\"},\"sourceIPs\":[\"1.2.3.4\"],\"objectRef\":{\"resource\":\"pods\",\"namespace\":\"kube-public\",\"name\":\"crypto-miner\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"kind\":\"Pod\",\"spec\":{\"containers\":[{\"name\":\"miner\",\"image\":\"cryptominer:latest\"}]}}}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GKE pod created in gke-system
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.core.v1.pods.create",
+            "resource": "core/v1/namespaces/gke-system/pods/suspicious-pod"
+          }],
+          "methodName": "io.k8s.core.v1.pods.create",
+          "requestMetadata": {"callerIP": "8.8.8.8"},
+          "resourceName": "core/v1/namespaces/gke-system/pods/suspicious-pod",
+          "serviceName": "k8s.io",
+          "request": {
+            "kind": "Pod",
+            "metadata": {"name": "suspicious-pod"},
+            "spec": {
+              "containers": [{"name": "app", "image": "nginx:latest"}]
+            }
+          }
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: EKS pod created in kube-node-lease
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "suspicious-user@example.com"},
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "kube-node-lease",
+          "name": "hidden-pod"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Pod",
+          "spec": {
+            "containers": [{"name": "app", "image": "alpine:latest"}]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: Pod created in application namespace
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "developer@example.com"},
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "production",
+          "name": "app-pod"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Pod",
+          "spec": {
+            "containers": [{"name": "app", "image": "myapp:v1"}]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: System principal creating pod in kube-system (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "system:serviceaccount:kube-system:controller"},
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "kube-system",
+          "name": "system-pod"
+        },
+        "responseStatus": {"code": 201},
+        "requestObject": {
+          "kind": "Pod",
+          "spec": {
+            "containers": [{"name": "controller", "image": "k8s.gcr.io/controller:v1"}]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Failed pod creation (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "attacker@example.com"},
+        "objectRef": {
+          "resource": "pods",
+          "namespace": "kube-system",
+          "name": "malicious-pod"
+        },
+        "responseStatus": {"code": 403},
+        "requestObject": {
+          "kind": "Pod",
+          "spec": {
+            "containers": [{"name": "backdoor", "image": "attacker:latest"}]
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Deployment creating pod (not direct pod creation)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "create",
+        "user": {"username": "developer@example.com"},
+        "objectRef": {
+          "resource": "deployments",
+          "namespace": "kube-system",
+          "name": "test-deployment"
+        },
+        "responseStatus": {"code": 201},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: EKS pod eviction in kube-system (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "create",
+        "user": {"username": "eks:node-manager"},
+        "sourceIPs": ["34.210.208.192"],
+        "userAgent": "Kubernetes Java Client/18.0.0-SNAPSHOT",
+        "objectRef": {
+          "resource": "pods",
+          "subresource": "eviction",
+          "namespace": "kube-system",
+          "name": "metrics-server-86c5f959ff-rcxtk",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {
+          "code": 429,
+          "message": "Cannot evict pod as it would violate the pod's disruption budget.",
+          "reason": "TooManyRequests"
+        },
+        "requestObject": {
+          "apiVersion": "policy/v1",
+          "kind": "Eviction",
+          "metadata": {
+            "name": "metrics-server-86c5f959ff-rcxtk",
+            "namespace": "kube-system"
+          }
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }

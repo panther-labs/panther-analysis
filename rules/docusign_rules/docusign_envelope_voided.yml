@@ -1,0 +1,75 @@
+AnalysisType: rule
+Filename: docusign_envelope_voided.py
+RuleID: "Docusign.Connect.EnvelopeVoided"
+DisplayName: "DocuSign Envelope Voided"
+Enabled: true
+LogTypes:
+  - Docusign.Connect
+Tags:
+  - DocuSign
+  - Envelope
+  - Fraud
+Severity: Medium
+Description: >
+  Detects when a DocuSign envelope is voided. Frequent voiding of envelopes could indicate fraudulent
+  activity, document tampering attempts, or process abuse. Monitor for patterns of voiding behavior.
+Runbook: |
+  1. Review the envelope contents and recipients
+  2. Verify if the voiding was legitimate or suspicious
+  3. Check for patterns of envelope voiding by the same user
+  4. Review the termination reason for additional context
+  5. Consider investigating other envelopes sent by the same sender
+Reference: https://developer.docusign.com/docs/connect/events/
+SummaryAttributes:
+  - data.envelopeId
+  - data.senderEmail
+  - data.terminationReason
+Tests:
+  - Name: "Envelope Voided Event"
+    ExpectedResult: true
+    Log:
+      event: "envelope-voided"
+      uri: "/api/v2/accounts/12345/envelopes/abc123"
+      retryCount: 0
+      configurationId: "config123"
+      apiVersion: "v2.1"
+      generatedDateTime: "2024-01-15T10:30:00.000Z"
+      data:
+        accountId: "12345"
+        userId: "user123"
+        envelopeId: "envelope123"
+        senderEmail: "denethor@lotr.com"
+        terminationReason: "User voided envelope"
+        terminated_by: "user123"
+        envelopeSummary:
+          status: "voided"
+          created: "2024-01-15T09:00:00.000Z"
+  - Name: "Envelope Completed Event"
+    ExpectedResult: false
+    Log:
+      event: "envelope-completed"
+      uri: "/api/v2/accounts/12345/envelopes/abc123"
+      retryCount: 0
+      configurationId: "config123"
+      apiVersion: "v2.1"
+      generatedDateTime: "2024-01-15T10:30:00.000Z"
+      data:
+        accountId: "12345"
+        userId: "user123"
+        envelopeId: "envelope123"
+        senderEmail: "denethor@lotr.com"
+        envelopeSummary:
+          status: "completed"
+          created: "2024-01-15T09:00:00.000Z"
+  - Name: "Different Event Type"
+    ExpectedResult: false
+    Log:
+      event: "envelope-sent"
+      uri: "/api/v2/accounts/12345/envelopes/abc123"
+      retryCount: 0
+      configurationId: "config123"
+      apiVersion: "v2.1"
+      generatedDateTime: "2024-01-15T10:30:00.000Z"
+      data:
+        accountId: "12345"
+        envelopeId: "envelope123"

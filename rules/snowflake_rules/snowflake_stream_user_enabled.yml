@@ -1,0 +1,47 @@
+AnalysisType: rule
+Filename: snowflake_stream_user_enabled.py
+RuleID: Snowflake.Stream.UserEnabled
+DisplayName: Snowflake User Enabled
+Enabled: true
+LogTypes:
+  - Snowflake.QueryHistory
+Severity: Info
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1136
+Description: Detects users being re-enabled in your environment.
+Tags:
+  - Snowflake
+  - '[MITRE] Persistence'
+  - '[MITRE] Create Account'
+Tests:
+  - Name: User Enabled
+    ExpectedResult: true
+    Log:
+      {
+        "p_event_time": "2024-10-09 21:03:25.750000000",
+        "p_log_type": "Snowflake.QueryHistory",
+        "p_row_id": "6283439ab35193e891ac9ea1227b",
+        "p_source_label": "SF-Ben",
+        "EXECUTION_STATUS": "SUCCESS",
+        "QUERY_TEXT": "ALTER USER CLARK_KENT SET DISABLED=FALSE;",
+        "QUERY_TYPE": "ALTER_USER",
+        "ROLE_NAME": "ACCOUNTADMIN",
+        "USER_NAME": "LEX_LUTHOR",
+        "WAREHOUSE_NAME": "DATAOPS_WH"
+      }
+  - Name: User Disabled
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2024-10-09 21:03:25.750000000",
+        "p_log_type": "Snowflake.QueryHistory",
+        "p_row_id": "6283439ab35193e891ac9ea1227b",
+        "p_source_label": "SF-Ben",
+        "EXECUTION_STATUS": "SUCCESS",
+        "QUERY_TEXT": "ALTER USER CLARK_KENT SET DISABLED=TRUE;",
+        "QUERY_TYPE": "ALTER_USER",
+        "ROLE_NAME": "ACCOUNTADMIN",
+        "USER_NAME": "PERRY_WHITE",
+        "WAREHOUSE_NAME": "DATAOPS_WH"
+      }

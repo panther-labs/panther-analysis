@@ -10,6 +10,7 @@ ALLOWLIST_ACTIONS = [
 
 
 def rule(event):
+
     return (
         event.get("action").startswith("ip_allow_list") and event.get("action") in ALLOWLIST_ACTIONS
     )

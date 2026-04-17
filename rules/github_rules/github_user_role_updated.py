@@ -1,4 +1,5 @@
 def rule(event):
+
     return event.get("action") == "org.update_member"
 
 

@@ -1,9 +1,7 @@
-from panther_base_helpers import IN_PCI_SCOPE, deep_get
+from panther_base_helpers import deep_get
 
 
 def policy(resource):
-    if not IN_PCI_SCOPE(resource):
-        return True
 
     for rule in resource["Rules"] or []:
         # Must block the XSS

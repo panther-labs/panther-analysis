@@ -1,0 +1,87 @@
+AnalysisType: datamodel
+DataModelID: "Standard.CarbonBlack.Endpoint"
+DisplayName: "Carbon Black Endpoint - Sigma Field Mappings"
+Enabled: true
+Filename: carbonblack_endpoint_data_model.py
+LogTypes:
+  - CarbonBlack.EndpointEvent
+Mappings:
+  # Sigma Field Mappings - Process Creation
+  - Name: Image
+    Path: $.process_path
+  - Name: ParentImage
+    Path: $.parent_path
+  - Name: CommandLine
+    Path: $.target_cmdline
+  - Name: ParentCommandLine
+    Path: $.process_cmdline
+  - Name: ProcessName
+    Method: get_process_name
+  - Name: ParentProcessName
+    Method: get_parent_process_name
+
+  # Sigma Field Mappings - File Operations
+  - Name: TargetFilename
+    Path: $.filemod_name
+
+  # Sigma Field Mappings - Network
+  - Name: DestinationIp
+    Path: $.remote_ip
+  - Name: DestinationPort
+    Path: $.remote_port
+  - Name: DestinationHostname
+    Path: $.netconn_domain
+  - Name: dst_ip
+    Path: $.remote_ip
+  - Name: dst_port
+    Path: $.remote_port
+
+  # Additional Common Fields
+  - Name: User
+    Path: $.process_username
+  - Name: ProcessId
+    Path: $.process_pid
+  - Name: ParentProcessId
+    Path: $.parent_pid
+  - Name: md5
+    Path: $.process_md5
+  - Name: sha1
+    Path: $.process_sha1
+  - Name: sha256
+    Path: $.process_sha256
+
+  # Sigma Field Mappings - DNS
+  - Name: QueryName
+    Path: $.dns_query
+  - Name: query
+    Path: $.dns_query
+
+  # Sigma Field Mappings - Source Network Fields
+  - Name: SourceIp
+    Path: $.local_ip
+  - Name: SourcePort
+    Path: $.local_port
+  - Name: src_ip
+    Path: $.local_ip
+  - Name: src_port
+    Path: $.local_port
+
+  # Standard UDM Mappings
+  - Name: actor_user
+    Path: $.process_username
+  - Name: process_name
+    Method: get_process_name
+  - Name: parent_process_name
+    Method: get_parent_process_name
+  - Name: destination_ip
+    Path: $.remote_ip
+  - Name: destination_port
+    Path: $.remote_port
+  - Name: cmd
+    Path: $.target_cmdline
+
+  # Sigma Metadata Fields (normalized)
+  - Name: _event_category
+    Method: get_event_category
+  - Name: _os
+    Method: get_os

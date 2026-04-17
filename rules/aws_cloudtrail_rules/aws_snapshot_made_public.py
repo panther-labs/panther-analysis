@@ -1,7 +1,9 @@
 from collections.abc import Mapping
 
-from panther import aws_cloudtrail_success
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
+from panther_base_helpers import deep_get
+
+IS_SINGLE_USER_SHARE = False  # Used to adjust severity
 
 
 def rule(event):
@@ -18,15 +20,20 @@ def rule(event):
         for item in items:
             if not isinstance(item, (Mapping, dict)):
                 continue
-            if item.get("group") == "all":
+            if item.get("userId") or item.get("group") == "all":
+                global IS_SINGLE_USER_SHARE  # pylint: disable=global-statement
+                IS_SINGLE_USER_SHARE = "userId" in item  # Used for dynamic severity
                 return True
         return False
 
-    # RDS snapshot made public
-    if event.get("eventName") == "ModifyDBClusterSnapshotAttribute":
-        return "all" in deep_get(event, "requestParameters", "valuesToAdd", default=[])
-
     return False
+
+
+def severity(_):
+    # Set severity to INFO if only shared with a single user
+    if IS_SINGLE_USER_SHARE:
+        return "INFO"
+    return "DEFAULT"
 
 
 def alert_context(event):

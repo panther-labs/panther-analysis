@@ -1,0 +1,98 @@
+AnalysisType: correlation_rule
+RuleID: AWS.CloudTrail.SES.SESEnumeration
+DisplayName: AWS CloudTrail SES Enumeration
+Enabled: true
+Severity: Medium
+Detection:
+  - Group:
+      - ID: CheckSendingEnabled
+        RuleID: AWS.CloudTrail.SES.CheckSESSendingEnabled
+      - ID: CheckSendQuota
+        RuleID: AWS.CloudTrail.SES.CheckSendQuota
+      - ID: ListIdentities
+        RuleID: AWS.CloudTrail.SES.ListIdentities
+      - ID: CheckVerifications
+        RuleID: AWS.CloudTrail.SES.CheckIdentityVerifications
+    MatchCriteria:
+      accountRegion:
+        - GroupID: CheckSendingEnabled
+          Match: p_alert_context.accountRegion
+        - GroupID: CheckSendQuota
+          Match: p_alert_context.accountRegion
+        - GroupID: ListIdentities
+          Match: p_alert_context.accountRegion
+        - GroupID: CheckVerifications
+          Match: p_alert_context.accountRegion
+    LookbackWindowMinutes: 2160
+    Schedule:
+      RateMinutes: 1440
+      TimeoutMinutes: 2
+Reference: 
+  https://stratus-red-team.cloud/attack-techniques/AWS/aws.discovery.ses-enumerate/
+Reports:
+  MITRE ATT&CK:
+    - TA0007:T1580
+SummaryAttributes:
+  - p_any_aws_arns
+  - p_any_ip_addresses
+  - p_any_emails
+  - p_any_actor_ids
+Tags:
+  - AWS
+  - SES
+  - Discovery
+  - Cloud Service Discovery
+Tests:
+  - Name: All Events Happen
+    ExpectedResult: true
+    RuleOutputs:
+      - ID: CheckSendingEnabled
+        Matches:
+          p_alert_context.accountRegion:
+            '111122223333_us-east-1': [0]
+      - ID: CheckSendQuota
+        Matches:
+          p_alert_context.accountRegion:
+            '111122223333_us-east-1': [1]
+      - ID: ListIdentities
+        Matches:
+          p_alert_context.accountRegion:
+            '111122223333_us-east-1': [2]
+      - ID: CheckVerifications
+        Matches:
+          p_alert_context.accountRegion:
+            '111122223333_us-east-1': [3]
+  - Name: Check Verification Step Missing
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: CheckSendingEnabled
+        Matches:
+          p_alert_context.accountRegion:
+            '111122223333_us-east-1': [0]
+      - ID: CheckSendQuota
+        Matches:
+          p_alert_context.accountRegion:
+            '111122223333_us-east-1': [1]
+      - ID: ListIdentities
+        Matches:
+          p_alert_context.accountRegion:
+            '111122223333_us-east-1': [2]
+  - Name: Region Mismatch
+    ExpectedResult: false
+    RuleOutputs:
+      - ID: CheckSendingEnabled
+        Matches:
+          p_alert_context.accountRegion:
+            '111122223333_us-east-1': [0]
+      - ID: CheckSendQuota
+        Matches:
+          p_alert_context.accountRegion:
+            '111122223333_us-east-2': [1]
+      - ID: ListIdentities
+        Matches:
+          p_alert_context.accountRegion:
+            '111122223333_us-west-1': [2]
+      - ID: CheckVerifications
+        Matches:
+          p_alert_context.accountRegion:
+            '111122223333_us-west-2': [3]

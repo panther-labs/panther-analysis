@@ -1,0 +1,73 @@
+AnalysisType: correlation_rule
+RuleID: "AWS.Privilege.Escalation.Via.User.Compromise"
+DisplayName: "AWS Privilege Escalation Via User Compromise"
+Enabled: true
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1098.001 # Additional Cloud Credentials
+Detection:
+    - Sequence:
+        - ID: User Backdoored
+          RuleID: AWS.IAM.Backdoor.User.Keys
+        - ID: User Accessed
+          RuleID: AWS.CloudTrail.UserAccessKeyAuth
+      Transitions:
+        - ID: User Backdoored TO User Accessed ON IP Addr
+          From: User Backdoored
+          To: User Accessed
+          WithinTimeFrameMinutes: 60
+          Match:
+            - On: p_alert_context.ip_accessKeyId
+      Schedule:
+        RateMinutes: 1440
+        TimeoutMinutes: 10
+      LookbackWindowMinutes: 2160
+Tests:
+    - Name: Access Key Created and Used from Same IP
+      ExpectedResult: true
+      RuleOutputs:
+        - ID: User Backdoored
+          Matches:
+            p_alert_context.ip_accessKeyId:
+              1.1.1.1-FAKE_ACCESS_KEY_ID: [0]
+        - ID: User Accessed
+          Matches:
+            p_alert_context.ip_accessKeyId:
+              1.1.1.1-FAKE_ACCESS_KEY_ID: [30]
+    - Name: Access Key Created and Used from Different IPs
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: User Backdoored
+          Matches:
+            p_alert_context.ip_accessKeyId:
+              1.1.1.1-FAKE_ACCESS_KEY_ID: [0]
+        - ID: User Accessed
+          Matches:
+            p_alert_context.ip_accessKeyId:
+              2.2.2.2-FAKE_ACCESS_KEY_ID: [30]
+    - Name: Single IP Creates Access Key, Uses Different Key
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: User Backdoored
+          Matches:
+            p_alert_context.ip_accessKeyId:
+              1.1.1.1-FAKE_ACCESS_KEY_ID: [0]
+        - ID: User Accessed
+          Matches:
+            p_alert_context.ip_accessKeyId:
+              1.1.1.1-OTHER_ACCESS_KEY_ID: [30]
+    - Name: Access Key Created But Not Used
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: User Backdoored
+          Matches:
+            p_alert_context.ip_accessKeyId:
+              1.1.1.1-FAKE_ACCESS_KEY_ID: [0]
+    - Name: Access Key Used But Not Created
+      ExpectedResult: false
+      RuleOutputs:
+        - ID: User Accessed
+          Matches:
+            p_alert_context.ip_accessKeyId:
+              1.1.1.1-FAKE_ACCESS_KEY_ID: [30]

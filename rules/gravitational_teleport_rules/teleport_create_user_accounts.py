@@ -16,4 +16,7 @@ def rule(event):
 
 
 def title(event):
-    return f"User [{event.get('user', '<UNKNOWN_USER>')}] has manually modified system users"
+    return (
+        f"User [{event.get('user', '<UNKNOWN_USER>')}] has manually modified system users "
+        f"on [{event.get('cluster_name', '<UNKNOWN_CLUSTER>')}]"
+    )

@@ -1,0 +1,66 @@
+AnalysisType: rule
+Filename: axonius_too_many_failed_logins.py
+RuleID: Axonius.TooManyFailedLogins
+DisplayName: Axonius Too Many Failed Logins
+Enabled: true
+LogTypes:
+  - Axonius.Activity
+Tags:
+  - Axonius
+Severity: Medium
+Threshold: 5
+DedupPeriodMinutes: 5
+Description: Detects too many failed Axonius login attempts, which may indicate a brute-force attack
+Runbook: Review the actions taken, check credentials/service user used and escalate.
+Tests:
+  - Name: Successful Login
+    ExpectedResult: False
+    Log:
+      {
+        "event": {
+          "action": "AuditAction.LoginFrom",
+          "category": "AuditCategory.UserSession",
+          "params": {
+            "ip": "1.2.3.4",
+            "status": "successful"
+          },
+          "type": "user",
+          "user": "denethor@lotr.com"
+        },
+        "source": "axonius",
+        "time": 1752690986.344609
+      }
+  - Name: Failed Login - Counts Toward Threshold
+    ExpectedResult: True
+    Log:
+      {
+        "event": {
+          "action": "AuditAction.LoginFrom",
+          "category": "AuditCategory.UserSession",
+          "params": {
+            "ip": "1.2.3.4",
+            "status": "failure"
+          },
+          "type": "user",
+          "user": "denethor@lotr.com"
+        },
+        "source": "axonius",
+        "time": 1752690986.344609
+      }
+  - Name: Failed Login Without Username - No Match
+    ExpectedResult: False
+    Log:
+      {
+        "event": {
+          "action": "AuditAction.LoginFrom",
+          "category": "AuditCategory.UserSession",
+          "params": {
+            "ip": "172.7.1.1",
+            "status": "failure"
+          },
+          "type": "user",
+          "user": ""
+        },
+        "source": "axonius",
+        "time": 1752690986.344609
+      }

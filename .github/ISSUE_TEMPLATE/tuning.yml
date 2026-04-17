@@ -1,0 +1,86 @@
+name: "Tuning Request"
+description: "Report false positives or bugs with existing detections."
+title: "[Tuning] Rule ID"
+labels: [tuning]
+body:
+- type: input
+  attributes:
+    label: "Rule ID"
+    placeholder: "AWS.CloudTrail.Stopped"
+    description: |
+      "RuleID of the rule that you are reporting a false positive for"
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: "Description"
+    placeholder: |
+      "This rule is triggering on the `StartLogging` event, which is not expected behavior."
+    description: |
+      "Describe why you believe this is a false positive or bug."
+  validations:
+    required: true
+    
+- type: textarea
+  attributes:
+    label: "Example Log (redacted)"
+    description: |
+      "Provide an example log that triggered the rule. Please make sure to redact any sensitive information."
+    placeholder: |
+      {
+        "eventVersion": "1.05",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "111:panther-snapshot-scheduler",
+            "arn": "arn:aws:sts::123456789012:assumed-role/tester",
+            "accountId": "123456789012",
+            "accessKeyId": "1",
+            "sessionContext":
+              {
+                "attributes":
+                  {
+                    "mfaAuthenticated": "false",
+                    "creationDate": "2019-01-01T00:00:00Z",
+                  },
+                "sessionIssuer":
+                  {
+                    "type": "Role",
+                    "principalId": "1111",
+                    "arn": "arn:aws:iam::123456789012:role/tester",
+                    "accountId": "123456789012",
+                    "userName": "tester",
+                  },
+              },
+          },
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "cloudtrail.amazonaws.com",
+        "eventName": "StartLogging",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "111.111.111.111",
+        "userAgent": "Mozilla",
+        "requestParameters":
+          {
+            "encryptionContext":
+              {
+                "aws:lambda:FunctionArn": "arn:aws:lambda:us-west-2:123456789012:function:test-function",
+              },
+          },
+        "responseElements": null,
+        "requestID": "1",
+        "eventID": "1",
+        "readOnly": true,
+        "resources":
+          [
+            {
+              "ARN": "arn:aws:kms:us-west-2:123456789012:key/1",
+              "accountId": "123456789012",
+              "type": "AWS::KMS::Key",
+            },
+          ],
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+      }
+  validations:
+    required: true

@@ -1,0 +1,13 @@
+AnalysisType: datamodel
+LogTypes:
+  - OCSF.DnsActivity
+DataModelID: "Standard.OCSF.DnsActivity"
+DisplayName: "OCSF DNS Activity"
+Enabled: true
+Mappings:
+  - Name: source_ip
+    Path: $.src_endpoint.ip
+  - Name: source_port
+    Path: $.src_endpoint.port
+  - Name: dns_query
+    Path: $.query.hostname

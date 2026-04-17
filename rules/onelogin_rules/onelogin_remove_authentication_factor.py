@@ -1,9 +1,8 @@
 def rule(event):
-
     # verify this is a auth factor being removed
     # event id 24 is otp device deregistration
     # event id 172 is a user deleted an authentication factor
-    return event.get("event_type_id") == 24 or event.get("event_type_id") == 172
+    return str(event.get("event_type_id")) == "24" or str(event.get("event_type_id")) == "172"
 
 
 def dedup(event):
@@ -11,7 +10,7 @@ def dedup(event):
 
 
 def title(event):
-    if event.get("event_type_id") == 172:
+    if str(event.get("event_type_id")) == "172":
         return (
             f"A user [{event.get('user_name', '<UNKNOWN_USER>')}] removed an authentication "
             f"factor [{event.get('authentication_factor_description', '<UNKNOWN_AUTH_FACTOR>')}]"

@@ -1,0 +1,23 @@
+AnalysisType: saved_query
+QueryName: "Anomalous VPC Traffic to Destination Port"
+Description: Look at which VPC hosts have been sending a lot of traffic over the past hour
+Tags:
+  - Anomaly Detection
+  - Example
+  - Statistical Anomaly
+Query: |-
+    -- pragma: template
+
+    {% import 'anomalies' statistical_anomaly %}
+
+    with subquery as (
+        SELECT *
+        FROM panther_logs.public.aws_vpcflow
+        WHERE
+          p_occurs_since('7 day')
+          AND dstAddr not like '10.%'
+          AND dstPort < 1024
+          AND flowDirection = 'egress'
+          AND pktDstAwsService is null
+    ),
+    {{ statistical_anomaly('subquery', 'srcAddr', 'bytes', 'sum', '1', 'hour', 10) }}

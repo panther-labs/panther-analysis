@@ -1,0 +1,210 @@
+AnalysisType: scheduled_rule
+Filename: okta_skeleton_key_bypass_behavioral.py
+RuleID: "Okta.SkeletonKeyBypass.Behavioral"
+DisplayName: "Okta Authentication Bypass via Skeleton Key Injection - Behavioral"
+Enabled: true
+ScheduledQueries:
+  - Query.Okta.SkeletonKeyBypassBehavioral
+Severity: High  # Default, dynamic severity in rule function
+Status: Experimental
+Tags:
+  - Identity & Access Management
+  - Okta
+  - Active Directory
+  - Defense Evasion:Modify Authentication Process
+  - Persistence:Account Manipulation
+  - Anomaly Detection
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1556  # Modify Authentication Process
+    - TA0003:T1098  # Account Manipulation
+Description: |
+  Detects potential Okta authentication bypass via skeleton key injection using behavioral z-score analysis.
+
+  Skeleton key attacks in Okta involve manipulating authentication policies to weaken MFA requirements
+  (disabling requireFactor, zeroing maxSessionLifetime) and bulk-enrolling attacker-controlled
+  authenticators on victim accounts. This detection builds a 90-day behavioral baseline for each
+  admin's policy change and factor enrollment patterns, then identifies anomalous spikes in the last
+  7 days.
+
+  **Detection Logic:**
+  - Z-score: Spike in security-weakening policy changes (> 2σ above baseline)
+  - Z-score: Spike in admin-on-behalf-of MFA factor enrollments (> 3σ above baseline)
+  - Cold-start: First-time security weakening (no prior baseline - immediate high-confidence signal)
+  - Cold-start: First-time admin-enrolled factors for other users
+
+  **Why This Matters:**
+  Skeleton key attacks require two steps: weaken authentication policies to reduce MFA friction,
+  then enroll attacker-controlled authenticators on victim accounts. This detection catches both
+  steps using behavioral baselines that adapt to legitimate admin workflows.
+
+  **Complementary Detection:**
+  Use alongside `Okta.ADAgent.TokenAbuse.Behavioral` for admin credential theft scenarios.
+
+Reference: https://www.varonis.com/blog/okta-attack-vectors
+Runbook: |
+  1. Review recent_total_weakenings and recent_max_weakenings_per_hour for admin_email against baseline_total_weakenings - query Okta SystemLog for policy.rule.update and policy.lifecycle.update events by admin_email in the 24 hours around recent_policy_first_event, focusing on changedAttributes containing requireFactor=false or maxSessionLifetimeMinutes=0
+  2. Check recent_total_admin_enrollments and z_score_admin_enrollments for user.mfa.factor.activate events by admin_email in the 7 days around recent_enrollment_first_event - identify target accounts enrolled and verify whether enrollment was authorized and factor types are consistent with corporate standards
+  3. Search for Okta.ADAgent.TokenAbuse.Behavioral or other privileged account alerts for admin_email in the 48 hours before recent_policy_first_event to determine whether the admin account itself was compromised prior to the policy manipulation
+
+DedupPeriodMinutes: 1440  # 24 hours
+SummaryAttributes:
+  - admin_email
+  - anomaly_severity_score
+  - recent_total_weakenings
+Tests:
+  # Positive Tests - Should Alert
+  - Name: First-Time Security Policy Weakening - Critical Severity
+    ExpectedResult: true
+    Log:
+      {
+        "admin_email": "attacker@company.com",
+        "baseline_total_policy_changes": 0,
+        "baseline_total_weakenings": 0,
+        "baseline_mean_weakenings_per_hour": 0.0,
+        "baseline_total_enrollments": 0,
+        "baseline_total_admin_enrollments": 0,
+        "recent_total_policy_changes": 3,
+        "recent_max_policy_changes_per_hour": 3,
+        "recent_total_weakenings": 2,
+        "recent_max_weakenings_per_hour": 2,
+        "recent_total_enrollments": 0,
+        "recent_total_admin_enrollments": 0,
+        "z_score_policy_changes": null,
+        "z_score_security_weakenings": null,
+        "z_score_enrollments": null,
+        "z_score_admin_enrollments": null,
+        "is_policy_volume_anomaly": false,
+        "is_security_weakening_anomaly": false,
+        "is_admin_enrollment_anomaly": false,
+        "is_first_time_security_weakening": true,
+        "is_first_time_admin_enrollment": false,
+        "is_anomalous": true,
+        "anomaly_severity_score": 20.0,
+        "recent_policy_first_event": "2024-01-15 02:00:00",
+        "recent_policy_last_event": "2024-01-15 03:00:00"
+      }
+
+  - Name: Security Weakening Z-Score Anomaly with Enrollment Spike - Critical Severity
+    ExpectedResult: true
+    Log:
+      {
+        "admin_email": "compromised-admin@company.com",
+        "baseline_total_policy_changes": 100,
+        "baseline_active_days_policy": 30,
+        "baseline_mean_policy_changes_per_hour": 2.0,
+        "baseline_stddev_policy_changes_per_hour": 1.0,
+        "baseline_total_weakenings": 0,
+        "baseline_mean_weakenings_per_hour": 0.0,
+        "recent_total_policy_changes": 20,
+        "recent_max_policy_changes_per_hour": 15,
+        "recent_total_weakenings": 5,
+        "recent_max_weakenings_per_hour": 5,
+        "baseline_total_enrollments": 50,
+        "baseline_active_days_enrollment": 20,
+        "baseline_mean_enrollments_per_hour": 1.0,
+        "baseline_stddev_enrollments_per_hour": 0.5,
+        "baseline_total_admin_enrollments": 2,
+        "baseline_mean_admin_enrollments_per_hour": 0.1,
+        "recent_total_enrollments": 5,
+        "recent_max_enrollments_per_hour": 3,
+        "recent_total_admin_enrollments": 2,
+        "recent_max_admin_enrollments_per_hour": 1,
+        "z_score_policy_changes": 13.0,
+        "z_score_security_weakenings": 50.0,
+        "z_score_enrollments": 4.0,
+        "z_score_admin_enrollments": 9.0,
+        "is_security_weakening_anomaly": true,
+        "is_first_time_security_weakening": false,
+        "is_first_time_admin_enrollment": false,
+        "is_anomalous": true,
+        "anomaly_severity_score": 109.0,
+        "recent_policy_first_event": "2024-01-15 10:00:00",
+        "recent_policy_last_event": "2024-01-15 14:00:00"
+      }
+
+  - Name: Bulk Admin Factor Enrollment Spike - High Severity
+    ExpectedResult: true
+    Log:
+      {
+        "admin_email": "svc-admin@company.com",
+        "baseline_total_policy_changes": 50,
+        "baseline_active_days_policy": 25,
+        "baseline_total_weakenings": 0,
+        "baseline_mean_weakenings_per_hour": 0.0,
+        "recent_total_policy_changes": 5,
+        "recent_max_policy_changes_per_hour": 2,
+        "recent_total_weakenings": 0,
+        "recent_max_weakenings_per_hour": 0,
+        "baseline_total_enrollments": 30,
+        "baseline_active_days_enrollment": 15,
+        "baseline_mean_enrollments_per_hour": 0.5,
+        "baseline_stddev_enrollments_per_hour": 0.3,
+        "baseline_total_admin_enrollments": 1,
+        "baseline_mean_admin_enrollments_per_hour": 0.02,
+        "recent_total_enrollments": 20,
+        "recent_max_enrollments_per_hour": 8,
+        "recent_total_admin_enrollments": 8,
+        "recent_max_admin_enrollments_per_hour": 8,
+        "z_score_enrollments": 25.0,
+        "z_score_admin_enrollments": 79.8,
+        "is_policy_volume_anomaly": false,
+        "is_security_weakening_anomaly": false,
+        "is_admin_enrollment_anomaly": true,
+        "is_first_time_security_weakening": false,
+        "is_first_time_admin_enrollment": false,
+        "is_anomalous": true,
+        "anomaly_severity_score": 79.8,
+        "recent_enrollment_first_event": "2024-01-15 09:00:00",
+        "recent_enrollment_last_event": "2024-01-15 11:00:00"
+      }
+
+  - Name: First-Time Admin Enrollment - Medium Severity
+    ExpectedResult: true
+    Log:
+      {
+        "admin_email": "new-admin@company.com",
+        "baseline_total_policy_changes": 0,
+        "baseline_total_weakenings": 0,
+        "baseline_total_enrollments": 0,
+        "baseline_total_admin_enrollments": 0,
+        "recent_total_policy_changes": 0,
+        "recent_total_weakenings": 0,
+        "recent_total_enrollments": 3,
+        "recent_total_admin_enrollments": 3,
+        "recent_max_admin_enrollments_per_hour": 3,
+        "z_score_policy_changes": null,
+        "z_score_security_weakenings": null,
+        "z_score_admin_enrollments": null,
+        "is_first_time_security_weakening": false,
+        "is_first_time_admin_enrollment": true,
+        "is_anomalous": true,
+        "anomaly_severity_score": 9.0,
+        "recent_enrollment_first_event": "2024-01-15 16:00:00",
+        "recent_enrollment_last_event": "2024-01-15 16:00:00"
+      }
+
+  # Note: rule() only validates admin_email; anomaly thresholds are enforced at the query level.
+  # All rows reaching rule() with a valid admin_email are expected to return true.
+
+  # Negative Tests - Should Not Alert
+  - Name: Malformed Row - Missing Admin Email
+    ExpectedResult: false
+    Log:
+      {
+        "baseline_total_policy_changes": 100,
+        "recent_total_weakenings": 5,
+        "is_anomalous": true,
+        "anomaly_severity_score": 50.0
+      }
+
+  - Name: Malformed Row - Empty Admin Email String
+    ExpectedResult: false
+    Log:
+      {
+        "admin_email": "",
+        "baseline_total_policy_changes": 100,
+        "recent_total_weakenings": 5,
+        "is_anomalous": true,
+        "anomaly_severity_score": 50.0
+      }

@@ -1,7 +1,7 @@
 AnalysisType: policy
 Filename: aws_guardduty_enabled.py
-PolicyID: AWS.GuardDuty.Enabled
-DisplayName: AWS GuardDuty Enabled
+PolicyID: "AWS.GuardDuty.Enabled"
+DisplayName: "AWS GuardDuty Enabled"
 Enabled: true
 ResourceTypes:
   - AWS.GuardDuty.Detector.Meta
@@ -9,6 +9,7 @@ Tags:
   - AWS
   - Security Control
   - Defense Evasion:Impair Defenses
+  - Configuration Required
 Reports:
   MITRE ATT&CK:
     - TA0005:T1562
@@ -19,8 +20,7 @@ Runbook: >
   https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-guardduty-is-enabled
 Reference: https://aws.amazon.com/guardduty/
 Tests:
-  -
-    Name: Detectors Do Not Exist
+  - Name: Detectors Do Not Exist
     ExpectedResult: false
     Resource:
       {
@@ -30,10 +30,9 @@ Tests:
         "ResourceId": "123456789012::AWS.GuardDuty.Detector.Meta",
         "ResourceType": "AWS.GuardDuty.Detector.Meta",
         "TimeCreated": null,
-        "Detectors": []
+        "Detectors": [],
       }
-  -
-    Name: Detectors Exist
+  - Name: Detectors Exist
     ExpectedResult: true
     Resource:
       {
@@ -43,14 +42,14 @@ Tests:
         "ResourceId": "123456789012::AWS.GuardDuty.Detector.Meta",
         "ResourceType": "AWS.GuardDuty.Detector.Meta",
         "TimeCreated": null,
-        "Detectors": [
-          "123456789012:ap-southeast-2:AWS.GuardDuty.Detector",
-          "123456789012:eu-central-1:AWS.GuardDuty.Detector",
-          "123456789012:us-west-2:AWS.GuardDuty.Detector"
-        ]
+        "Detectors":
+          [
+            "123456789012:ap-southeast-2:AWS.GuardDuty.Detector",
+            "123456789012:eu-central-1:AWS.GuardDuty.Detector",
+            "123456789012:us-west-2:AWS.GuardDuty.Detector",
+          ],
       }
-  -
-    Name: Detectors Exist But Not in Required Regions
+  - Name: Detectors Exist But Not in Required Regions
     ExpectedResult: false
     Resource:
       {
@@ -60,8 +59,9 @@ Tests:
         "ResourceId": "123456789012::AWS.GuardDuty.Detector.Meta",
         "ResourceType": "AWS.GuardDuty.Detector.Meta",
         "TimeCreated": null,
-        "Detectors": [
-          "123456789012:ap-southeast-2:AWS.GuardDuty.Detector",
-          "123456789012:eu-central-1:AWS.GuardDuty.Detector"
-        ]
+        "Detectors":
+          [
+            "123456789012:ap-southeast-2:AWS.GuardDuty.Detector",
+            "123456789012:eu-central-1:AWS.GuardDuty.Detector",
+          ],
       }

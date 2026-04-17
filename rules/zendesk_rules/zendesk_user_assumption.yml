@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: zendesk_user_assumption.py
-RuleID: Zendesk.UserAssumption
-DisplayName: Enabled Zendesk Support to Assume Users
+RuleID: "Zendesk.UserAssumption"
+DisplayName: "Enabled Zendesk Support to Assume Users"
 Enabled: true
 LogTypes:
   - Zendesk.Audit
@@ -15,11 +15,11 @@ Severity: Medium
 Description: User enabled or disabled zendesk support user assumption.
 Runbook: >
   Investigate whether allowing zendesk support to assume users is necessary. If not, disable the feature.
+Reference: https://support.zendesk.com/hc/en-us/articles/4408894200474-Assuming-end-users#:~:text=In%20Support%2C%20click%20the%20Customers,user%20in%20the%20information%20dialog
 SummaryAttributes:
-  - p_any_addresses
+  - p_any_ip_addresses
 Tests:
-  - 
-    Name: User assumption settings changed
+  - Name: User assumption settings changed
     ExpectedResult: true
     Log:
       {
@@ -27,6 +27,7 @@ Tests:
         "id": 123456789123,
         "action_label": "Updated",
         "actor_id": 123,
+        "actor_name": "John Doe",
         "source_id": 123,
         "source_type": "account_setting",
         "source_label": "Account Assumption",
@@ -34,10 +35,9 @@ Tests:
         "change_description": "Changed",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit"
+        "p_log_type": "Zendesk.Audit",
       }
-  -
-    Name: Zendesk - Credit Card Redaction On
+  - Name: Zendesk - Credit Card Redaction On
     ExpectedResult: false
     Log:
       {
@@ -45,6 +45,7 @@ Tests:
         "id": 123456789123,
         "action_label": "Updated",
         "actor_id": 123,
+        "actor_name": "John Doe",
         "source_id": 123,
         "source_type": "account_setting",
         "source_label": "Credit Card Redaction",
@@ -52,5 +53,5 @@ Tests:
         "change_description": "Enabled",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit"
+        "p_log_type": "Zendesk.Audit",
       }

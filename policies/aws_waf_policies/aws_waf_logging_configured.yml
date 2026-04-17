@@ -1,0 +1,91 @@
+AnalysisType: policy
+Filename: aws_waf_logging_configured.py
+PolicyID: "AWS.WAF.LoggingConfigured"
+DisplayName: "AWS WAF Logging Configured"
+Enabled: true
+ResourceTypes:
+  - AWS.WAF.Regional.WebACL
+  - AWS.WAF.WebACL
+Tags:
+  - AWS
+  - Monitoring
+  - Logging
+  - Security Control
+  - Defense Evasion:Impair Defenses
+Reports:
+  PCI:
+    - 10.5.5
+  MITRE ATT&CK:
+    - TA0005:T1562
+Severity: High
+Description: >
+  Ensures that AWS WAF logging is enabled and that the logs are being sent to a valid destination (S3, CloudWatch, or Kinesis Firehose). Without logging, visibility into WAF activity is severely limited, increasing the risk of undetected attacks.
+Runbook: >
+  Ensure AWS WAF logging is configured to at least one valid destination such as an Amazon S3 bucket, Amazon CloudWatch Logs, or Amazon Kinesis Data Firehose. Refer to the AWS WAF logging documentation for setup instructions.
+Reference: https://docs.aws.amazon.com/waf/latest/developerguide/logging.html
+Tests:
+  - Name: WAF Logging Configured to CloudWatch Logs
+    ExpectedResult: true
+    Resource:
+      LoggingConfiguration:
+        LogDestinationConfigs:
+          - "arn:aws:logs:us-west-2:123456789012:log-group:example-log-group"
+        RedactedFields: null
+
+  - Name: WAF Logging Configured to S3
+    ExpectedResult: true
+    Resource:
+      LoggingConfiguration:
+        LogDestinationConfigs:
+          - "arn:aws:s3:::example-bucket/waf-logs/"
+        RedactedFields: null
+
+  - Name: WAF Logging Configured to Kinesis Firehose
+    ExpectedResult: true
+    Resource:
+      LoggingConfiguration:
+        LogDestinationConfigs:
+          - "arn:aws:firehose:us-west-2:123456789012:deliverystream/example-firehose"
+        RedactedFields: null
+
+  - Name: WAF Logging Not Configured
+    ExpectedResult: false
+    Resource:
+      LoggingConfiguration: null
+
+  # Edge Case 1: Malformed CloudWatch Logs ARN
+  - Name: WAF Logging Configured with Malformed CloudWatch Logs ARN
+    ExpectedResult: false
+    Resource:
+      LoggingConfiguration:
+        LogDestinationConfigs:
+          - "arn:aws:logs:us-west-2:123456789012"  # Incorrect ARN format
+        RedactedFields: null
+
+  # Edge Case 2: Malformed S3 ARN
+  - Name: WAF Logging Configured with Malformed S3 ARN
+    ExpectedResult: false
+    Resource:
+      LoggingConfiguration:
+        LogDestinationConfigs:
+          - "arn:aws:s3::example-bucket-wrong-format"  # Incorrect ARN format
+        RedactedFields: null
+
+  # Edge Case 3: Multiple Valid Logging Destinations (S3 and Kinesis Firehose)
+  - Name: WAF Logging Configured to Both S3 and Kinesis Firehose
+    ExpectedResult: true
+    Resource:
+      LoggingConfiguration:
+        LogDestinationConfigs:
+          - "arn:aws:s3:::example-bucket/waf-logs/"
+          - "arn:aws:firehose:us-west-2:123456789012:deliverystream/example-firehose"
+        RedactedFields: null
+
+  # Edge Case 4: Malformed Kinesis Firehose ARN
+  - Name: WAF Logging Configured with Malformed Kinesis Firehose ARN
+    ExpectedResult: false
+    Resource:
+      LoggingConfiguration:
+        LogDestinationConfigs:
+          - "arn:aws:firehose:us-west-2"  # Incorrect ARN format
+        RedactedFields: null

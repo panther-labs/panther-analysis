@@ -1,5 +1,4 @@
-from panther import aws_cloudtrail_success
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 
 
 def rule(event):
@@ -9,9 +8,9 @@ def rule(event):
 
     # Check if this new NACL entry is allowing traffic from anywhere
     return (
-        deep_get(event, "requestParameters", "cidrBlock") == "0.0.0.0/0"
-        and deep_get(event, "requestParameters", "ruleAction") == "allow"
-        and deep_get(event, "requestParameters", "egress") is False
+        event.deep_get("requestParameters", "cidrBlock") == "0.0.0.0/0"
+        and event.deep_get("requestParameters", "ruleAction") == "allow"
+        and event.deep_get("requestParameters", "egress") is False
     )
 
 

@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get, slack_alert_context
+from panther_slack_helpers import slack_alert_context
 
 LEGAL_HOLD_POLICY_ACTIONS = {
     "legal_hold_policy_entities_deleted": "Slack Legal Hold Policy Entities Deleted",
@@ -17,7 +17,7 @@ def title(event):
     if event.get("action") == "legal_hold_policy_updated":
         return (
             f"Slack Legal Hold Updated "
-            f"[{deep_get(event, 'details', 'old_legal_hold_policy', 'name')}]"
+            f"[{event.deep_get('details', 'old_legal_hold_policy', 'name')}]"
         )
     if event.get("action") in LEGAL_HOLD_POLICY_ACTIONS:
         return LEGAL_HOLD_POLICY_ACTIONS.get(event.get("action"))

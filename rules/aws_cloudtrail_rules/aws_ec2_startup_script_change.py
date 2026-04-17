@@ -1,9 +1,9 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_aws_helpers import aws_rule_context
 
 
 def rule(event):
-    if event.get("eventName") == "ModifyInstanceAttribute" and deep_get(
-        event, "requestParameters", "userData"
+    if event.get("eventName") == "ModifyInstanceAttribute" and event.deep_get(
+        "requestParameters", "userData"
     ):
         return True
     return False
@@ -11,16 +11,18 @@ def rule(event):
 
 def title(event):
     return (
-        f"[{deep_get(event,'userIdentity','arn')}] "
+        f"[{event.deep_get('userIdentity','arn')}] "
         "modified the startup script for "
-        f" [{deep_get(event, 'requestParameters', 'instanceId')}] "
+        f" [{event.deep_get('requestParameters', 'instanceId')}] "
         f"in [{event.get('recipientAccountId')}] - [{event.get('awsRegion')}]"
     )
 
 
 def dedup(event):
-    return deep_get(event, "requestParameters", "instanceId")
+    return event.deep_get("requestParameters", "instanceId")
 
 
 def alert_context(event):
-    return aws_rule_context(event)
+    context = aws_rule_context(event)
+    context["instance_ids"] = [event.deep_get("requestParameters", "instanceId"), "no_instance_id"]
+    return context

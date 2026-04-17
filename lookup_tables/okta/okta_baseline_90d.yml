@@ -1,0 +1,627 @@
+AnalysisType: lookup_table
+LookupName: okta_baseline_90d
+Enabled: false
+Refresh:
+  PeriodMinutes: 1440
+Description: |
+  Shared 90-day behavioral baseline for all Okta users with event-specific statistical baselines
+  for security detections.
+
+  GENERAL SECTION (90-day, all events):
+  - Scalar features: volume, diversity counts, temporal ratios, security patterns
+  - Distribution features: country, IP, hour, app, browser, OS, ASN, MFA factor, VPN
+
+  EVENT-SPECIFIC SECTIONS (90-day, per detection):
+  - Policy changes: mean/stddev of hourly policy.rule.update + policy.lifecycle.update counts
+    (for Okta.SkeletonKeyBypass.Behavioral)
+  - MFA enrollments: mean/stddev of hourly user.mfa.factor.activate admin-enrollment counts
+    (for Okta.SkeletonKeyBypass.Behavioral)
+  - SWA access: mean/stddev of hourly SWA user.authentication.sso stats
+    (for Okta.SWA.BulkAccess.Behavioral)
+  - Credential extractions: mean/stddev + temporal ratios for application.user_membership.change_username
+    (for Okta.SWA.BulkAccess.Behavioral and Okta.SWA.OffHoursAccess.Behavioral)
+Reference: https://www.varonis.com/blog/okta-attack-vectors
+Query: |
+  -- OKTA SHARED BEHAVIORAL BASELINE
+  -- PART 1: General 90-day baseline (all event types)
+  -- PARTS 2-5: Event-specific 90-day baselines for detection z-scores
+
+  WITH base AS (
+      SELECT
+          actor:alternateId::string AS user_email,
+          published,
+          outcome:result::string AS outcome,
+          client:geographicalContext:country::string AS country,
+          client:geographicalContext:city::string AS city,
+          client:geographicalContext:state::string AS state,
+          client:userAgent:browser::string AS browser,
+          client:userAgent:os::string AS os,
+          client:device::string AS device,
+          securityContext:asNumber::string AS asn,
+          client:ipAddress::string AS ip_address,
+          securityContext:isp::string AS isp,
+          securityContext:domain::string AS domain,
+          securityContext:asOrg::string AS asn_org,
+          authenticationContext:authenticationProvider::string AS auth_provider,
+          authenticationContext:credentialType::string AS credential_type,
+          securityContext:isProxy::boolean AS is_proxy,
+          target,
+          client:userAgent:rawUserAgent::string AS raw_user_agent,
+          debugContext:debugData:tunnels::string AS tunnels,
+          TRY_PARSE_JSON(debugContext:debugData:logOnlySecurityData::string) AS security_data,
+          TRY_PARSE_JSON(debugContext:debugData:tunnels::string) AS tunnels_parsed,
+          debugContext:debugData:deviceFingerprint::string AS device_fingerprint,
+          debugContext:debugData:threatSuspected::string AS threat_suspected,
+          debugContext:debugData:responseTime::int AS response_time_ms,
+          CASE
+              WHEN target[0]:type::string IN ('AuthenticatorEnrollment', 'AuthenticatorMethod')
+                  THEN target[0]:displayName::string
+              WHEN target[1]:type::string IN ('AuthenticatorEnrollment', 'AuthenticatorMethod')
+                  THEN target[1]:displayName::string
+              WHEN target[2]:type::string IN ('AuthenticatorEnrollment', 'AuthenticatorMethod')
+                  THEN target[2]:displayName::string
+              ELSE NULL
+          END AS mfa_factor,
+          target[0]:displayName::string AS app,
+          HOUR(published) AS utc_hour
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND actor:alternateId::string LIKE '%@%'
+  ),
+
+  tunnel_features AS (
+      SELECT
+          user_email,
+          t.value:type::string AS tunnel_type,
+          t.value:operator::string AS tunnel_operator
+      FROM base,
+      LATERAL FLATTEN(input => tunnels_parsed) t
+      WHERE tunnels_parsed IS NOT NULL
+          AND ARRAY_SIZE(tunnels_parsed) > 0
+  ),
+
+  scalar_features AS (
+      SELECT
+          user_email,
+          COUNT(*) AS total_events,
+          SUM(CASE WHEN outcome = 'SUCCESS' THEN 1 ELSE 0 END)::float / NULLIF(COUNT(*), 0) AS success_rate,
+          COUNT(DISTINCT country) AS country_diversity,
+          COUNT(DISTINCT city) AS city_diversity,
+          COUNT(DISTINCT state) AS state_diversity,
+          COUNT(DISTINCT browser) AS browser_diversity,
+          COUNT(DISTINCT os) AS os_diversity,
+          COUNT(DISTINCT device) AS device_diversity,
+          COUNT(DISTINCT asn) AS asn_diversity,
+          COUNT(DISTINCT ip_address) AS ip_diversity,
+          COUNT(DISTINCT isp) AS isp_diversity,
+          COUNT(DISTINCT domain) AS domain_diversity,
+          COUNT(DISTINCT utc_hour) AS hour_diversity,
+          COUNT(DISTINCT DATE(published)) AS active_days_count,
+          COUNT(DISTINCT auth_provider) AS authenticator_diversity,
+          COUNT(DISTINCT credential_type) AS credential_type_diversity,
+          COUNT(DISTINCT app) AS app_diversity,
+          COUNT(DISTINCT raw_user_agent) AS unique_user_agents,
+          SUM(CASE WHEN DAYOFWEEK(published) IN (0, 6) THEN 1 ELSE 0 END)::float / NULLIF(COUNT(*), 0) AS weekend_ratio,
+          SUM(CASE WHEN DAYOFWEEK(published) BETWEEN 1 AND 5 THEN 1 ELSE 0 END)::float / NULLIF(COUNT(*), 0) AS weekday_ratio,
+          SUM(CASE WHEN is_proxy = TRUE THEN 1 ELSE 0 END)::float / NULLIF(COUNT(*), 0) AS proxy_usage_ratio,
+          SUM(CASE WHEN is_proxy = TRUE THEN 1 ELSE 0 END) AS proxy_events_count,
+          MAX(CASE WHEN is_proxy = TRUE THEN 1 ELSE 0 END)::boolean AS uses_proxy,
+          SUM(CASE WHEN tunnels IS NOT NULL AND tunnels != '[]' THEN 1 ELSE 0 END) AS tunnel_events_count,
+          SUM(CASE WHEN tunnels IS NOT NULL AND tunnels != '[]' THEN 1 ELSE 0 END)::float / NULLIF(COUNT(*), 0) AS tunnel_usage_ratio,
+          MODE(country) AS primary_country,
+          MODE(city) AS primary_city,
+          MODE(browser) AS primary_browser,
+          MODE(os) AS primary_os,
+          MODE(asn) AS primary_asn,
+          MODE(asn_org) AS primary_asn_org,
+          MODE(isp) AS primary_isp,
+          MODE(domain) AS primary_domain,
+          MODE(auth_provider) AS dominant_authenticator,
+          MODE(app) AS primary_app,
+          COUNT(DISTINCT security_data:risk:level::string) AS risk_level_diversity,
+          MODE(security_data:risk:level::string) AS primary_risk_level,
+          SUM(CASE WHEN security_data:risk:level::string IN ('MEDIUM', 'HIGH') THEN 1 ELSE 0 END) AS elevated_risk_events,
+          SUM(CASE WHEN security_data:behaviors:"New Geo-Location"::string = 'POSITIVE' THEN 1 ELSE 0 END) AS new_geo_location_count,
+          SUM(CASE WHEN security_data:behaviors:"New Device"::string = 'POSITIVE' THEN 1 ELSE 0 END) AS new_device_count,
+          SUM(CASE WHEN security_data:behaviors:"New IP"::string = 'POSITIVE' THEN 1 ELSE 0 END) AS new_ip_count,
+          SUM(CASE WHEN security_data:behaviors:"Velocity"::string = 'POSITIVE' THEN 1 ELSE 0 END) AS velocity_anomaly_count,
+          SUM(CASE WHEN threat_suspected = 'true' THEN 1 ELSE 0 END) AS threat_suspected_events,
+          COUNT(DISTINCT device_fingerprint) AS device_fingerprint_diversity,
+          ROUND(AVG(response_time_ms))::int AS avg_response_time_ms,
+          MAX(response_time_ms) AS max_response_time_ms
+      FROM base
+      GROUP BY user_email
+  ),
+
+  vpn_features AS (
+      SELECT
+          user_email,
+          MAX(CASE WHEN tunnel_type = 'VPN' THEN 1 ELSE 0 END)::boolean AS vpn_uses_vpn,
+          SUM(CASE WHEN tunnel_type = 'VPN' THEN 1 ELSE 0 END) AS vpn_events_count,
+          ARRAY_AGG(DISTINCT CASE WHEN tunnel_type = 'VPN' AND tunnel_operator IS NOT NULL
+                    THEN tunnel_operator END)
+              WITHIN GROUP (ORDER BY CASE WHEN tunnel_type = 'VPN' AND tunnel_operator IS NOT NULL
+                            THEN tunnel_operator END) AS vpn_providers,
+          MODE(CASE WHEN tunnel_type = 'VPN' THEN tunnel_operator END) AS vpn_primary_provider,
+          COUNT(DISTINCT CASE WHEN tunnel_type = 'VPN' THEN tunnel_operator END) AS vpn_tunnel_operator_diversity,
+          COUNT(DISTINCT tunnel_type) AS vpn_tunnel_type_diversity,
+          ARRAY_AGG(DISTINCT tunnel_type) WITHIN GROUP (ORDER BY tunnel_type) AS vpn_tunnel_types
+      FROM tunnel_features
+      GROUP BY user_email
+  ),
+
+  country_dist AS (
+      SELECT user_email, OBJECT_AGG(country, cnt) AS country_distribution
+      FROM (SELECT user_email, country, COUNT(*) AS cnt FROM base WHERE country IS NOT NULL GROUP BY user_email, country)
+      GROUP BY user_email
+  ),
+  city_dist AS (
+      SELECT user_email, OBJECT_AGG(city, cnt) AS city_distribution
+      FROM (SELECT user_email, city, COUNT(*) AS cnt FROM base WHERE city IS NOT NULL GROUP BY user_email, city)
+      GROUP BY user_email
+  ),
+  browser_dist AS (
+      SELECT user_email, OBJECT_AGG(browser, cnt) AS browser_distribution
+      FROM (SELECT user_email, browser, COUNT(*) AS cnt FROM base WHERE browser IS NOT NULL GROUP BY user_email, browser)
+      GROUP BY user_email
+  ),
+  os_dist AS (
+      SELECT user_email, OBJECT_AGG(os, cnt) AS os_distribution
+      FROM (SELECT user_email, os, COUNT(*) AS cnt FROM base WHERE os IS NOT NULL GROUP BY user_email, os)
+      GROUP BY user_email
+  ),
+  asn_dist AS (
+      SELECT user_email, OBJECT_AGG(asn, cnt) AS asn_distribution
+      FROM (SELECT user_email, asn, COUNT(*) AS cnt FROM base WHERE asn IS NOT NULL GROUP BY user_email, asn)
+      GROUP BY user_email
+  ),
+  isp_dist AS (
+      SELECT user_email, OBJECT_AGG(isp, cnt) AS isp_distribution
+      FROM (SELECT user_email, isp, COUNT(*) AS cnt FROM base WHERE isp IS NOT NULL GROUP BY user_email, isp)
+      GROUP BY user_email
+  ),
+  domain_dist AS (
+      SELECT user_email, OBJECT_AGG(domain, cnt) AS domain_distribution
+      FROM (SELECT user_email, domain, COUNT(*) AS cnt FROM base WHERE domain IS NOT NULL GROUP BY user_email, domain)
+      GROUP BY user_email
+  ),
+  device_dist AS (
+      SELECT user_email, OBJECT_AGG(device, cnt) AS device_distribution
+      FROM (SELECT user_email, device, COUNT(*) AS cnt FROM base WHERE device IS NOT NULL GROUP BY user_email, device)
+      GROUP BY user_email
+  ),
+  ip_dist AS (
+      SELECT user_email, OBJECT_AGG(ip_address, cnt) AS ip_distribution
+      FROM (SELECT user_email, ip_address, COUNT(*) AS cnt FROM base WHERE ip_address IS NOT NULL GROUP BY user_email, ip_address)
+      GROUP BY user_email
+  ),
+  mfa_dist AS (
+      SELECT user_email, OBJECT_AGG(mfa_factor, cnt) AS mfa_factor_distribution
+      FROM (
+          SELECT user_email, mfa_factor, COUNT(*) AS cnt
+          FROM base
+          WHERE mfa_factor IS NOT NULL AND mfa_factor NOT LIKE '%@%'
+          GROUP BY user_email, mfa_factor
+      )
+      GROUP BY user_email
+  ),
+  app_dist AS (
+      SELECT user_email, OBJECT_AGG(app, cnt) AS app_distribution
+      FROM (SELECT user_email, app, COUNT(*) AS cnt FROM base WHERE app IS NOT NULL GROUP BY user_email, app)
+      GROUP BY user_email
+  ),
+  hour_dist AS (
+      SELECT user_email, OBJECT_AGG(utc_hour::VARCHAR, cnt) AS utc_hour_distribution
+      FROM (SELECT user_email, utc_hour, COUNT(*) AS cnt FROM base WHERE utc_hour IS NOT NULL GROUP BY user_email, utc_hour)
+      GROUP BY user_email
+  ),
+  vpn_provider_dist AS (
+      SELECT user_email, OBJECT_AGG(tunnel_operator, cnt) AS vpn_provider_distribution
+      FROM (
+          SELECT user_email, tunnel_operator, COUNT(*) AS cnt
+          FROM tunnel_features
+          WHERE tunnel_type = 'VPN' AND tunnel_operator IS NOT NULL
+          GROUP BY user_email, tunnel_operator
+      )
+      GROUP BY user_email
+  ),
+  vpn_tunnel_type_dist AS (
+      SELECT user_email, OBJECT_AGG(tunnel_type, cnt) AS vpn_tunnel_type_distribution
+      FROM (
+          SELECT user_email, tunnel_type, COUNT(*) AS cnt
+          FROM tunnel_features
+          WHERE tunnel_type IS NOT NULL
+          GROUP BY user_email, tunnel_type
+      )
+      GROUP BY user_email
+  ),
+
+  -- ============================================================
+  -- PART 2: POLICY CHANGES (90-day, for Skeleton Key detection)
+  -- ============================================================
+
+  policy_hourly AS (
+      SELECT
+          actor:alternateId::string AS user_email,
+          DATE_TRUNC('hour', published) AS event_hour,
+          COUNT(*) AS hourly_policy_changes,
+          SUM(CASE
+              WHEN debugContext:debugData:changedAttributes::string LIKE '%requireFactor%false%' THEN 1
+              WHEN debugContext:debugData:changedAttributes::string LIKE '%maxSessionLifetimeMinutes%0%' THEN 1
+              WHEN debugContext:debugData:changedAttributes::string RLIKE '.*minLength.*[1-6][^0-9].*' THEN 1
+              ELSE 0
+          END) AS hourly_security_weakenings
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND eventType IN ('policy.rule.update', 'policy.lifecycle.update')
+          AND actor:alternateId::string LIKE '%@%'
+      GROUP BY user_email, event_hour
+  ),
+
+  policy_stats AS (
+      SELECT
+          user_email,
+          SUM(hourly_policy_changes) AS baseline_total_policy_changes,
+          COUNT(DISTINCT DATE(event_hour)) AS baseline_active_days_policy,
+          AVG(hourly_policy_changes)::FLOAT AS mean_policy_changes_per_hour,
+          STDDEV(hourly_policy_changes) AS stddev_policy_changes_per_hour,
+          SUM(hourly_security_weakenings) AS baseline_total_weakenings,
+          AVG(hourly_security_weakenings)::FLOAT AS mean_weakenings_per_hour,
+          STDDEV(hourly_security_weakenings) AS stddev_weakenings_per_hour
+      FROM policy_hourly
+      GROUP BY user_email
+  ),
+
+  -- ============================================================
+  -- PART 3: MFA ENROLLMENTS (90-day, for Skeleton Key detection)
+  -- ============================================================
+
+  enrollment_hourly AS (
+      SELECT
+          actor:alternateId::string AS user_email,
+          DATE_TRUNC('hour', published) AS event_hour,
+          COUNT(*) AS hourly_enrollments,
+          SUM(CASE
+              WHEN actor:alternateId::string != target[0]:alternateId::string THEN 1
+              ELSE 0
+          END) AS hourly_admin_enrollments,
+          COUNT(DISTINCT target[0]:alternateId::string) AS hourly_unique_targets
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND eventType = 'user.mfa.factor.activate'
+          AND actor:alternateId::string LIKE '%@%'
+      GROUP BY user_email, event_hour
+  ),
+
+  enrollment_stats AS (
+      SELECT
+          user_email,
+          SUM(hourly_enrollments) AS baseline_total_enrollments,
+          COUNT(DISTINCT DATE(event_hour)) AS baseline_active_days_enrollment,
+          AVG(hourly_enrollments)::FLOAT AS mean_enrollments_per_hour,
+          STDDEV(hourly_enrollments) AS stddev_enrollments_per_hour,
+          SUM(hourly_admin_enrollments) AS baseline_total_admin_enrollments,
+          AVG(hourly_admin_enrollments)::FLOAT AS mean_admin_enrollments_per_hour,
+          STDDEV(hourly_admin_enrollments) AS stddev_admin_enrollments_per_hour,
+          AVG(hourly_unique_targets)::FLOAT AS mean_targets_per_hour,
+          STDDEV(hourly_unique_targets) AS stddev_targets_per_hour
+      FROM enrollment_hourly
+      GROUP BY user_email
+  ),
+
+  -- ============================================================
+  -- PART 4: SWA ACCESS (90-day, for SWA Bulk detection)
+  -- ============================================================
+
+  swa_access_hourly AS (
+      SELECT
+          actor:alternateId::string AS user_email,
+          DATE_TRUNC('hour', published) AS event_hour,
+          COUNT(*) AS hourly_swa_events,
+          COUNT(DISTINCT target[0]:displayName::string) AS hourly_app_diversity,
+          COUNT(DISTINCT client:geographicalContext:country::string) AS hourly_country_diversity,
+          COUNT(DISTINCT client:ipAddress::string) AS hourly_ip_diversity
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND eventType = 'user.authentication.sso'
+          AND actor:alternateId::string LIKE '%@%'
+          -- NOTE: swa_mode and signOnMode are internal Okta debug fields.
+          -- Availability varies by tenant. Validate against actual log samples
+          -- and adjust conditions if SWA events are not being detected.
+          AND (
+              debugContext:debugData:swa_mode::string = 'true'
+              OR debugContext:debugData:signOnMode::string LIKE '%AUTO%LOGIN%'
+              OR debugContext:debugData:signOnMode::string LIKE '%BROWSER%PLUGIN%'
+          )
+      GROUP BY user_email, event_hour
+  ),
+
+  swa_known_sources AS (
+      SELECT
+          actor:alternateId::string AS user_email,
+          ARRAY_COMPACT(ARRAY_AGG(DISTINCT client:ipAddress::string)) AS swa_known_ips,
+          ARRAY_COMPACT(ARRAY_AGG(DISTINCT client:userAgent:rawUserAgent::string)) AS swa_known_user_agents
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND eventType = 'user.authentication.sso'
+          AND actor:alternateId::string LIKE '%@%'
+          AND (
+              debugContext:debugData:swa_mode::string = 'true'
+              OR debugContext:debugData:signOnMode::string LIKE '%AUTO%LOGIN%'
+              OR debugContext:debugData:signOnMode::string LIKE '%BROWSER%PLUGIN%'
+          )
+      GROUP BY user_email
+  ),
+
+  swa_access_stats AS (
+      SELECT
+          user_email,
+          SUM(hourly_swa_events) AS baseline_total_swa_events,
+          COUNT(DISTINCT DATE(event_hour)) AS baseline_active_days_swa,
+          AVG(hourly_swa_events)::FLOAT AS mean_swa_events_per_hour,
+          STDDEV(hourly_swa_events) AS stddev_swa_events_per_hour,
+          AVG(hourly_app_diversity)::FLOAT AS mean_app_diversity_per_hour,
+          STDDEV(hourly_app_diversity) AS stddev_app_diversity_per_hour,
+          AVG(hourly_country_diversity)::FLOAT AS mean_country_diversity_per_hour,
+          STDDEV(hourly_country_diversity) AS stddev_country_diversity_per_hour,
+          AVG(hourly_ip_diversity)::FLOAT AS mean_ip_diversity_per_hour,
+          STDDEV(hourly_ip_diversity) AS stddev_ip_diversity_per_hour
+      FROM swa_access_hourly
+      GROUP BY user_email
+  ),
+
+  -- =========================================================================
+  -- PART 5: CREDENTIAL EXTRACTIONS (90-day, for SWA Bulk + SWA Off-Hours)
+  -- =========================================================================
+
+  extraction_hourly AS (
+      SELECT
+          actor:alternateId::string AS user_email,
+          DATE_TRUNC('hour', published) AS event_hour,
+          COUNT(*) AS hourly_credential_extractions,
+          COUNT(DISTINCT target[0]:alternateId::string) AS hourly_victim_diversity,
+          COUNT(DISTINCT client:geographicalContext:country::string) AS hourly_country_diversity
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND eventType = 'application.user_membership.change_username'
+          AND actor:alternateId::string LIKE '%@%'
+      GROUP BY user_email, event_hour
+  ),
+
+  -- Per-user UTC hour slot activity (DAYOFWEEK * 24 + HOUR gives a 0-167 slot per hour-of-week)
+  extraction_hour_activity AS (
+      SELECT
+          user_email,
+          DAYOFWEEK(event_hour) * 24 + HOUR(event_hour) AS utc_hour_slot,
+          COUNT(DISTINCT DATE(event_hour)) AS active_days_in_slot
+      FROM extraction_hourly
+      GROUP BY user_email, DAYOFWEEK(event_hour) * 24 + HOUR(event_hour)
+  ),
+
+  -- Array of UTC hour slots where user has meaningful historical activity (>= 3 days)
+  user_active_hour_slots AS (
+      SELECT
+          user_email,
+          ARRAY_AGG(utc_hour_slot) WITHIN GROUP (ORDER BY utc_hour_slot) AS active_utc_hour_slots,
+          COUNT(*) AS active_slot_count
+      FROM extraction_hour_activity
+      WHERE active_days_in_slot >= 3
+      GROUP BY user_email
+  ),
+
+  -- Per-hour binary flag: was this hour in an inactive slot?
+  -- Used to compute baseline distribution of inactive-slot activity for z-score gating
+  extraction_hourly_slot_classified AS (
+      SELECT
+          eh.user_email,
+          eh.event_hour,
+          CASE
+              WHEN uahs.active_utc_hour_slots IS NOT NULL
+                  AND NOT ARRAY_CONTAINS(
+                      (DAYOFWEEK(eh.event_hour) * 24 + HOUR(eh.event_hour))::VARIANT,
+                      uahs.active_utc_hour_slots)
+              THEN 1.0
+              ELSE 0.0
+          END AS is_inactive_slot_hour
+      FROM extraction_hourly eh
+      JOIN user_active_hour_slots uahs ON eh.user_email = uahs.user_email
+  ),
+
+  -- Mean and stddev of the per-hour inactive-slot ratio across the 90-day baseline window
+  extraction_inactive_stats AS (
+      SELECT
+          user_email,
+          AVG(is_inactive_slot_hour)::FLOAT AS mean_inactive_slot_ratio_per_hour,
+          STDDEV(is_inactive_slot_hour) AS stddev_inactive_slot_ratio_per_hour
+      FROM extraction_hourly_slot_classified
+      GROUP BY user_email
+  ),
+
+  extraction_stats AS (
+      SELECT
+          user_email,
+          -- SWA Bulk fields
+          SUM(hourly_credential_extractions) AS baseline_total_extractions,
+          COUNT(DISTINCT DATE(event_hour)) AS baseline_active_days_extraction,
+          AVG(hourly_credential_extractions)::FLOAT AS mean_extractions_per_hour,
+          STDDEV(hourly_credential_extractions) AS stddev_extractions_per_hour,
+          AVG(hourly_victim_diversity)::FLOAT AS mean_victim_diversity_per_hour,
+          STDDEV(hourly_victim_diversity) AS stddev_victim_diversity_per_hour,
+          AVG(hourly_country_diversity)::FLOAT AS mean_extraction_country_diversity_per_hour,
+          STDDEV(hourly_country_diversity) AS stddev_extraction_country_diversity_per_hour,
+          -- SWA Off-Hours temporal fields
+          SUM(hourly_credential_extractions) AS baseline_total_credential_access,
+          COUNT(DISTINCT DATE(event_hour)) AS baseline_active_days,
+          COUNT(*) AS baseline_hours_with_activity,
+          AVG(hourly_credential_extractions)::FLOAT AS mean_credential_access_per_hour,
+          STDDEV(hourly_credential_extractions) AS stddev_credential_access_per_hour
+      FROM extraction_hourly
+      GROUP BY user_email
+  )
+
+  SELECT
+      s.user_email,
+
+      -- General scalar features (30-day)
+      s.total_events,
+      s.success_rate,
+      s.country_diversity,
+      s.city_diversity,
+      s.state_diversity,
+      s.browser_diversity,
+      s.os_diversity,
+      s.device_diversity,
+      s.asn_diversity,
+      s.ip_diversity,
+      s.isp_diversity,
+      s.domain_diversity,
+      s.hour_diversity,
+      s.active_days_count,
+      s.authenticator_diversity,
+      s.credential_type_diversity,
+      s.app_diversity,
+      s.unique_user_agents,
+      s.weekend_ratio,
+      s.weekday_ratio,
+      s.proxy_usage_ratio,
+      s.proxy_events_count,
+      s.uses_proxy,
+      s.tunnel_events_count,
+      s.tunnel_usage_ratio,
+      s.primary_country,
+      s.primary_city,
+      s.primary_browser,
+      s.primary_os,
+      s.primary_asn,
+      s.primary_asn_org,
+      s.primary_isp,
+      s.primary_domain,
+      s.dominant_authenticator,
+      s.primary_app,
+      s.risk_level_diversity,
+      s.primary_risk_level,
+      s.elevated_risk_events,
+      s.new_geo_location_count,
+      s.new_device_count,
+      s.new_ip_count,
+      s.velocity_anomaly_count,
+      s.threat_suspected_events,
+      s.device_fingerprint_diversity,
+      s.avg_response_time_ms,
+      s.max_response_time_ms,
+      COALESCE(v.vpn_uses_vpn, FALSE) AS vpn_uses_vpn,
+      COALESCE(v.vpn_events_count, 0) AS vpn_events_count,
+      v.vpn_providers,
+      v.vpn_primary_provider,
+      COALESCE(v.vpn_tunnel_operator_diversity, 0) AS vpn_tunnel_operator_diversity,
+      COALESCE(v.vpn_tunnel_type_diversity, 0) AS vpn_tunnel_type_diversity,
+      v.vpn_tunnel_types,
+
+      -- Distribution features (30-day)
+      cd.country_distribution,
+      cid.city_distribution,
+      bd.browser_distribution,
+      od.os_distribution,
+      ad.asn_distribution,
+      isd.isp_distribution,
+      dd.domain_distribution,
+      devd.device_distribution,
+      id.ip_distribution,
+      mfad.mfa_factor_distribution,
+      apd.app_distribution,
+      hd.utc_hour_distribution,
+      vpnd.vpn_provider_distribution,
+      vttd.vpn_tunnel_type_distribution,
+
+      -- Policy change stats (90-day, Skeleton Key)
+      ps.baseline_total_policy_changes,
+      ps.baseline_active_days_policy,
+      ps.mean_policy_changes_per_hour,
+      ps.stddev_policy_changes_per_hour,
+      ps.baseline_total_weakenings,
+      ps.mean_weakenings_per_hour,
+      ps.stddev_weakenings_per_hour,
+
+      -- MFA enrollment stats (90-day, Skeleton Key)
+      es.baseline_total_enrollments,
+      es.baseline_active_days_enrollment,
+      es.mean_enrollments_per_hour,
+      es.stddev_enrollments_per_hour,
+      es.baseline_total_admin_enrollments,
+      es.mean_admin_enrollments_per_hour,
+      es.stddev_admin_enrollments_per_hour,
+      es.mean_targets_per_hour,
+      es.stddev_targets_per_hour,
+
+      -- SWA access stats (90-day, SWA Bulk)
+      sa.baseline_total_swa_events,
+      sa.baseline_active_days_swa,
+      sa.mean_swa_events_per_hour,
+      sa.stddev_swa_events_per_hour,
+      sa.mean_app_diversity_per_hour,
+      sa.stddev_app_diversity_per_hour,
+      sa.mean_country_diversity_per_hour,
+      sa.stddev_country_diversity_per_hour,
+      sa.mean_ip_diversity_per_hour,
+      sa.stddev_ip_diversity_per_hour,
+      ks.swa_known_ips,
+      ks.swa_known_user_agents,
+
+      -- Credential extraction stats (90-day, SWA Bulk + SWA Off-Hours)
+      ex.baseline_total_extractions,
+      ex.baseline_active_days_extraction,
+      ex.mean_extractions_per_hour,
+      ex.stddev_extractions_per_hour,
+      ex.mean_victim_diversity_per_hour,
+      ex.stddev_victim_diversity_per_hour,
+      ex.mean_extraction_country_diversity_per_hour,
+      ex.stddev_extraction_country_diversity_per_hour,
+      ex.baseline_total_credential_access,
+      ex.baseline_active_days,
+      ex.baseline_hours_with_activity,
+      ex.mean_credential_access_per_hour,
+      ex.stddev_credential_access_per_hour,
+      uahs.active_utc_hour_slots,
+      uahs.active_slot_count,
+      eis.mean_inactive_slot_ratio_per_hour,
+      eis.stddev_inactive_slot_ratio_per_hour,
+
+      CURRENT_TIMESTAMP AS baseline_updated_at
+
+  FROM scalar_features s
+  LEFT JOIN vpn_features v ON s.user_email = v.user_email
+  LEFT JOIN country_dist cd ON s.user_email = cd.user_email
+  LEFT JOIN city_dist cid ON s.user_email = cid.user_email
+  LEFT JOIN browser_dist bd ON s.user_email = bd.user_email
+  LEFT JOIN os_dist od ON s.user_email = od.user_email
+  LEFT JOIN asn_dist ad ON s.user_email = ad.user_email
+  LEFT JOIN isp_dist isd ON s.user_email = isd.user_email
+  LEFT JOIN domain_dist dd ON s.user_email = dd.user_email
+  LEFT JOIN device_dist devd ON s.user_email = devd.user_email
+  LEFT JOIN ip_dist id ON s.user_email = id.user_email
+  LEFT JOIN mfa_dist mfad ON s.user_email = mfad.user_email
+  LEFT JOIN app_dist apd ON s.user_email = apd.user_email
+  LEFT JOIN hour_dist hd ON s.user_email = hd.user_email
+  LEFT JOIN vpn_provider_dist vpnd ON s.user_email = vpnd.user_email
+  LEFT JOIN vpn_tunnel_type_dist vttd ON s.user_email = vttd.user_email
+  LEFT JOIN policy_stats ps ON s.user_email = ps.user_email
+  LEFT JOIN enrollment_stats es ON s.user_email = es.user_email
+  LEFT JOIN swa_access_stats sa ON s.user_email = sa.user_email
+  LEFT JOIN swa_known_sources ks ON s.user_email = ks.user_email
+  LEFT JOIN extraction_stats ex ON s.user_email = ex.user_email
+  LEFT JOIN user_active_hour_slots uahs ON s.user_email = uahs.user_email
+  LEFT JOIN extraction_inactive_stats eis ON s.user_email = eis.user_email
+
+  ORDER BY s.total_events DESC
+LogTypeMap:
+  PrimaryKey: user_email
+  AssociatedLogTypes:
+    - LogType: Okta.SystemLog
+      Selectors:
+        - "$.actor.alternateId"

@@ -1,4 +1,4 @@
-from panther_base_helpers import slack_alert_context
+from panther_slack_helpers import slack_alert_context
 
 INFORMATION_BARRIER_ACTIONS = {
     "barrier_deleted": "Slack Information Barrier Deleted",

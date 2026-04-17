@@ -1,0 +1,81 @@
+AnalysisType: rule
+Filename: databricks_global_init_script_changes.py
+RuleID: "Databricks.Audit.GlobalInitScriptChanges"
+DisplayName: "Databricks Global Init Script Changes"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Persistence
+  - Execution
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1037 # Boot or Logon Initialization Scripts
+    - TA0002:T1059 # Command and Scripting Interpreter
+Severity: Info
+Description: >
+  Detects modifications to global initialization scripts which run on all clusters at startup.
+  These scripts can be used for persistence or to execute malicious code across the environment.
+  All script creations, updates, and deletions are monitored.
+Runbook: |
+  1. Query audit logs for all global init script changes by this actor in the past 30 days
+  2. Check if new clusters were created shortly after the script modification in the 6 hours after this change
+  3. Find all script modifications across all workspaces in the past 7 days to identify coordinated changes
+Reference: https://github.com/andyweaves/system-tables-audit-logs/blob/main/resources/queries_and_alerts.json
+SummaryAttributes:
+  - actor
+  - script_name
+  - action
+Tests:
+  - Name: Init Script Created
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "globalInitScripts"
+      actionName: "create"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "admin@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        name: "security-monitoring"
+        script_id: "script-123"
+        enabled: "true"
+        script-SHA256: "abc123def456"
+      response:
+        statusCode: 200
+  - Name: Init Script Updated
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "globalInitScripts"
+      actionName: "update"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        name: "data-collector"
+        script_id: "script-456"
+        enabled: "false"
+      response:
+        statusCode: 200
+  - Name: Init Script Deleted
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "globalInitScripts"
+      actionName: "delete"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        script_id: "script-789"
+  - Name: Different Service
+    ExpectedResult: false
+    Log:
+      timestamp: 1704067200000
+      serviceName: "clusters"
+      actionName: "create"
+      userIdentity:
+        email: "user@example.com"

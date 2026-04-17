@@ -1,0 +1,86 @@
+AnalysisType: rule
+Filename: databricks_attempted_logon_from_denied_ip.py
+RuleID: "Databricks.Audit.AttemptedLogonFromDeniedIP"
+DisplayName: "Databricks Attempted Logon From Denied IP"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Initial Access
+  - Reconnaissance
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078 # Valid Accounts
+Severity: Info
+Description: >
+  Detects blocked login attempts from IP addresses explicitly denied by workspace IP access
+  control policies. This excludes known service agents and telemetry operations. While these
+  attempts were successfully blocked, they may indicate reconnaissance or unauthorized access attempts.
+Runbook: |
+  1. Count all login attempts from the source IP (sourceIPAddress) in the 1 hour before and after this blocked attempt
+  2. Check if the source IP is associated with known VPN services, cloud providers, or threat intelligence feeds
+  3. Find all successful and failed login attempts for this user in the 24 hours around the alert to identify credential stuffing patterns
+Reference: https://github.com/databricks-solutions/cybersec-workspace-detection-app/blob/main/base/detections/event-based/attempted_logon_from_denied_ip.py
+Tests:
+  - Name: Blocked Login from Denied IP
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "IpAccessDenied"
+      workspaceId: "1234567890123456"
+      sourceIPAddress: "192.0.2.100"
+      userAgent: "Mozilla/5.0"
+      userIdentity:
+        email: "user@example.com"
+      requestParams:
+        path: "/login"
+      response:
+        statusCode: 403
+  - Name: Service Agent Blocked
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "IpAccessDenied"
+      sourceIPAddress: "192.0.2.100"
+      userAgent: "Databricks-Runtime/12.0"
+      userIdentity:
+        email: "user@example.com"
+      requestParams:
+        path: "/api/data"
+  - Name: Telemetry Path Blocked
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "IpAccessDenied"
+      sourceIPAddress: "192.0.2.100"
+      userAgent: "Mozilla/5.0"
+      userIdentity:
+        email: "user@example.com"
+      requestParams:
+        path: "/telemetry/events"
+  - Name: Token Identity Blocked
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "IpAccessDenied"
+      sourceIPAddress: "192.0.2.100"
+      userAgent: "Mozilla/5.0"
+      userIdentity:
+        email: "12345678-1234-1234-1234-123456789012"
+      requestParams:
+        path: "/api/data"
+  - Name: Different Action
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "login"
+      sourceIPAddress: "192.0.2.100"
+      userIdentity:
+        email: "user@example.com"

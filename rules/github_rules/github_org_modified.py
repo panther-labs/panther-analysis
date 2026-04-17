@@ -1,4 +1,5 @@
 def rule(event):
+
     return event.get("action") == "org.add_member" or event.get("action") == "org.remove_member"
 
 

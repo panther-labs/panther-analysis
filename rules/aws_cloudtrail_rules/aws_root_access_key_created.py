@@ -1,4 +1,4 @@
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_aws_helpers import aws_rule_context
 
 
 def rule(event):
@@ -7,7 +7,7 @@ def rule(event):
         return False
 
     # Only root can create root access keys
-    if deep_get(event, "userIdentity", "type") != "Root":
+    if event.deep_get("userIdentity", "type") != "Root":
         return False
 
     # Only alert if the root user is creating an access key for itself

@@ -1,0 +1,76 @@
+AnalysisType: rule
+Filename: databricks_mount_point_creation.py
+RuleID: "Databricks.Audit.MountPointCreation"
+DisplayName: "Databricks Mount Point Creation"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Collection
+  - Lateral Movement
+Reports:
+  MITRE ATT&CK:
+    - TA0009:T1074 # Data Staged
+    - TA0008:T1021 # Remote Services
+Severity: Info
+Description: >
+  Detects creation of legacy mount points in Databricks. Mount points are deprecated in favor
+  of Unity Catalog external locations and can pose security risks by bypassing access controls.
+  This anti-pattern should be avoided in modern Databricks deployments.
+Runbook: |
+  1. Query audit logs for all mount operations by this user in the past 30 days to identify patterns
+  2. Check if data was accessed through this mount point in the 24 hours after creation
+  3. Find all mount point creations across workspaces in the past 90 days to establish baseline
+Reference: https://github.com/andyweaves/system-tables-audit-logs/blob/main/resources/queries_and_alerts.json
+SummaryAttributes:
+  - actor
+  - mount_point
+  - workspace_id
+Tests:
+  - Name: Mount Point Created
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "dbfs"
+      actionName: "mount"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "user@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        mountPoint: "/mnt/data-lake"
+        source: "s3://my-bucket/data"
+      response:
+        statusCode: 200
+  - Name: Mount Point to ADLS
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "dbfs"
+      actionName: "mount"
+      workspaceId: "1234567890123456"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        mountPoint: "/mnt/azure-storage"
+        source: "abfss://container@storage.dfs.core.windows.net"
+  - Name: Unmount Action
+    ExpectedResult: false
+    Log:
+      timestamp: 1704067200000
+      serviceName: "dbfs"
+      actionName: "unmount"
+      userIdentity:
+        email: "user@example.com"
+      requestParams:
+        mountPoint: "/mnt/data-lake"
+  - Name: Different Action
+    ExpectedResult: false
+    Log:
+      timestamp: 1704067200000
+      serviceName: "dbfs"
+      actionName: "read"
+      userIdentity:
+        email: "user@example.com"

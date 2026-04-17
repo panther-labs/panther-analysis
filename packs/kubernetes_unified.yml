@@ -1,0 +1,28 @@
+AnalysisType: pack
+PackID: PantherManaged.Kubernetes.Unified
+DisplayName: "Panther Unified Kubernetes Pack"
+Description: Group of Kubernetes detections that support Amazon EKS, Azure AKS, and GCP audit logs
+PackDefinition:
+  IDs:
+    - Kubernetes.AdmissionController.Created
+    - Kubernetes.API.IOC.Activity
+    - Kubernetes.ClientCertificate.Created
+    - Kubernetes.ClusterRoleBinding.Privileged
+    - Kubernetes.DaemonSet.Created
+    - Kubernetes.Ingress.NoTLS
+    - Kubernetes.Kubectl.CP.Operation
+    - Kubernetes.Pod.Dangerous.Capabilities
+    - Kubernetes.Pod.Host.IPC
+    - Kubernetes.Pod.Host.Network
+    - Kubernetes.Pod.Host.PID
+    - Kubernetes.Pod.HostPath.Volume
+    - Kubernetes.Pod.Privileged.Created
+    - Kubernetes.Pod.StealServiceAccountToken
+    - Kubernetes.Service.NodePort.Deployed
+    # Data Models
+    - Standard.Amazon.EKS.Audit
+    - Standard.Azure.AKS.Audit
+    - Standard.GCP.AuditLog
+    # Globals used in these detections
+    - panther_base_helpers
+    - panther_kubernetes_helpers

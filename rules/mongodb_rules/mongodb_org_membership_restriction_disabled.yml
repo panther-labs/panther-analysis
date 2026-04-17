@@ -1,0 +1,70 @@
+AnalysisType: rule
+Description:
+  You can configure Atlas to require API access lists at the organization level.
+  When you enable IP access list for the Atlas Administration API, all API calls in that organization must originate
+  from a valid entry in the associated Atlas Administration API key access list.
+  This rule detects when IP access list is disabled
+DisplayName: "MongoDB org membership restriction disabled"
+Enabled: true
+LogTypes:
+  - MongoDB.OrganizationEvent
+RuleID: "MongoDB.org.Membership.Restriction.Disabled"
+Filename: mongodb_org_membership_restriction_disabled.py
+Severity: High
+Tags:
+  - MongoDB
+  - Persistence
+  - Modify Authentication Process
+  - Conditional Access Policies
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1556.009 # Modify Authentication Process
+Reference: https://www.mongodb.com/docs/atlas/tutorial/manage-organizations/
+Runbook: Check if this activity is legitimate. If not, re-enable IP access list for the Atlas Administration API
+Tests:
+  - Name: Restriction disabled
+    ExpectedResult: true
+    Log:
+      {
+        "created": "2024-04-03 15:03:51.000000000",
+        "currentValue": {},
+        "eventTypeName": "ORG_PUBLIC_API_ACCESS_LIST_NOT_REQUIRED",
+        "id": "alert_id",
+        "isGlobalAdmin": false,
+        "orgId": "some_org_id",
+        "remoteAddress": "1.2.3.4",
+        "userId": "user_id",
+        "username": "some_user@company.com",
+      }
+  - Name: Restriction enabled
+    ExpectedResult: false
+    Log:
+      {
+        "created": "2024-04-03 15:03:51.000000000",
+        "currentValue": {},
+        "eventTypeName": "ORG_PUBLIC_API_ACCESS_LIST_REQUIRED",
+        "id": "alert_id",
+        "isGlobalAdmin": false,
+        "orgId": "some_org_id",
+        "remoteAddress": "1.2.3.4",
+        "userId": "user_id",
+        "username": "some_user@company.com",
+      }
+  - Name: Other activity
+    ExpectedResult: false
+    Log:
+      {
+        "alertConfigId": "alert_id",
+        "created": "2024-04-01 11:58:52.000000000",
+        "currentValue": {},
+        "eventTypeName": "ALERT_CONFIG_DELETED_AUDIT",
+        "id": "alert_id",
+        "isGlobalAdmin": false,
+        "links": [],
+        "orgId": "some_org_id",
+        "remoteAddress": "1.2.3.4",
+        "userId": "user_id",
+        "username": "some_user@company.com",
+      }
+DedupPeriodMinutes: 60
+Threshold: 1

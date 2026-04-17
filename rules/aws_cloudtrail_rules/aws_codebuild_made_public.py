@@ -1,18 +1,17 @@
-from panther import lookup_aws_account_name
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_aws_helpers import aws_rule_context
 
 
 def rule(event):
     return (
         event["eventName"] == "UpdateProjectVisibility"
-        and deep_get(event, "requestParameters", "projectVisibility") == "PUBLIC_READ"
+        and event.deep_get("requestParameters", "projectVisibility") == "PUBLIC_READ"
     )
 
 
 def title(event):
     return (
-        f"AWS CodeBuild Project made Public by {deep_get(event, 'userIdentity', 'arn')} "
-        f"in account {lookup_aws_account_name(deep_get(event, 'recipientAccountId'))}"
+        f"AWS CodeBuild Project made Public by {event.deep_get('userIdentity', 'arn')} "
+        f"in account {event.deep_get('recipientAccountId')}"
     )
 
 

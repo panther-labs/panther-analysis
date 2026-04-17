@@ -1,290 +1,358 @@
 # pylint: disable=too-many-public-methods
 import datetime
+from collections.abc import Sequence
+from typing import Union
 
 from dateutil import parser
-from panther_base_helpers import deep_get
+from panther_lookuptable_helpers import LookupTableMatches
+
+_SEVERITIES = {
+    "INFO": 0,
+    "LOW": 1,
+    "MEDIUM": 2,
+    "HIGH": 3,
+    "CRITICAL": 4,
+}
 
 
-class PantherGreyNoiseException(Exception):
-    def __init__(self, sublevel):
-        if sublevel == "advanced":
-            message = (
-                "This account is configured with an advanced GreyNoise Subscription. Please "
-                "use GreyNoiseAdvanced and GreyNoiseRIOTAdvanced "
-            )
-        elif sublevel == "basic":
-            message = (
-                "This account is configured with a basic GreyNoise Subscription. Please use "
-                "GreyNoiseBasic and GreyNoiseRIOTBasic "
-            )
-        else:
-            message = "Unknown Error Reading GreyNoise Data"
-        super().__init__(message)
+def greynoise_severity_decode(classification: str, default: str) -> str:
+    if classification == "malicious":
+        return "CRITICAL"
+    if classification == "benign":
+        return "LOW"
+    return default
 
 
-class GreyNoiseBasic:
-    def __init__(self, event):
-        self.noise = deep_get(event, "p_enrichment", "greynoise_noise_basic")
-        self.sublevel = "basic"
-
-    def subscription_level(self):
-        return self.sublevel
-
-    def __getattr__(self, name):
-        def advanced_only():
-            advanced_methods = [
-                method
-                for method in dir(GreyNoiseAdvanced)
-                if method.startswith("__") is False and method not in dir(self)
-            ]
-            if name in advanced_methods:
-                raise PantherGreyNoiseException(self.sublevel)
-
-        return advanced_only()
-
-    def ip_address(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "ip")
-
-    def classification(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "classification")
-
-    def actor(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "actor")
-
-    def url(self, match_field) -> str:
-        return f"https://www.greynoise.io/viz/ip/{deep_get(self.noise, match_field, 'ip')}"
-
-    def context(self, match_field) -> dict:
-        return {
-            "IP": self.ip_address(match_field),
-            "Classification": self.classification(match_field),
-            "Actor": self.actor(match_field),
-            "GreyNoise_URL": self.url(match_field),
-        }
+def severity_greater_than(sev1: str, sev2: str) -> bool:
+    return _SEVERITIES.get(sev1, -1) > _SEVERITIES.get(sev2, -1)
 
 
-class GreyNoiseAdvanced:
-    def __init__(self, event):
-        self.noise = deep_get(event, "p_enrichment", "greynoise_noise_advanced")
-        self.sublevel = "advanced"
+# GreyNoise V3 API Helpers
 
-    def subscription_level(self):
-        return self.sublevel
 
-    def ip_address(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "ip")
+def _find_greynoise_v3_lut_name(event) -> str:
+    """Auto-detect the GreyNoise V3 lookup table name from the event enrichment.
 
-    def classification(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "classification")
+    The LUT name is user-customizable in Panther but always ends with '_noise'.
+    V3 data is identified by the presence of 'internet_scanner_intelligence' in the values.
+    """
+    enrichment = event.deep_get("p_enrichment", default={})
+    for lut_name in enrichment.keys():
+        if not lut_name.endswith("_noise"):
+            continue
+        for match_data in enrichment.get(lut_name, {}).values():
+            if hasattr(match_data, "get") and match_data.get("internet_scanner_intelligence"):
+                return lut_name
+    return None
 
-    def actor(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "actor")
 
-    def url(self, match_field) -> str:
-        return f"https://www.greynoise.io/viz/ip/{deep_get(self.noise, match_field, 'ip')}"
+class _GreyNoiseV3Base(LookupTableMatches):
+    """Shared base for GreyNoise V3 helpers with common IP/URL methods."""
 
-    def is_bot(self, match_field) -> bool:
-        return deep_get(self.noise, match_field, "bot")
+    def __init__(self, event, lut_name=None):
+        super().__init__()
+        if lut_name is None:
+            lut_name = _find_greynoise_v3_lut_name(event)
+        if lut_name:
+            super()._register(event, lut_name)
 
-    def cve_string(self, match_field, limit: int = 10) -> str:
-        cve_raw = deep_get(self.noise, match_field, "cve")
-        if isinstance(cve_raw, list):
-            return " ".join(cve_raw[:limit])
-        return cve_raw
+    def ip_address(self, match_field: str) -> Union[list[str], str]:
+        return self._lookup(match_field, "ip")
 
-    def cve_list(self, match_field) -> list:
-        cve_raw = deep_get(self.noise.get, match_field, "cve")
-        if isinstance(cve_raw, str):
-            return [cve_raw]
-        return cve_raw
+    def url(self, match_field: str) -> Union[list[str], str, None]:
+        ip_addr = self._lookup(match_field, "ip")
+        if not ip_addr:
+            return None
+        if isinstance(ip_addr, Sequence) and not isinstance(ip_addr, str):
+            return [f"https://www.greynoise.io/viz/ip/{addr}" for addr in ip_addr]
+        return f"https://www.greynoise.io/viz/ip/{ip_addr}"
 
-    def first_seen(self, match_field) -> datetime.date:
-        return parser.parse(deep_get(self.noise, match_field, "first_seen"))
 
-    def last_seen(self, match_field) -> datetime.date:
-        return parser.parse(deep_get(self.noise, match_field, "last_seen_timestamp"))
+class GreyNoiseV3ScannerIntelligence(_GreyNoiseV3Base):
+    """Helper to get GreyNoise V3 Internet Scanner Intelligence for enriched fields"""
 
-    def asn(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "metadata", "asn")
+    def _scanner_lookup(self, match_field: str, *keys):
+        return self._lookup(match_field, "internet_scanner_intelligence", *keys)
 
-    def category(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "metadata", "category")
+    def actor(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "actor")
 
-    def city(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "metadata", "city")
+    def is_bot(self, match_field: str) -> bool:
+        return bool(self._scanner_lookup(match_field, "bot"))
 
-    def country(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "metadata", "country")
+    def classification(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "classification")
 
-    def country_code(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "metadata", "country_code")
+    def cve_list(self, match_field: str) -> list:
+        cves = self._scanner_lookup(match_field, "cves")
+        if not cves:
+            return []
+        if isinstance(cves, str):
+            return [cves]
+        return cves
 
-    def organization(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "metadata", "organization")
+    def cve_string(self, match_field: str, limit: int = 10) -> str:
+        return " ".join(self.cve_list(match_field)[:limit])
 
-    def operating_system(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "metadata", "os")
+    def first_seen(self, match_field: str) -> datetime.date:
+        time = self._scanner_lookup(match_field, "first_seen")
+        if not time:
+            return None
+        try:
+            if isinstance(time, Sequence) and not isinstance(time, str):
+                if len(time) == 0:
+                    return None
+                return min(parser.parse(t) for t in time)
+            return parser.parse(time)
+        except (ValueError, TypeError):
+            return None
 
-    def region(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "metadata", "region")
+    def found(self, match_field: str) -> bool:
+        return bool(self._scanner_lookup(match_field, "found"))
 
-    def is_tor(self, match_field) -> bool:
-        return deep_get(self.noise, match_field, "metadata", "tor")
+    def last_seen(self, match_field: str) -> datetime.date:
+        time = self._scanner_lookup(match_field, "last_seen_timestamp")
+        if not time:
+            return None
+        try:
+            if isinstance(time, Sequence) and not isinstance(time, str):
+                if len(time) == 0:
+                    return None
+                return max(parser.parse(t) for t in time)
+            return parser.parse(time)
+        except (ValueError, TypeError):
+            return None
 
-    def rev_dns(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "metadata", "rdns")
+    # Metadata accessors
+    def asn(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "metadata", "asn")
 
-    def is_spoofable(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "spoofable")
+    def carrier(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "metadata", "carrier")
 
-    def tags_list(self, match_field) -> list:
-        tags = deep_get(self.noise, match_field, "tags")
-        if isinstance(tags, str):
-            return [tags]
+    def category(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "metadata", "category")
+
+    def datacenter(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "metadata", "datacenter")
+
+    def domain(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "metadata", "domain")
+
+    def latitude(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "metadata", "latitude")
+
+    def longitude(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "metadata", "longitude")
+
+    def is_mobile(self, match_field: str) -> bool:
+        return bool(self._scanner_lookup(match_field, "metadata", "mobile"))
+
+    def organization(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "metadata", "organization")
+
+    def operating_system(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "metadata", "os")
+
+    def rev_dns(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "metadata", "rdns")
+
+    def rev_dns_parent(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "metadata", "rdns_parent")
+
+    def region(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "metadata", "region")
+
+    def sensor_count(self, match_field: str) -> Union[int, list]:
+        return self._scanner_lookup(match_field, "metadata", "sensor_count")
+
+    def sensor_hits(self, match_field: str) -> Union[int, list]:
+        return self._scanner_lookup(match_field, "metadata", "sensor_hits")
+
+    def source_city(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "metadata", "source_city")
+
+    def source_country(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "metadata", "source_country")
+
+    def source_country_code(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "metadata", "source_country_code")
+
+    def destination_countries(self, match_field: str) -> list:
+        return self._scanner_lookup(match_field, "metadata", "destination_countries")
+
+    def metadata(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "metadata")
+
+    # Top-level scanner fields
+    def is_spoofable(self, match_field: str) -> bool:
+        return bool(self._scanner_lookup(match_field, "spoofable"))
+
+    def tags(self, match_field: str) -> list:
+        tags = self._scanner_lookup(match_field, "tags")
+        if not tags:
+            return []
         return tags
 
-    def tags_string(self, match_field, limit: int = 10) -> str:
-        tags_raw = deep_get(self.noise, match_field, "tags")
-        if isinstance(tags_raw, list):
-            return " ".join(tags_raw[:limit])
-        return tags_raw
+    def tag_names(self, match_field: str) -> list:
+        tags = self.tags(match_field)
+        if not tags:
+            return []
+        if isinstance(tags, Sequence) and not isinstance(tags, str):
+            return [str(t.get("name", "")) if hasattr(t, "get") else str(t) for t in tags]
+        return []
 
-    def is_vpn(self, match_field) -> bool:
-        return deep_get(self.noise, match_field, "vpn")
+    def tag_names_string(self, match_field: str, limit: int = 10) -> str:
+        names = self.tag_names(match_field)
+        if isinstance(names, Sequence) and not isinstance(names, str):
+            return " ".join(names[:limit])
+        return names
 
-    def vpn_service(self, match_field) -> str:
-        return deep_get(self.noise, match_field, "vpn_service")
+    def is_tor(self, match_field: str) -> bool:
+        return bool(self._scanner_lookup(match_field, "tor"))
 
-    def context(self, match_field) -> dict:
+    def is_vpn(self, match_field: str) -> bool:
+        return bool(self._scanner_lookup(match_field, "vpn"))
+
+    def vpn_service(self, match_field: str) -> Union[list[str], str]:
+        return self._scanner_lookup(match_field, "vpn_service")
+
+    def context(self, match_field: str) -> dict:
         return {
             "IP": self.ip_address(match_field),
             "Classification": self.classification(match_field),
             "Actor": self.actor(match_field),
             "GreyNoise_URL": self.url(match_field),
             "VPN": self.vpn_service(match_field),
-            "Metadata": deep_get(self.noise, match_field, "metadata"),
-            "Tags": self.tags_list(match_field),
-            "CVE": self.cve_list(match_field),
+            "Tor": self.is_tor(match_field),
+            "Bot": self.is_bot(match_field),
+            "Metadata": self.metadata(match_field),
+            "Tags": self.tag_names(match_field),
+            "CVEs": self.cve_list(match_field),
         }
 
 
-class GreyNoiseRIOTBasic:
-    def __init__(self, event):
-        self.riot = deep_get(event, "p_enrichment", "greynoise_riot_basic")
-        self.sublevel = "basic"
+class GreyNoiseV3BusinessService(_GreyNoiseV3Base):
+    """Helper to get GreyNoise V3 Business Service Intelligence for enriched fields"""
 
-    def __getattr__(self, name):
-        def advanced_only():
-            advanced_methods = [
-                method
-                for method in dir(GreyNoiseRIOTAdvanced)
-                if method.startswith("__") is False and method not in dir(self)
-            ]
-            if name in advanced_methods:
-                raise PantherGreyNoiseException(self.sublevel)
+    def _bsi_lookup(self, match_field: str, *keys):
+        return self._lookup(match_field, "business_service_intelligence", *keys)
 
-        return advanced_only()
+    def found(self, match_field: str) -> bool:
+        return bool(self._bsi_lookup(match_field, "found"))
 
-    def subscription_level(self):
-        return self.sublevel
+    def category(self, match_field: str) -> Union[list[str], str]:
+        return self._bsi_lookup(match_field, "category")
 
-    def is_riot(self, match_field) -> bool:
-        return deep_get(self.riot, match_field, "ip_cidr") is not None
+    def description(self, match_field: str) -> Union[list[str], str]:
+        return self._bsi_lookup(match_field, "description")
 
-    def ip_address(self, match_field) -> str:
-        return deep_get(self.riot, match_field, "ip_cidr")
+    def explanation(self, match_field: str) -> Union[list[str], str]:
+        return self._bsi_lookup(match_field, "explanation")
 
-    def name(self, match_field) -> str:
-        return deep_get(self.riot, match_field, "provider", "name")
+    def name(self, match_field: str) -> Union[list[str], str]:
+        return self._bsi_lookup(match_field, "name")
 
-    def url(self, match_field) -> str:
-        ip_stripped = deep_get(self.riot, match_field, "ip_cidr", default="")
-        return f"https://www.greynoise.io/viz/ip/{ip_stripped.split('/')[0]}"
+    def reference(self, match_field: str) -> Union[list[str], str]:
+        return self._bsi_lookup(match_field, "reference")
 
-    def last_updated(self, match_field) -> datetime.date:
-        return parser.parse(deep_get(self.riot, match_field, "scan_time"))
+    def trust_level(self, match_field: str) -> Union[int, list[str], str]:
+        return self._bsi_lookup(match_field, "trust_level")
 
-    def context(self, match_field) -> dict:
+    def last_updated(self, match_field: str) -> datetime.date:
+        time = self._bsi_lookup(match_field, "last_updated")
+        if not time:
+            return None
+        try:
+            if isinstance(time, Sequence) and not isinstance(time, str):
+                if len(time) == 0:
+                    return None
+                return max(parser.parse(t) for t in time)
+            return parser.parse(time)
+        except (ValueError, TypeError):
+            return None
+
+    def context(self, match_field: str) -> dict:
         return {
-            "Is_RIOT": self.is_riot(match_field),
+            "Found": self.found(match_field),
             "IP": self.ip_address(match_field),
             "Name": self.name(match_field),
+            "Category": self.category(match_field),
+            "TrustLevel": self.trust_level(match_field),
             "GreyNoise_URL": self.url(match_field),
         }
 
 
-class GreyNoiseRIOTAdvanced:
-    def __init__(self, event):
-        self.riot = deep_get(event, "p_enrichment", "greynoise_riot_advanced")
-        self.sublevel = "advanced"
-
-    def subscription_level(self):
-        return self.sublevel
-
-    def is_riot(self, match_field) -> bool:
-        return deep_get(self.riot, match_field, "ip_cidr") is not None
-
-    def ip_address(self, match_field) -> str:
-        return deep_get(self.riot, match_field, "ip_cidr")
-
-    def name(self, match_field) -> str:
-        return deep_get(self.riot, match_field, "provider", "name")
-
-    def url(self, match_field) -> str:
-        ip_stripped = deep_get(self.riot, match_field, "ip_cidr", default="")
-        return f"https://www.greynoise.io/viz/ip/{ip_stripped.split('/')[0]}"
-
-    def last_updated(self, match_field) -> datetime.date:
-        return parser.parse(deep_get(self.riot, match_field, "scan_time"))
-
-    def description(self, match_field) -> str:
-        return deep_get(self.riot, match_field, "provider", "description")
-
-    def explanation(self, match_field) -> str:
-        return deep_get(self.riot, match_field, "provider", "explanation")
-
-    def reference(self, match_field) -> str:
-        return deep_get(self.riot, match_field, "provider", "reference")
-
-    def trust_level(self, match_field) -> int:
-        return deep_get(self.riot, match_field, "provider", "trust_level")
-
-    def context(self, match_field) -> dict:
-        return {
-            "Is_RIOT": self.is_riot(match_field),
-            "IP": self.ip_address(match_field),
-            "Name": self.name(match_field),
-            "GreyNoise_URL": self.url(match_field),
-            "Provider Data": deep_get(self.riot, match_field, "provider"),
-        }
+def get_greynoise_v3_object(event):
+    """Returns a GreyNoiseV3ScannerIntelligence object or None if not available"""
+    lut_name = _find_greynoise_v3_lut_name(event)
+    if lut_name:
+        return GreyNoiseV3ScannerIntelligence(event, lut_name=lut_name)
+    return None
 
 
-# pylint: disable=invalid-name
-def GetGreyNoiseObject(event):
-    if deep_get(event, "p_enrichment", "greynoise_noise_advanced"):
-        return GreyNoiseAdvanced(event)
-    return GreyNoiseBasic(event)
+def get_greynoise_v3_business_service_object(event):
+    """Returns a GreyNoiseV3BusinessService object or None if not available"""
+    lut_name = _find_greynoise_v3_lut_name(event)
+    if lut_name:
+        return GreyNoiseV3BusinessService(event, lut_name=lut_name)
+    return None
 
 
-def GetGreyNoiseRiotObject(event):
-    if deep_get(event, "p_enrichment", "greynoise_riot_advanced"):
-        return GreyNoiseRIOTAdvanced(event)
-    return GreyNoiseRIOTBasic(event)
+def greynoise_v3_severity(event, field, default="MEDIUM"):
+    """Set severity based on GreyNoise V3 classification and business service intelligence"""
+    lut_name = _find_greynoise_v3_lut_name(event)
+    if not lut_name:
+        return default
+    scanner = GreyNoiseV3ScannerIntelligence(event, lut_name=lut_name)
+    bsi = GreyNoiseV3BusinessService(event, lut_name=lut_name)
 
-
-def GreyNoiseSeverity(event, ip, default="MEDIUM"):
-    # Set Severity based on GreyNoise classification. If unknown to GreyNoise
-    # return default
-    noise = GetGreyNoiseObject(event)
-    riot = GetGreyNoiseRiotObject(event)
-
-    # If IP exists in RIOT Dataset it is known good, lower alert severity
-    if riot.is_riot(ip):
+    # If IP is a known business service, lower severity
+    if bsi and bsi.found(field):
         return "INFO"
 
-    if noise.classification(ip) == "malicious":
-        return "CRITICAL"
-    if noise.classification(ip) == "benign":
-        return "LOW"
-    # If classification is unknown default to medium
-    return default
+    classification = scanner.classification(field)
+    if isinstance(classification, Sequence) and not isinstance(classification, str):
+        highest_severity = "INFO"
+        for cls in classification:
+            severity = greynoise_severity_decode(cls, default)
+            if severity_greater_than(severity, highest_severity):
+                highest_severity = severity
+        return highest_severity
+
+    return greynoise_severity_decode(classification, default)
+
+
+def greynoise_v3_alert_context(event, field):
+    """Build a rich alert context dict from GreyNoise V3 enrichment data."""
+    lut_name = _find_greynoise_v3_lut_name(event)
+    if not lut_name:
+        return {}
+    scanner = GreyNoiseV3ScannerIntelligence(event, lut_name=lut_name)
+    bsi = GreyNoiseV3BusinessService(event, lut_name=lut_name)
+    ctx = scanner.context(field)
+    first_seen = scanner.first_seen(field)
+    ctx["FirstSeen"] = str(first_seen) if first_seen is not None else None
+    last_seen = scanner.last_seen(field)
+    ctx["LastSeen"] = str(last_seen) if last_seen is not None else None
+    ctx["Spoofable"] = scanner.is_spoofable(field)
+    ctx["Organization"] = scanner.organization(field)
+    ctx["SourceCountry"] = scanner.source_country(field)
+    ctx["ASN"] = scanner.asn(field)
+    ctx["OperatingSystem"] = scanner.operating_system(field)
+    ctx["ReverseDNS"] = scanner.rev_dns(field)
+
+    if bsi.found(field):
+        ctx["BusinessService"] = bsi.context(field)
+
+    return ctx
+
+
+# Backward-compatible aliases
+GreyNoiseSeverityDecode = greynoise_severity_decode  # pylint: disable=invalid-name
+SeverityGreaterThan = severity_greater_than  # pylint: disable=invalid-name
+GetGreyNoiseV3Object = get_greynoise_v3_object  # pylint: disable=invalid-name
+GetGreyNoiseV3BusinessServiceObject = (
+    get_greynoise_v3_business_service_object  # pylint: disable=invalid-name
+)
+GreyNoiseV3Severity = greynoise_v3_severity  # pylint: disable=invalid-name

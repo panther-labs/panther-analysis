@@ -1,5 +1,5 @@
-from panther import aws_cloudtrail_success
-from panther_base_helpers import aws_rule_context, deep_get, pattern_match_list
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
+from panther_base_helpers import pattern_match_list
 
 PROD_ACCOUNT_IDS = {"11111111111111", "112233445566"}
 SG_CHANGE_EVENTS = {
@@ -37,24 +37,24 @@ def rule(event):
             pattern_match_list(event.get("userAgent"), ALLOWED_USER_AGENTS)
             and
             # Validate the IAM Role used is in our acceptable list
-            any(role in deep_get(event, "userIdentity", "arn") for role in ALLOWED_ROLE_NAMES)
+            any(role in event.deep_get("userIdentity", "arn") for role in ALLOWED_ROLE_NAMES)
         )
     )
 
 
 def dedup(event):
     return ":".join(
-        deep_get(event, "requestParameters", field, default="<UNKNOWN_FIELD>")
+        event.deep_get("requestParameters", field, default="<UNKNOWN_FIELD>")
         for field in SG_CHANGE_EVENTS[event.get("eventName")]["fields"]
     )
 
 
 def title(event):
     title_fields = {
-        field: deep_get(event, "requestParameters", field, default="<UNKNOWN_FIELD>")
+        field: event.deep_get("requestParameters", field, default="<UNKNOWN_FIELD>")
         for field in SG_CHANGE_EVENTS[event.get("eventName")]["fields"]
     }
-    user = deep_get(event, "userIdentity", "arn", default="<UNKNOWN_USER>").split("/")[-1]
+    user = event.deep_get("userIdentity", "arn", default="<UNKNOWN_USER>").split("/")[-1]
     title_template = SG_CHANGE_EVENTS[event.get("eventName")]["title"]
     title_fields["actor"] = user
     return title_template.format(**title_fields)

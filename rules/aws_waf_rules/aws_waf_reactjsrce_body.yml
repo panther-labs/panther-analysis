@@ -1,0 +1,113 @@
+AnalysisType: rule
+Filename: aws_waf_reactjsrce_body.py
+RuleID: "AWS.WAF.ReactJSRCE.Body"
+DisplayName: "AWS WAF ReactJS RCE Attempt via Body"
+Enabled: true
+LogTypes:
+  - AWS.WAFWebACL
+Tags:
+  - AWS
+  - WAF
+  - React2Shell
+  - Initial Access:Exploit Public-Facing Application
+  - Execution:Command and Scripting Interpreter
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1190
+    - TA0002:T1059
+Severity: High
+Description: >
+  Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating React2Shell (CVE-2025-55182)
+  ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.
+Runbook: |
+  1. Review alert context for source IP, URI, and body content
+  2. Check action: BLOCK (HIGH) or ALLOW (CRITICAL - investigate immediately)
+  3. If allowed, check target application for compromise
+  4. Review backend server logs for suspicious activity
+  5. Block repeat offender IPs and validate ReactJS input handling
+Reference: https://docs.aws.amazon.com/waf/latest/developerguide/aws-managed-rule-groups-list.html
+Tests:
+  - Name: Blocked via terminatingRuleId
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:30:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "ReactJSRCE_BODY"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.45"
+        country: "US"
+        uri: "/api/endpoint"
+        httpMethod: "POST"
+
+  - Name: Allowed via nonTerminatingMatchingRules (Critical)
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:35:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "198.51.100.22"
+        country: "CN"
+        uri: "/admin/upload"
+      nonTerminatingMatchingRules:
+        - ruleId: "ReactJSRCE_BODY"
+          action: "COUNT"
+
+  - Name: Match in ruleGroupList
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:40:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesKnownBadInputsRuleSet"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "192.0.2.100"
+        country: "RU"
+        uri: "/api/v1/process"
+      ruleGroupList:
+        - ruleGroupId: "AWS-AWSManagedRulesKnownBadInputsRuleSet"
+          terminatingRule:
+            ruleId: "ReactJSRCE_BODY"
+            action: "BLOCK"
+
+  - Name: CloudFront source detected
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:45:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "ReactJSRCE_BODY"
+      action: "BLOCK"
+      httpSourceName: "CF"
+      httpRequest:
+        clientIp: "203.0.113.45"
+        uri: "/api/endpoint"
+
+  - Name: Different rule - no alert
+    ExpectedResult: false
+    Log:
+      timestamp: "2024-03-20T10:50:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "SQLi_BODY"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.45"
+
+  - Name: Normal traffic - no alert
+    ExpectedResult: false
+    Log:
+      timestamp: "2024-03-20T10:55:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "198.51.100.10"
+
+DedupPeriodMinutes: 60
+Threshold: 1

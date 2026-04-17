@@ -1,28 +1,100 @@
-## Rules 
+## Okta
 
-[ Okta MFA Globally Disabled](../rules/okta_rules/okta_admin_disabled_mfa.py)
+- [AWS Console Sign-In NOT PRECEDED BY Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
+  - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta and both log sources configured.
+- [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
+  - An actor user was denied login access more times than the configured threshold.
+- [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
+  - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [Impossible Travel for Login Action](../rules/standard_rules/impossible_travel_login.yml)
+  - A user has subsequent logins from two geographic locations that are very far apart
+- [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
+  - Detects when Multi-Factor Authentication (MFA) is disabled
+- [Okta AD Agent Authentication Anomaly - Z-Score Detection](../rules/okta_rules/okta_ad_agent_auth_zscore_anomaly.yml)
+  - Detects potential Okta AD Agent token theft and credential abuse using statistical z-score analysis.This detection uses a lookup table containing 90-day behavioral baselines for each user's AD Agentauthentication patterns, then calculates z-scores to identify suspicious activity in the last 7 days.**PREREQUISITES:**1. Baseline builder query must run first: `Query.Okta.ADAgentBaselineBuilder`2. Lookup table must be configured: `okta_ad_pantherflow_baseline_90d`3. Allow 24 hours for initial baseline to populate**Detection Logic:**- Calculates mean and standard deviation for hourly authentication volume, IP diversity,  country diversity, and device diversity- Alerts when recent activity shows BOTH:  1. Volume spike (z-score > 3 standard deviations)  2. Geographic/IP diversity spike (z-score > 2 standard deviations)**Why This Matters:**Token theft attacks have a distinct signature: stolen credentials are used from multiplelocations/IPs simultaneously or in rapid succession. This creates both a volume spike anda diversity spike that this detection identifies.**Complementary Detection:**This rule complements `Okta.ADAgent.TokenAbuse.Behavioral` which detects admin actions(token creation, agent configuration) from new sources. This rule detects the actual USEof stolen tokens through authentication patterns.
+- [Okta AD Agent Token Abuse - Behavioral](../rules/okta_rules/okta_ad_agent_token_abuse_behavioral.yml)
+  - Detects potential Okta AD Agent token theft and abuse using behavioral analysis.Instead of relying on hardcoded service account patterns, this detection identifieswhen AD agent-related activities (API token creation, agent registration, config changes)occur from previously unseen IP addresses or user agents. This behavioral approachadapts to your environment and catches anomalous access patterns that may indicatecompromised credentials or unauthorized token generation.**What This Detection Catches:**- API token creation from new IPs or user agents- New AD agent registrations from unexpected sources- AD agent configuration changes from new locations**Complementary Detection:**Use alongside `Okta.ADAgent.AuthenticationAnomaly.ZScore` which detects the actualUSE of stolen tokens through authentication pattern anomalies.
+- [Okta Admin Access Granted](../queries/okta_queries/okta_admin_access_granted.yml)
+  - Audit instances of admin access granted in your okta tenant
+- [Okta Admin Role Assigned](../rules/okta_rules/okta_admin_role_assigned.yml)
+  - A user has been granted administrative privileges in Okta
+- [Okta AiTM Phishing Attempt Blocked by FastPass](../rules/okta_rules/okta_phishing_attempt_blocked_by_fastpass.yml)
+  - Okta FastPass detected a user targeted by attackers wielding real-time (AiTM) proxies.
+- [Okta API Key Created](../rules/okta_rules/okta_api_key_created.yml)
+  - A user created an API Key in Okta
+- [Okta API Key Revoked](../rules/okta_rules/okta_api_key_revoked.yml)
+  - A user has revoked an API Key in Okta
+- [Okta App Refresh Access Token Reuse](../rules/okta_rules/okta_app_refresh_access_token_reuse.yml)
+  - When a client wants to renew an access token, it sends the refresh token with the access token request to the /token Okta endpoint.Okta validates the incoming refresh token, issues a new set of tokens and invalidates the refresh token that was passed with the initial request.This detection alerts when a previously used refresh token is used again with the token request
+- [Okta App Unauthorized Access Attempt](../rules/okta_rules/okta_app_unauthorized_access_attempt.yml)
+  - Detects when a user is denied access to an Okta application
+- [Okta Authentication Bypass via Skeleton Key Injection - Behavioral](../rules/okta_rules/okta_skeleton_key_bypass_behavioral.yml)
+  - Detects potential Okta authentication bypass via skeleton key injection using behavioral z-score analysis.Skeleton key attacks in Okta involve manipulating authentication policies to weaken MFA requirements(disabling requireFactor, zeroing maxSessionLifetime) and bulk-enrolling attacker-controlledauthenticators on victim accounts. This detection builds a 90-day behavioral baseline for eachadmin's policy change and factor enrollment patterns, then identifies anomalous spikes in the last7 days.**Detection Logic:**- Z-score: Spike in security-weakening policy changes (> 2σ above baseline)- Z-score: Spike in admin-on-behalf-of MFA factor enrollments (> 3σ above baseline)- Cold-start: First-time security weakening (no prior baseline - immediate high-confidence signal)- Cold-start: First-time admin-enrolled factors for other users**Why This Matters:**Skeleton key attacks require two steps: weaken authentication policies to reduce MFA friction,then enroll attacker-controlled authenticators on victim accounts. This detection catches bothsteps using behavioral baselines that adapt to legitimate admin workflows.**Complementary Detection:**Use alongside `Okta.ADAgent.TokenAbuse.Behavioral` for admin credential theft scenarios.
+- [Okta Cleartext Passwords Extracted via SCIM Application](../rules/okta_rules/okta_password_extraction_via_scim.yml)
+  - An application admin has extracted cleartext user passwords via SCIM app. Malcious actors can extract plaintext passwords by creating a SCIM application under their control and configuring it to sync passwords from Okta.
+- [Okta Group Admin Role Assigned](../rules/okta_rules/okta_group_admin_role_assigned.yml)
+  - Detect when an admin role is assigned to a group
+- [Okta HAR File IOCs](../queries/okta_queries/okta_harfile_iocs.yml)
+  - https://sec.okta.com/harfiles
+- [Okta Identity Provider Created or Modified](../rules/okta_rules/okta_idp_create_modify.yml)
+  - A new 3rd party Identity Provider has been created or modified. Attackers have been observed configuring a second Identity Provider to act as an "impersonation app" to access applications within the compromised Org on behalf of other users. This second Identity Provider, also controlled by the attacker, would act as a “source” IdP in an inbound federation relationship (sometimes called “Org2Org”) with the target.
+- [Okta Identity Provider Sign-in](../rules/okta_rules/okta_idp_signin.yml)
+  - A user has signed in using a 3rd party Identity Provider. Attackers have been observed configuring a second Identity Provider to act as an "impersonation app" to access applications within the compromised Org on behalf of other users. This second Identity Provider, also controlled by the attacker, would act as a “source” IdP in an inbound federation relationship (sometimes called “Org2Org”) with the target. From this “source” IdP, the threat actor manipulated the username parameter for targeted users in the second “source” Identity Provider to match a real user in the compromised “target” Identity Provider. This provided the ability to Single sign-on (SSO) into applications in the target IdP as the targeted user. Do not use this rule if your organization uses legitimate 3rd-party Identity Providers.
+- [Okta Investigate MFA and Password resets](../queries/okta_queries/okta_mfa_password_reset_audit.yml)
+  - Investigate Password and MFA resets for the last 7 days
+- [Okta Investigate Session ID Activity](../queries/okta_queries/okta_session_id_audit.yml)
+  - Search for activity related to a specific SessionID in Okta panther_logs.okta_systemlog
+- [Okta Investigate User Activity](../queries/okta_queries/okta_activity_audit.yml)
+  - Audit user activity across your environment. Customize to filter on specific users, time ranges, etc
+- [Okta Login From CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_Query.yml)
+  - Okta Logins from an IP Address not found in CrowdStrike's AIP List
+- [Okta Login From CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/okta_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_FDREvent.yml)
+  - Okta Logins from an IP Address not found in CrowdStrike's AIP List (crowdstrike_fdrevent table)
+- [Okta Login Without Push](../correlation_rules/okta_login_without_push.yml)
+  - Identifies successful Okta logins not followed by Push Security authorization within 60 minutes. Push Security provides additional identity verification beyond Okta MFA as a defense-in-depth strategy. Missing Push Security verification suggests compromised credentials, session hijacking, or MFA bypass where attackers satisfied Okta authentication but cannot complete additional verification.
+- [Okta MFA Globally Disabled](../rules/okta_rules/okta_admin_disabled_mfa.yml)
+  - An admin user has disabled the MFA requirement for your Okta account
+- [Okta New Behaviors Acessing Admin Console](../rules/okta_rules/okta_new_behavior_accessing_admin_console.yml)
+  - New Behaviors Observed while Accessing Okta Admin Console. A user attempted to access the Okta Admin Console from a new device with a new IP.
+- [Okta Org2Org application created of modified](../rules/okta_rules/okta_org2org_creation_modification.yml)
+  - An Okta Org2Org application has been created or modified. Okta's Org2Org applications instances are used to push and match users from one Okta organization to another. A malicious actor can add an Org2Org application instance and create a user in the source organization (controlled by the attacker) with the same identifier as a Super Administrator in the target organization.
+- [Okta Password Accessed](../rules/okta_rules/okta_password_accessed.yml)
+  - User accessed another user's application password
+- [Okta Potentially Stolen Session](../rules/okta_rules/okta_potentially_stolen_session.yml)
+  - This rule looks for the same session being used from two devices, indicating a compromised session token.
+- [Okta Rate Limits](../rules/okta_rules/okta_rate_limits.yml)
+  - Potential DoS/Bruteforce attack or hitting limits (system degradation)
+- [Okta Sign-In from VPN Anonymizer](../rules/okta_rules/okta_anonymizing_vpn_login.yml)
+  - A user is attempting to sign-in to Okta from a known VPN anonymizer.  The threat actor would access the compromised account using anonymizing proxy services.
+- [Okta Support Access](../queries/okta_queries/okta_support_access.yml)
+  - Show instances that Okta support was granted to your account
+- [Okta Support Access Granted](../rules/okta_rules/okta_account_support_access.yml)
+  - An admin user has granted access to Okta Support to your account
+- [Okta Support Reset Credential](../rules/okta_rules/okta_support_reset.yml)
+  - A Password or MFA factor was reset by Okta Support
+- [Okta SWA Bulk Access, New Source, and Credential Extraction - Behavioral](../rules/okta_rules/okta_swa_bulk_access_behavioral.yml)
+  - Detects Okta SWA (Secure Web Authentication) bulk credential extraction, abuse, and access frompreviously unseen IP addresses or user agents using behavioral z-score and source novelty analysis.SWA apps store credentials in Okta's encrypted vault. Admin accounts with SWA access can view orrotate credentials for users across many apps. This detection builds a 90-day behavioral baselinefor each admin's SWA access, credential change patterns, and known source IPs/user agents, thenidentifies anomalous spikes or new sources in the last 7 days.**Detection Logic:**- Z-score: SWA authentication volume spike (> 3σ above baseline)- Z-score: Unique SWA app diversity spike (many different apps accessed in one hour) (> 3σ)- Z-score: Credential extraction volume spike (> 3σ)- Z-score: Victim diversity spike (credential changes across many users) (> 2σ)- Cold-start: First-time bulk SWA access (>= 10 events, no prior baseline)- Cold-start: First-time credential extraction (>= 5 extractions, no prior baseline)- New source: SWA access from IP address not seen in 90-day baseline- New source: SWA access from user agent not seen in 90-day baseline- Critical compound: New IP + any credential extraction events**Why This Matters:**SWA credential extraction is a powerful lateral movement technique. An attacker with admin accesscan silently retrieve plaintext credentials for hundreds of SWA-protected applications withouttriggering MFA or generating obvious authentication failures. New source detection catches theinitial access phase when a compromised admin account is used from an unfamiliar device or location.**Complementary Detection:**Use alongside `Okta.SWA.OffHoursAccess.Behavioral` which detects the same attack vectoroccurring outside normal business hours.
+- [Okta SWA Off-Hours Credential Access - Behavioral](../rules/okta_rules/okta_swa_offhours_access_behavioral.yml)
+  - Detects Okta SWA credential access occurring outside normal business hours using behavioralz-score analysis on temporal patterns.Compromised admin accounts often access SWA credentials at unusual times - late at night,during weekends, or from a different geographic location than normal. This detection buildsa 90-day baseline for each admin's temporal credential access patterns, then identifiesanomalous shifts toward off-hours, late-night, and weekend activity in the last 7 days.**Detection Logic:**- Z-score: Off-hours ratio spike (> 3σ above normal off-hours proportion)- Z-score: Late-night ratio spike (2 AM - 6 AM accesses) (> 2σ)- Z-score: Weekend ratio spike (> 2σ)- Cold-start: First-time off-hours credential access (>= 3 events, no prior baseline)- Cold-start: First-time late-night access (>= 2 events, no prior baseline)- Cold-start: First-time weekend access (>= 2 events, no prior baseline)- Compound: Geographic shift + off-hours activity (high-confidence indicator)**Why This Matters:**Attackers using stolen admin credentials typically operate at off-hours to avoid detectionand minimize interference with active users. A sudden shift in the time distribution ofSWA credential accesses is a strong indicator of account compromise.**Complementary Detection:**Use alongside `Okta.SWA.BulkAccess.Behavioral` which detects the same attack vectorbased on volume rather than temporal patterns.
+- [Okta ThreatInsight Security Threat Detected](../rules/okta_rules/okta_threatinsight_security_threat_detected.yml)
+  - Okta ThreatInsight identified request from potentially malicious IP address
+- [Okta User Account Locked](../rules/okta_rules/okta_user_account_locked.yml)
+  - An Okta user has locked their account.
+- [Okta User MFA Factor Suspend](../rules/okta_rules/okta_user_mfa_factor_suspend.yml)
+  - Suspend factor or authenticator enrollment method for user.
+- [Okta User MFA Own Reset](../rules/okta_rules/okta_user_mfa_reset.yml)
+  - User has reset one of their own MFA factors
+- [Okta User MFA Reset All](../rules/okta_rules/okta_user_mfa_reset_all.yml)
+  - All MFA factors have been reset for a user.
+- [Okta User Reported Suspicious Activity](../rules/okta_rules/okta_user_reported_suspicious_activity.yml)
+  - Suspicious Activity Reporting provides an end user with the option to report unrecognized activity from an account activity email notification.This detection alerts when a user marks the raised activity as suspicious.
+- [Okta Username Above 52 Characters Security Advisory](../queries/okta_queries/okta_52_char_username_threat_hunt.yml)
+  - On October 30, 2024, a vulnerability was internally identified in generating the cache key for AD/LDAP DelAuth. The Bcrypt algorithm was used to generate the cache key where we hash a combined string of userId + username + password. Under a specific set of conditions, listed below, this could allow users to authenticate by providing the username with the stored cache key of a previous successful authentication. Customers meeting the pre-conditions should investigate their Okta System Log for unexpected authentications from usernames greater than 52 characters between the period of July 23rd, 2024 to October 30th, 2024. https://trust.okta.com/security-advisories/okta-ad-ldap-delegated-authentication-username/
+- [Potential Compromised Okta Credentials](../correlation_rules/potential_compromised_okta_credentials.yml)
+  - Identifies high-confidence credential compromise by detecting Okta login without Push Security verification followed by Push Security phishing attack within 60 minutes. This sequence indicates an attacker authenticated to Okta with stolen credentials then attempted MFA fatigue or push bombing attacks. The correlation of both events provides strong evidence of active account compromise requiring immediate response.
+- [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
+  - Detects when an entity signs in from a nation associated with cyber attacks
 
-[ Okta API Key Revoked](../rules/okta_rules/okta_api_key_revoked.py)
 
-[ Geographically Improbable Okta Login](../rules/okta_rules/okta_geo_improbable_access.py)
-
-[ Okta Support Reset Credential](../rules/okta_rules/okta_support_reset.py)
-
-[ Okta Admin Role Assigned](../rules/okta_rules/okta_admin_role_assigned.py)
-
-[ Okta API Key Created](../rules/okta_rules/okta_api_key_created.py)
-
-[ Okta Support Access Granted](../rules/okta_rules/okta_account_support_access.py)
-
-
-## Investigative Queries 
-
-[Session ID Audit ](../queries/okta_queries/okta_session_id_audit.yml)
-
-[MFA and Password Reset Audit ](../queries/okta_queries/okta_mfa_password_reset_audit.yml)
-
-[Admin Access Granted](../queries/okta_queries/okta_admin_access_granted.yml)
-
-[Support Access](../queries/okta_queries/okta_support_access.yml)
-
-[User Activity Audit](../queries/okta_queries/okta_activity_audit.yml)

@@ -1,0 +1,145 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "AnalysisType": {
+      "oneOf": [
+        {
+          "type": "string",
+          "const": "lookup_table"
+        }
+      ]
+    },
+    "LookupName": {
+      "type": "string"
+    },
+    "Enabled": {
+      "type": "boolean"
+    },
+    "Filename": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "RoleARN": {
+              "type": "string"
+            },
+            "ObjectPath": {
+              "type": "string"
+            },
+            "PeriodMinutes": {
+              "type": "integer"
+            },
+            "AlarmPeriodMinutes": {
+              "type": "integer"
+            },
+            "ObjectKMSKey": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "Refresh": {
+      "type": "object",
+      "properties": {
+        "RoleARN": {
+          "type": "string"
+        },
+        "ObjectPath": {
+          "type": "string"
+        },
+        "PeriodMinutes": {
+          "type": "integer"
+        },
+        "AlarmPeriodMinutes": {
+          "type": "integer"
+        },
+        "CronExpression": {
+          "type": "string"
+        }
+      }
+    },
+    "Query": {
+      "type": "string"
+    },
+    "Schema": {
+      "type": "string"
+    },
+    "LogTypeMap": {
+      "type": "object",
+      "properties": {
+        "PrimaryKey": {
+          "type": "string"
+        },
+        "AssociatedLogTypes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "LogType": {
+                "type": "string"
+              },
+              "Selectors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Indicators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Field": {
+            "type": "string"
+          },
+          "Indicators": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "Validations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "Field": {
+            "type": "string"
+          },
+          "Validations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "Description": {
+      "type": "string"
+    },
+    "Reference": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "AnalysisType",
+    "LookupName",
+    "Enabled",
+    "LogTypeMap"
+  ],
+  "additionalProperties": false
+}

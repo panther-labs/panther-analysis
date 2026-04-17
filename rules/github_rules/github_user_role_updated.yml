@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: github_user_role_updated.py
-RuleID: GitHub.User.RoleUpdated
-DisplayName: GitHub User Role Updated
+RuleID: "GitHub.User.RoleUpdated"
+DisplayName: "GitHub User Role Updated"
 Enabled: true
 LogTypes:
   - GitHub.Audit
@@ -11,11 +11,11 @@ Tags:
 Reports:
   MITRE ATT&CK:
     - TA0003:T1098
+Reference: https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/roles-in-an-organization
 Severity: High
 Description: Detects when a GitHub user role is upgraded to an admin or downgraded to a member
 Tests:
-  -
-    Name: GitHub - Member Updated
+  - Name: GitHub - Member Updated
     ExpectedResult: true
     Log:
       {
@@ -24,10 +24,9 @@ Tests:
         "created_at": 1621305118553,
         "p_log_type": "GitHub.Audit",
         "repo": "my-org/my-repo",
-        "user": "bob"
+        "user": "bob",
       }
-  -
-    Name: GitHub - Member Updated
+  - Name: GitHub - Member Invited
     ExpectedResult: false
     Log:
       {
@@ -36,5 +35,5 @@ Tests:
         "created_at": 1621305118553,
         "p_log_type": "GitHub.Audit",
         "repo": "my-org/my-repo",
-        "user": "bob"
+        "user": "bob",
       }

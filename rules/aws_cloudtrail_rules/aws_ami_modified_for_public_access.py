@@ -1,5 +1,5 @@
-from panther import aws_cloudtrail_success
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
+from panther_detection_helpers.caching import check_account_age
 
 
 def rule(event):
@@ -7,12 +7,16 @@ def rule(event):
     if not aws_cloudtrail_success(event) or event.get("eventName") != "ModifyImageAttribute":
         return False
 
-    added_perms = deep_get(
-        event, "requestParameters", "launchPermission", "add", "items", default=[]
+    added_perms = event.deep_get(
+        "requestParameters", "launchPermission", "add", "items", default=[{}]
     )
 
     for item in added_perms:
         if item.get("group") == "all":
+            return True
+        if check_account_age(
+            item.get("userId", "") + "-" + event.udm("user_account_id", default="")
+        ):  # checking if the account is new
             return True
 
     return False

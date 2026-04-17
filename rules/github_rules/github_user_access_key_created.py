@@ -1,4 +1,5 @@
 def rule(event):
+
     return event.get("action") == "public_key.create"
 
 

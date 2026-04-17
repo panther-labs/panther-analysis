@@ -1,4 +1,5 @@
-from panther_base_helpers import box_parse_additional_details, deep_get
+from panther_base_helpers import deep_get
+from panther_box_helpers import box_parse_additional_details
 
 
 def rule(event):
@@ -18,8 +19,8 @@ def rule(event):
 def title(event):
     if event.get("event_type") == "FILE_MARKED_MALICIOUS":
         return (
-            f"File [{deep_get(event, 'source', 'item_name', default='<UNKNOWN_FILE>')}], owned by "
-            f"[{deep_get(event, 'source', 'owned_by', 'login', default='<UNKNOWN_USER>')}], "
+            f"File [{event.deep_get('source', 'item_name', default='<UNKNOWN_FILE>')}], owned by "
+            f"[{event.deep_get('source', 'owned_by', 'login', default='<UNKNOWN_USER>')}], "
             f"was marked malicious."
         )
 

@@ -1,0 +1,104 @@
+AnalysisType: rule
+Filename: cloudflare_react2shell_rce_attempt.py
+RuleID: "Cloudflare.Firewall.React2Shell.RCE"
+DisplayName: "Cloudflare React2Shell RCE Attempt Detected"
+Enabled: true
+LogTypes:
+  - Cloudflare.Firewall
+Tags:
+  - Cloudflare
+  - RCE
+  - React2Shell
+  - CVE-2025-55182
+Severity: High
+Description: Detects React2Shell (CVE-2025-55182) RCE attempts blocked by Cloudflare WAF
+Runbook: |
+  1. Query Cloudflare Firewall logs for all requests from the ClientIP in the 6 hours before and after the alert to identify attack patterns
+  2. Check if the ClientIP is associated with known threat actors, scanning infrastructure, VPN services, or proxy networks
+  3. Search for other React2Shell attempts from this IP or targeting the same ClientRequestHost in the past 7 days
+Reference: https://blog.cloudflare.com/cloudflare-protection-against-cve-2025-55182-react2shell
+SummaryAttributes:
+  - Action
+  - ClientCountry
+  - ClientIP
+  - ClientRequestUserAgent
+  - ClientRequestHost
+Tests:
+  - Name: Managed Ruleset Match
+    ExpectedResult: true
+    Log:
+      {
+        "Action": "block",
+        "ClientASN": 13335,
+        "ClientASNDescription": "CLOUDFLARENET",
+        "ClientCountry": "us",
+        "ClientIP": "1.2.3.4",
+        "ClientRequestHost": "example.com",
+        "ClientRequestMethod": "POST",
+        "ClientRequestPath": "/api/upload",
+        "ClientRequestProtocol": "HTTP/2",
+        "ClientRequestQuery": "",
+        "ClientRequestScheme": "https",
+        "ClientRequestUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "Datetime": "2025-12-16 10:30:00",
+        "EdgeColoCode": "SFO",
+        "EdgeResponseStatus": 403,
+        "Kind": "firewall",
+        "MatchIndex": 0,
+        "OriginResponseStatus": 0,
+        "RayID": "8e5c2da581234abc",
+        "RuleID": "33aa8a8a948b48b28d40450c5fb92fba",
+        "Source": "firewallmanaged",
+      }
+  - Name: Free Ruleset Match
+    ExpectedResult: true
+    Log:
+      {
+        "Action": "block",
+        "ClientASN": 13335,
+        "ClientASNDescription": "CLOUDFLARENET",
+        "ClientCountry": "cn",
+        "ClientIP": "1.2.3.40",
+        "ClientRequestHost": "example.org",
+        "ClientRequestMethod": "GET",
+        "ClientRequestPath": "/search",
+        "ClientRequestProtocol": "HTTP/1.1",
+        "ClientRequestQuery": "q=malicious",
+        "ClientRequestScheme": "https",
+        "ClientRequestUserAgent": "python-requests/2.28.0",
+        "Datetime": "2025-12-16 11:00:00",
+        "EdgeColoCode": "LAX",
+        "EdgeResponseStatus": 403,
+        "Kind": "firewall",
+        "MatchIndex": 0,
+        "OriginResponseStatus": 0,
+        "RayID": "9f6d3eb692345cde",
+        "RuleID": "2b5d06e34a814a889bee9a0699702280",
+        "Source": "firewallmanaged",
+      }
+  - Name: Different Rule Match
+    ExpectedResult: false
+    Log:
+      {
+        "Action": "block",
+        "ClientASN": 13335,
+        "ClientASNDescription": "CLOUDFLARENET",
+        "ClientCountry": "us",
+        "ClientIP": "9.10.11.12",
+        "ClientRequestHost": "example.com",
+        "ClientRequestMethod": "GET",
+        "ClientRequestPath": "/",
+        "ClientRequestProtocol": "HTTP/1.1",
+        "ClientRequestQuery": "",
+        "ClientRequestScheme": "https",
+        "ClientRequestUserAgent": "Mozilla/5.0",
+        "Datetime": "2025-12-16 12:00:00",
+        "EdgeColoCode": "SJC",
+        "EdgeResponseStatus": 403,
+        "Kind": "firewall",
+        "MatchIndex": 0,
+        "OriginResponseStatus": 0,
+        "RayID": "1a7e4fc703456def",
+        "RuleID": "e35c9a670b864a3ba0203ffb1bc977d1",
+        "Source": "firewallmanaged",
+      }

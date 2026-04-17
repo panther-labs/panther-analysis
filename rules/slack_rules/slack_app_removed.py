@@ -1,4 +1,4 @@
-from panther_base_helpers import deep_get, slack_alert_context
+from panther_slack_helpers import slack_alert_context
 
 APP_REMOVED_ACTIONS = [
     "app_restricted",
@@ -13,8 +13,8 @@ def rule(event):
 
 def title(event):
     return (
-        f"Slack App [{deep_get(event, 'entity', 'app', 'name')}] "
-        f"Removed by [{deep_get(event, 'actor', 'user', 'name')}]"
+        f"Slack App [{event.deep_get('entity', 'app', 'name')}] "
+        f"Removed by [{event.deep_get('actor', 'user', 'name')}]"
     )
 
 

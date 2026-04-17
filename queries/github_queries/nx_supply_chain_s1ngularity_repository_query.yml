@@ -1,0 +1,40 @@
+AnalysisType: saved_query
+QueryName: NX Supply Chain - S1ngularity Repository Detection
+Description: |
+  https://github.com/nrwl/nx/security/advisories/GHSA-cxm3-wv7p-598c
+
+  Detects GitHub activity associated with the NX supply chain compromise (CVE-2024-XXXX).
+  The s1ngularity attack compromised popular NX build system packages affecting ~4M weekly downloads.
+  
+  Attack Details:
+  - Malicious NPM packages published August 26-27, 2025 (22:32-03:37 UTC)
+  - Created repositories: "s1ngularity-repository", "s1ngularity-repository-0/1" for data exfiltration
+  - Targeted cryptocurrency wallets, SSH keys, GitHub/NPM tokens, .env files
+  - Used triple base64 encoding to upload stolen credentials
+  - First documented case of weaponizing AI CLI tools for reconnaissance
+  
+  This query detects repository creation, access, and API activity patterns consistent with the attack.
+Tags:
+  - GitHub
+  - Supply Chain Compromise
+  - NX Package Compromise
+  - Data Exfiltration
+Query: |
+  SELECT 
+    p_event_time,
+    actor,
+    action,
+    repo,
+    org,
+    actor_ip,
+    user_agent,
+    visibility,
+    public_repo,
+    operation_type,
+    created_at
+  FROM panther_logs.public.github_audit
+  WHERE p_event_time >= '2025-08-25 12:00:00'
+    AND action IN ('repo.create', 'repo.access', 'repo.download_zip', 'team.add_repository')
+    AND public_repo
+    AND LOWER(COALESCE(repo, '')) LIKE '%s1ngularity-repository%'
+  ORDER BY p_event_time DESC

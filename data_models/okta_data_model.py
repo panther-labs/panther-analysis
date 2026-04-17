@@ -3,6 +3,7 @@ from panther_base_helpers import deep_get
 
 
 def get_event_type(event):
+    # pylint: disable=too-many-return-statements
     if (
         event.get("eventType") == "user.session.start"
         and event.get("outcome", {}).get("result") == "FAILURE"
@@ -14,6 +15,8 @@ def get_event_type(event):
     ):
         return event_type.SUCCESSFUL_LOGIN
     if event.get("eventType") in ["user.mfa.factor.deactivate", "user.mfa.factor.suspend"]:
+        if event.get("outcome", {}).get("reason", "").startswith("User reset"):
+            return event_type.MFA_RESET
         return event_type.MFA_DISABLED
 
     if event.get("eventType") in [
@@ -29,7 +32,7 @@ def get_event_type(event):
 
 
 def get_actor_user(event):
-    actor = deep_get(event, "actor", "displayName", default="unknown")
+    actor = deep_get(event, "actor", "alternateId", default="unknown")
     if actor == "unknown":
-        actor = deep_get(event, "actor", "alternateId", default="Unknown User")
+        actor = deep_get(event, "actor", "displayName", default="Unknown User")
     return actor

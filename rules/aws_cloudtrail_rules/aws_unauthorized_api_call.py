@@ -1,6 +1,7 @@
 from ipaddress import ip_address
 
-from panther_base_helpers import aws_rule_context, aws_strip_role_session_id, deep_get
+from panther_aws_helpers import aws_rule_context
+from panther_misp_helpers import get_misp_warning_lists
 
 # Do not alert on these access denied errors for these events.
 # Events could be exceptions because they are particularly noisy and provide little to no value,
@@ -12,25 +13,29 @@ EVENT_EXCEPTIONS = {
 
 
 def rule(event):
-    # Validate the request came from outside of AWS
+    source_ip = event.get("sourceIPAddress")
+
     try:
-        ip_address(event.get("sourceIPAddress"))
+        ip_address(source_ip)
     except ValueError:
         return False
+
+    # Filter out known Amazon IP ranges
+    misp_data = get_misp_warning_lists(event)
+    if misp_data and misp_data.has_warning_list_id(source_ip, "amazon-aws"):
+        return False
+
     return (
         event.get("errorCode") == "AccessDenied" and event.get("eventName") not in EVENT_EXCEPTIONS
     )
 
 
 def dedup(event):
-    user_identity = event.get("userIdentity", {})
-    if user_identity.get("type") == "AssumedRole":
-        return aws_strip_role_session_id(user_identity.get("arn", ""))
-    return user_identity.get("arn", "")
+    return event.udm("actor_user")
 
 
 def title(event):
-    return f"Access denied to {deep_get(event, 'userIdentity', 'type')} [{dedup(event)}]"
+    return f"Access denied to {event.deep_get('userIdentity', 'type')} [{dedup(event)}]"
 
 
 def alert_context(event):

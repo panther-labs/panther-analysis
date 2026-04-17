@@ -1,0 +1,103 @@
+AnalysisType: rule
+Filename: aws_waf_managed_admin_protection.py
+RuleID: "AWS.WAF.Managed.AdminProtection"
+DisplayName: "AWS WAF Managed Admin Protection Passthrough Rule"
+Enabled: true
+LogTypes:
+  - AWS.WAFWebACL
+Tags:
+  - AWS
+  - WAF
+  - Managed Rules
+  - Initial Access:Exploit Public-Facing Application
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1190
+    - TA0007:T1083
+Severity: High
+Description: >
+  Detects AWS WAF Admin Protection managed rule group matches. Blocks external access to exposed
+  administrative pages such as /admin, /wp-admin, and similar paths.
+Runbook: |
+  1. Find all requests from httpRequest:clientIp targeting admin-related URI paths in the 6 hours before and after this alert
+  2. Check if httpRequest:clientIp is associated with known corporate network ranges, VPNs, or threat intelligence feeds
+  3. Search for successful authentication events or other WAF alerts from httpRequest:clientIp across all httpSourceIds in the past 24 hours
+Reference: https://docs.aws.amazon.com/waf/latest/developerguide/aws-managed-rule-groups-baseline.html#aws-managed-rule-groups-baseline-admin
+Tests:
+  - Name: Blocked admin page access via terminatingRuleId
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:30:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesAdminProtectionRuleSet"
+      terminatingRuleType: "MANAGED_RULE_GROUP"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.45"
+        country: "US"
+        uri: "/wp-admin/"
+        httpMethod: "GET"
+
+  - Name: Match in ruleGroupList
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:35:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesAdminProtectionRuleSet"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "198.51.100.22"
+        country: "CN"
+        uri: "/admin/dashboard"
+        httpMethod: "GET"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesAdminProtectionRuleSet"
+          terminatingRule:
+            ruleId: "AdminProtection_URIPATH"
+            action: "BLOCK"
+
+  - Name: Non-terminating match (COUNT mode)
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:40:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "CF"
+      httpRequest:
+        clientIp: "192.0.2.100"
+        country: "RU"
+        uri: "/admin"
+        httpMethod: "GET"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesAdminProtectionRuleSet"
+          nonTerminatingMatchingRules:
+            - ruleId: "AdminProtection_URIPATH"
+              action: "COUNT"
+
+  - Name: Different rule group - no alert
+    ExpectedResult: false
+    Log:
+      timestamp: "2024-03-20T10:50:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesCommonRuleSet"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.45"
+
+  - Name: Normal traffic - no alert
+    ExpectedResult: false
+    Log:
+      timestamp: "2024-03-20T10:55:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "198.51.100.10"
+
+DedupPeriodMinutes: 60
+Threshold: 1

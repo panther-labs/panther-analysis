@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: github_org_ip_allowlist.py
-RuleID: GitHub.Org.IpAllowlist
-DisplayName: GitHub Org IP Allow List modified
+RuleID: "GitHub.Org.IpAllowlist"
+DisplayName: "GitHub Org IP Allow List modified"
 Enabled: true
 LogTypes:
   - GitHub.Audit
@@ -17,9 +17,9 @@ SummaryAttributes:
   - action
 Description: Detects changes to a GitHub Org IP Allow List
 Runbook: Verify that the change was authorized and appropriate.
+Reference: https://docs.github.com/en/apps/maintaining-github-apps/managing-allowed-ip-addresses-for-a-github-app
 Tests:
-  -
-    Name: GitHub - IP Allow list modified
+  - Name: GitHub - IP Allow list modified
     ExpectedResult: true
     Log:
       {
@@ -29,8 +29,7 @@ Tests:
         "p_log_type": "GitHub.Audit",
         "org": "my-org",
       }
-  -
-    Name: GitHub - IP Allow list disabled
+  - Name: GitHub - IP Allow list disabled
     ExpectedResult: true
     Log:
       {
@@ -40,8 +39,7 @@ Tests:
         "org": "my-org",
         "p_log_type": "GitHub.Audit",
       }
-  -
-    Name: GitHub - Non IP Allow list action
+  - Name: GitHub - Non IP Allow list action
     ExpectedResult: false
     Log:
       {

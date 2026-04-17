@@ -1,0 +1,197 @@
+AnalysisType: rule
+RuleID: "Kubernetes.SystemRole.Modified"
+DisplayName: "Kubernetes System Role Modified or Deleted"
+Enabled: true
+Status: Experimental
+Filename: k8s_system_role_modified.py
+LogTypes:
+  - Amazon.EKS.Audit
+  - Azure.MonitorActivity
+  - GCP.AuditLog
+Tags:
+  - Kubernetes
+  - Privilege Escalation
+  - Defense Evasion
+  - Persistence
+  - RBAC
+  - Unified Detection
+Severity: Critical
+Description: >
+  This detection monitors for modifications or deletions of system ClusterRoles/Roles (those starting with "system:").
+  These are built-in Kubernetes roles for control plane components like kube-scheduler, kube-controller-manager, and
+  system:admin. Tampering with system roles can break cluster functionality, create privilege escalation backdoors,
+  or disable security controls. Legitimate modifications to system roles are extremely rare outside of cluster upgrades.
+Runbook: |
+  1. Immediately review the changes made to the system role and determine if this represents a cluster upgrade or unauthorized tampering
+  2. If unauthorized, revert the role to its original state using kubectl or restore from backup, then revoke credentials for the modifying user
+  3. Search for all RBAC modifications by this user across all clusters in the past 7 days and audit all API operations to identify other malicious changes
+Reports:
+  MITRE ATT&CK:
+    - TA0004:T1078.004 # Privilege Escalation: Valid Accounts - Cloud Accounts
+    - TA0005:T1222 # Defense Evasion: File and Directory Permissions Modification
+    - TA0003:T1098 # Persistence: Account Manipulation
+Reference: https://kubernetes.io/docs/reference/access-authn-authz/rbac/#default-roles-and-role-bindings
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - username
+  - resource
+  - name
+  - p_source_label
+Tests:
+  - Name: EKS system ClusterRole modified
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "apiVersion": "audit.k8s.io/v1",
+        "verb": "update",
+        "user": {"username": "attacker@example.com"},
+        "sourceIPs": ["203.0.113.42"],
+        "userAgent": "kubectl/v1.28.0",
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "system:node",
+          "apiGroup": "rbac.authorization.k8s.io",
+          "apiVersion": "v1"
+        },
+        "responseStatus": {"code": 200},
+        "requestObject": {
+          "kind": "ClusterRole",
+          "metadata": {"name": "system:node"},
+          "rules": [
+            {
+              "apiGroups": ["*"],
+              "resources": ["*"],
+              "verbs": ["*"]
+            }
+          ]
+        },
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: AKS system ClusterRole deleted
+    ExpectedResult: true
+    Log:
+      {
+        "p_log_type": "Azure.MonitorActivity",
+        "category": "kube-audit",
+        "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
+        "properties": {
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"delete\",\"user\":{\"username\":\"malicious-user@example.com\"},\"sourceIPs\":[\"1.2.3.4\"],\"objectRef\":{\"resource\":\"clusterroles\",\"name\":\"system:kube-scheduler\",\"apiGroup\":\"rbac.authorization.k8s.io\"},\"responseStatus\":{\"code\":200}}"
+        },
+        "p_source_label": "aks-cluster"
+      }
+  - Name: GKE system Role patched
+    ExpectedResult: true
+    Log:
+      {
+        "protoPayload": {
+          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authorizationInfo": [{
+            "granted": true,
+            "permission": "io.k8s.rbac.v1.roles.patch",
+            "resource": "rbac.authorization.k8s.io/v1/namespaces/kube-system/roles/system:controller"
+          }],
+          "methodName": "io.k8s.rbac.v1.roles.patch",
+          "requestMetadata": {"callerIP": "8.8.8.8"},
+          "resourceName": "rbac.authorization.k8s.io/v1/namespaces/kube-system/roles/system:controller",
+          "serviceName": "k8s.io"
+        },
+        "resource": {
+          "type": "k8s_cluster",
+          "labels": {"project_id": "test-project"}
+        },
+        "p_log_type": "GCP.AuditLog",
+        "p_source_label": "gke-cluster"
+      }
+  - Name: EKS system:admin ClusterRole modified
+    ExpectedResult: true
+    Log:
+      {
+        "kind": "Event",
+        "verb": "patch",
+        "user": {"username": "attacker@example.com"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "system:admin",
+          "apiGroup": "rbac.authorization.k8s.io"
+        },
+        "responseStatus": {"code": 200},
+        "p_log_type": "Amazon.EKS.Audit",
+        "p_source_label": "eks-cluster"
+      }
+  - Name: System:coredns modified (excluded - expected)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "update",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "system:coredns",
+          "apiGroup": "rbac.authorization.k8s.io"
+        },
+        "responseStatus": {"code": 200},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Non-system role modified
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "update",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "custom-admin",
+          "apiGroup": "rbac.authorization.k8s.io"
+        },
+        "responseStatus": {"code": 200},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: System principal modifying system role (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "update",
+        "user": {"username": "system:serviceaccount:kube-system:operator"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "system:node",
+          "apiGroup": "rbac.authorization.k8s.io"
+        },
+        "responseStatus": {"code": 200},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Failed modification (excluded)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "update",
+        "user": {"username": "attacker@example.com"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "system:admin",
+          "apiGroup": "rbac.authorization.k8s.io"
+        },
+        "responseStatus": {"code": 403},
+        "p_log_type": "Amazon.EKS.Audit"
+      }
+  - Name: Reading system role (not modifying)
+    ExpectedResult: false
+    Log:
+      {
+        "kind": "Event",
+        "verb": "get",
+        "user": {"username": "admin@example.com"},
+        "objectRef": {
+          "resource": "clusterroles",
+          "name": "system:admin",
+          "apiGroup": "rbac.authorization.k8s.io"
+        },
+        "responseStatus": {"code": 200},
+        "p_log_type": "Amazon.EKS.Audit"
+      }

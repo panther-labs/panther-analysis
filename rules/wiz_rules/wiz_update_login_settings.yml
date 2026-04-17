@@ -1,0 +1,105 @@
+AnalysisType: rule
+RuleID: Wiz.Update.Login.Settings
+Description: This rule detects updates of Wiz login settings.
+DisplayName: Wiz Update Login Settings
+Runbook: Verify that this change was planned. If not, revert the change and ensure this doesn't happen again.
+Reference: https://support.wiz.io/hc/en-us/categories/5311977085340-User-Management
+Enabled: true
+Filename: wiz_update_login_settings.py
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1556  # Modify Authentication Process
+LogTypes:
+  - Wiz.Audit
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+  - Name: UpdateLoginSettings
+    ExpectedResult: true
+    Log:
+      {
+        "id": "f77a8e1e-5674-42d1-9f1e-8a259dc736cd",
+        "action": "UpdateLoginSettings",
+        "requestId": "417f1751-bcc1-4d38-86aa-eb781790bdd6",
+        "status": "SUCCESS",
+        "timestamp": "2024-06-16T13:14:22.291227Z",
+        "actionParameters": {
+          "input": {
+            "patch": {
+              "approvedUserDomains": [
+                "abc.com",
+              ]
+            }
+          },
+          "selection": [
+            "__typename",
+            {
+              "loginSettings": [
+                "__typename",
+                "approvedUserDomains"
+              ]
+            }
+          ]
+        },
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+        "sourceIP": "12.34.56.78",
+        "serviceAccount": null,
+        "user": {
+          "id": "<redacted>",
+          "name": "user@company.com"
+        }
+      }
+  - Name: CreateUser
+    ExpectedResult: false
+    Log:
+      {
+        "id": "220d23be-f07c-4d97-b4a6-87ad04eddb14",
+        "action": "CreateUser",
+        "requestId": "0d9521b2-c3f8-4a73-bf7c-20257788752e",
+        "status": "SUCCESS",
+        "timestamp": "2024-07-29T09:40:15.66643Z",
+        "actionParameters": {
+          "input": {
+            "assignedProjectIds": null,
+            "email": "testy@company.com",
+            "expiresAt": null,
+            "name": "Test User",
+            "role": "GLOBAL_ADMIN"
+          },
+          "selection": [
+            "__typename",
+            {
+              "user": [
+                "__typename",
+                "id"
+              ]
+            }
+          ]
+        },
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+        "sourceIP": "8.8.8.8",
+        "serviceAccount": null,
+        "user": {
+          "id": "someuser@company.com",
+          "name": "someuser@company.com"
+        }
+      }
+  - Name: UpdateLoginSettings - Fail
+    ExpectedResult: false
+    Log:
+      {
+        "id": "f77a8e1e-5674-42d1-9f1e-8a259dc736cd",
+        "action": "UpdateLoginSettings",
+        "requestId": "417f1751-bcc1-4d38-86aa-eb781790bdd6",
+        "status": "FAILED",
+        "timestamp": "2024-06-16T13:14:22.291227Z",
+        "actionParameters": { },
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+        "sourceIP": "12.34.56.78",
+        "serviceAccount": null,
+        "user": {
+          "id": "<redacted>",
+          "name": "user@company.com"
+        }
+      }

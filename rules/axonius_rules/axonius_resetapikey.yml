@@ -1,0 +1,27 @@
+AnalysisType: rule
+Filename: axonius_resetapikey.py
+RuleID: Axonius.ResetApiKey
+DisplayName: Axonius API Key Reset
+Enabled: true
+LogTypes:
+  - Axonius.Activity
+Tags:
+  - Axonius
+Severity: Low
+Description: Detects an Axonius API Key Reset
+Runbook: Review the actions taken, check credentials/service user used and escalate.
+Tests:
+  - Name: API Key Reset
+    ExpectedResult: True
+    Log:
+      {
+        "event": {
+          "action": "AuditAction.ResetApiKey",
+          "category": "AuditCategory.Settings",
+          "params": { },
+          "type": "user",
+          "user": "boss@axonius.com"
+        },
+        "source": "axonius",
+        "time": 1752699243.486779
+      }

@@ -1,0 +1,200 @@
+AnalysisType: rule
+Filename: github_pull_request_target_usage.py
+RuleID: "GitHub.Webhook.PullRequestTargetUsage"
+DisplayName: "GitHub pull_request_target Workflow Usage"
+Enabled: true
+LogTypes:
+  - GitHub.Webhook
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195.002  # Supply Chain Compromise: Compromise Software Supply Chain
+    - TA0002:T1072  # Execution: Software Deployment Tools
+    - TA0004:T1134 # Privilege Escalation: Access Token Manipulation
+Tags:
+  - CI/CD
+  - Workflow
+  - Privilege Escalation
+Severity: High
+Description: >
+  Detects usage of pull_request_target workflows, which run with elevated privileges and can access
+  secrets even when triggered by external contributors from forks. These workflows pose security risks
+  as they run in the context of the target repository rather than the fork, potentially allowing
+  malicious code execution with write access and secrets. Low severity for non-cross-fork PRs.
+Runbook: |
+  1. Verify the pull_request_target workflow is necessary and properly secured
+  2. Check that the workflow doesn't build or run untrusted code from the pull request
+  3. Ensure the workflow follows security best practices:
+     - Uses explicit checkout with trusted refs
+     - Validates inputs and doesn't execute arbitrary code
+     - Has minimal required permissions
+  4. Review the workflow file for potential security vulnerabilities
+  5. Monitor for unusual activity from external contributors
+  6. Consider if pull_request event would be sufficient instead
+Reference: https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request_target
+Tests:
+  - Name: "Pull request target workflow completed"
+    ExpectedResult: true
+    Log:
+      action: "completed"
+      workflow_run:
+        id: 12345678
+        name: "Security Scan"
+        event: "pull_request_target"
+        status: "completed"
+        conclusion: "success"
+        html_url: "https://github.com/example-org/example-repo/actions/runs/12345678"
+        head_branch: "feature-branch"
+        pull_requests:
+          - number: 123
+            head:
+              ref: "feature-branch"
+              repo:
+                id: 243627255
+                name: "example-repo"
+                full_name: "example-org/example-repo"
+            base:
+              ref: "main"
+              repo:
+                id: 243627255
+                name: "example-repo"
+                full_name: "example-org/example-repo"
+      repository:
+        id: 243627255
+        full_name: "example-org/example-repo"
+        private: true
+
+  - Name: "Cross-fork pull request target workflow"
+    ExpectedResult: true
+    Log:
+      action: "completed"
+      workflow_run:
+        id: 87654321
+        name: "Build and Test"
+        event: "pull_request_target"
+        status: "completed"
+        conclusion: "failure"
+        html_url: "https://github.com/example-org/example-repo/actions/runs/87654321"
+        head_branch: "malicious-feature"
+        pull_requests:
+          - number: 456
+            head:
+              ref: "malicious-feature"
+              repo:
+                id: 999999999
+                name: "example-repo"
+                full_name: "attacker/example-repo"
+            base:
+              ref: "main"
+              repo:
+                id: 243627255
+                name: "example-repo"
+                full_name: "example-org/example-repo"
+      repository:
+        id: 243627255
+        full_name: "example-org/example-repo"
+        private: false
+
+  - Name: "Regular pull request workflow (not target)"
+    ExpectedResult: false
+    Log:
+      action: "completed"
+      workflow_run:
+        id: 11111111
+        name: "CI Tests"
+        event: "pull_request"
+        status: "completed"
+        conclusion: "success"
+        html_url: "https://github.com/example-org/example-repo/actions/runs/11111111"
+        head_branch: "safe-feature"
+        pull_requests:
+          - number: 789
+            head:
+              ref: "safe-feature"
+              repo:
+                id: 243627255
+                name: "example-repo"
+                full_name: "example-org/example-repo"
+            base:
+              ref: "main"
+              repo:
+                id: 243627255
+                name: "example-repo"
+                full_name: "example-org/example-repo"
+      repository:
+        id: 243627255
+        full_name: "example-org/example-repo"
+        private: true
+
+  - Name: "Push workflow (not pull request related)"
+    ExpectedResult: false
+    Log:
+      action: "completed"
+      workflow_run:
+        id: 22222222
+        name: "Deploy"
+        event: "push"
+        status: "completed"
+        conclusion: "success"
+        html_url: "https://github.com/example-org/example-repo/actions/runs/22222222"
+        head_branch: "main"
+        pull_requests: []
+      repository:
+        id: 243627255
+        full_name: "example-org/example-repo"
+        private: true
+
+  - Name: "Pull request target workflow requested"
+    ExpectedResult: false
+    Log:
+      action: "requested"
+      workflow_run:
+        id: 12345678
+        name: "Security Scan"
+        event: "pull_request_target"
+        status: "completed"
+        conclusion: "success"
+        html_url: "https://github.com/example-org/example-repo/actions/runs/12345678"
+        head_branch: "feature-branch"
+        pull_requests:
+          - number: 123
+            head:
+              ref: "feature-branch"
+              repo:
+                id: 243627255
+                name: "example-repo"
+                full_name: "example-org/example-repo"
+            base:
+              ref: "main"
+              repo:
+                id: 243627255
+                name: "example-repo"
+                full_name: "example-org/example-repo"
+      repository:
+        id: 243627255
+        full_name: "example-org/example-repo"
+        private: true
+
+  - Name: "Cross-fork with head_repository (empty pull_requests)"
+    ExpectedResult: true
+    Log:
+      action: "completed"
+      workflow_run:
+        id: 18538851870
+        name: "Your Workflow"
+        event: "pull_request_target"
+        status: "completed"
+        conclusion: "failure"
+        html_url: "https://github.com/example-org/example-repo/actions/runs/18538851870"
+        head_branch: "deathcon"
+        pull_requests: []
+        head_repository:
+          id: 1077071328
+          full_name: "attacker/example-repo"
+          fork: true
+        repository:
+          id: 1072340117
+          full_name: "example-org/example-repo"
+      repository:
+        id: 1072340117
+        full_name: "example-org/example-repo"
+        private: true

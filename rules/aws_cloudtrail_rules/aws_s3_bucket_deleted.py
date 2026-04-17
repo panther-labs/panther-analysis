@@ -1,5 +1,4 @@
-from panther import aws_cloudtrail_success
-from panther_base_helpers import aws_rule_context, deep_get
+from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
 
 
 def rule(event):
@@ -19,11 +18,11 @@ def dedup(event):
     user_identity = event.get("userIdentity", {})
     if user_identity.get("type") == "AssumedRole":
         return helper_strip_role_session_id(user_identity.get("arn", ""))
-    return user_identity.get("arn")
+    return user_identity.get("arn", "<NO_ARN_FOUND>")
 
 
 def title(event):
-    return f"{deep_get(event, 'userIdentity', 'type')} [{dedup(event)}] destroyed a bucket"
+    return f"{event.deep_get('userIdentity', 'type')} [{dedup(event)}] destroyed a bucket"
 
 
 def alert_context(event):

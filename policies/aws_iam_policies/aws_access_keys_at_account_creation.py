@@ -1,7 +1,6 @@
 from datetime import timedelta
 
-from panther_base_helpers import deep_get
-from panther_oss_helpers import resolve_timestamp_string
+from panther_base_helpers import deep_get, resolve_timestamp_string
 
 AWS_TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 DEFAULT_TIME = "0001-01-01T00:00:00Z"

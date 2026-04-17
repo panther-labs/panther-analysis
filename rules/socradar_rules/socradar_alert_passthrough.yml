@@ -1,0 +1,219 @@
+AnalysisType: rule
+Filename: socradar_alert_passthrough.py
+RuleID: "SOCRadar.Alert.Passthrough"
+DisplayName: "SOCRadar Alert Passthrough"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - SOCRadar.Incidents
+Tags:
+  - SOCRadar
+  - Threat Intelligence
+  - Brand Protection
+  - Dark Web
+  - Credential Intelligence
+  - Attack Surface
+DedupPeriodMinutes: 60
+Severity: Info
+Description: >
+  Surfaces all open SOCRadar security incidents as Panther alerts. Severity is mapped
+  dynamically from SOCRadar's alarm_risk_level (CRITICAL/HIGH/MEDIUM/LOW/INFO).
+  SOCRadar performs the underlying threat detection; this rule ensures every open
+  incident is visible in Panther for triage and response.
+Runbook: |
+  1. Review the full alert context including alarm_id, alarm_type_details.alarm_main_type, alarm_type_details.alarm_sub_type, and all content fields (phishing_domain, compromised_emails, malware_family, content_link) to understand the nature and scope of the SOCRadar incident.
+  2. Check whether any extracted indicators (p_any_ip_addresses, p_any_domain_names, p_any_emails, p_any_usernames) appear in other log sources or security alerts in the 24 hours before and after this alert to determine if the threat has already reached internal systems.
+  3. Search for other SOCRadar incidents with the same alarm_type_details.alarm_main_type or alarm_asset in the past 30 days to identify whether this is an isolated finding or part of a recurring or escalating threat pattern.
+Reference: https://socradar.io/incident-response/
+SummaryAttributes:
+  - alarm_id
+  - alarm_risk_level
+  - alarm_asset
+  - status
+  - p_any_ip_addresses
+  - p_any_domain_names
+  - p_any_emails
+  - p_any_usernames
+Tests:
+  - Name: CRITICAL - Credential Intelligence Stealer Logs
+    ExpectedResult: true
+    Log:
+      alarm_id: 93001001
+      alarm_asset: "TESTSOCRadar"
+      alarm_assignees: []
+      alarm_risk_level: "CRITICAL"
+      alarm_text: "Detected stolen credentials from infected system. Employee credentials found in stealer logs."
+      alarm_type_details:
+        alarm_main_type: "Credential Intelligence"
+        alarm_sub_type: "Stealer Logs"
+        alarm_default_mitigation_plan: "Force password reset. Isolate infected systems. Enable MFA."
+        alarm_default_risk_level: "CRITICAL"
+        alarm_detection_and_analysis: ""
+        alarm_post_incident_analysis: ""
+      approved_by: "Auto Approve"
+      content:
+        computer_name: "DESKTOP-HR-042"
+        username: "alice.jones"
+        compromised_emails: "alice.jones@testcompany.com"
+        malware_family: "Vidar Stealer"
+        source: "Underground Forum - XSS.is"
+      date: "2026-03-19 09:00:00"
+      status: "OPEN"
+      is_approved: true
+      notification_id: 8810001
+      tags:
+        - credentials
+        - stealer
+        - vidar
+
+  - Name: HIGH - Dark Web Hacker Forum Mention
+    ExpectedResult: true
+    Log:
+      alarm_id: 93002002
+      alarm_asset: "TESTSOCRadar"
+      alarm_assignees: []
+      alarm_risk_level: "HIGH"
+      alarm_text: "Company-related information detected on a hacker forum."
+      alarm_type_details:
+        alarm_main_type: "Deep&Dark Web Monitoring"
+        alarm_sub_type: "Dark Web Suspicious Content"
+        alarm_default_mitigation_plan: "Identify the specific data being discussed. Assess authenticity."
+        alarm_default_risk_level: "HIGH"
+        alarm_detection_and_analysis: ""
+        alarm_post_incident_analysis: ""
+      approved_by: "Auto Approve"
+      content:
+        content_date: "2026-03-18 22:10"
+        content_link: "https://forum.raidforums.io/thread/45123/"
+        content_preview: "Full internal employee database for testcompany.com - 45k records"
+        matched_asset:
+          - "TESTSOCRadar"
+        source: "raidforums.io"
+      date: "2026-03-19 01:30:00"
+      status: "OPEN"
+      is_approved: true
+      notification_id: 8810002
+      tags:
+        - dark web
+        - hacker forum
+
+  - Name: MEDIUM - Brand Protection SSL Registration
+    ExpectedResult: true
+    Log:
+      alarm_id: 87638015
+      alarm_asset: "TESTSOCRadar"
+      alarm_assignees: []
+      alarm_risk_level: "MEDIUM"
+      alarm_text: "An SSL Registration activity is detected on a domain possibly prepared for impersonating your brand."
+      alarm_type_details:
+        alarm_main_type: "Brand Protection"
+        alarm_sub_type: "Impersonating Domain"
+        alarm_default_mitigation_plan: "Check if domain was registered by your company. Initiate takedown if malicious."
+        alarm_default_risk_level: "MEDIUM"
+        alarm_detection_and_analysis: ""
+        alarm_post_incident_analysis: ""
+      approved_by: "Auto Approve"
+      content:
+        phishing_domain: "salesforce.lv"
+        phishing_domain_url: "https://platform.socradar.com/company/330/phishing/101036358/detail_page"
+        phishing_keyword: "salesforce"
+        ip_address: "104.247.81.99"
+        score: 85
+      date: "2026-03-19 21:04:55"
+      status: "OPEN"
+      is_approved: true
+      notification_id: 8702571
+      tags:
+        - domain
+        - impersonating
+        - phishing
+
+  - Name: LOW - Attack Surface Certificate Expiry
+    ExpectedResult: true
+    Log:
+      alarm_id: 94012012
+      alarm_asset: "TESTSOCRadar"
+      alarm_assignees: []
+      alarm_risk_level: "LOW"
+      alarm_text: "An SSL/TLS certificate is expiring within 14 days."
+      alarm_type_details:
+        alarm_main_type: "Attack Surface Monitoring"
+        alarm_sub_type: "Certificate Expiry"
+        alarm_default_mitigation_plan: "Renew the SSL/TLS certificate immediately."
+        alarm_default_risk_level: "LOW"
+        alarm_detection_and_analysis: ""
+        alarm_post_incident_analysis: ""
+      approved_by: "Auto Approve"
+      content:
+        compromised_ips: "198.51.100.22"
+        source: "Certificate Monitoring"
+      date: "2026-03-19 06:00:00"
+      status: "OPEN"
+      is_approved: true
+      notification_id: 8820012
+      tags:
+        - ssl
+        - certificate
+        - expiry
+
+  - Name: INFO - Threat Hunting Proactive
+    ExpectedResult: true
+    Log:
+      alarm_id: 87637977
+      alarm_asset: "TESTSOCRadar"
+      alarm_assignees: []
+      alarm_risk_level: "INFO"
+      alarm_text: "An alarm has been manually generated using the Threat Hunting module."
+      alarm_type_details:
+        alarm_main_type: "Threat Hunting"
+        alarm_sub_type: "Proactive Threat Hunting"
+        alarm_default_mitigation_plan: "Customer Definition"
+        alarm_default_risk_level: "HIGH"
+        alarm_detection_and_analysis: ""
+        alarm_post_incident_analysis: ""
+      approved_by: "Auto Approve"
+      content:
+        content: ""
+        content_insert_date: "19 Mar 2026"
+        content_preview: '{"keyword": "be.sibelga", "source": "apkcombo.com"}'
+        matched_query: "google"
+        source_type: ""
+        tags:
+          - apk_sites
+        user_description: "test description"
+      date: "2026-03-19 21:00:38"
+      status: "OPEN"
+      is_approved: true
+      notification_id: 8702552
+      tags:
+        - threat hunting
+        - proactive
+
+  - Name: CLOSED incident - should not alert
+    ExpectedResult: false
+    Log:
+      alarm_id: 94011011
+      alarm_asset: "TESTSOCRadar"
+      alarm_assignees:
+        - "analyst@testcompany.com"
+      alarm_risk_level: "LOW"
+      alarm_text: "A low-confidence mention of your organization was detected - assessed as non-threatening."
+      alarm_type_details:
+        alarm_main_type: "Deep&Dark Web Monitoring"
+        alarm_sub_type: "Dark Web Suspicious Content"
+        alarm_default_mitigation_plan: "Review and close if non-threatening."
+        alarm_default_risk_level: "LOW"
+        alarm_detection_and_analysis: ""
+        alarm_post_incident_analysis: ""
+      approved_by: "Auto Approve"
+      content:
+        content_link: "https://forum.hackingforums.net/thread/99012"
+        content_preview: "Generic mention - no sensitive data"
+        source: "hackingforums.net"
+      date: "2026-03-19 04:00:00"
+      status: "CLOSED"
+      is_approved: true
+      notification_id: 8820011
+      tags:
+        - closed
+        - false positive

@@ -7,7 +7,6 @@ lookup table to do this translation can be found at :
 
 The steps detailed in that document are required for this rule to function as intended.
 """
-from panther_base_helpers import deep_get
 
 # Add the human-readable names of 1Password items you want to monitor
 SENSITIVE_ITEM_WATCHLIST = ["demo_item"]
@@ -15,20 +14,20 @@ SENSITIVE_ITEM_WATCHLIST = ["demo_item"]
 
 def rule(event):
     return (
-        deep_get(event, "p_enrichment", "1Password Translation", "item_uuid", "title")
+        event.deep_get("p_enrichment", "1Password Translation", "item_uuid", "title")
         in SENSITIVE_ITEM_WATCHLIST
     )
 
 
 def title(event):
-    return f"A Sensitive 1Password Item was Accessed by user {deep_get(event, 'user', 'name')}"
+    return f"A Sensitive 1Password Item was Accessed by user {event.deep_get('user', 'name')}"
 
 
 def alert_context(event):
     context = {
-        "user": deep_get(event, "user", "name"),
-        "item_name": deep_get(event, "p_enrichment", "1Password Translation", "item_uuid", "title"),
-        "client": deep_get(event, "client", "app_name"),
+        "user": event.deep_get("user", "name"),
+        "item_name": event.deep_get("p_enrichment", "1Password Translation", "item_uuid", "title"),
+        "client": event.deep_get("client", "app_name"),
         "ip_address": event.udm("source_ip"),
         "event_time": event.get("timestamp"),
     }

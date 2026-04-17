@@ -1,0 +1,89 @@
+AnalysisType: rule
+Filename: crowdstrike_new_user_created.py
+RuleID: "Crowdstrike.NewUserCreated"
+DisplayName: "Crowdstrike New User Created"
+Enabled: true
+LogTypes:
+  - Crowdstrike.EventStreams
+Severity: Info
+CreateAlert: false
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1136.003 # Create Cloud Account
+Description: A new Crowdstrike user was created
+DedupPeriodMinutes: 60
+Threshold: 1
+Runbook: Confirm the new user is valid.
+Tests:
+  - Name: New User Created
+    ExpectedResult: true
+    Log:
+      {
+        "metadata": {
+          "customerIDString": "face_customer_id",
+          "offset": 1238741,
+          "eventType": "AuthActivityAuditEvent",
+          "eventCreationTime": "2024-07-22 15:50:16.923000000",
+          "version": "1.0"
+        },
+        "event": {
+          "UserId": "bilbo.baggins@hobbiton.co",
+          "UserIp": "1.1.1.1",
+          "OperationName": "createUser",
+          "ServiceName": "CrowdStrike Authentication",
+          "Success": true,
+          "UTCTimestamp": "2024-07-22 15:50:16.923000000",
+          "AuditKeyValues": [
+            {
+              "Key": "target_name",
+              "ValueString": "frodo.baggins@hobbiton.co"
+            }
+          ]
+        }
+      }
+  - Name: Unrelated Event
+    ExpectedResult: false
+    Log:
+      {
+        "event": {
+          "AuditKeyValues": [
+            {
+              "Key": "target_uuid",
+              "ValueString": "e70e5306-4a83-4a9f-9b59-a78c304c438b"
+            },
+            {
+              "Key": "target_cid",
+              "ValueString": "fake_customer_id"
+            },
+            {
+              "Key": "actor_cid",
+              "ValueString": "fake_customer_id"
+            },
+            {
+              "Key": "trace_id",
+              "ValueString": "652fc606f369ef3105925197b34f2c54"
+            },
+            {
+              "Key": "target_name",
+              "ValueString": "peregrin.took@hobbiton.co"
+            },
+            {
+              "Key": "action_target_name",
+              "ValueString": "peregrin.took@hobbiton.co"
+            }
+          ],
+          "OperationName": "userAuthenticate",
+          "ServiceName": "CrowdStrike Authentication",
+          "Success": true,
+          "UTCTimestamp": "2024-07-22 15:50:16.923000000",
+          "UserId": "peregrin.took@hobbiton.co",
+          "UserIp": "1.1.1.1"
+        },
+        "metadata": {
+          "customerIDString": "fake_customer_id",
+          "eventCreationTime": "2024-07-22 15:50:16.923000000",
+          "eventType": "AuthActivityAuditEvent",
+          "offset": 341329,
+          "version": "1.0"
+        }
+      }

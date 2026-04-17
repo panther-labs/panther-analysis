@@ -1,88 +1,450 @@
-## 1Password
-[ Unusual 1Password Client Detected](../rules/onepassword_rules/onepassword_unusual_client.py)
+## Box
 
-[ BETA - Sensitive 1Password Item Accessed](../rules/onepassword_rules/onepassword_lut_sensitive_item_access.py)
+- [Box Access Granted](../rules/box_rules/box_access_granted.yml)
+  - A user granted access to their box account to Box technical support from account settings.
+- [Box Content Workflow Policy Violation](../rules/box_rules/box_policy_violation.yml)
+  - A user violated the content workflow policy.
+- [Box event triggered by unknown or external user](../rules/box_rules/box_event_triggered_externally.yml)
+  - An external user has triggered a box enterprise event.
+- [Box Large Number of Downloads](../rules/box_rules/box_user_downloads.yml)
+  - A user has exceeded the threshold for number of downloads within a single time frame.
+- [Box Large Number of Permission Changes](../rules/box_rules/box_user_permission_updates.yml)
+  - A user has exceeded the threshold for number of folder permission changes within a single time frame.
+- [Box New Login](../rules/box_rules/box_new_login.yml)
+  - A user logged in from a new device.
+- [Box Shield Detected Anomalous Download Activity](../rules/box_rules/box_anomalous_download.yml)
+  - A user's download activity has altered significantly.
+- [Box Shield Suspicious Alert Triggered](../rules/box_rules/box_suspicious_login_or_session.yml)
+  - A user login event or session event was tagged as medium to high severity by Box Shield.
+- [Box Untrusted Device Login](../rules/box_rules/box_untrusted_device.yml)
+  - A user attempted to login from an untrusted device.
+- [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
+  - An actor user was denied login access more times than the configured threshold.
+- [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
+  - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [Malicious Content Detected](../rules/box_rules/box_malicious_content.yml)
+  - Box has detect malicious content, such as a virus.
+- [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
+  - Detects when an entity signs in from a nation associated with cyber attacks
 
-[ Configuration Required - Sensitive 1Password Item Accessed](../rules/onepassword_rules/onepassword_sensitive_item_access.py)
 
-## Gravitational Teleport
-[ Teleport Suspicious Commands Executed](../rules/gravitational_teleport_rules/teleport_suspicious_commands.py)
+## Dropbox
 
-[ Teleport SSH Auth Errors](../rules/gravitational_teleport_rules/teleport_auth_errors.py)
+- [Dropbox Admin sign-in-as Session](../rules/dropbox_rules/dropbox_admin_sign_in_as_session.yml)
+  - Alerts when an admin starts a sign-in-as session.
+- [Dropbox Document/Folder Ownership Transfer](../rules/dropbox_rules/dropbox_ownership_transfer.yml)
+  - Dropbox ownership of a document or folder has been transferred.
+- [Dropbox External Share](../rules/dropbox_rules/dropbox_external_share.yml)
+  - Dropbox item shared externally
+- [Dropbox Linked Team Application Added](../rules/dropbox_rules/dropbox_linked_team_application_added.yml)
+  - An application was linked to your Dropbox Account
+- [Dropbox Many Deletes](../queries/dropbox_queries/Dropbox_Many_Deletes_Query.yml)
+  - Dropbox Many Deletes
+- [Dropbox Many Downloads](../queries/dropbox_queries/Dropbox_Many_Downloads_Query.yml)
+  - Dropbox Many Downloads
+- [Dropbox User Disabled 2FA](../rules/dropbox_rules/dropbox_user_disabled_2fa.yml)
+  - Dropbox user has disabled 2fa login
 
-[ Teleport Create User Accounts](../rules/gravitational_teleport_rules/teleport_create_user_accounts.py)
 
-[ Teleport Scheduled Jobs](../rules/gravitational_teleport_rules/teleport_scheduled_jobs.py)
+## Google Workspace
 
-[ Teleport Network Scan Initiated](../rules/gravitational_teleport_rules/teleport_network_scanning.py)
+- [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
+  - Assigning an admin role manually could be a sign of privilege escalation
+- [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
+  - An actor user was denied login access more times than the configured threshold.
+- [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
+  - An actor user was denied login access more times than the configured threshold.
+- [External GSuite File Share](../rules/gsuite_reports_rules/gsuite_drive_external_share.yml)
+  - An employee shared a sensitive file externally with another organization
+- [GAIA GCPW Credential Theft Attack Chain](../correlation_rules/gaia_credential_theft_attack_chain.yml)
+  - Detects the GAIA (Google Account Information and Authentication) credential theftattack chain: credential dumping tool execution on Windows followed by anomalous GoogleWorkspace authentication. This pattern indicates an attacker has extracted OAuth refreshtokens from a Windows machine and is using them to authenticate to Google Workspace.
+- [Gmail Malicious SMTP Response](../rules/gsuite_activityevent_rules/gsuite_malicious_smtp_response.yml)
+  - Detects when Gmail blocks or rejects emails due to malicious SMTP response reasons including malware detection, spam/phishing links, low sender reputation, RBL listings, or denial of service attempts. This rule monitors inbound SMTP connections for security threats that Gmail's filters identify.
+- [Gmail Potential Spoofed Email Delivered](../rules/gsuite_activityevent_rules/gsuite_potential_spoofed_email.yml)
+  - Detects when a potentially spoofed email was successfully delivered to a user's inbox despite failing email authentication checks. This rule triggers when:1. DMARC authentication fails, OR 2. Both SPF and DKIM authentication fail simultaneouslyThese authentication failures indicate the sender may be impersonating a legitimate domain, which is a common tactic in phishing and business email compromise (BEC) attacks.
+- [Google Accessed a GSuite Resource](../rules/gsuite_activityevent_rules/gsuite_google_access.yml)
+  - Google accessed one of your GSuite resources directly, most likely in response to a support incident.
+- [Google Drive High Download Count](../queries/gsuite_queries/gsuite_drive_many_docs_downloaded.yml)
+  - Scheduled rule for the High Google Drive Download Count query which looks for incidents of more than 10 (tunable) downloads by a user in the past day.
+- [Google Workspace Admin Custom Role](../rules/gsuite_activityevent_rules/google_workspace_admin_custom_role.yml)
+  - A Google Workspace administrator created a new custom administrator role.
+- [Google Workspace Advanced Protection Program](../rules/gsuite_activityevent_rules/google_workspace_advanced_protection_program.yml)
+  - Your organization's Google Workspace Advanced Protection Program settings were modified.
+- [Google Workspace Apps Marketplace Allowlist](../rules/gsuite_activityevent_rules/google_workspace_apps_marketplace_allowlist.yml)
+  - Google Workspace Marketplace application allowlist settings were modified.
+- [Google Workspace Apps Marketplace New Domain Application](../rules/gsuite_activityevent_rules/google_workspace_apps_marketplace_new_domain_application.yml)
+  - A Google Workspace User configured a new domain application from the Google Workspace Apps Marketplace.
+- [Google Workspace Apps New Mobile App Installed](../rules/gsuite_activityevent_rules/google_workspace_apps_new_mobile_app_installed.yml)
+  - A new mobile application was added to your organization's mobile apps whitelist in Google Workspace Apps.
+- [Google Workspace Login Type Anomaly](../queries/gsuite_queries/GSuite_Login_Type_Anomaly_Query.yml)
+  - Detects users authenticating with login types they haven't used in the past 30 days.May indicate GAIA credential theft where attackers use stolen tokens with differentauthentication methods than the victim's normal pattern (e.g., google_password instead of SAML).
+- [Google Workspace Many Docs Downloaded](../rules/gsuite_activityevent_rules/google_workspace_many_docs_downloaded.yml)
+  - Checks whether a user has downloaded a large number of documents from Google Drive within a 5-minute period.
+- [Google Workspace OAuth Anomalous Privileged Request](../queries/gsuite_queries/GSuite_OAuth_Anomalous_Scope_Patterns_Query.yml)
+  - Detects new OAuth applications authorized with privileged scopes in Google Workspace.Uses anomaly detection to identify users authorizing OAuth apps they haven't used inthe past 7 days.
+- [Google Workspace OAuth Application Authorized with Privileged Scopes](../rules/gsuite_activityevent_rules/gsuite_oauth_privileged_scopes.yml)
+  - Detects when a user authorizes an OAuth application with privileged scopes in Google Workspace. Privileged scopes grant broad access to sensitive data and administrative functions.
+- [Google Workspace OAuth Token Requests from New IP](../queries/gsuite_queries/gsuite_oauth_token_new_ip_rule.yml)
+  - Alerts when users request OAuth tokens from IP addresses they haven't used in the past 30 days,with 3+ requests indicating active usage. This may indicate GAIA credential theft where attackersuse stolen refresh tokens to request access tokens from their infrastructure.
+- [Google Workspace OAuth Token Requests from New IPs](../queries/gsuite_queries/GSuite_OAuth_Token_New_IP_Query.yml)
+  - Detects users requesting OAuth tokens from IPv4 addresses they haven't used in the past 30 days,with 3+ requests indicating active usage. May indicate GAIA credential theft where attackers usestolen refresh tokens from their infrastructure.
+- [Google Workspace OAuthLogin Scope Anomalous Application Access](../queries/gsuite_queries/GSuite_OAuth_Login_Scope_Anomalous_Access_Query.yml)
+  - Detects apps requesting OAuth tokens with the OAuthLogin scope when they haven't requestedthis scope in the previous 14 days. This scope can be used to access Google's device passwordescrow endpoint for GAIA credential theft.
+- [Google Workspace Rapid Multi-IP Authentication](../queries/gsuite_queries/GSuite_Rapid_Multi_IP_Authentication_Query.yml)
+  - Detects users authenticating from 3+ distinct IPv4 addresses within 6 hours.May indicate GAIA credential theft where stolen OAuth tokens are used acrossmultiple compromised machines simultaneously. IPv6 addresses are excluded toavoid false positives from dual-stack networking.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [Gsuite Attachments Downloaded from Spam Email](../rules/gsuite_activityevent_rules/gsuite_attachments_downloaded_from_spam_email.yml)
+  - Detects when a user downloads or saves to Google Drive one or more attachments that are classified as spam.
+- [GSuite Calendar Has Been Made Public](../rules/gsuite_activityevent_rules/gsuite_calendar_made_public.yml)
+  - A User or Admin Has Modified A Calendar To Be Public
+- [GSuite Device Suspicious Activity](../rules/gsuite_activityevent_rules/gsuite_mobile_device_suspicious_activity.yml)
+  - GSuite reported a suspicious activity on a user's device.
+- [GSuite Document External Ownership Transfer](../rules/gsuite_activityevent_rules/gsuite_doc_ownership_transfer.yml)
+  - A GSuite document's ownership was transferred to an external party.
+- [GSuite Drive Many Documents Deleted](../queries/gsuite_queries/gsuite_drive_many_docs_deleted.yml)
+  - Scheduled rule for the GSuite Drive Many Documents Deleted query. Looks for users who have deleted more than 10 (tunable) documents the past day.
+- [Gsuite Email Bypassed Spam Filter](../rules/gsuite_activityevent_rules/gsuite_bypass_spam_filter_email.yml)
+  - Detects if an email received by a user has bypassed the organization's spam filter.
+- [GSuite External Drive Document](../rules/gsuite_reports_rules/gsuite_drive_visibility_change.yml)
+  - A Google drive resource became externally accessible.
+- [GSuite Government Backed Attack](../rules/gsuite_activityevent_rules/gsuite_gov_attack.yml)
+  - Detects Google Workspace warnings of government-backed attacks targeting user accounts, issued only when indicators match nation-state threat actors or APT groups. These sophisticated attacks target high-value individuals using advanced tactics including zero-day exploits, spear-phishing, and social engineering. Successful compromise can lead to persistent access, intellectual property theft, and supply chain attacks.
+- [Gsuite Link Clicked in Spam Email](../rules/gsuite_activityevent_rules/gsuite_links_clicked_in_spam_email.yml)
+  - Detects when a user click links contained in a received email that is classified as spam.
+- [GSuite Login Type](../rules/gsuite_activityevent_rules/gsuite_login_type.yml)
+  - A login of a non-approved type was detected for this user.
+- [Gsuite Mail forwarded to external domain](../rules/gsuite_activityevent_rules/gsuite_external_forwarding.yml)
+  - A user has configured mail forwarding to an external domain
+- [GSuite Many Docs Deleted Query](../queries/gsuite_queries/GSuite_Many_Docs_Deleted_Query.yml)
+  - Query to search for a user deleting many documents.
+- [GSuite Many Docs Downloaded Query](../queries/gsuite_queries/GSuite_Many_Docs_Downloaded_Query.yml)
+  - Query to search high document download counts by users.
+- [GSuite Overly Visible Drive Document](../rules/gsuite_reports_rules/gsuite_drive_overly_visible.yml)
+  - A Google drive resource that is overly visible has been modified.
+- [GSuite Passthrough Rule Triggered](../rules/gsuite_activityevent_rules/gsuite_passthrough_rule.yml)
+  - A GSuite rule was triggered.
+- [GSuite User Advanced Protection Change](../rules/gsuite_activityevent_rules/gsuite_advanced_protection.yml)
+  - A user disabled advanced protection for themselves.
+- [GSuite User Banned from Group](../rules/gsuite_activityevent_rules/gsuite_group_banned_user.yml)
+  - A GSuite user was banned from an enterprise group by moderator action.
+- [GSuite User Device Compromised](../rules/gsuite_activityevent_rules/gsuite_mobile_device_compromise.yml)
+  - GSuite reported a user's device has been compromised.
+- [GSuite User Device Unlock Failures](../rules/gsuite_activityevent_rules/gsuite_mobile_device_screen_unlock_fail.yml)
+  - Someone failed to unlock a user's device multiple times in quick succession.
+- [GSuite User Password Leaked](../rules/gsuite_activityevent_rules/gsuite_leaked_password.yml)
+  - GSuite reported a user's password has been compromised, so they disabled the account.
+- [GSuite User Suspended](../rules/gsuite_activityevent_rules/gsuite_user_suspended.yml)
+  - A GSuite user was suspended, the account may have been compromised by a spam network.
+- [GSuite User Two Step Verification Change](../rules/gsuite_activityevent_rules/gsuite_two_step_verification.yml)
+  - A user disabled two step verification for themselves.
+- [GSuite Workspace Calendar External Sharing Setting Change](../rules/gsuite_activityevent_rules/gsuite_workspace_calendar_external_sharing.yml)
+  - A Workspace Admin Changed The Sharing Settings for Primary Calendars
+- [GSuite Workspace Data Export Has Been Created](../rules/gsuite_activityevent_rules/gsuite_workspace_data_export_created.yml)
+  - A Workspace Admin Has Created a Data Export
+- [GSuite Workspace Gmail Default Routing Rule Modified](../rules/gsuite_activityevent_rules/gsuite_workspace_gmail_default_routing_rule.yml)
+  - A Workspace Admin Has Modified A Default Routing Rule In Gmail
+- [GSuite Workspace Gmail Pre-Delivery Message Scanning Disabled](../rules/gsuite_activityevent_rules/gsuite_workspace_gmail_enhanced_predelivery_scanning.yml)
+  - A Workspace Admin Has Disabled Pre-Delivery Scanning For Gmail.
+- [GSuite Workspace Gmail Security Sandbox Disabled](../rules/gsuite_activityevent_rules/gsuite_workspace_gmail_security_sandbox_disabled.yml)
+  - A Workspace Admin Has Disabled The Security Sandbox
+- [GSuite Workspace Password Reuse Has Been Enabled](../rules/gsuite_activityevent_rules/gsuite_workspace_password_reuse_enabled.yml)
+  - A Workspace Admin Has Enabled Password Reuse
+- [GSuite Workspace Strong Password Enforcement Has Been Disabled](../rules/gsuite_activityevent_rules/gsuite_workspace_password_enforce_strong_disabled.yml)
+  - A Workspace Admin Has Disabled The Enforcement Of Strong Passwords
+- [GSuite Workspace Trusted Domain Allowlist Modified](../rules/gsuite_activityevent_rules/gsuite_workspace_trusted_domains_allowlist.yml)
+  - A Workspace Admin Has Modified The Trusted Domains List
+- [Malware Detected in Email](../rules/gsuite_activityevent_rules/gsuite_malware_in_email.yml)
+  - Detects when malware is found in an email received by a user. Identifies different malware families including known malicious programs, viruses, worms, harmful content, and unwanted content. Severity is dynamically assigned based on the malware type, with known malicious programs and viruses triggering high-severity alerts.
+- [Spam Email Surge](../rules/gsuite_activityevent_rules/gsuite_spam_email.yml)
+  - Detects a high number of spam emails received by a single user in a short timeframe. This could indicate the user's email has appeared in data leaks and is being targeted for spam.
+- [Suspicious GSuite Login](../rules/gsuite_activityevent_rules/gsuite_suspicious_logins.yml)
+  - GSuite reported a suspicious login for this user.
+- [Suspicious is_suspicious tag](../rules/gsuite_activityevent_rules/gsuite_is_suspicious_tag.yml)
+  - GSuite reported a suspicious activity for this user.
 
-[ Teleport Suspicious Commands Executed](../rules/gravitational_teleport_rules/teleport_suspicious_commands.py)
 
-[ Teleport SSH Auth Errors](../rules/gravitational_teleport_rules/teleport_auth_errors.py)
+## Okta
 
-[ Teleport Create User Accounts](../rules/gravitational_teleport_rules/teleport_create_user_accounts.py)
+- [AWS Console Sign-In NOT PRECEDED BY Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
+  - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta and both log sources configured.
+- [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
+  - An actor user was denied login access more times than the configured threshold.
+- [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
+  - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [Impossible Travel for Login Action](../rules/standard_rules/impossible_travel_login.yml)
+  - A user has subsequent logins from two geographic locations that are very far apart
+- [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
+  - Detects when Multi-Factor Authentication (MFA) is disabled
+- [Okta AD Agent Authentication Anomaly - Z-Score Detection](../rules/okta_rules/okta_ad_agent_auth_zscore_anomaly.yml)
+  - Detects potential Okta AD Agent token theft and credential abuse using statistical z-score analysis.This detection uses a lookup table containing 90-day behavioral baselines for each user's AD Agentauthentication patterns, then calculates z-scores to identify suspicious activity in the last 7 days.**PREREQUISITES:**1. Baseline builder query must run first: `Query.Okta.ADAgentBaselineBuilder`2. Lookup table must be configured: `okta_ad_pantherflow_baseline_90d`3. Allow 24 hours for initial baseline to populate**Detection Logic:**- Calculates mean and standard deviation for hourly authentication volume, IP diversity,  country diversity, and device diversity- Alerts when recent activity shows BOTH:  1. Volume spike (z-score > 3 standard deviations)  2. Geographic/IP diversity spike (z-score > 2 standard deviations)**Why This Matters:**Token theft attacks have a distinct signature: stolen credentials are used from multiplelocations/IPs simultaneously or in rapid succession. This creates both a volume spike anda diversity spike that this detection identifies.**Complementary Detection:**This rule complements `Okta.ADAgent.TokenAbuse.Behavioral` which detects admin actions(token creation, agent configuration) from new sources. This rule detects the actual USEof stolen tokens through authentication patterns.
+- [Okta AD Agent Token Abuse - Behavioral](../rules/okta_rules/okta_ad_agent_token_abuse_behavioral.yml)
+  - Detects potential Okta AD Agent token theft and abuse using behavioral analysis.Instead of relying on hardcoded service account patterns, this detection identifieswhen AD agent-related activities (API token creation, agent registration, config changes)occur from previously unseen IP addresses or user agents. This behavioral approachadapts to your environment and catches anomalous access patterns that may indicatecompromised credentials or unauthorized token generation.**What This Detection Catches:**- API token creation from new IPs or user agents- New AD agent registrations from unexpected sources- AD agent configuration changes from new locations**Complementary Detection:**Use alongside `Okta.ADAgent.AuthenticationAnomaly.ZScore` which detects the actualUSE of stolen tokens through authentication pattern anomalies.
+- [Okta Admin Access Granted](../queries/okta_queries/okta_admin_access_granted.yml)
+  - Audit instances of admin access granted in your okta tenant
+- [Okta Admin Role Assigned](../rules/okta_rules/okta_admin_role_assigned.yml)
+  - A user has been granted administrative privileges in Okta
+- [Okta AiTM Phishing Attempt Blocked by FastPass](../rules/okta_rules/okta_phishing_attempt_blocked_by_fastpass.yml)
+  - Okta FastPass detected a user targeted by attackers wielding real-time (AiTM) proxies.
+- [Okta API Key Created](../rules/okta_rules/okta_api_key_created.yml)
+  - A user created an API Key in Okta
+- [Okta API Key Revoked](../rules/okta_rules/okta_api_key_revoked.yml)
+  - A user has revoked an API Key in Okta
+- [Okta App Refresh Access Token Reuse](../rules/okta_rules/okta_app_refresh_access_token_reuse.yml)
+  - When a client wants to renew an access token, it sends the refresh token with the access token request to the /token Okta endpoint.Okta validates the incoming refresh token, issues a new set of tokens and invalidates the refresh token that was passed with the initial request.This detection alerts when a previously used refresh token is used again with the token request
+- [Okta App Unauthorized Access Attempt](../rules/okta_rules/okta_app_unauthorized_access_attempt.yml)
+  - Detects when a user is denied access to an Okta application
+- [Okta Authentication Bypass via Skeleton Key Injection - Behavioral](../rules/okta_rules/okta_skeleton_key_bypass_behavioral.yml)
+  - Detects potential Okta authentication bypass via skeleton key injection using behavioral z-score analysis.Skeleton key attacks in Okta involve manipulating authentication policies to weaken MFA requirements(disabling requireFactor, zeroing maxSessionLifetime) and bulk-enrolling attacker-controlledauthenticators on victim accounts. This detection builds a 90-day behavioral baseline for eachadmin's policy change and factor enrollment patterns, then identifies anomalous spikes in the last7 days.**Detection Logic:**- Z-score: Spike in security-weakening policy changes (> 2σ above baseline)- Z-score: Spike in admin-on-behalf-of MFA factor enrollments (> 3σ above baseline)- Cold-start: First-time security weakening (no prior baseline - immediate high-confidence signal)- Cold-start: First-time admin-enrolled factors for other users**Why This Matters:**Skeleton key attacks require two steps: weaken authentication policies to reduce MFA friction,then enroll attacker-controlled authenticators on victim accounts. This detection catches bothsteps using behavioral baselines that adapt to legitimate admin workflows.**Complementary Detection:**Use alongside `Okta.ADAgent.TokenAbuse.Behavioral` for admin credential theft scenarios.
+- [Okta Cleartext Passwords Extracted via SCIM Application](../rules/okta_rules/okta_password_extraction_via_scim.yml)
+  - An application admin has extracted cleartext user passwords via SCIM app. Malcious actors can extract plaintext passwords by creating a SCIM application under their control and configuring it to sync passwords from Okta.
+- [Okta Group Admin Role Assigned](../rules/okta_rules/okta_group_admin_role_assigned.yml)
+  - Detect when an admin role is assigned to a group
+- [Okta HAR File IOCs](../queries/okta_queries/okta_harfile_iocs.yml)
+  - https://sec.okta.com/harfiles
+- [Okta Identity Provider Created or Modified](../rules/okta_rules/okta_idp_create_modify.yml)
+  - A new 3rd party Identity Provider has been created or modified. Attackers have been observed configuring a second Identity Provider to act as an "impersonation app" to access applications within the compromised Org on behalf of other users. This second Identity Provider, also controlled by the attacker, would act as a “source” IdP in an inbound federation relationship (sometimes called “Org2Org”) with the target.
+- [Okta Identity Provider Sign-in](../rules/okta_rules/okta_idp_signin.yml)
+  - A user has signed in using a 3rd party Identity Provider. Attackers have been observed configuring a second Identity Provider to act as an "impersonation app" to access applications within the compromised Org on behalf of other users. This second Identity Provider, also controlled by the attacker, would act as a “source” IdP in an inbound federation relationship (sometimes called “Org2Org”) with the target. From this “source” IdP, the threat actor manipulated the username parameter for targeted users in the second “source” Identity Provider to match a real user in the compromised “target” Identity Provider. This provided the ability to Single sign-on (SSO) into applications in the target IdP as the targeted user. Do not use this rule if your organization uses legitimate 3rd-party Identity Providers.
+- [Okta Investigate MFA and Password resets](../queries/okta_queries/okta_mfa_password_reset_audit.yml)
+  - Investigate Password and MFA resets for the last 7 days
+- [Okta Investigate Session ID Activity](../queries/okta_queries/okta_session_id_audit.yml)
+  - Search for activity related to a specific SessionID in Okta panther_logs.okta_systemlog
+- [Okta Investigate User Activity](../queries/okta_queries/okta_activity_audit.yml)
+  - Audit user activity across your environment. Customize to filter on specific users, time ranges, etc
+- [Okta Login From CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_Query.yml)
+  - Okta Logins from an IP Address not found in CrowdStrike's AIP List
+- [Okta Login From CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/okta_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_FDREvent.yml)
+  - Okta Logins from an IP Address not found in CrowdStrike's AIP List (crowdstrike_fdrevent table)
+- [Okta Login Without Push](../correlation_rules/okta_login_without_push.yml)
+  - Identifies successful Okta logins not followed by Push Security authorization within 60 minutes. Push Security provides additional identity verification beyond Okta MFA as a defense-in-depth strategy. Missing Push Security verification suggests compromised credentials, session hijacking, or MFA bypass where attackers satisfied Okta authentication but cannot complete additional verification.
+- [Okta MFA Globally Disabled](../rules/okta_rules/okta_admin_disabled_mfa.yml)
+  - An admin user has disabled the MFA requirement for your Okta account
+- [Okta New Behaviors Acessing Admin Console](../rules/okta_rules/okta_new_behavior_accessing_admin_console.yml)
+  - New Behaviors Observed while Accessing Okta Admin Console. A user attempted to access the Okta Admin Console from a new device with a new IP.
+- [Okta Org2Org application created of modified](../rules/okta_rules/okta_org2org_creation_modification.yml)
+  - An Okta Org2Org application has been created or modified. Okta's Org2Org applications instances are used to push and match users from one Okta organization to another. A malicious actor can add an Org2Org application instance and create a user in the source organization (controlled by the attacker) with the same identifier as a Super Administrator in the target organization.
+- [Okta Password Accessed](../rules/okta_rules/okta_password_accessed.yml)
+  - User accessed another user's application password
+- [Okta Potentially Stolen Session](../rules/okta_rules/okta_potentially_stolen_session.yml)
+  - This rule looks for the same session being used from two devices, indicating a compromised session token.
+- [Okta Rate Limits](../rules/okta_rules/okta_rate_limits.yml)
+  - Potential DoS/Bruteforce attack or hitting limits (system degradation)
+- [Okta Sign-In from VPN Anonymizer](../rules/okta_rules/okta_anonymizing_vpn_login.yml)
+  - A user is attempting to sign-in to Okta from a known VPN anonymizer.  The threat actor would access the compromised account using anonymizing proxy services.
+- [Okta Support Access](../queries/okta_queries/okta_support_access.yml)
+  - Show instances that Okta support was granted to your account
+- [Okta Support Access Granted](../rules/okta_rules/okta_account_support_access.yml)
+  - An admin user has granted access to Okta Support to your account
+- [Okta Support Reset Credential](../rules/okta_rules/okta_support_reset.yml)
+  - A Password or MFA factor was reset by Okta Support
+- [Okta SWA Bulk Access, New Source, and Credential Extraction - Behavioral](../rules/okta_rules/okta_swa_bulk_access_behavioral.yml)
+  - Detects Okta SWA (Secure Web Authentication) bulk credential extraction, abuse, and access frompreviously unseen IP addresses or user agents using behavioral z-score and source novelty analysis.SWA apps store credentials in Okta's encrypted vault. Admin accounts with SWA access can view orrotate credentials for users across many apps. This detection builds a 90-day behavioral baselinefor each admin's SWA access, credential change patterns, and known source IPs/user agents, thenidentifies anomalous spikes or new sources in the last 7 days.**Detection Logic:**- Z-score: SWA authentication volume spike (> 3σ above baseline)- Z-score: Unique SWA app diversity spike (many different apps accessed in one hour) (> 3σ)- Z-score: Credential extraction volume spike (> 3σ)- Z-score: Victim diversity spike (credential changes across many users) (> 2σ)- Cold-start: First-time bulk SWA access (>= 10 events, no prior baseline)- Cold-start: First-time credential extraction (>= 5 extractions, no prior baseline)- New source: SWA access from IP address not seen in 90-day baseline- New source: SWA access from user agent not seen in 90-day baseline- Critical compound: New IP + any credential extraction events**Why This Matters:**SWA credential extraction is a powerful lateral movement technique. An attacker with admin accesscan silently retrieve plaintext credentials for hundreds of SWA-protected applications withouttriggering MFA or generating obvious authentication failures. New source detection catches theinitial access phase when a compromised admin account is used from an unfamiliar device or location.**Complementary Detection:**Use alongside `Okta.SWA.OffHoursAccess.Behavioral` which detects the same attack vectoroccurring outside normal business hours.
+- [Okta SWA Off-Hours Credential Access - Behavioral](../rules/okta_rules/okta_swa_offhours_access_behavioral.yml)
+  - Detects Okta SWA credential access occurring outside normal business hours using behavioralz-score analysis on temporal patterns.Compromised admin accounts often access SWA credentials at unusual times - late at night,during weekends, or from a different geographic location than normal. This detection buildsa 90-day baseline for each admin's temporal credential access patterns, then identifiesanomalous shifts toward off-hours, late-night, and weekend activity in the last 7 days.**Detection Logic:**- Z-score: Off-hours ratio spike (> 3σ above normal off-hours proportion)- Z-score: Late-night ratio spike (2 AM - 6 AM accesses) (> 2σ)- Z-score: Weekend ratio spike (> 2σ)- Cold-start: First-time off-hours credential access (>= 3 events, no prior baseline)- Cold-start: First-time late-night access (>= 2 events, no prior baseline)- Cold-start: First-time weekend access (>= 2 events, no prior baseline)- Compound: Geographic shift + off-hours activity (high-confidence indicator)**Why This Matters:**Attackers using stolen admin credentials typically operate at off-hours to avoid detectionand minimize interference with active users. A sudden shift in the time distribution ofSWA credential accesses is a strong indicator of account compromise.**Complementary Detection:**Use alongside `Okta.SWA.BulkAccess.Behavioral` which detects the same attack vectorbased on volume rather than temporal patterns.
+- [Okta ThreatInsight Security Threat Detected](../rules/okta_rules/okta_threatinsight_security_threat_detected.yml)
+  - Okta ThreatInsight identified request from potentially malicious IP address
+- [Okta User Account Locked](../rules/okta_rules/okta_user_account_locked.yml)
+  - An Okta user has locked their account.
+- [Okta User MFA Factor Suspend](../rules/okta_rules/okta_user_mfa_factor_suspend.yml)
+  - Suspend factor or authenticator enrollment method for user.
+- [Okta User MFA Own Reset](../rules/okta_rules/okta_user_mfa_reset.yml)
+  - User has reset one of their own MFA factors
+- [Okta User MFA Reset All](../rules/okta_rules/okta_user_mfa_reset_all.yml)
+  - All MFA factors have been reset for a user.
+- [Okta User Reported Suspicious Activity](../rules/okta_rules/okta_user_reported_suspicious_activity.yml)
+  - Suspicious Activity Reporting provides an end user with the option to report unrecognized activity from an account activity email notification.This detection alerts when a user marks the raised activity as suspicious.
+- [Okta Username Above 52 Characters Security Advisory](../queries/okta_queries/okta_52_char_username_threat_hunt.yml)
+  - On October 30, 2024, a vulnerability was internally identified in generating the cache key for AD/LDAP DelAuth. The Bcrypt algorithm was used to generate the cache key where we hash a combined string of userId + username + password. Under a specific set of conditions, listed below, this could allow users to authenticate by providing the username with the stored cache key of a previous successful authentication. Customers meeting the pre-conditions should investigate their Okta System Log for unexpected authentications from usernames greater than 52 characters between the period of July 23rd, 2024 to October 30th, 2024. https://trust.okta.com/security-advisories/okta-ad-ldap-delegated-authentication-username/
+- [Potential Compromised Okta Credentials](../correlation_rules/potential_compromised_okta_credentials.yml)
+  - Identifies high-confidence credential compromise by detecting Okta login without Push Security verification followed by Push Security phishing attack within 60 minutes. This sequence indicates an attacker authenticated to Okta with stolen credentials then attempted MFA fatigue or push bombing attacks. The correlation of both events provides strong evidence of active account compromise requiring immediate response.
+- [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
+  - Detects when an entity signs in from a nation associated with cyber attacks
 
-[ Teleport Scheduled Jobs](../rules/gravitational_teleport_rules/teleport_scheduled_jobs.py)
 
-[ Teleport Network Scan Initiated](../rules/gravitational_teleport_rules/teleport_network_scanning.py)
+## OneLogin
+
+- [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
+  - Assigning an admin role manually could be a sign of privilege escalation
+- [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
+  - An actor user was denied login access more times than the configured threshold.
+- [Brute Force By User](../rules/standard_rules/brute_force_by_user.yml)
+  - An actor user was denied login access more times than the configured threshold.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [New User Account Created](../rules/indicator_creation_rules/new_user_account_logging.yml)
+  - A new account was created
+- [OneLogin Active Login Activity](../rules/onelogin_rules/onelogin_active_login_activity.yml)
+  - Multiple user accounts logged in from the same ip address.
+- [OneLogin Authentication Factor Removed](../rules/onelogin_rules/onelogin_remove_authentication_factor.yml)
+  - A user removed an authentication factor or otp device.
+- [OneLogin Failed High Risk Login](../rules/onelogin_rules/onelogin_high_risk_failed_login.yml)
+  - A OneLogin attempt with a high risk factor (>50) resulted in a failed authentication.
+- [OneLogin High Risk Failed Login FOLLOWED BY Successful Login](../correlation_rules/onelogin_successful_login_after_high_risk_failed_login.yml)
+  - A OneLogin user successfully logged in after a failed high-risk login attempt.
+- [OneLogin Multiple Accounts Deleted](../rules/onelogin_rules/onelogin_threshold_accounts_deleted.yml)
+  - Possible Denial of Service detected. Threshold for user account deletions exceeded.
+- [OneLogin Multiple Accounts Modified](../rules/onelogin_rules/onelogin_threshold_accounts_modified.yml)
+  - Possible Denial of Service detected. Threshold for user account password changes exceeded.
+- [OneLogin Password Access](../rules/onelogin_rules/onelogin_password_accessed.yml)
+  - User accessed another user's application password
+- [OneLogin Unauthorized Access](../rules/onelogin_rules/onelogin_unauthorized_access.yml)
+  - A OneLogin user was denied access to an app more times than the configured threshold.
+- [OneLogin User Assumed Another User](../rules/onelogin_rules/onelogin_user_assumed.yml)
+  - User assumed another user account
+- [OneLogin User Locked](../rules/onelogin_rules/onelogin_user_account_locked.yml)
+  - User locked or suspended from their account.
+- [OneLogin User Password Changed](../rules/onelogin_rules/onelogin_password_changed.yml)
+  - A user password was updated.
+- [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
+  - Detects when an entity signs in from a nation associated with cyber attacks
+
+
+## Salesforce
+
+- [Salesforce Admin Login As User](../rules/salesforce_rules/salesforce_admin_login_as_user.yml)
+  - Salesforce detection that alerts when an admin logs in as another user.
+- [Salesforce API Anomaly Detection (RET Passthrough)](../rules/salesforce_rules/salesforce_api_anomaly_passthrough.yml)
+  - Salesforce Real-Time Event Monitoring has detected anomalous API activity. This could indicate compromised credentials, automated abuse, data exfiltration attempts, or other suspicious API usage patterns.
+- [Salesforce Bulk API Data Exfiltration](../rules/salesforce_rules/salesforce_bulk_data_exfiltration.yml)
+  - Detects Salesforce Bulk API operations that could indicate data exfiltration attempts. The Bulk API allows users to process large volumes of records (up to millions) asynchronously, making it a common vector for data theft.This detection triggers on all Bulk API job completions and adjusts severity based on:- Operation type (query operations are highest risk for exfiltration)- Volume of records processed- Entity/object type being accessed
+- [Salesforce OAuth Credential Abuse Detection](../rules/salesforce_rules/salesforce_oauth_credential_abuse.yml)
+  - Detects OAuth credential abuse and suspicious token usage patterns in Salesforce. OAuth tokens provide API access and can be abused if compromised, making this detection critical for:- Stolen or leaked OAuth tokens- Token replay attacks- Excessive API usage indicating automated abuse- Failed token refresh attempts (potential brute force)- Unauthorized token revocationsThis detection triggers on OAuth-related security events and adjusts severity based on:- Token revocation events (may indicate compromise response)- Failed OAuth operations (potential attack attempts)- Excessive API usage patterns
+- [Salesforce Third-Party Integration Monitoring](../rules/salesforce_rules/salesforce_third_party_integration.yml)
+  - Monitors third-party integrations and OAuth connected apps accessing Salesforce. Connected apps use OAuth for authorization and can access data on behalf of users, making them a potential vector for:- Unauthorized data access- Shadow IT applications- Compromised OAuth tokens- Over-privileged integrationsThis detection triggers on connected app usage events and adjusts severity based on:- Connection type (refresh tokens are higher risk)- App authorization events- Suspicious app naming patterns
+
+
+## Slack
+
+- [Slack Anomaly Detected](../rules/slack_rules/slack_passthrough_anomaly.yml)
+  - Passthrough for anomalies detected by Slack
+- [Slack App Access Expanded](../rules/slack_rules/slack_app_access_expanded.yml)
+  - Detects when a Slack App has had its permission scopes expanded
+- [Slack App Added](../rules/slack_rules/slack_app_added.yml)
+  - Detects when a Slack App has been added to a workspace
+- [Slack App Removed](../rules/slack_rules/slack_app_removed.yml)
+  - Detects when a Slack App has been removed
+- [Slack Denial of Service via Session Invalidation](../rules/slack_rules/slack_application_dos.yml)
+  - Detects potential DoS attacks via excessive session invalidation when administrators reset user sessions 60+ times within 24 hours. Repeated session termination prevents users from maintaining Slack access, disrupting communication and productivity. Legitimate session resets for incident response or troubleshooting typically occur 1-3 times, so reaching the 60-event threshold indicates malicious intent.
+- [Slack DLP Modified](../rules/slack_rules/slack_dlp_modified.yml)
+  - Detects when a Data Loss Prevention (DLP) rule has been deactivated or a violation has been deleted
+- [Slack EKM Config Changed](../rules/slack_rules/slack_ekm_config_changed.yml)
+  - Detects when the logging settings for a workspace's EKM configuration has changed
+- [Slack EKM Slackbot Unenrolled](../rules/slack_rules/slack_ekm_slackbot_unenrolled.yml)
+  - Detects when a workspace is longer enrolled in EKM
+- [Slack Enterprise Key Management Unenrolled](../rules/slack_rules/slack_ekm_unenrolled.yml)
+  - Detects when Slack Enterprise Key Management (EKM) is unenrolled, removing customer-controlled encryption and reverting to Slack-managed keys. EKM allows organizations to store encryption keys externally (e.g., AWS KMS), ensuring data remains protected even from Slack infrastructure compromise. Unenrollment exposes all workspace data to decryption by Slack systems and violates compliance requirements for regulated industries.
+- [Slack IDP Configuration Changed](../rules/slack_rules/slack_idp_configuration_change.yml)
+  - Detects changes to the identity provider (IdP) configuration for Slack organizations.
+- [Slack Information Barrier Modified](../rules/slack_rules/slack_information_barrier_modified.yml)
+  - Detects when a Slack information barrier is deleted/updated
+- [Slack Legal Hold Policy Modified](../rules/slack_rules/slack_legal_hold_policy_modified.yml)
+  - Detects changes to configured legal hold policies
+- [Slack MFA Settings Changed](../rules/slack_rules/slack_mfa_settings_changed.yml)
+  - Detects changes to Multi-Factor Authentication requirements
+- [Slack Microsoft Intune Mobile Device Management Disabled](../rules/slack_rules/slack_intune_mdm_disabled.yml)
+  - Detects when Microsoft Intune MDM integration is disabled for Slack, removing mobile security controls and enabling data exfiltration via unmanaged devices. Intune enforces policies preventing copy/paste to unmanaged apps, requires device encryption, blocks jailbroken devices, and enables remote wipe. Disabling these controls allows unrestricted Slack access from personal or compromised devices without security restrictions.
+- [Slack Organization Created](../rules/slack_rules/slack_org_created.yml)
+  - Detects when a Slack organization is created
+- [Slack Organization Deleted](../rules/slack_rules/slack_org_deleted.yml)
+  - Detects when a Slack organization is deleted
+- [Slack Potentially Malicious File Shared](../rules/slack_rules/slack_potentially_malicious_file_shared.yml)
+  - Detects when Slack's automated security scanning identifies malicious files uploaded to the workspace, indicating malware delivery or phishing attempts. Slack scans for executable malware, ransomware, phishing documents, malicious scripts, and files matching threat actor signatures. This detection indicates compromised accounts, insider threats, or successful phishing attacks where users uploaded infected files.
+- [Slack Primary Owner Transferred](../rules/slack_rules/slack_service_owner_transferred.yml)
+  - Detects Slack Primary Owner transfers, representing the highest administrative privilege change with absolute control over workspace settings, security, billing, and data access. Primary Owners can add/remove all admins, delete entire workspaces, and transfer ownership. Unauthorized transfers indicate account compromise, insider threats, or hostile takeovers that could lead to permanent data loss or complete security control loss.
+- [Slack Private Channel Made Public](../rules/slack_rules/slack_private_channel_made_public.yml)
+  - Detects when a channel that was previously private is made public
+- [Slack SSO Settings Changed](../rules/slack_rules/slack_sso_settings_changed.yml)
+  - Detects changes to Single Sign On (SSO) restrictions
+- [Slack User Privilege Escalation](../rules/slack_rules/slack_user_privilege_escalation.yml)
+  - Detects when a Slack user gains escalated privileges
+- [Slack User Privileges Changed to User](../rules/slack_rules/slack_privilege_changed_to_user.yml)
+  - Detects when a Slack account is changed to User from an elevated role.
+
+
+## Teleport
+
+- [A long-lived cert was created](../rules/gravitational_teleport_rules/teleport_long_lived_certs.yml)
+  - An unusually long-lived Teleport certificate was created
+- [A SAML Connector was created or modified](../rules/gravitational_teleport_rules/teleport_saml_created.yml)
+  - A SAML connector was created or modified
+- [A Teleport Lock was created](../rules/gravitational_teleport_rules/teleport_lock_created.yml)
+  - A Teleport Lock was created
+- [A Teleport Role was modified or created](../rules/gravitational_teleport_rules/teleport_role_created.yml)
+  - A Teleport Role was modified or created
+- [A user authenticated with SAML, but from an unknown company domain](../rules/gravitational_teleport_rules/teleport_saml_login_not_company_domain.yml)
+  - A user authenticated with SAML, but from an unknown company domain
+- [A User from the company domain(s) Logged in without SAML](../rules/gravitational_teleport_rules/teleport_company_domain_login_without_saml.yml)
+  - A User from the company domain(s) Logged in without SAML
+- [Teleport Create User Accounts](../rules/gravitational_teleport_rules/teleport_create_user_accounts.yml)
+  - A user has been manually created, modified, or deleted
+- [Teleport Network Scan Initiated](../rules/gravitational_teleport_rules/teleport_network_scanning.yml)
+  - A user has invoked a network scan that could potentially indicate enumeration of the network.
+- [Teleport Scheduled Jobs](../rules/gravitational_teleport_rules/teleport_scheduled_jobs.yml)
+  - A user has manually edited the Linux crontab
+- [Teleport SSH Auth Errors](../rules/gravitational_teleport_rules/teleport_auth_errors.yml)
+  - A high volume of SSH errors could indicate a brute-force attack
+- [Teleport Suspicious Commands Executed](../rules/gravitational_teleport_rules/teleport_suspicious_commands.yml)
+  - A user has invoked a suspicious command that could lead to a host compromise
+- [User Logged in as root](../rules/gravitational_teleport_rules/teleport_root_login.yml)
+  - A User logged in as root
+- [User Logged in wihout MFA](../rules/gravitational_teleport_rules/teleport_local_user_login_without_mfa.yml)
+  - A local User logged in without MFA
+
 
 ## Zendesk
-[ Zendesk User Suspension Status Changed](../rules/zendesk_rules/zendesk_user_suspension.py)
 
-[ Zendesk Account Owner Changed](../rules/zendesk_rules/zendesk_new_owner.py)
+- [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
+  - Assigning an admin role manually could be a sign of privilege escalation
+- [Enabled Zendesk Support to Assume Users](../rules/zendesk_rules/zendesk_user_assumption.yml)
+  - User enabled or disabled zendesk support user assumption.
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
+  - Detects when Multi-Factor Authentication (MFA) is disabled
+- [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
+  - Detects when an entity signs in from a nation associated with cyber attacks
+- [Zendesk Account Owner Changed](../rules/zendesk_rules/zendesk_new_owner.yml)
+  - Only one admin user can be the account owner. Ensure the change in ownership is expected.
+- [Zendesk API Token Created](../rules/zendesk_rules/zendesk_new_api_token.yml)
+  - A user created a new API token to be used with Zendesk.
+- [Zendesk Credit Card Redaction Off](../rules/zendesk_rules/zendesk_sensitive_data_redaction.yml)
+  - A user updated account setting that disabled credit card redaction.
+- [Zendesk Mobile App Access Modified](../rules/zendesk_rules/zendesk_mobile_app_access.yml)
+  - A user updated account setting that enabled or disabled mobile app access.
+- [Zendesk User Role Changed](../rules/zendesk_rules/zendesk_user_role.yml)
+  - A user's Zendesk role was changed
+- [Zendesk User Suspension Status Changed](../rules/zendesk_rules/zendesk_user_suspension.yml)
+  - A user's Zendesk suspension status was changed.
 
-[ Zendesk User Role Changed](../rules/zendesk_rules/zendesk_user_role.py)
-
-[ Zendesk Mobile App Access Modified](../rules/zendesk_rules/zendesk_mobile_app_access.py)
-
-[ Zendesk Credit Card Redaction Off](../rules/zendesk_rules/zendesk_sensitive_data_redaction.py)
-
-[ Zendesk API Token Created](../rules/zendesk_rules/zendesk_new_api_token.py)
-
-[ Enabled Zendesk Support to Assume Users](../rules/zendesk_rules/zendesk_user_assumption.py)
-
-[ Zendesk User Suspension Status Changed](../rules/zendesk_rules/zendesk_user_suspension.py)
-
-[ Zendesk Account Owner Changed](../rules/zendesk_rules/zendesk_new_owner.py)
-
-[ Zendesk User Role Changed](../rules/zendesk_rules/zendesk_user_role.py)
-
-[ Zendesk Mobile App Access Modified](../rules/zendesk_rules/zendesk_mobile_app_access.py)
-
-[ Zendesk Credit Card Redaction Off](../rules/zendesk_rules/zendesk_sensitive_data_redaction.py)
-
-[ Zendesk API Token Created](../rules/zendesk_rules/zendesk_new_api_token.py)
-
-[ Enabled Zendesk Support to Assume Users](../rules/zendesk_rules/zendesk_user_assumption.py)
 
 ## Zoom
-[ Zoom User Granted Admin Rights](../rules/zoom_operation_rules/zoom_operation_user_granted_admin.py)
 
-[ Zoom Meeting Passcode Disabled](../rules/zoom_operation_rules/zoom_operation_passcode_disabled.py)
+- [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
+  - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [New User Account Created](../rules/indicator_creation_rules/new_user_account_logging.yml)
+  - A new account was created
+- [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
+  - Detects when an entity signs in from a nation associated with cyber attacks
+- [Zoom All Meetings Secured With One Option Disabled](../rules/zoom_operation_rules/zoom_all_meetings_secured_with_one_option_disabled.yml)
+  - A Zoom User turned off your organization's requirement that all meetings are secured with one security option.
+- [Zoom Automatic Sign Out Disabled](../rules/zoom_operation_rules/zoom_automatic_sign_out_disabled.yml)
+  - A Zoom User turned off your organization's setting to automatically sign users out after a specified period of time.
+- [Zoom Meeting Passcode Disabled](../rules/zoom_operation_rules/zoom_operation_passcode_disabled.yml)
+  - Meeting passcode requirement has been disabled from usergroup
+- [Zoom New Meeting Passcode Required Disabled](../rules/zoom_operation_rules/zoom_new_meeting_passcode_required_disabled.yml)
+  - A Zoom User turned off your organization's setting to require passcodes for new meetings.
+- [Zoom Sign In Method Modified](../rules/zoom_operation_rules/zoom_sign_in_method_modified.yml)
+  - A Zoom User modified your organizations sign in method.
+- [Zoom Sign In Requirements Changed](../rules/zoom_operation_rules/zoom_sign_in_requirements_changed.yml)
+  - A Zoom User changed your organization's sign in requirements.
+- [Zoom Two Factor Authentication Disabled](../rules/zoom_operation_rules/zoom_two_factor_authentication_disabled.yml)
+  - A Zoom User disabled your organization's setting to sign in with Two-Factor Authentication.
+- [Zoom User Promoted to Privileged Role](../rules/zoom_operation_rules/zoom_user_promoted_to_privileged_role.yml)
+  - A Zoom user was promoted to a privileged role.
 
-[ Zoom User Granted Admin Rights](../rules/zoom_operation_rules/zoom_operation_user_granted_admin.py)
 
-[ Zoom Meeting Passcode Disabled](../rules/zoom_operation_rules/zoom_operation_passcode_disabled.py)
-
-## Box
-[ Box Access Granted](../rules/box_rules/box_access_granted.py)
-
-[ Box Content Workflow Policy Violation](../rules/box_rules/box_policy_violation.py)
-
-[ Box Large Number of Downlaods](../rules/box_rules/box_user_downloads.py)
-
-[ Box Large Number of Permission Changes](../rules/box_rules/box_user_permission_updates.py)
-
-[ Box New Login](../rules/box_rules/box_new_login.py)
-
-[ Box Shield Detected Anomalous Download Activity](../rules/box_rules/box_anomalous_download.py)
-
-[ Box Shield Suspicious Alert Triggered](../rules/box_rules/box_suspicious_login_or_session.py)
-
-[ Box Untrusted Device Login](../rules/box_rules/box_untrusted_device.py)
-
-[ Box event triggered by unknown or external user](../rules/box_rules/box_event_triggered_externally.py)
-
-[ Box item shared externally](../rules/box_rules/box_item_shared_externally.py)
-
-[ Malicious Content Detected](../rules/box_rules/box_malicious_content.py)

@@ -1,0 +1,37 @@
+AnalysisType: scheduled_query
+QueryName: "Google Workspace OAuth Anomalous Privileged Request"
+Description: |
+  Detects new OAuth applications authorized with privileged scopes in Google Workspace.
+  Uses anomaly detection to identify users authorizing OAuth apps they haven't used in
+  the past 7 days.
+Enabled: false
+Query: |
+  -- pragma: template
+
+  {% import 'anomalies' new_unique_values %}
+  with subquery as (
+      SELECT
+        p_event_time,
+        actor:email AS actor_email,
+        parameters:client_id AS client_id,
+        parameters:app_name AS app_name,
+        parameters:scope AS scopes,
+        ipAddress,
+        id:applicationName AS application_name,
+        name AS event_name
+      FROM panther_logs.public.gsuite_activityevent
+      WHERE p_occurs_since('7 day')
+      AND id:applicationName = 'token'
+      AND name = 'authorize'
+      AND (
+        LOWER(ARRAY_TO_STRING(parameters:scope, ' ')) LIKE '%admin.directory.user%'
+        OR LOWER(ARRAY_TO_STRING(parameters:scope, ' ')) LIKE '%ediscovery%'
+        OR LOWER(ARRAY_TO_STRING(parameters:scope, ' ')) LIKE '%drive%'
+        OR LOWER(ARRAY_TO_STRING(parameters:scope, ' ')) LIKE '%cloud_search.query%'
+      )
+      LIMIT 10000
+    ),
+    {{ new_unique_values('subquery', 'actor_email', 'client_id', '1d') }}
+Schedule:
+    RateMinutes: 360
+    TimeoutMinutes: 3

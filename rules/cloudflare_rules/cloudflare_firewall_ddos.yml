@@ -1,26 +1,26 @@
 AnalysisType: rule
 Filename: cloudflare_firewall_ddos.py
-RuleID: Cloudflare.Firewall.L7DDoS
-DisplayName: Cloudflare L7 DDoS
+RuleID: "Cloudflare.Firewall.L7DDoS"
+DisplayName: "Cloudflare L7 DDoS"
 Enabled: true
 LogTypes:
   - Cloudflare.Firewall
 Tags:
   - Cloudflare
-  - Configuration Required
+  - Variable Severity
 Severity: Medium
 Description: Layer 7 Distributed Denial of Service (DDoS) detected
 Runbook: Inspect and monitor internet-facing services for potential outages
+Reference: https://www.cloudflare.com/en-gb/learning/ddos/application-layer-ddos-attack/
 DedupPeriodMinutes: 60 # 1 hour
-Threshold:  100
+Threshold: 100
 SummaryAttributes:
   - Action
   - ClientCountry
   - ClientIP
   - ClientRequestUserAgent
 Tests:
-  -
-    Name: Traffic Marked as L7DDoS
+  - Name: Traffic Marked as L7DDoS
     ExpectedResult: true
     Log:
       {
@@ -41,18 +41,15 @@ Tests:
         "EdgeResponseStatus": 403,
         "Kind": "firewall",
         "MatchIndex": 0,
-        "Metadata": {
-          "dos-source": "dosd-edge"
-        },
+        "Metadata": { "dos-source": "dosd-edge" },
         "OriginResponseStatus": 0,
         "OriginatorRayID": "00",
         "RayID": "7090a9da88e333d8",
         "RuleID": "ed651449c4a54f4b99c6e3bf863134d5",
         "Source": "l7ddos",
       }
-  -
-    Name: Traffic Marked as L7DDoS but blocked
-    ExpectedResult: false
+  - Name: Traffic Marked as L7DDoS but blocked ( INFO level alert )
+    ExpectedResult: true
     Log:
       {
         "Action": "block",
@@ -72,17 +69,14 @@ Tests:
         "EdgeResponseStatus": 403,
         "Kind": "firewall",
         "MatchIndex": 0,
-        "Metadata": {
-          "dos-source": "dosd-edge"
-        },
+        "Metadata": { "dos-source": "dosd-edge" },
         "OriginResponseStatus": 0,
         "OriginatorRayID": "00",
         "RayID": "7090a9da88e333d8",
         "RuleID": "ed651449c4a54f4b99c6e3bf863134d5",
         "Source": "l7ddos",
       }
-  -
-    Name: Traffic Not Marked as L7DDoS
+  - Name: Traffic Not Marked as L7DDoS
     ExpectedResult: false
     Log:
       {
@@ -103,13 +97,10 @@ Tests:
         "EdgeResponseStatus": 403,
         "Kind": "firewall",
         "MatchIndex": 0,
-        "Metadata": {
-          "dos-source": "dosd-edge"
-        },
+        "Metadata": { "dos-source": "dosd-edge" },
         "OriginResponseStatus": 0,
         "OriginatorRayID": "00",
         "RayID": "708174c00f61faa8",
         "RuleID": "e35c9a670b864a3ba0203ffb1bc977d1",
         "Source": "firewallmanaged",
       }
-

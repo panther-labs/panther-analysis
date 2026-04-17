@@ -1,0 +1,179 @@
+AnalysisType: rule
+Filename: crowdstrike_admin_role_assigned.py
+RuleID: "Crowdstrike.AdminRoleAssigned"
+DisplayName: "Crowdstrike Admin Role Assigned"
+Enabled: true
+LogTypes:
+  - Crowdstrike.EventStreams
+Severity: Medium
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098.003 # Persistence: Additional Cloud Roles
+    - TA0004:T1098.003 # Priv Escalation: Additional Cloud Roles
+Description: A user was assigned a priviledged role
+DedupPeriodMinutes: 60
+Threshold: 1
+Runbook: Confirm the role assignment is justified.
+Tests:
+  - Name: Admin Role Assigned (Single)
+    ExpectedResult: true
+    Log:
+      {
+        "event": {
+          "AuditKeyValues": [
+            {
+              "Key": "target_name",
+              "ValueString": "merry.brandybuck@hobbiton.co"
+            },
+            {
+              "Key": "target_user_uuid",
+              "ValueString": "e70e5306-4a83-4a9f-9b59-a78c304c438b"
+            },
+            {
+              "Key": "target_cid",
+              "ValueString": "fake_customer_id"
+            },
+            {
+              "Key": "roles",
+              "ValueString": "billing_dashboard_admin"
+            },
+            {
+              "Key": "actor_cid",
+              "ValueString": "fake_customer_id"
+            },
+            {
+              "Key": "trace_id",
+              "ValueString": "897d300ad09137b362ee6a62846a9277"
+            },
+            {
+              "Key": "actor_user",
+              "ValueString": "peregrin.took@hobbiton.co"
+            },
+            {
+              "Key": "actor_user_uuid",
+              "ValueString": "e70e5306-4a83-4a9f-9b59-a78c304c438b"
+            }
+          ],
+          "OperationName": "grantUserRoles",
+          "ServiceName": "Crowdstrike Authentication",
+          "Success": true,
+          "UTCTimestamp": "2024-07-22 21:32:49.000000000",
+          "UserId": "peregrin.took@hobbiton.co",
+          "UserIp": "1.1.1.1"
+        },
+        "metadata": {
+          "customerIDString": "fake_customer_id",
+          "eventCreationTime": "2024-07-22 21:32:49.531000000",
+          "eventType": "AuthActivityAuditEvent",
+          "offset": 342905,
+          "version": "1.0"
+        }
+      }
+  - Name: Admin Role Assigned (Multiple)
+    ExpectedResult: true
+    Log:
+      {
+        "event": {
+          "AuditKeyValues": [
+            {
+              "Key": "target_name",
+              "ValueString": "merry.brandybuck@hobbiton.co"
+            },
+            {
+              "Key": "target_user_uuid",
+              "ValueString": "e70e5306-4a83-4a9f-9b59-a78c304c438b"
+            },
+            {
+              "Key": "target_cid",
+              "ValueString": "fake_customer_id"
+            },
+            {
+              "Key": "roles",
+              "ValueString": "custom_non_admin_role,billing_dashboard_admin,falconhost_admin"
+            },
+            {
+              "Key": "actor_cid",
+              "ValueString": "fake_customer_id"
+            },
+            {
+              "Key": "trace_id",
+              "ValueString": "897d300ad09137b362ee6a62846a9277"
+            },
+            {
+              "Key": "actor_user",
+              "ValueString": "peregrin.took@hobbiton.co"
+            },
+            {
+              "Key": "actor_user_uuid",
+              "ValueString": "e70e5306-4a83-4a9f-9b59-a78c304c438b"
+            }
+          ],
+          "OperationName": "grantUserRoles",
+          "ServiceName": "Crowdstrike Authentication",
+          "Success": true,
+          "UTCTimestamp": "2024-07-22 21:32:49.000000000",
+          "UserId": "peregrin.took@hobbiton.co",
+          "UserIp": "1.1.1.1"
+        },
+        "metadata": {
+          "customerIDString": "fake_customer_id",
+          "eventCreationTime": "2024-07-22 21:32:49.531000000",
+          "eventType": "AuthActivityAuditEvent",
+          "offset": 342905,
+          "version": "1.0"
+        }
+      }
+  - Name: Non-Admin Role Assigned
+    ExpectedResult: false
+    Log:
+      {
+        "event": {
+          "AuditKeyValues": [
+            {
+              "Key": "target_name",
+              "ValueString": "merry.brandybuck@hobbiton.co"
+            },
+            {
+              "Key": "target_user_uuid",
+              "ValueString": "e70e5306-4a83-4a9f-9b59-a78c304c438b"
+            },
+            {
+              "Key": "target_cid",
+              "ValueString": "fake_customer_id"
+            },
+            {
+              "Key": "roles",
+              "ValueString": "custom_non_admin_role"
+            },
+            {
+              "Key": "actor_cid",
+              "ValueString": "fake_customer_id"
+            },
+            {
+              "Key": "trace_id",
+              "ValueString": "897d300ad09137b362ee6a62846a9277"
+            },
+            {
+              "Key": "actor_user",
+              "ValueString": "peregrin.took@hobbiton.co"
+            },
+            {
+              "Key": "actor_user_uuid",
+              "ValueString": "e70e5306-4a83-4a9f-9b59-a78c304c438b"
+            }
+          ],
+          "OperationName": "grantUserRoles",
+          "ServiceName": "Crowdstrike Authentication",
+          "Success": true,
+          "UTCTimestamp": "2024-07-22 21:32:49.000000000",
+          "UserId": "peregrin.took@hobbiton.co",
+          "UserIp": "1.1.1.1"
+        },
+        "metadata": {
+          "customerIDString": "fake_customer_id",
+          "eventCreationTime": "2024-07-22 21:32:49.531000000",
+          "eventType": "AuthActivityAuditEvent",
+          "offset": 342905,
+          "version": "1.0"
+        }
+      }

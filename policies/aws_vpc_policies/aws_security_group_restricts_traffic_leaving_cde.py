@@ -1,12 +1,7 @@
 from ipaddress import ip_network
 
-from panther_base_helpers import IN_PCI_SCOPE
-
 
 def policy(resource):
-    # Only apply this policy if the Security Group is in scope for PCI
-    if not IN_PCI_SCOPE(resource):
-        return True
 
     for permission in resource["IpPermissionsEgress"] or []:
         # Check if any traffic can leave this security group to public IP space

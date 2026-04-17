@@ -1,6 +1,6 @@
 def rule(event):
     # filter events; event type 11 is an actor_user changed user password
-    return event.get("event_type_id") == 11
+    return str(event.get("event_type_id")) == "11"
 
 
 def title(event):

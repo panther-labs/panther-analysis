@@ -1,13 +1,13 @@
 AnalysisType: datamodel
-LogTypes: 
+LogTypes:
   - GCP.AuditLog
-DataModelID: Standard.GCP.AuditLog
-DisplayName: GCP Audit Log
+DataModelID: "Standard.GCP.AuditLog"
+DisplayName: "GCP Audit Log"
 Filename: gcp_data_model.py
 Enabled: true
 Mappings:
   - Name: actor_user
-    Path: $.protoPayload.authenticationInfo.principalEmail
+    Method: get_actor_user
   - Name: assigned_admin_role
     Method: get_iam_roles
   - Name: event_type
@@ -16,3 +16,47 @@ Mappings:
     Path: $.protoPayload.requestMetadata.callerIP
   - Name: user
     Method: get_modified_users
+  - Name: annotations
+    Path: $.labels
+  - Name: apiGroup
+    Method: get_api_group
+  - Name: apiVersion
+    Method: get_api_version
+  - Name: namespace
+    Method: get_namespace
+  - Name: resource
+    Method: get_resource
+  - Name: name
+    Method: get_name
+  - Name: subresource
+    Method: get_subresource
+  - Name: requestURI
+    Method: get_request_uri
+  - Name: responseStatus
+    Path: $.protoPayload.status
+  - Name: sourceIPs
+    Method: get_source_ips
+  - Name: username
+    Method: get_actor_user
+  - Name: userAgent
+    Path: $.protoPayload.requestMetadata.callerSuppliedUserAgent
+  - Name: verb
+    Method: get_verb
+  - Name: requestObject
+    Path: $.protoPayload.request
+  - Name: responseObject
+    Path: $.protoPayload.response
+  - Name: containers
+    Method: get_containers
+  - Name: volumes
+    Method: get_volumes
+  - Name: hostIPC
+    Method: get_host_ipc
+  - Name: hostNetwork
+    Method: get_host_network
+  - Name: hostPID
+    Method: get_host_pid
+  - Name: webhooks
+    Method: get_webhooks
+  - Name: serviceType
+    Method: get_service_type

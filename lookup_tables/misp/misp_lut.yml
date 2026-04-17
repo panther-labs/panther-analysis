@@ -1,0 +1,13 @@
+AnalysisType: lookup_table
+LookupName: misp_warning_lists
+Enabled: true
+Description: Lists of well-known indicators that can be associated to potential false positives, errors or mistakes.
+Refresh:
+  RoleARN: arn:aws:iam::893421435052:role/panther-gitfetcher-access-role
+  ObjectPath: s3://panther-gitfetcher-gmji11fb16h67os7pc8djtoe9g49nusw2a-s3alias/luts/data/gitfetcher/misp.jsonl
+  PeriodMinutes: 1440
+Reference: https://github.com/MISP/misp-warninglists
+Schema: MISP.WarningListsCIDR
+LogTypeMap:
+  PrimaryKey: cidr
+  AssociatedLogTypes: []

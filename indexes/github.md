@@ -1,36 +1,96 @@
-## User Rules
+## GitHub
 
-[ GitHub User Role Updated](../rules/github_rules/github_user_role_updated.py)
+- [Admin Role Assigned](../rules/standard_rules/admin_assigned.yml)
+  - Assigning an admin role manually could be a sign of privilege escalation
+- [GitHub Action Failed](../rules/github_rules/github_action_failed.yml)
+  - A monitored github action has failed.
+- [GitHub Advanced Security Change WITHOUT Repo Archived](../correlation_rules/github_advanced_security_change_not_followed_by_repo_archived.yml)
+  - Identifies when GitHub Advanced Security (GHAS) settings are modified without the repository being archived within 90 minutes. GHAS provides code scanning, secret scanning, and dependency review to detect vulnerabilities and exposed credentials. Disabling GHAS while keeping repositories active suggests attackers hiding malicious code, preventing security alert detection, or facilitating backdoors and supply chain attacks.
+- [GitHub Artifact Download from Cross-Fork Workflow](../correlation_rules/github_artifact_download_from_forked_repo.yml)
+  - The "download artifacts" API, and various custom actions encapsulating it, doesn't differentiate between artifacts that were uploaded by forked repositories  and base repositories, which could lead privileged workflows to download artifacts that were created by forked repositories and that are potentially poisoned.
+- [GitHub Branch Protection Disabled](../rules/github_rules/github_branch_protection_disabled.yml)
+  - Disabling branch protection controls could indicate malicious use of admin credentials in an attempt to hide activity.
+- [GitHub Branch Protection Policy Override](../rules/github_rules/github_branch_policy_override.yml)
+  - Bypassing branch protection controls could indicate malicious use of admin credentials in an attempt to hide activity.
+- [GitHub Commits Skipping Workflows](../rules/github_rules/github_workflow_skip_commits.yml)
+  - Detects commits from cross-fork scenarios that contain workflow skip directives, which bypass GitHub Actions workflows. These skip patterns ([skip ci], [ci skip], [no ci], [skip actions], [actions skip], skip-checks:true) can be used to avoid security checks and CI/CD processes. This rule only alerts on commits to public forkable repositories.
+- [GitHub Cross-Fork Workflow Run](../rules/github_rules/github_crossfork_workflow_run.yml)
+  - Tracks workflows run in cross-fork pull requests.
+- [GitHub Dependabot Vulnerability Dismissed](../rules/github_rules/github_repo_vulnerability_dismissed.yml)
+  - Creates an alert if a dependabot alert is dismissed without being fixed.
+- [GitHub Malicious Comment/Review Content](../rules/github_rules/github_malicious_comment_content.yml)
+  - Detects malicious patterns in GitHub comment and review content that could indicate bash injection attempts or social engineering attacks. This includes comments on issues, pull requests, and pull request reviews. While comments cannot directly execute code, they can be used to trick developers into running malicious commands. This rule detects command substitution patterns similar to those found in the Nx vulnerability (GHSA-cxm3-wv7p-598c).
+- [GitHub Malicious Commit Content](../rules/github_rules/github_malicious_commit_content.yml)
+  - Detects malicious patterns in GitHub commit content including commit messages, author names, and author emails. These fields can contain injection payloads that may be executed by vulnerable CI/CD workflows or git hooks. This rule is particularly important as commit metadata is often trusted and may be processed unsafely. Based on patterns from the Nx vulnerability (GHSA-cxm3-wv7p-598c).
+- [GitHub Malicious Issue/Pages Content](../rules/github_rules/github_malicious_issue_pages.yml)
+  - Detects malicious patterns in GitHub issue content (title and body) and GitHub wiki pages (page names) that could indicate bash injection attempts. This rule detects command substitution patterns similar to those found in the Nx vulnerability (GHSA-cxm3-wv7p-598c). Covers both issue events and Gollum (wiki) events.
+- [GitHub Malicious Pull Request Content](../rules/github_rules/github_malicious_pr_titles.yml)
+  - Detects malicious patterns in GitHub pull request content (title, body, head ref, head label, default branch) that could indicate bash injection attempts or other malicious activity. This rule is designed to catch attacks like the Nx vulnerability (GHSA-cxm3-wv7p-598c) where PR titles contained bash injection payloads that could be executed by vulnerable CI workflows. Lower severity for PRs that are not cross-fork.
+- [GitHub Org Authentication Method Changed](../rules/github_rules/github_org_auth_modified.yml)
+  - Detects critical changes to GitHub organization authentication settings including SAML SSO, 2FA requirements, SAML provider configuration, and OAuth restrictions. These foundational security controls protect entire organizations, and unauthorized modifications can enable attackers to bypass identity management, maintain persistence, or prepare for data exfiltration. Legitimate changes are rare and should be well-documented with proper authorization.
+- [GitHub Org IP Allow List modified](../rules/github_rules/github_org_ip_allowlist.yml)
+  - Detects changes to a GitHub Org IP Allow List
+- [Github Organization App Integration Installed](../rules/github_rules/github_organization_app_integration_installed.yml)
+  - An application integration was installed to your organization's Github account by someone in your organization.
+- [Github Public Repository Created](../rules/github_rules/github_public_repository_created.yml)
+  - A public Github repository was created.
+- [GitHub pull_request_target Workflow on Self-Hosted Runner](../correlation_rules/github_pull_request_target_with_self_hosted_runner.yml)
+  - Detects when a pull_request_target workflow runs on a self-hosted runner. pull_request_target workflows run with elevated privileges and have access to repository secrets even when triggered by external contributors from forks. When these workflows run on self-hosted runners attackers can gain direct code execution on the underlying infrastructure  with potential access to internal network, databases, and systems. Unlike GitHub-hosted runners which are destroyed after each job,  self-hosted runners persist and can be permanently compromised. This pattern is high risk regardless of whether the PR is cross-fork or same-repository because self-hosted runners represent infrastructure access. GitHub explicitly warns never to use self-hosted runners with public repositories or workflows that can be triggered by untrusted contributors. This configuration allows any GitHub user with read access to your repository to execute arbitrary code on your infrastructure.
+- [GitHub pull_request_target Workflow Usage](../rules/github_rules/github_pull_request_target_usage.yml)
+  - Detects usage of pull_request_target workflows, which run with elevated privileges and can access secrets even when triggered by external contributors from forks. These workflows pose security risks as they run in the context of the target repository rather than the fork, potentially allowing malicious code execution with write access and secrets. Low severity for non-cross-fork PRs.
+- [GitHub pull_request_target Workflow with Checkout Action](../correlation_rules/github_pull_request_target_with_checkout_in_workflow.yml)
+  - Detects when a pull_request_target workflow contains a checkout action, creating a potential security risk. pull_request_target workflows run with elevated privileges and have access to repository secrets even when triggered by external contributors from forks. When combined with a checkout action, this can create dangerous attack vectors. This is a well-known technique for supply chain compromise in GitHub Actions, often called a "pwn request".
+- [GitHub Repository Archived](../rules/github_rules/github_repo_archived.yml)
+  - Detects when a repository is archived.
+- [GitHub Repository Collaborator Change](../rules/github_rules/github_repo_collaborator_change.yml)
+  - Detects when a repository collaborator is added or removed.
+- [GitHub Repository Created](../rules/github_rules/github_repo_created.yml)
+  - Detects when a repository is created.
+- [GitHub Repository Ruleset Modified](../rules/github_rules/github_repo_ruleset_modified.yml)
+  - Disabling repository ruleset controls could indicate malicious use of admin credentials in an attempt to hide activity.
+- [Github Repository Transfer](../rules/github_rules/github_repository_transfer.yml)
+  - A user accepted a request to receive a transferred Github repository, a  Github repository was transferred to another repository network, or a user sent a request to transfer a repository to another user or organization.
+- [GitHub Repository Visibility Change](../rules/github_rules/github_repo_visibility_change.yml)
+  - Detects when an organization repository visibility changes.
+- [GitHub Secret Scanning Alert Created](../rules/github_rules/github_secret_scanning_alert_created.yml)
+  - GitHub detected a secret and created a secret scanning alert.
+- [GitHub Security Change, includes GitHub Advanced Security](../rules/github_rules/github_advanced_security_change.yml)
+  - The rule alerts when GitHub Security tools (Dependabot, Secret Scanner, etc) are disabled.
+- [GitHub Sha1-Hulud Malicious Repository Created](../rules/github_rules/github_shai_hulud_repo_created.yml)
+  - Detects when a repository is created with the description "Sha1-Hulud: The Second Coming.", which is a known indicator of compromise associated with the Sha1-Hulud 2.0 campaign. Repos created with this description are typically indicators of an exfiltration attempt by the worm.
+- [GitHub Supply Chain - Software Installation Tool User Agents](../rules/github_rules/github_supply_chain_suspicious_user_agents.yml)
+  - Detects software installation tool user agents in GitHub audit logs that should never  directly access GitHub. Package managers like npm, pip, yarn, and system installers  operate at the registry level, not GitHub audit level. Their presence indicates: 1. Supply chain attacks using spoofed user agents to blend in 2. Compromised systems running installation tools with stolen GitHub tokens   3. Malicious automation disguised as legitimate package managersBased on analysis of GitHub audit logs showing zero legitimate npm/yarn/pip user agents, any such patterns are inherently suspicious and warrant immediate investigation.
+- [GitHub Team Modified](../rules/github_rules/github_team_modified.yml)
+  - Detects when a team is modified in some way, such as adding a new team, deleting a team, modifying members, or a change in repository control.
+- [GitHub User Access Key Created](../rules/github_rules/github_user_access_key_created.yml)
+  - Detects when a GitHub user access key is created.
+- [GitHub User Added or Removed from Org](../rules/github_rules/github_org_modified.yml)
+  - Detects when a user is added or removed from a GitHub Org.
+- [GitHub User Added to Org Moderators](../rules/github_rules/github_org_moderators_add.yml)
+  - Detects when a user is added to a GitHub org's list of moderators.
+- [GitHub User Initial Access to Private Repo](../rules/github_rules/github_repo_initial_access.yml)
+  - Detects when a user initially accesses a private organization repository.
+- [GitHub User Role Updated](../rules/github_rules/github_user_role_updated.yml)
+  - Detects when a GitHub user role is upgraded to an admin or downgraded to a member
+- [GitHub Web Hook Modified](../rules/github_rules/github_webhook_modified.yml)
+  - Detects when a webhook is added, modified, or deleted
+- [GitHub Workflow Contains Checkout Action](../rules/github_rules/github_workflow_contains_checkout.yml)
+  - Detects when a GitHub Actions workflow job contains a checkout step. The checkout action (actions/checkout) pulls repository code into the workflow runner. In certain contexts, especially with pull_request_target triggers or workflows with elevated permissions, checking out untrusted code can pose security risks. This detection helps identify workflows that interact with repository code for security review.
+- [GitHub Workflow Dispatched by GitHub Actions Bot](../rules/github_rules/github_workflow_dispatch_by_github_bot.yml)
+  - Detects when a GitHub App server-to-server token (GITHUB_TOKEN) triggers a workflow manually through the workflow_dispatch event, creating a new workflow run. This activity may indicate that a possibly previously exfiltrated GITHUB_TOKEN was subsequently used to authenticate to the GitHub REST API to trigger a workflow manually.  This technique has been observed as the last step in the attack chain of the Nx/S1ngularity supply chain attack.
+- [GitHub Workflow Downloading Artifacts](../rules/github_rules/github_workflow_artifact_download.yml)
+  - Detects when a GitHub Actions workflow downloads artifacts.
+- [GitHub Workflow Permissions Modified](../rules/github_rules/github_workflow_permission_modified.yml)
+  - Detects when the default workflow permissions for the GITHUB_TOKEN are modified at the organization level. GitHub Actions workflows use GITHUB_TOKEN for authentication, and changing these permissions can either expand or restrict what workflows can do by default. Unauthorized modifications could allow attackers to escalate privileges in CI/CD pipelines, potentially leading to supply chain compromise through malicious workflow modifications, unauthorized code deployments, or exfiltration of secrets. This is particularly concerning as it affects all repositories in the organization unless overridden at the repository level.
+- [GitHub Workflow Using Self-Hosted Runner](../rules/github_rules/github_self_hosted_runner_used.yml)
+  - Detects when a GitHub Actions workflow runs on a self-hosted runner.
+- [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
+  - Detects when Multi-Factor Authentication (MFA) is disabled
+- [NX Supply Chain - S1ngularity Repository Detection](../queries/github_queries/nx_supply_chain_s1ngularity_repository_query.yml)
+  - https://github.com/nrwl/nx/security/advisories/GHSA-cxm3-wv7p-598cDetects GitHub activity associated with the NX supply chain compromise (CVE-2024-XXXX).The s1ngularity attack compromised popular NX build system packages affecting ~4M weekly downloads.Attack Details:- Malicious NPM packages published August 26-27, 2025 (22:32-03:37 UTC)- Created repositories: "s1ngularity-repository", "s1ngularity-repository-0/1" for data exfiltration- Targeted cryptocurrency wallets, SSH keys, GitHub/NPM tokens, .env files- Used triple base64 encoding to upload stolen credentials- First documented case of weaponizing AI CLI tools for reconnaissanceThis query detects repository creation, access, and API activity patterns consistent with the attack.
+- [Secret Exposed and not Quarantined](../correlation_rules/secret_exposed_and_not_quarantined.yml)
+  - The rule detects when a GitHub Secret Scan detects an exposed secret, which is not followed by the expected quarantine operation in AWS.  When you make a repository public, or push changes to a public repository, GitHub always scans the code for secrets that match partner patterns. Public packages on the npm registry are also scanned. If secret scanning detects a potential secret, we notify the service provider who issued the secret. The service provider validates the string and then decides whether they should revoke the secret, issue a new secret, or contact you directly. Their action will depend on the associated risks to you or them.
+- [Sha1-Hulud V2 Filenames Added to Repository](../queries/github_queries/shai_hulud_filenames_in_repo.yml)
+  - This saved query detects filenames associated with the Sha1-Hulud worm 2.0 campaign, where malicious JS files are inserted into GitHub repositories to exfiltrate secrets.Attack details: - GitHub repositories get compromised via vulnerable workflows- Attackers are able to push their malicious code, contained in  filenames "setup_bun.js" and "bun_environment.js"- These files are responsible for exfiltrating cloud credentials, secrets and tokens.
 
-[ GitHub Team Modified](../rules/github_rules/github_team_modified.py)
 
-[ GitHub User Initial Access to Private Repo](../rules/github_rules/github_repo_initial_access.py)
-
-[ GitHub Team Modified](../rules/github_rules/github_team_modified.py)
-
-[ GitHub User Initial Access to Private Repo](../rules/github_rules/github_repo_initial_access.py)
-
-[ GitHub User Added or Removed from Org](../rules/github_rules/github_org_modified.py)
-
-[ GitHub User Access Key Created](../rules/github_rules/github_user_access_key_created.py)
-
-## Repository Rules
-
-[ GitHub Branch Protection Policy Override](../rules/github_rules/github_branch_policy_override.py)
-
-[ GitHub Branch Protection Disabled](../rules/github_rules/github_branch_protection_disabled.py)
-
-[ GitHub Repository Created](../rules/github_rules/github_repo_created.py)
-
-[ GitHub Repository Visibility Change](../rules/github_rules/github_repo_collaborator_change.py)
-
-[ GitHub Web Hook Modified](../rules/github_rules/github_repo_hook_modified.py)
-
-[ GitHub Repository Visibility Change](../rules/github_rules/github_repo_visibility_change.py)
-
-
-## Organization Rules
-
-[ GitHub Org Authentication Method Changed](../rules/github_rules/github_org_auth_modified.py)
-
-[ GitHub Org IP Allow List modified](../rules/github_rules/github_org_ip_allowlist.py)

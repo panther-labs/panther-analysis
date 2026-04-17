@@ -1,0 +1,30 @@
+AnalysisType: saved_query
+QueryName: Sha1-Hulud V2 Filenames Added to Repository
+Description: |
+  This saved query detects filenames associated with the Sha1-Hulud worm 2.0 campaign, 
+  where malicious JS files are inserted into GitHub repositories to exfiltrate secrets.
+  Attack details: 
+  - GitHub repositories get compromised via vulnerable workflows
+  - Attackers are able to push their malicious code, contained in
+    filenames "setup_bun.js" and "bun_environment.js"
+  - These files are responsible for exfiltrating cloud credentials, secrets and tokens.
+Tags:
+  - GitHub
+  - Supply Chain
+  - Suspicious Files
+  - Code Injection
+Query: |
+  SELECT 
+      github_webhook.*,
+      all_commits.value AS commit_data,
+      added_files.value AS added_file
+  FROM panther_logs.public.github_webhook,
+      TABLE(FLATTEN(input => commits, outer => true)) all_commits,
+      TABLE(FLATTEN(input => all_commits.value:added, outer => true)) added_files
+  WHERE p_event_time >= TIMESTAMP '2025-11-24 03:00:00'
+    AND (
+      added_files.value::STRING IN ('setup_bun.js', 'bun_environment.js')
+      OR ARRAY_CONTAINS('setup_bun.js'::VARIANT, head_commit:added)
+      OR ARRAY_CONTAINS('bun_environment.js'::VARIANT, head_commit:added)
+    )
+  ORDER BY p_event_time DESC

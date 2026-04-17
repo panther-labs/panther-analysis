@@ -1,0 +1,220 @@
+AnalysisType: scheduled_rule
+Filename: okta_swa_offhours_access_behavioral.py
+RuleID: "Okta.SWA.OffHoursAccess.Behavioral"
+DisplayName: "Okta SWA Off-Hours Credential Access - Behavioral"
+Enabled: true
+ScheduledQueries:
+  - Query.Okta.SWAOffHoursAccessBehavioral
+Severity: High  # Default, dynamic severity in rule function
+Status: Experimental
+Tags:
+  - Identity & Access Management
+  - Okta
+  - SWA
+  - Credential Access:Credentials from Password Stores
+  - Initial Access:Valid Accounts
+  - Anomaly Detection
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1555  # Credentials from Password Stores
+    - TA0001:T1078  # Valid Accounts
+Description: |
+  Detects Okta SWA credential access occurring outside normal business hours using behavioral
+  z-score analysis on temporal patterns.
+
+  Compromised admin accounts often access SWA credentials at unusual times - late at night,
+  during weekends, or from a different geographic location than normal. This detection builds
+  a 90-day baseline for each admin's temporal credential access patterns, then identifies
+  anomalous shifts toward off-hours, late-night, and weekend activity in the last 7 days.
+
+  **Detection Logic:**
+  - Z-score: Off-hours ratio spike (> 3σ above normal off-hours proportion)
+  - Z-score: Late-night ratio spike (2 AM - 6 AM accesses) (> 2σ)
+  - Z-score: Weekend ratio spike (> 2σ)
+  - Cold-start: First-time off-hours credential access (>= 3 events, no prior baseline)
+  - Cold-start: First-time late-night access (>= 2 events, no prior baseline)
+  - Cold-start: First-time weekend access (>= 2 events, no prior baseline)
+  - Compound: Geographic shift + off-hours activity (high-confidence indicator)
+
+  **Why This Matters:**
+  Attackers using stolen admin credentials typically operate at off-hours to avoid detection
+  and minimize interference with active users. A sudden shift in the time distribution of
+  SWA credential accesses is a strong indicator of account compromise.
+
+  **Complementary Detection:**
+  Use alongside `Okta.SWA.BulkAccess.Behavioral` which detects the same attack vector
+  based on volume rather than temporal patterns.
+
+Reference: https://www.varonis.com/blog/okta-attack-vectors
+Runbook: |
+  1. Compare recent_late_night_ratio and recent_offhours_ratio for admin_email against baseline_late_night_ratio and baseline_offhours_ratio - query Okta SystemLog for application.user_membership.change_username events by admin_email in the 7 days around recent_first_event, listing UTC timestamps and app names for all off-hours accesses
+  2. Check is_geographic_shift by comparing baseline_primary_country against recent_primary_country for admin_email - review client IP addresses and geolocation data for recent accesses in the 24 hours around recent_first_event to confirm whether the location change is legitimate travel or suspicious
+  3. Search for Okta.SWA.BulkAccess.Behavioral and any MFA bypass or session anomaly alerts for admin_email in the 48 hours before recent_first_event to determine whether this off-hours access is part of a broader credential theft campaign
+
+DedupPeriodMinutes: 1440  # 24 hours
+SummaryAttributes:
+  - admin_email
+  - anomaly_severity_score
+  - is_geographic_shift
+Tests:
+  # Positive Tests - Should Alert
+  - Name: Geographic Shift with Off-Hours Access - Critical Severity
+    ExpectedResult: true
+    Log:
+      {
+        "admin_email": "victim-admin@company.com",
+        "baseline_total_credential_access": 80,
+        "baseline_active_days": 25,
+        "baseline_hours_with_activity": 60,
+        "baseline_mean_credential_access_per_hour": 1.33,
+        "baseline_stddev_credential_access_per_hour": 0.5,
+        "baseline_active_slot_count": 45,
+        "baseline_primary_country": "United States",
+        "baseline_primary_city": "San Francisco",
+        "recent_total_credential_access": 20,
+        "recent_active_days": 3,
+        "recent_max_per_hour": 5,
+        "recent_avg_per_hour": 2.5,
+        "recent_inactive_slot_events": 16,
+        "recent_inactive_slot_ratio": 0.8,
+        "recent_avg_inactive_slot_ratio_per_hour": 0.75,
+        "z_score_inactive_slot_ratio": 7.0,
+        "recent_country_diversity": 1,
+        "recent_city_diversity": 1,
+        "recent_primary_country": "Russia",
+        "recent_primary_city": "Moscow",
+        "recent_first_event": "2024-01-15 02:00:00",
+        "recent_last_event": "2024-01-15 05:00:00",
+        "is_inactive_hour_anomaly": true,
+        "is_cold_start": false,
+        "is_geographic_shift": true,
+        "is_anomalous": true,
+        "anomaly_severity_score": 34.0
+      }
+
+  - Name: Cold Start - No Baseline - High Severity
+    ExpectedResult: true
+    Log:
+      {
+        "admin_email": "admin@company.com",
+        "baseline_total_credential_access": null,
+        "baseline_active_days": null,
+        "baseline_hours_with_activity": null,
+        "baseline_mean_credential_access_per_hour": null,
+        "baseline_stddev_credential_access_per_hour": null,
+        "baseline_active_slot_count": null,
+        "baseline_primary_country": null,
+        "baseline_primary_city": null,
+        "recent_total_credential_access": 8,
+        "recent_active_days": 2,
+        "recent_max_per_hour": 3,
+        "recent_avg_per_hour": 1.5,
+        "recent_inactive_slot_events": 5,
+        "recent_inactive_slot_ratio": 0.63,
+        "recent_avg_inactive_slot_ratio_per_hour": 0.6,
+        "z_score_inactive_slot_ratio": null,
+        "recent_country_diversity": 1,
+        "recent_city_diversity": 1,
+        "recent_primary_country": "United States",
+        "recent_primary_city": "New York",
+        "recent_first_event": "2024-01-15 03:00:00",
+        "recent_last_event": "2024-01-15 04:00:00",
+        "is_inactive_hour_anomaly": false,
+        "is_cold_start": true,
+        "is_geographic_shift": false,
+        "is_anomalous": true,
+        "anomaly_severity_score": 8.0
+      }
+
+  - Name: Inactive Hour Z-Score Spike - Medium Severity
+    ExpectedResult: true
+    Log:
+      {
+        "admin_email": "svc-admin@company.com",
+        "baseline_total_credential_access": 60,
+        "baseline_active_days": 20,
+        "baseline_hours_with_activity": 45,
+        "baseline_mean_credential_access_per_hour": 1.33,
+        "baseline_stddev_credential_access_per_hour": 0.4,
+        "baseline_active_slot_count": 38,
+        "baseline_primary_country": "United States",
+        "baseline_primary_city": "Chicago",
+        "recent_total_credential_access": 15,
+        "recent_active_days": 4,
+        "recent_max_per_hour": 4,
+        "recent_avg_per_hour": 1.5,
+        "recent_inactive_slot_events": 11,
+        "recent_inactive_slot_ratio": 0.73,
+        "recent_avg_inactive_slot_ratio_per_hour": 0.6,
+        "z_score_inactive_slot_ratio": 4.5,
+        "recent_country_diversity": 1,
+        "recent_city_diversity": 1,
+        "recent_primary_country": "United States",
+        "recent_primary_city": "Chicago",
+        "recent_first_event": "2024-01-15 19:00:00",
+        "recent_last_event": "2024-01-15 23:00:00",
+        "is_inactive_hour_anomaly": true,
+        "is_cold_start": false,
+        "is_geographic_shift": false,
+        "is_anomalous": true,
+        "anomaly_severity_score": 9.0
+      }
+
+  - Name: Geographic Shift Only - High Severity
+    ExpectedResult: true
+    Log:
+      {
+        "admin_email": "admin@company.com",
+        "baseline_total_credential_access": 50,
+        "baseline_active_days": 18,
+        "baseline_hours_with_activity": 40,
+        "baseline_mean_credential_access_per_hour": 1.25,
+        "baseline_stddev_credential_access_per_hour": 0.3,
+        "baseline_active_slot_count": 35,
+        "baseline_primary_country": "United States",
+        "baseline_primary_city": "Austin",
+        "recent_total_credential_access": 10,
+        "recent_active_days": 2,
+        "recent_max_per_hour": 3,
+        "recent_avg_per_hour": 1.4,
+        "recent_inactive_slot_events": 2,
+        "recent_inactive_slot_ratio": 0.2,
+        "recent_avg_inactive_slot_ratio_per_hour": 0.15,
+        "z_score_inactive_slot_ratio": 1.5,
+        "recent_country_diversity": 1,
+        "recent_city_diversity": 1,
+        "recent_primary_country": "Germany",
+        "recent_primary_city": "Berlin",
+        "recent_first_event": "2024-01-15 10:00:00",
+        "recent_last_event": "2024-01-15 14:00:00",
+        "is_inactive_hour_anomaly": false,
+        "is_cold_start": false,
+        "is_geographic_shift": true,
+        "is_anomalous": true,
+        "anomaly_severity_score": 5.0
+      }
+
+  # Note: rule() only validates admin_email; anomaly thresholds are enforced at the query level.
+  # All rows reaching rule() with a valid admin_email are expected to return true.
+
+  # Negative Tests - Should Not Alert
+  - Name: Malformed Row - Missing Admin Email
+    ExpectedResult: false
+    Log:
+      {
+        "baseline_total_credential_access": 60,
+        "recent_inactive_slot_events": 5,
+        "is_anomalous": true,
+        "anomaly_severity_score": 25.0
+      }
+
+  - Name: Malformed Row - Empty Admin Email String
+    ExpectedResult: false
+    Log:
+      {
+        "admin_email": "",
+        "baseline_total_credential_access": 60,
+        "recent_inactive_slot_events": 5,
+        "is_anomalous": true,
+        "anomaly_severity_score": 25.0
+      }

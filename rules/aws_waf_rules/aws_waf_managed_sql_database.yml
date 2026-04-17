@@ -1,0 +1,122 @@
+AnalysisType: rule
+Filename: aws_waf_managed_sql_database.py
+RuleID: "AWS.WAF.Managed.SQLDatabase"
+DisplayName: "AWS WAF Managed SQL Database Passthrough Rule"
+Enabled: true
+LogTypes:
+  - AWS.WAFWebACL
+Tags:
+  - AWS
+  - WAF
+  - Managed Rules
+  - Initial Access:Exploit Public-Facing Application
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1190
+Severity: High
+Description: >
+  Detects AWS WAF SQL Database managed rule group matches. Covers SQL injection patterns in
+  query arguments, request body, cookies, and URI path, including extended patterns not covered
+  by the Core Rule Set.
+Runbook: |
+  1. Find all WAF log entries from httpRequest:clientIp in the 6 hours before and after this alert to identify SQL injection attempts across multiple endpoints
+  2. Check if httpRequest:clientIp appears in threat intelligence feeds or is associated with known automated scanning tools
+  3. If the action was ALLOW, search application and database logs for the targeted httpRequest:uri in the 1 hour after the alert to determine if injection was successful
+Reference: https://docs.aws.amazon.com/waf/latest/developerguide/aws-managed-rule-groups-use-case.html
+Tests:
+  - Name: SQLi blocked via terminatingRuleId
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:30:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesSQLiRuleSet"
+      terminatingRuleType: "MANAGED_RULE_GROUP"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.45"
+        country: "US"
+        uri: "/api/search"
+        httpMethod: "GET"
+
+  - Name: SQLi in query arguments via ruleGroupList
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:35:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesSQLiRuleSet"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "198.51.100.22"
+        country: "CN"
+        uri: "/api/users?id=1 OR 1=1"
+        httpMethod: "GET"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesSQLiRuleSet"
+          terminatingRule:
+            ruleId: "SQLi_QUERYARGUMENTS"
+            action: "BLOCK"
+
+  - Name: Extended SQLi pattern in body non-terminating (COUNT mode)
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:40:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "APIGW"
+      httpRequest:
+        clientIp: "192.0.2.100"
+        country: "RU"
+        uri: "/api/login"
+        httpMethod: "POST"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesSQLiRuleSet"
+          nonTerminatingMatchingRules:
+            - ruleId: "SQLiExtendedPatterns_BODY"
+              action: "COUNT"
+
+  - Name: SQLi in cookie header
+    ExpectedResult: true
+    Log:
+      timestamp: "2024-03-20T10:45:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesSQLiRuleSet"
+      action: "BLOCK"
+      httpSourceName: "CF"
+      httpRequest:
+        clientIp: "203.0.113.99"
+        country: "BR"
+        uri: "/dashboard"
+        httpMethod: "GET"
+      ruleGroupList:
+        - ruleGroupId: "AWS#AWSManagedRulesSQLiRuleSet"
+          terminatingRule:
+            ruleId: "SQLi_COOKIE"
+            action: "BLOCK"
+
+  - Name: Different rule group - no alert
+    ExpectedResult: false
+    Log:
+      timestamp: "2024-03-20T10:50:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "AWS-AWSManagedRulesCommonRuleSet"
+      action: "BLOCK"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "203.0.113.45"
+
+  - Name: Normal traffic - no alert
+    ExpectedResult: false
+    Log:
+      timestamp: "2024-03-20T10:55:00.000Z"
+      webaclId: "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/test/a1b2c3d4"
+      terminatingRuleId: "Default_Action"
+      action: "ALLOW"
+      httpSourceName: "ALB"
+      httpRequest:
+        clientIp: "198.51.100.10"
+
+DedupPeriodMinutes: 60
+Threshold: 1

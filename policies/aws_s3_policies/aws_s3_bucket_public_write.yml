@@ -1,7 +1,7 @@
 AnalysisType: policy
 Filename: aws_s3_bucket_public_write.py
-PolicyID: AWS.S3.Bucket.PublicWrite
-DisplayName: AWS S3 Bucket Public Write
+PolicyID: "AWS.S3.Bucket.PublicWrite"
+DisplayName: "AWS S3 Bucket Public Write"
 Enabled: true
 ResourceTypes:
   - AWS.S3.Bucket
@@ -11,180 +11,195 @@ Tags:
   - Identity & Access Management
   - Impact:Data Destruction
 Reports:
+  CIS:
+    - S3.8
   PCI:
-    - 10.5.2
+    - 1.3.1
+    - 7.1
+    - 7.2.1
   MITRE ATT&CK:
     - TA0040:T1485
 Severity: Critical
-Description: Ensures that the S3 bucket is not publicly writeable.
-Runbook: >
-  https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-s3-bucket-not-publicly-writeable
+Description: >
+  Ensures S3 buckets are not publicly writeable, preventing critical security vulnerabilities. Public write access allows attackers to upload malicious content, delete legitimate data, or consume storage for massive AWS bills. Attackers can use writable buckets for C2 infrastructure, malware distribution, or supply chain attacks.
+Runbook: |
+  1. Query CloudTrail for s3:PutObject, s3:DeleteObject, and s3:PutObjectAcl events on the bucket in the past 30 days to identify any unauthorized write operations from unfamiliar IP addresses or principals
+  2. Remove public write permissions from the bucket's ACL and bucket policy, enable all four S3 Block Public Access settings, and quarantine or delete any malicious objects that were uploaded
+  3. Enable S3 server access logging and CloudTrail S3 data events for ongoing monitoring, and review how the public write access was configured to prevent recurrence
 Reference: https://docs.aws.amazon.com/AmazonS3/latest/dev/using-iam-policies.html
 Tests:
-  -
-    Name: Bucket Grants READ To All Authenticated Users
+  - Name: Bucket Grants READ To All Authenticated Users
     ExpectedResult: true
     Resource:
       {
         "CreationDate": "2019-01-01T00:00:00Z",
-        "EncryptionRules": [
-          {
-            "ApplyServerSideEncryptionByDefault": {
-              "KMSMasterKeyID": null,
-              "SSEAlgorithm": "AES256"
-            }
-          }
-        ],
-        "Grants": [
-          {
-            "Grantee": {
-              "DisplayName": "user.name",
-              "EmailAddress": null,
-              "ID": "11112223334445556667778899aaabbbcccdddeeee",
-              "Type": "CanonicalUser",
-              "URI": "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"
+        "EncryptionRules":
+          [
+            {
+              "ApplyServerSideEncryptionByDefault":
+                { "KMSMasterKeyID": null, "SSEAlgorithm": "AES256" },
             },
-            "Permission": "READ"
-          },
-          {
-            "Grantee": {
-              "DisplayName": null,
-              "EmailAddress": null,
-              "ID": null,
-              "Type": "Group",
-              "URI": "http://acs.amazonaws.com/groups/s3/LogDelivery"
+          ],
+        "Grants":
+          [
+            {
+              "Grantee":
+                {
+                  "DisplayName": "user.name",
+                  "EmailAddress": null,
+                  "ID": "11112223334445556667778899aaabbbcccdddeeee",
+                  "Type": "CanonicalUser",
+                  "URI": "http://acs.amazonaws.com/groups/global/AuthenticatedUsers",
+                },
+              "Permission": "READ",
             },
-            "Permission": "READ"
-          }
-        ],
+            {
+              "Grantee":
+                {
+                  "DisplayName": null,
+                  "EmailAddress": null,
+                  "ID": null,
+                  "Type": "Group",
+                  "URI": "http://acs.amazonaws.com/groups/s3/LogDelivery",
+                },
+              "Permission": "READ",
+            },
+          ],
         "LifecycleRules": null,
         "Location": "us-east-2",
         "LoggingPolicy": null,
         "MFADelete": null,
         "Name": "bucket-name",
-        "Owner": {
-          "DisplayName": "user.name",
-          "ID": "11112223334445556667778899aaabbbcccdddeeee"
-        },
+        "Owner":
+          {
+            "DisplayName": "user.name",
+            "ID": "11112223334445556667778899aaabbbcccdddeeee",
+          },
         "Policy": null,
-        "PublicAccessBlockConfiguration": {
-          "BlockPublicAcls": false,
-          "BlockPublicPolicy": false,
-          "IgnorePublicAcls": false,
-          "RestrictPublicBuckets": false
-        },
-        "Versioning": null
+        "PublicAccessBlockConfiguration":
+          {
+            "BlockPublicAcls": false,
+            "BlockPublicPolicy": false,
+            "IgnorePublicAcls": false,
+            "RestrictPublicBuckets": false,
+          },
+        "Versioning": null,
       }
-  -
-    Name: Bucket Grants WRITE To All Authenticated Users
+  - Name: Bucket Grants WRITE To All Authenticated Users
     ExpectedResult: false
     Resource:
       {
         "CreationDate": "2019-01-01T00:00:00Z",
-        "EncryptionRules": [
-          {
-            "ApplyServerSideEncryptionByDefault": {
-              "KMSMasterKeyID": null,
-              "SSEAlgorithm": "AES256"
-            }
-          }
-        ],
-        "Grants": [
-          {
-            "Grantee": {
-              "DisplayName": "user.name",
-              "EmailAddress": null,
-              "ID": "11112223334445556667778899aaabbbcccdddeeee",
-              "Type": "CanonicalUser",
-              "URI": "http://acs.amazonaws.com/groups/global/AuthenticatedUsers"
+        "EncryptionRules":
+          [
+            {
+              "ApplyServerSideEncryptionByDefault":
+                { "KMSMasterKeyID": null, "SSEAlgorithm": "AES256" },
             },
-            "Permission": "WRITE"
-          },
-          {
-            "Grantee": {
-              "DisplayName": null,
-              "EmailAddress": null,
-              "ID": null,
-              "Type": "Group",
-              "URI": "http://acs.amazonaws.com/groups/s3/LogDelivery"
+          ],
+        "Grants":
+          [
+            {
+              "Grantee":
+                {
+                  "DisplayName": "user.name",
+                  "EmailAddress": null,
+                  "ID": "11112223334445556667778899aaabbbcccdddeeee",
+                  "Type": "CanonicalUser",
+                  "URI": "http://acs.amazonaws.com/groups/global/AuthenticatedUsers",
+                },
+              "Permission": "WRITE",
             },
-            "Permission": "WRITE"
-          }
-        ],
+            {
+              "Grantee":
+                {
+                  "DisplayName": null,
+                  "EmailAddress": null,
+                  "ID": null,
+                  "Type": "Group",
+                  "URI": "http://acs.amazonaws.com/groups/s3/LogDelivery",
+                },
+              "Permission": "WRITE",
+            },
+          ],
         "LifecycleRules": null,
         "Location": "us-east-2",
         "LoggingPolicy": null,
         "MFADelete": null,
         "Name": "bucket-name",
-        "Owner": {
-          "DisplayName": "user.name",
-          "ID": "11112223334445556667778899aaabbbcccdddeeee"
-        },
+        "Owner":
+          {
+            "DisplayName": "user.name",
+            "ID": "11112223334445556667778899aaabbbcccdddeeee",
+          },
         "Policy": null,
-        "PublicAccessBlockConfiguration": {
-          "BlockPublicAcls": false,
-          "BlockPublicPolicy": false,
-          "IgnorePublicAcls": false,
-          "RestrictPublicBuckets": false
-        },
-        "Versioning": null
+        "PublicAccessBlockConfiguration":
+          {
+            "BlockPublicAcls": false,
+            "BlockPublicPolicy": false,
+            "IgnorePublicAcls": false,
+            "RestrictPublicBuckets": false,
+          },
+        "Versioning": null,
       }
-  -
-    Name: Bucket Grants WRITE To All Users
+  - Name: Bucket Grants WRITE To All Users
     ExpectedResult: false
     Resource:
       {
         "CreationDate": "2019-01-01T00:00:00Z",
-        "EncryptionRules": [
-          {
-            "ApplyServerSideEncryptionByDefault": {
-              "KMSMasterKeyID": null,
-              "SSEAlgorithm": "AES256"
-            }
-          }
-        ],
-        "Grants": [
-          {
-            "Grantee": {
-              "DisplayName": "user.name",
-              "EmailAddress": null,
-              "ID": "11112223334445556667778899aaabbbcccdddeeee",
-              "Type": "CanonicalUser",
-              "URI": "http://acs.amazonaws.com/groups/global/AllUsers"
+        "EncryptionRules":
+          [
+            {
+              "ApplyServerSideEncryptionByDefault":
+                { "KMSMasterKeyID": null, "SSEAlgorithm": "AES256" },
             },
-            "Permission": "WRITE"
-          },
-          {
-            "Grantee": {
-              "DisplayName": null,
-              "EmailAddress": null,
-              "ID": null,
-              "Type": "Group",
-              "URI": "http://acs.amazonaws.com/groups/s3/LogDelivery"
+          ],
+        "Grants":
+          [
+            {
+              "Grantee":
+                {
+                  "DisplayName": "user.name",
+                  "EmailAddress": null,
+                  "ID": "11112223334445556667778899aaabbbcccdddeeee",
+                  "Type": "CanonicalUser",
+                  "URI": "http://acs.amazonaws.com/groups/global/AllUsers",
+                },
+              "Permission": "WRITE",
             },
-            "Permission": "WRITE"
-          }
-        ],
+            {
+              "Grantee":
+                {
+                  "DisplayName": null,
+                  "EmailAddress": null,
+                  "ID": null,
+                  "Type": "Group",
+                  "URI": "http://acs.amazonaws.com/groups/s3/LogDelivery",
+                },
+              "Permission": "WRITE",
+            },
+          ],
         "LifecycleRules": null,
         "Location": "us-east-2",
         "LoggingPolicy": null,
         "MFADelete": null,
         "Name": "bucket-name",
-        "Owner": {
-          "DisplayName": "user.name",
-          "ID": "11112223334445556667778899aaabbbcccdddeeee"
-        },
+        "Owner":
+          {
+            "DisplayName": "user.name",
+            "ID": "11112223334445556667778899aaabbbcccdddeeee",
+          },
         "Policy": null,
-        "PublicAccessBlockConfiguration": {
-          "BlockPublicAcls": false,
-          "BlockPublicPolicy": false,
-          "IgnorePublicAcls": false,
-          "RestrictPublicBuckets": false
-        },
-        "Versioning": null
+        "PublicAccessBlockConfiguration":
+          {
+            "BlockPublicAcls": false,
+            "BlockPublicPolicy": false,
+            "IgnorePublicAcls": false,
+            "RestrictPublicBuckets": false,
+          },
+        "Versioning": null,
       }
-  -
-    Name: Null Configuration
+  - Name: Null Configuration
     ExpectedResult: true
     Resource:
       {
@@ -199,20 +214,22 @@ Tests:
         "EncryptionRules": null,
         "PublicAccessBlockConfiguration": null,
         "AccountId": "123456789",
-        "Tags": {
-          "something": "ttd",
-          "user": "prodsec",
-          "service": "-",
-          "owner": "-",
-          "team": "-"
-        },
+        "Tags":
+          {
+            "something": "ttd",
+            "user": "prodsec",
+            "service": "-",
+            "owner": "-",
+            "team": "-",
+          },
         "Region": "us-west-2",
         "ResourceType": "AWS.S3.Bucket",
         "Name": "something-prodsec",
         "ResourceId": "arn:aws:s3:::something-prodsec",
         "TimeCreated": "2020-06-27T00:11:11Z",
-        "Owner": {
-          "DisplayName": "aws-corp",
-          "ID": "11112223334445556667778899aaabbbcccdddeeee"
-        }
+        "Owner":
+          {
+            "DisplayName": "aws-corp",
+            "ID": "11112223334445556667778899aaabbbcccdddeeee",
+          },
       }

@@ -1,0 +1,71 @@
+AnalysisType: rule
+Filename: databricks_repeated_unauthorized_uc_requests.py
+RuleID: "Databricks.Audit.RepeatedUnauthorizedUCRequests"
+DisplayName: "Databricks Repeated Unauthorized Unity Catalog Requests"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Discovery
+  - Unity Catalog
+Reports:
+  MITRE ATT&CK:
+    - TA0007:T1087 # Account Discovery
+Severity: Medium
+Threshold: 26
+DedupPeriodMinutes: 60
+Description: >
+  Detects repeated unauthorized Unity Catalog API requests (>25 per hour) which may indicate
+  reconnaissance, privilege enumeration, or unauthorized data access attempts.
+Runbook: |
+  1. Query Unity Catalog audit logs for all unauthorized attempts by this user in the past 24 hours
+  2. Check if the user attempted to access specific catalogs, schemas, or tables repeatedly
+  3. Find all users with high unauthorized request rates in the past 7 days
+Reference: https://github.com/andyweaves/system-tables-audit-logs/blob/main/resources/queries_and_alerts.json
+SummaryAttributes:
+  - actor
+  - uc_action
+Tests:
+  - Name: Unauthorized UC Request - 403
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "unityCatalog"
+      actionName: "getCatalog"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 403
+        errorMessage: "Access denied"
+  - Name: Unauthorized UC Request - 401
+    ExpectedResult: true
+    Log:
+      timestamp: 1704067200000
+      serviceName: "unityCatalog"
+      actionName: "getSchema"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 401
+  - Name: Successful UC Request
+    ExpectedResult: false
+    Log:
+      timestamp: 1704067200000
+      serviceName: "unityCatalog"
+      actionName: "getCatalog"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 200
+  - Name: Wrong Service
+    ExpectedResult: false
+    Log:
+      timestamp: 1704067200000
+      serviceName: "workspace"
+      actionName: "getCatalog"
+      userIdentity:
+        email: "user@example.com"
+      response:
+        statusCode: 403

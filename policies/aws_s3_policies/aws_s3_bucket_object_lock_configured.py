@@ -1,11 +1,9 @@
-from panther_base_helpers import IN_PCI_SCOPE, deep_get
+from panther_base_helpers import deep_get
 
 RETENTION_PERIOD_DAYS = 365
 
 
 def policy(resource):
-    if not IN_PCI_SCOPE(resource):
-        return True
 
     object_lock = resource["ObjectLockConfiguration"]
 

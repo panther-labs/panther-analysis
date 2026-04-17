@@ -1,6 +1,7 @@
 import ipaddress
 
 import panther_event_type_helpers as event_type
+from panther_aws_helpers import get_actor_user  # pylint: disable=unused-import
 from panther_base_helpers import deep_get
 
 
@@ -23,7 +24,7 @@ def get_event_type(event):
 
 def load_ip_address(event):
     """
-    CloudTrail occassionally sets non-IPs in the sourceIPAddress field.
+    CloudTrail occasionally sets non-IPs in the sourceIPAddress field.
     This method ensures that either an IPv4 or IPv6 address is always returned.
     """
     source_ip = event.get("sourceIPAddress")

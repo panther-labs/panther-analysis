@@ -1,0 +1,77 @@
+AnalysisType: rule
+Filename: github_workflow_dispatch_by_github_bot.py
+RuleID: "GitHub.Workflow.DispatchByGitHubBot"
+DisplayName: "GitHub Workflow Dispatched by GitHub Actions Bot"
+Enabled: true
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+Status: Experimental
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195
+Severity: Info
+Description: >
+  Detects when a GitHub App server-to-server token (GITHUB_TOKEN) triggers a workflow manually through the workflow_dispatch event,
+  creating a new workflow run. This activity may indicate that a possibly previously exfiltrated GITHUB_TOKEN was subsequently
+  used to authenticate to the GitHub REST API to trigger a workflow manually. 
+  This technique has been observed as the last step in the attack chain of the Nx/S1ngularity supply chain attack.
+Runbook: |
+  1. Identify the workflow and repository:
+     - Review the workflow name and repository from the alert details
+     - Check the workflow_run_link in the alert context to view the workflow run details
+  2. Review the workflow contents:
+     - Examine the workflow file (.github/workflows/) for potentially malicious actions
+     - Check for suspicious steps like secret exfiltration or unauthorized deployments
+     - Verify the workflow or any scripts used in the workflow itself haven't been recently modified in an unauthorized manner
+  3. If suspicious or unauthorized:
+     - Immediately cancel the workflow run if it's still in progress
+     - Review GitHub audit logs for other activities by this token_id
+     - Rotate any secrets that may have been exposed to this workflow
+     - Review all recent workflow modifications and runs
+Reference: https://nx.dev/blog/s1ngularity-postmortem
+Tests:
+  - Name: GitHub App Manual Workflow Dispatch by Bot
+    ExpectedResult: true
+    Log:
+      {
+        "action": "workflows.created_workflow_run",
+        "actor": "github-actions[bot]",
+        "actor_id": "12345678",
+        "actor_is_agent": false,
+        "actor_is_bot": true,
+        "at_sign_timestamp": "2025-10-15 18:45:47.048000000",
+        "business": "yourcompany",
+        "business_id": "485638",
+        "created_at": "2025-10-15 18:45:47.048000000",
+        "event": "workflow_dispatch",
+        "head_branch": "bot-branch",
+        "name": "Your Workflow",
+        "operation_type": "create",
+        "org": "YourCompany",
+        "org_id": 12345678,
+        "programmatic_access_type": "GitHub App server-to-server token",
+        "repo": "YourCompany/YourRepo",
+        "repo_id": 12345678,
+        "run_number": 1,
+        "started_at": "2025-10-15 18:45:47.000000000",
+        "token_id": "1111111111111",
+        "user_agent": "launch/production",
+        "workflow_id": "123456789",
+        "workflow_run_id": "123456789"
+      }
+  - Name: Other Event
+    ExpectedResult: false
+    Log:
+      {
+        "p_event_time": "2025-10-15 18:45:47.048000000",
+        "p_log_type": "GitHub.Audit",
+        "action": "workflows.created_workflow_run",
+        "actor": "github-actions[bot]",
+        "actor_id": "123456789",
+        "event": "push",
+        "programmatic_access_type": "GitHub App server-to-server token",
+        "repo": "YourCompany/YourRepo",
+        "workflow_id": "123456789"
+      }

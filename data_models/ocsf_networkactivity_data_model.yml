@@ -1,0 +1,17 @@
+AnalysisType: datamodel
+LogTypes:
+  - OCSF.NetworkActivity
+DataModelID: "Standard.OCSF.NetworkActivity"
+DisplayName: "OCSF Network Activity"
+Enabled: true
+Mappings:
+  - Name: destination_ip
+    Path: $.dst_endpoint.ip
+  - Name: destination_port
+    Path: $.dst_endpoint.port
+  - Name: source_ip
+    Path: $.src_endpoint.ip
+  - Name: source_port
+    Path: $.src_endpoint.port
+  - Name: log_status
+    Path: status_code

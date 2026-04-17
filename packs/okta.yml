@@ -6,12 +6,47 @@ PackDefinition:
     - Okta.AdminRoleAssigned
     - Okta.APIKeyCreated
     - Okta.APIKeyRevoked
-    - Okta.GeographicallyImprobableAccess
     - Okta.Support.Access
     - Okta.Global.MFA.Disabled
+    - Okta.ThreatInsight.Security.Threat.Detected
+    - Okta.User.Account.Locked
+    - Okta.User.MFA.Factor.Suspend
+    - Okta.User.MFA.Reset.All
+    - Okta.User.Reported.Suspicious.Activity
+    - Okta.Refresh.Access.Token.Reuse
+    - Okta.App.Unauthorized.Access.Attempt
+    - Okta.Group.Admin.Role.Assigned
+    - Okta.Rate.Limits
+    - Okta.Anonymizing.VPN.Login
+    - Okta.Identity.Provider.Created.Modified
+    - Okta.New.Behavior.Accessing.Admin.Console
+    - Okta.Org2org.Creation.Modification
+    - Okta.Password.Extraction.via.SCIM
+    - Okta.Phishing.Attempt.Blocked.FastPass
+    - Okta.User.MFA.Reset.Single
+    - Okta.PasswordAccess
+    - Okta.PotentiallyStolenSession
+    - Okta.Support.Reset
+    # Signals
+    - Okta.Login.Success
+    - Okta.SSO.to.AWS
     # Globals used in these detections
     - panther_base_helpers
-    - panther_oss_helpers
+    - panther_event_type_helpers
+    - panther_okta_helpers
     # Data Model
     - Standard.Okta.SystemLog
-DisplayName: Panther Okta Pack
+    # Behavioral Scheduled Queries
+    - Query.Okta.ADAgentAuthZScoreAnomaly
+    - Query.Okta.ADAgentTokenAbuseBehavioral
+    - Query.Okta.SkeletonKeyBypassBehavioral
+    - Query.Okta.SWABulkAccessBehavioral
+    - Query.Okta.SWAOffHoursAccessBehavioral
+    # Lookup Tables
+    - okta_ad_pantherflow_baseline_30d
+    - okta_ad_pantherflow_baseline_90d
+    - okta_ad_pantherflow_baseline_180d
+    - okta_baseline_30d
+    - okta_baseline_90d
+    - okta_baseline_180d
+DisplayName: "Panther Okta Pack"

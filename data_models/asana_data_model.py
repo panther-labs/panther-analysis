@@ -11,7 +11,6 @@ audit_log_type_map = {
 
 
 def get_event_type(event):
-
     logged_event_type = event.get("event_type", {})
     # Since this is a safe dict get if the event type is not mapped
     # there is an implicit return of None

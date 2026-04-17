@@ -1,4 +1,5 @@
-from panther_base_helpers import box_parse_additional_details, deep_get
+from panther_base_helpers import deep_get
+from panther_box_helpers import box_parse_additional_details
 
 
 def rule(event):
@@ -19,5 +20,5 @@ def title(event):
         return description
     return (
         f"Anomalous download activity triggered by user "
-        f"[{deep_get(event, 'created_by', 'name', default='<UNKNOWN_USER>')}]."
+        f"[{event.deep_get('created_by', 'name', default='<UNKNOWN_USER>')}]."
     )

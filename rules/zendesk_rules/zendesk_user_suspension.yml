@@ -1,8 +1,8 @@
 AnalysisType: rule
 Filename: zendesk_user_suspension.py
-RuleID: Zendesk.UserSuspension
+RuleID: "Zendesk.UserSuspension"
 DedupPeriodMinutes: 60
-DisplayName: Zendesk User Suspension Status Changed
+DisplayName: "Zendesk User Suspension Status Changed"
 Enabled: true
 LogTypes:
   - Zendesk.Audit
@@ -15,11 +15,11 @@ Reports:
 Severity: High
 Description: A user's Zendesk suspension status was changed.
 Runbook: Ensure the user's suspension status is appropriate.
+Reference: https://support.zendesk.com/hc/en-us/articles/4408889293978-Suspending-a-user#:~:text=select%20Unsuspend%20access.-,Identifying%20suspended%20users,name%20on%20the%20Customers%20page
 SummaryAttributes:
   - p_any_ip_addresses
 Tests:
-  -
-    Name: Zendesk - Suspension Enabled
+  - Name: Zendesk - Suspension Enabled
     ExpectedResult: true
     Log:
       {
@@ -27,6 +27,7 @@ Tests:
         "id": 123456789123,
         "action_label": "Updated",
         "actor_id": 123,
+        "actor_name": "John Doe",
         "source_id": 123,
         "source_type": "user_setting",
         "source_label": "Suspension state: Bob Cat",
@@ -34,10 +35,9 @@ Tests:
         "change_description": "Suspended",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit"
+        "p_log_type": "Zendesk.Audit",
       }
-  -
-    Name: Zendesk - Suspension Disabled
+  - Name: Zendesk - Suspension Disabled
     ExpectedResult: true
     Log:
       {
@@ -45,6 +45,7 @@ Tests:
         "id": 123456789123,
         "action_label": "Updated",
         "actor_id": 123,
+        "actor_name": "John Doe",
         "source_id": 123,
         "source_type": "user_setting",
         "source_label": "Suspension state: Bob Cat",
@@ -52,10 +53,9 @@ Tests:
         "change_description": "Unsuspended",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit"
+        "p_log_type": "Zendesk.Audit",
       }
-  -
-    Name: Zendesk - Admin Role Assigned
+  - Name: Zendesk - Admin Role Assigned
     ExpectedResult: false
     Log:
       {
@@ -63,6 +63,7 @@ Tests:
         "id": 123456789123,
         "action_label": "Updated",
         "actor_id": 123,
+        "actor_name": "John Doe",
         "source_id": 123,
         "source_type": "user",
         "source_label": "Bob Cat",
@@ -70,5 +71,5 @@ Tests:
         "change_description": "Role changed from End User to Administrator",
         "ip_address": "127.0.0.1",
         "created_at": "2021-05-28T18:39:50Z",
-        "p_log_type": "Zendesk.Audit"
+        "p_log_type": "Zendesk.Audit",
       }

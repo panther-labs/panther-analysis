@@ -1,18 +1,19 @@
 import argparse
 import csv
 import json
-import os
 import logging
+import os
+
 import yaml
 
 
 def load_csv_logs(filename):
     logs = []
     p_fields = set()
-    with open(filename, 'r' ) as fi:
+    with open(filename, "r") as fi:
         reader = csv.DictReader(fi)
         # Get the full list of p_ fields in this particular log type
-        p_fields = set([x for x in reader.fieldnames if x.startswith('p_')])
+        p_fields = set([x for x in reader.fieldnames if x.startswith("p_")])
         for line in reader:
             # Pop the p_any fields off the record so they are recalculated
             for p_field in p_fields:
@@ -30,7 +31,7 @@ def load_json_logs(filename):
             except json.JSONDecodeError:
                 logging.error("non-JSON line [%s] detected", line_num + 1)
                 continue
-            panther_keys = set(key for key in json_line.keys() if key.startswith('p_'))
+            panther_keys = set(key for key in json_line.keys() if key.startswith("p_"))
             for key in panther_keys:
                 del json_line[key]
             logs.append(json_line)
@@ -44,27 +45,25 @@ def main(cmdline_args):
     }
 
     extension = os.path.splitext(cmdline_args.input)[1]
-    if extension == '.csv':
-        test_data['Logs'] = load_csv_logs(cmdline_args.input)
-    elif extension == '.json':
-        test_data['Logs'] = load_json_logs(cmdline_args.input)
+    if extension == ".csv":
+        test_data["Logs"] = load_csv_logs(cmdline_args.input)
+    elif extension == ".json":
+        test_data["Logs"] = load_json_logs(cmdline_args.input)
     else:
-        logging.info('unsupported input type: %s', extension)
+        logging.info("unsupported input type: %s", extension)
         return
 
     with open(cmdline_args.output, "w") as fo:
         yaml.dump(test_data, fo)
-    logging.info("Wrote %d example logs to %s", len(test_data['Logs']), cmdline_args.output)
+    logging.info("Wrote %d example logs to %s", len(test_data["Logs"]), cmdline_args.output)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Prepare scenario data from JSONL-formatted files."
     )
-    parser.add_argument(
-        "--input", help="the filename", required=True)
-    parser.add_argument(
-        "--output", help="the YAML scenario filename", required=True)
+    parser.add_argument("--input", help="the filename", required=True)
+    parser.add_argument("--output", help="the YAML scenario filename", required=True)
     parser.add_argument(
         "--log-type", help="the test scenario log type (e.g. AWS.CloudTrail)", required=True
     )

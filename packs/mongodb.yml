@@ -1,0 +1,20 @@
+AnalysisType: pack
+PackID: PantherManaged.MongoDb
+Description: Group of all MongoDB detections
+DisplayName: "Panther MongoDB Atlas Pack"
+PackDefinition:
+  IDs:
+    - MongoDB.Atlas.ApiKeyCreated
+    - MongoDB.org.Membership.Restriction.Disabled
+    - MongoDB.Access.Allowed.From.Anywhere
+    - MongoDB.Alerting.Disabled.Or.Deleted
+    - MongoDB.User.Created.Or.Deleted
+    - MongoDB.User.Roles.Changed
+    - MongoDB.2FA.Disabled
+    - MongoDB.Identity.Provider.Activity
+    - MongoDB.External.UserInvited.NoConfig
+    - MongoDB.Logging.Toggled
+    # Globals
+
+    - panther_mongodb_helpers
+

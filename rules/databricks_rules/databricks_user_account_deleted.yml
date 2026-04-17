@@ -1,0 +1,81 @@
+AnalysisType: rule
+Filename: databricks_user_account_deleted.py
+RuleID: "Databricks.Audit.UserAccountDeleted"
+DisplayName: "Databricks User Account Deleted"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Impact
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1531 # Account Access Removal
+Severity: Low
+Description: >
+  Detects user account deletions in Databricks. While often part of normal offboarding processes,
+  unauthorized deletions could indicate malicious activity or insider threats. Successful deletions
+  are elevated to HIGH severity.
+Runbook: |
+  1. Query audit logs for all actions performed by the deleted user (requestParams.targetUserName) in the 48 hours before deletion
+  2. Check if there were any privilege escalation or suspicious actions by this user in the 7 days before deletion
+  3. Find all user deletions by this actor in the past 30 days to identify bulk deletion patterns
+Reference: https://github.com/databricks-solutions/cybersec-workspace-detection-app/blob/main/base/detections/event-based/user_account_deleted.py
+Tests:
+  - Name: Successful User Deletion
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "delete"
+      userIdentity:
+        email: "admin@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        targetUserName: "user@example.com"
+        endpoint: "/users"
+      response:
+        statusCode: 200
+  - Name: Failed User Deletion
+    ExpectedResult: true
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "delete"
+      userIdentity:
+        email: "admin@example.com"
+      sourceIPAddress: "198.51.100.1"
+      requestParams:
+        targetUserName: "user@example.com"
+        endpoint: "/users"
+      response:
+        statusCode: 403
+  - Name: Wrong Service
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "workspace"
+      actionName: "delete"
+      userIdentity:
+        email: "admin@example.com"
+  - Name: Delete Without User Context
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "delete"
+      userIdentity:
+        email: "admin@example.com"
+      requestParams:
+        endpoint: "/servicePrincipals"
+      response:
+        statusCode: 200
+  - Name: Different Action
+    ExpectedResult: false
+    Log:
+      timestamp: 1234567890000
+      serviceName: "accounts"
+      actionName: "create"
+      userIdentity:
+        email: "admin@example.com"

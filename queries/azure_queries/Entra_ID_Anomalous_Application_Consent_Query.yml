@@ -1,0 +1,34 @@
+AnalysisType: saved_query
+QueryName: "Microsoft Entra ID Anomalous Application Consent"
+Description: >
+  Detects anomalous OAuth application consent grants in Microsoft Entra ID where users approve
+  permissions to applications they have not consented to in the past 14 days. Identifies potential
+  OAuth phishing attacks where attackers trick users into granting malicious applications access
+  to their accounts and organizational data.
+Tags:
+  - Anomaly Detection
+Query: |-
+  -- pragma: template
+
+  {% import 'anomalies' new_unique_values %}
+
+  with subquery as (
+      SELECT
+        p_event_time,
+        operationName,
+        category,
+        properties:initiatedBy:user:userPrincipalName AS user_principal_name,
+        properties:additionalDetails:key AS additional_details_key,
+        properties:additionalDetails:value AS app_id,
+        properties:result AS result,
+        properties
+      FROM panther_logs.public.azure_audit
+      WHERE
+        p_occurs_since('14 day')
+        AND category = 'AuditLogs'
+        AND operationName = 'Consent to application'
+        AND properties:result::string = 'success'
+        AND ARRAY_CONTAINS('AppId'::VARIANT, properties:additionalDetails:key)
+      LIMIT 10000
+  ),
+  {{ new_unique_values('subquery', 'user_principal_name', 'app_id', '1h') }}
