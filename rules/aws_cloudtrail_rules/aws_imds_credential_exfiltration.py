@@ -1,9 +1,11 @@
+import ipaddress
 import re
 
 from panther_aws_helpers import aws_rule_context
 
-# Pattern matching AWS-managed instance roles (IMDS credentials)
-INSTANCE_ROLE_PATTERN = re.compile(r":assumed-role/aws:.+")
+# IMDS credentials appear as assumed-role sessions where the session name
+# is an EC2 instance ID (i-xxxxxxxxxxxxxxxxx)
+INSTANCE_SESSION_PATTERN = re.compile(r":assumed-role/.+/i-[0-9a-f]+$")
 
 # Legitimate internal services and actions that use instance identity
 INTERNAL_SOURCES = {"ssm.amazonaws.com"}
@@ -11,9 +13,16 @@ INTERNAL_EVENTS = {"RegisterManagedInstance"}
 INTERNAL_IPS = {"AWS Internal"}
 
 
+def _is_private_ip(ip_str):
+    try:
+        return ipaddress.ip_address(ip_str).is_private
+    except ValueError:
+        return False
+
+
 def rule(event):
     arn = event.deep_get("userIdentity", "arn", default="")
-    if not INSTANCE_ROLE_PATTERN.search(arn):
+    if not INSTANCE_SESSION_PATTERN.search(arn):
         return False
     # Exclude legitimate internal AWS traffic
     if event.get("eventSource") in INTERNAL_SOURCES:
@@ -36,9 +45,8 @@ def title(event):
 
 
 def severity(event):
-    # Calls from public IPs are more suspicious
     ip_addr = event.get("sourceIPAddress", "")
-    if ip_addr and not ip_addr.startswith(("10.", "172.", "192.168.", "AWS Internal")):
+    if ip_addr and not _is_private_ip(ip_addr):
         return "HIGH"
     return "MEDIUM"
 
