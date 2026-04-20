@@ -968,6 +968,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects GetSigninToken calls from non-SSO user agents. An adversary can use tools like aws_consoler to convert compromised CLI credentials into a federated console session, bypassing MFA requirements and obscuring the original access key. The GetSigninToken API creates temporary console access from STS temporary credentials.",
+        "DisplayName": "AWS Console GetSigninToken Potential Abuse",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_console_getsignintoken.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "",
         "DisplayName": "AWS Console Login",
         "LogTypes": [
@@ -1474,6 +1483,15 @@
             "AWS.IAM.User"
         ],
         "YAMLPath": "policies/aws_iam_policies/aws_iam_user_not_in_conflicting_groups.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when an EC2 instance identity (credentials obtained via IMDS) is used to make API calls outside of expected internal AWS services like SSM. This indicates that IMDS credentials may have been exfiltrated from a compromised instance and are being used externally for lateral movement or privilege escalation.",
+        "DisplayName": "AWS IMDS Credential Usage Outside Expected Services",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_imds_credential_exfiltration.yml"
     },
     {
         "AnalysisType": "Policy",
@@ -2380,6 +2398,24 @@
             "AWS.CloudTrail"
         ],
         "YAMLPath": "correlation_rules/aws_sso_access_token_retrieved_by_unauthenticated_ip.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects AWS STS GetCallerIdentity calls made by TruffleHog, a credential scanning tool. Threat actors use TruffleHog to validate whether leaked or stolen AWS access keys are still active. A GetCallerIdentity call with a TruffleHog user agent indicates that credentials from this account have been discovered externally and are being tested for validity.",
+        "DisplayName": "AWS STS GetCallerIdentity via TruffleHog",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_sts_getcalleridentity_trufflehog.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects an IAM user calling STS GetSessionToken to obtain temporary credentials. Attackers who have compromised long-term IAM credentials may use GetSessionToken to generate short-lived session tokens for lateral movement or to bypass IP-based policies that apply only to long-term credentials.",
+        "DisplayName": "AWS STS GetSessionToken by IAM User",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_sts_getsessiontoken_misuse.yml"
     },
     {
         "AnalysisType": "Rule",
