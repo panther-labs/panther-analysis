@@ -788,6 +788,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects password spraying attacks by alerting when more than 9 distinct usernames fail to authenticate to the AWS console from the same account and region within 60 minutes.",
+        "DisplayName": "AWS CloudTrail Password Spraying",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_cloudtrail_password_spraying.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Threat actors who successfully compromise a victim's AWS account, whether through stolen credentials,  exposed access keys, exploited IAM misconfigurations, vulnerabilities in third-party applications,  or the absence of Multi-Factor Authentication (MFA), can exploit unused regions as safe zones  for malicious activities. These regions are often overlooked in monitoring and security setups,  making them an attractive target for attackers to operate undetected.",
         "DisplayName": "AWS Cloudtrail Region Enabled",
         "LogTypes": [
@@ -6503,6 +6512,17 @@
             "GCP.AuditLog"
         ],
         "YAMLPath": "rules/kubernetes_rules/k8s_secret_access_denied.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a single user accesses 15 or more distinct secrets within 30 minutes using list, get, or watch verbs. This may indicate secret enumeration to enable lateral or vertical movement and unauthorized access to critical resources. The threshold should be tuned to your environment.",
+        "DisplayName": "Kubernetes Secret Enumeration by a User",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_secret_enumeration.yml"
     },
     {
         "AnalysisType": "Rule",

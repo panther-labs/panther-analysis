@@ -66,6 +66,8 @@
   - This policy ensures that at least one CloudTrail has management (control plane) operations logged.
 - [AWS CloudTrail Password Policy Discovery](../rules/aws_cloudtrail_rules/aws_cloudtrail_password_policy_discovery.yml)
   - This detection looks for *AccountPasswordPolicy events in AWS CloudTrail logs. If these events occur in a short period of time from the same ARN, it could constitute Password Policy reconnaissance.
+- [AWS CloudTrail Password Spraying](../rules/aws_cloudtrail_rules/aws_cloudtrail_password_spraying.yml)
+  - Detects password spraying attacks by alerting when more than 9 distinct usernames fail to authenticate to the AWS console from the same account and region within 60 minutes.
 - [AWS Cloudtrail Region Enabled](../rules/aws_cloudtrail_rules/aws_cloudtrail_region_enabled.yml)
   - Threat actors who successfully compromise a victim's AWS account, whether through stolen credentials,  exposed access keys, exploited IAM misconfigurations, vulnerabilities in third-party applications,  or the absence of Multi-Factor Authentication (MFA), can exploit unused regions as safe zones  for malicious activities. These regions are often overlooked in monitoring and security setups,  making them an attractive target for attackers to operate undetected.
 - [AWS CloudTrail Retention Lifecycle Too Short](../rules/aws_cloudtrail_rules/aws_cloudtrail_short_lifecycle.yml)
@@ -483,6 +485,8 @@
   - This detection monitors for Roles or ClusterRoles being created with write permissions (create, update, patch, delete, deletecollection). While write permissions are common and often necessary for application operations, tracking role creation helps establish RBAC baselines and identify overly permissive configurations. Severity escalates for write access to sensitive resources like secrets or RBAC objects.
 - [Kubernetes Secret Access Denied](../rules/kubernetes_rules/k8s_secret_access_denied.yml)
   - This detection monitors for failed attempts to read Kubernetes secrets. While occasional failed access attempts may indicate RBAC misconfigurations, repeated failures suggest enumeration or brute-force attempts by compromised accounts. With 15-minute deduplication, 20 or more failed attempts within this window indicates active secret enumeration and should be investigated immediately.
+- [Kubernetes Secret Enumeration by a User](../rules/kubernetes_rules/k8s_secret_enumeration.yml)
+  - Detects when a single user accesses 15 or more distinct secrets within 30 minutes using list, get, or watch verbs. This may indicate secret enumeration to enable lateral or vertical movement and unauthorized access to critical resources. The threshold should be tuned to your environment.
 - [Kubernetes Service Account Token Theft from Pod](../rules/kubernetes_rules/k8s_steal_serviceaccount_token.yml)
   - This detection monitors for commands executed in pods that attempt to read service account tokens from /var/run/secrets/kubernetes.io/serviceaccount/token. Attackers who gain exec access to a pod can steal its service account token to authenticate as that service account to the Kubernetes API server. This enables privilege escalation and lateral movement within the cluster. This is a known attack technique documented by Stratus Red Team.
 - [Kubernetes System Principal Accessed from Non-Cloud Public IP](../rules/kubernetes_rules/k8s_system_principal_public_ip.yml)
