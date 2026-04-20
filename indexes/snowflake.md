@@ -28,6 +28,8 @@
   - Detect snowflake logins without multifactor authentication
 - [Snowflake Multiple Failed Logins Followed By Success](../queries/snowflake_queries/snowflake_multiple_failed_logins_followed_by_success.yml)
   - Detecting brute force activity and reporting when a user has incorrectly logged in multiple times and then had a successful login.
+- [Snowflake Password Spray](../rules/snowflake_rules/snowflake_stream_password_spray.yml)
+  - Detects password spraying attacks against Snowflake by tracking the number of distinct user accounts targeted by failed login attempts from the same source IP address within a short timeframe. Unlike brute force against a single account, password spraying distributes attempts across many accounts to evade lockout policies. This rule complements Snowflake.Stream.BruteForceByIp (same IP, any accounts) and Snowflake.PotentialBruteForceSuccess (brute force followed by confirmed login).
 - [Snowflake Successful Login](../rules/snowflake_rules/snowflake_stream_login_success.yml)
   - Track successful login signals for correlation.
 - [Snowflake Table Copied Into Stage](../queries/snowflake_queries/snowflake_table_copied_into_stage_signal.yml)

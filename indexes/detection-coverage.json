@@ -2175,6 +2175,15 @@
         "YAMLPath": "rules/aws_cloudtrail_rules/aws_s3_ransomware_note_upload.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Detects the disabling of 2 or more distinct S3 security controls (logging, versioning, and MFA delete protection) on the same bucket by the same actor within a short timeframe. Threshold is set to 2 rather than 3 because versioning and MFA delete can be disabled together in a single PutBucketVersioning API call, which produces only one unique value \u2014 making a threshold of 3 structurally unreachable in that scenario. This pattern is a strong indicator of preparation for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before encrypting or deleting data.",
+        "DisplayName": "AWS S3 Security Control Disabling",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_s3_security_control_disabling.yml"
+    },
+    {
         "AnalysisType": "Correlation Rule",
         "Description": "Detects the disabling of multiple S3 security controls (logging, versioning and MFA delete protection) on the same bucket within a short timeframe. This pattern is a strong indicator of preparation for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before encrypting or deleting data. Alerting on this activity enables early intervention before actual data loss occurs.",
         "DisplayName": "AWS S3 Security Controls Disabled",
@@ -7719,6 +7728,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects credential stuffing attacks against OpenAI accounts by tracking the number of distinct source IP addresses submitting failed login attempts against the same email address within a short timeframe. Unlike brute force from a single IP, credential stuffing distributes attempts across many IPs to evade rate limiting. This rule complements OpenAI.BruteForce.Login.Success, which confirms account compromise once a successful login follows the failures.",
+        "DisplayName": "OpenAI Credential Stuffing",
+        "LogTypes": [
+            "OpenAI.Audit"
+        ],
+        "YAMLPath": "rules/openai_rules/openai_credential_stuffing.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Base rule for detecting OpenAI failed login attempts. This rule is used primarilyas a building block for correlation rules and does not generate alerts on its own.",
         "DisplayName": "OpenAI Failed Login (Base Rule)",
         "LogTypes": [
@@ -8601,6 +8619,15 @@
             "Snowflake.AccountUsage"
         ],
         "YAMLPath": "queries/snowflake_queries/snowflake_multiple_failed_logins_followed_by_success.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects password spraying attacks against Snowflake by tracking the number of distinct user accounts targeted by failed login attempts from the same source IP address within a short timeframe. Unlike brute force against a single account, password spraying distributes attempts across many accounts to evade lockout policies. This rule complements Snowflake.Stream.BruteForceByIp (same IP, any accounts) and Snowflake.PotentialBruteForceSuccess (brute force followed by confirmed login).",
+        "DisplayName": "Snowflake Password Spray",
+        "LogTypes": [
+            "Snowflake.LoginHistory"
+        ],
+        "YAMLPath": "rules/snowflake_rules/snowflake_stream_password_spray.yml"
     },
     {
         "AnalysisType": "Rule",
