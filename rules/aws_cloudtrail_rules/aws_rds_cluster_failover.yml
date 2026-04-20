@@ -1,0 +1,150 @@
+AnalysisType: rule
+Filename: aws_rds_cluster_failover.py
+RuleID: "AWS.RDS.ClusterFailover"
+DisplayName: "AWS RDS Cluster Failover Initiated"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Impact
+  - Availability
+  - Endpoint Denial of Service
+  - RDS
+Severity: Medium
+Description: >
+  Detects when RDS cluster or global cluster failovers are manually initiated. Forced
+  failovers cause brief service interruptions and may indicate disaster recovery testing,
+  operational troubleshooting, or disruption attempts.
+Runbook: |
+  1. Find all cluster failover events by the user ARN in the past 24 hours
+  2. Check if this user has performed failovers in the past 90 days to determine if this is normal behavior
+  3. Look for database health or modification events in the 30 minutes before the failover
+Reference: https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database-disaster-recovery.html
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1499  # Endpoint Denial of Service
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - eventName
+  - userIdentity:principalId
+  - requestParameters:dBClusterIdentifier
+  - requestParameters:globalClusterIdentifier
+  - p_any_aws_account_ids
+Threshold: 1
+Tests:
+  - Name: DB Cluster Failover Initiated
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:admin"
+        arn: "arn:aws:sts::123456789012:assumed-role/DBARole/admin"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+      eventTime: "2024-01-18T03:30:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: FailoverDBCluster
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.1.100"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        dBClusterIdentifier: "aurora-cluster-prod"
+        targetDBInstanceIdentifier: "aurora-instance-2"
+      responseElements:
+        dBClusterIdentifier: "aurora-cluster-prod"
+        status: "failing-over"
+      requestID: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      eventID: "f1e2d3c4-b5a6-7890-1234-567890abcdef"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Global Cluster Failover
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/dr-coordinator"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: dr-coordinator
+      eventTime: "2024-01-18T03:30:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: FailoverGlobalCluster
+      awsRegion: us-west-2
+      sourceIPAddress: "10.0.5.50"
+      userAgent: "console.amazonaws.com"
+      requestParameters:
+        globalClusterIdentifier: "global-aurora-cluster"
+        targetDbClusterIdentifier: "arn:aws:rds:eu-west-1:123456789012:cluster:aurora-eu-secondary"
+      responseElements:
+        globalClusterIdentifier: "global-aurora-cluster"
+        status: "failing-over"
+      requestID: "b2c3d4e5-f6a7-8901-bcde-f1234567890a"
+      eventID: "g2f3e4d5-c6b7-8901-2345-678901bcdefg"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Failover Failed
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/developer"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: developer
+      eventTime: "2024-01-18T03:30:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: FailoverDBCluster
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.2.100"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        dBClusterIdentifier: "aurora-cluster-prod"
+      errorCode: AccessDenied
+      errorMessage: "User is not authorized to perform: rds:FailoverDBCluster"
+      requestID: "c3d4e5f6-a7b8-9012-cdef-1234567890ab"
+      eventID: "h3g4f5e6-d7c8-9012-3456-789012cdefgh"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Different RDS Event
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:user"
+        arn: "arn:aws:sts::123456789012:assumed-role/Admin/user"
+        accountId: "123456789012"
+      eventTime: "2024-01-18T03:30:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: ModifyDBCluster
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.1.100"
+      requestParameters:
+        dBClusterIdentifier: "aurora-cluster"
+        engineVersion: "8.0.mysql_aurora.3.04.0"
+      requestID: "d4e5f6a7-b8c9-0123-def0-1234567890bc"
+      eventID: "i4h5g6f7-e8d9-0123-4567-890123defghi"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management

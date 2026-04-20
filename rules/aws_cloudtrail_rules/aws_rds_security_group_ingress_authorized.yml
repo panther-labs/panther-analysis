@@ -1,0 +1,193 @@
+AnalysisType: rule
+Filename: aws_rds_security_group_ingress_authorized.py
+RuleID: "AWS.RDS.SecurityGroupIngressAuthorized"
+DisplayName: "AWS RDS Security Group Ingress Authorized"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Persistence
+  - Defense Evasion
+  - Account Manipulation
+  - Disable or Modify Cloud Firewall
+  - RDS
+Severity: Medium
+Description: >
+  Detects when ingress rules are added to RDS security groups. Overly permissive rules,
+  especially 0.0.0.0/0, expose databases to the internet and may indicate attackers
+  opening network access for persistence or data exfiltration.
+Runbook: |
+  1. Find all security group ingress authorizations by the user ARN in the past 24 hours
+  2. Check if the CIDR range in requestParameters:cIDRIP is overly permissive or previously used by this user
+  3. Look for database connection attempts from external IPs in the 6 hours after this rule was added
+Reference: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithSecurityGroups.html
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098  # Account Manipulation
+    - TA0005:T1562.007  # Disable or Modify Cloud Firewall
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - eventName
+  - userIdentity:principalId
+  - requestParameters:dBSecurityGroupName
+  - requestParameters:cIDRIP
+  - p_any_aws_account_ids
+Threshold: 1
+Tests:
+  - Name: Ingress Authorized from Specific CIDR
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:user"
+        arn: "arn:aws:sts::123456789012:assumed-role/NetworkAdmin/user"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+      eventTime: "2024-01-17T09:30:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: AuthorizeDBSecurityGroupIngress
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.1.100"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        dBSecurityGroupName: "production-db-sg"
+        cIDRIP: "203.0.113.0/24"
+      responseElements:
+        dBSecurityGroupName: "production-db-sg"
+        iPRanges:
+          - cIDRIP: "203.0.113.0/24"
+            status: "authorizing"
+      requestID: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      eventID: "f1e2d3c4-b5a6-7890-1234-567890abcdef"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Ingress Authorized from Public Internet - Critical
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/contractor"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: contractor
+      eventTime: "2024-01-17T09:30:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: AuthorizeDBSecurityGroupIngress
+      awsRegion: us-west-2
+      sourceIPAddress: "198.51.100.50"
+      userAgent: "Boto3/1.26.0"
+      requestParameters:
+        dBSecurityGroupName: "database-sg"
+        cIDRIP: "0.0.0.0/0"
+      responseElements:
+        dBSecurityGroupName: "database-sg"
+        iPRanges:
+          - cIDRIP: "0.0.0.0/0"
+            status: "authorizing"
+      requestID: "b2c3d4e5-f6a7-8901-bcde-f1234567890a"
+      eventID: "g2f3e4d5-c6b7-8901-2345-678901bcdefg"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Ingress Authorized from EC2 Security Group
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:admin"
+        arn: "arn:aws:sts::123456789012:assumed-role/AdminRole/admin"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+      eventTime: "2024-01-17T09:30:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: AuthorizeDBSecurityGroupIngress
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.1.50"
+      userAgent: "console.amazonaws.com"
+      requestParameters:
+        dBSecurityGroupName: "app-db-sg"
+        eC2SecurityGroupName: "app-servers-sg"
+        eC2SecurityGroupId: "sg-0123456789abcdef0"
+        eC2SecurityGroupOwnerId: "123456789012"
+      responseElements:
+        dBSecurityGroupName: "app-db-sg"
+        eC2SecurityGroups:
+          - eC2SecurityGroupName: "app-servers-sg"
+            eC2SecurityGroupId: "sg-0123456789abcdef0"
+            eC2SecurityGroupOwnerId: "123456789012"
+            status: "authorizing"
+      requestID: "c3d4e5f6-a7b8-9012-cdef-1234567890ab"
+      eventID: "h3g4f5e6-d7c8-9012-3456-789012cdefgh"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Authorization Failed
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/developer"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: developer
+      eventTime: "2024-01-17T09:30:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: AuthorizeDBSecurityGroupIngress
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.2.100"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        dBSecurityGroupName: "production-db-sg"
+        cIDRIP: "0.0.0.0/0"
+      errorCode: AccessDenied
+      errorMessage: "User is not authorized to perform: rds:AuthorizeDBSecurityGroupIngress"
+      requestID: "d4e5f6a7-b8c9-0123-def0-1234567890bc"
+      eventID: "i4h5g6f7-e8d9-0123-4567-890123defghi"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Different RDS Event
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:user"
+        arn: "arn:aws:sts::123456789012:assumed-role/Admin/user"
+        accountId: "123456789012"
+      eventTime: "2024-01-17T09:30:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: RevokeDBSecurityGroupIngress
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.1.100"
+      requestParameters:
+        dBSecurityGroupName: "production-db-sg"
+        cIDRIP: "0.0.0.0/0"
+      requestID: "e5f6a7b8-c9d0-1234-ef01-234567890bcd"
+      eventID: "j5i6h7g8-f9e0-1234-5678-901234efghij"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management

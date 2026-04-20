@@ -1,0 +1,156 @@
+AnalysisType: rule
+Filename: aws_rds_log_file_downloaded.py
+RuleID: "AWS.RDS.LogFileDownloaded"
+DisplayName: "AWS RDS Log File Downloaded"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Credential Access
+  - Discovery
+  - Credentials in Files
+  - RDS
+Severity: Low
+Description: >
+  Detects when RDS database log files are downloaded. Log files may contain credentials,
+  sensitive queries, or application secrets. Bulk downloads from unusual locations may
+  indicate credential harvesting or data reconnaissance.
+Runbook: |
+  1. Find all log file download events by the user ARN in the past 6 hours to identify bulk download patterns
+  2. Check if the source IP address matches the user's normal access patterns from the past 30 days
+  3. Look for database access or modification events from this user in the 48 hours before the log download
+Reference: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.html
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1552.001  # Credentials in Files
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - eventName
+  - userIdentity:principalId
+  - requestParameters:dBInstanceIdentifier
+  - requestParameters:logFileName
+  - sourceIPAddress
+  - p_any_aws_account_ids
+Threshold: 1
+Tests:
+  - Name: Error Log Downloaded
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:dba"
+        arn: "arn:aws:sts::123456789012:assumed-role/DBARole/dba"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+      eventTime: "2024-01-18T06:15:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: DownloadDBLogFilePortion
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.1.100"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        dBInstanceIdentifier: "production-mysql"
+        logFileName: "error/mysql-error.log"
+        numberOfLines: 1000
+        marker: "0"
+      responseElements:
+        logFileData: "[REDACTED]"
+        marker: "1000"
+        additionalDataPending: true
+      requestID: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      eventID: "f1e2d3c4-b5a6-7890-1234-567890abcdef"
+      readOnly: true
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Audit Log Downloaded from External IP
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/contractor"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: contractor
+      eventTime: "2024-01-18T06:15:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: DownloadDBLogFilePortion
+      awsRegion: us-west-2
+      sourceIPAddress: "198.51.100.200"
+      userAgent: "Boto3/1.26.0"
+      requestParameters:
+        dBInstanceIdentifier: "customer-database"
+        logFileName: "audit/server_audit.log"
+        numberOfLines: 5000
+      responseElements:
+        logFileData: "[REDACTED]"
+        marker: "5000"
+        additionalDataPending: false
+      requestID: "b2c3d4e5-f6a7-8901-bcde-f1234567890a"
+      eventID: "g2f3e4d5-c6b7-8901-2345-678901bcdefg"
+      readOnly: true
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Download Failed
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/developer"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: developer
+      eventTime: "2024-01-18T06:15:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: DownloadDBLogFilePortion
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.2.100"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        dBInstanceIdentifier: "production-db"
+        logFileName: "error/mysql-error.log"
+      errorCode: AccessDenied
+      errorMessage: "User is not authorized to perform: rds:DownloadDBLogFilePortion"
+      requestID: "c3d4e5f6-a7b8-9012-cdef-1234567890ab"
+      eventID: "h3g4f5e6-d7c8-9012-3456-789012cdefgh"
+      readOnly: true
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Different RDS Event
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:user"
+        arn: "arn:aws:sts::123456789012:assumed-role/Admin/user"
+        accountId: "123456789012"
+      eventTime: "2024-01-18T06:15:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: DescribeDBLogFiles
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.1.100"
+      requestParameters:
+        dBInstanceIdentifier: "production-db"
+      requestID: "d4e5f6a7-b8c9-0123-def0-1234567890bc"
+      eventID: "i4h5g6f7-e8d9-0123-4567-890123defghi"
+      readOnly: true
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management

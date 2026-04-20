@@ -1,0 +1,243 @@
+AnalysisType: rule
+Filename: aws_rds_deletion_protection_disabled.py
+RuleID: "AWS.RDS.DeletionProtectionDisabled"
+DisplayName: "AWS RDS Deletion Protection Disabled"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Defense Evasion
+  - Impact
+  - Impair Defenses
+  - Inhibit System Recovery
+  - RDS
+Severity: High
+Description: >
+  Detects when deletion protection is disabled on an RDS instance or cluster. This is often
+  a precursor to database deletion and may indicate ransomware or data destruction attacks
+  where attackers first disable protections before deleting resources.
+Runbook: |
+  1. Find all RDS modification events by the user ARN in the 24 hours before the alert
+  2. Check if this user has disabled deletion protection in the past 90 days to determine if this is normal behavior
+  3. Look for database deletion attempts from this user in the 2 hours after this modification
+  5. Immediately re-enable deletion protection if unauthorized using ModifyDBInstance or ModifyDBCluster with deletionProtection:true
+Reference: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_DeleteInstance.html
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562  # Impair Defenses
+    - TA0040:T1490  # Inhibit System Recovery
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - eventName
+  - userIdentity:principalId
+  - requestParameters:dBInstanceIdentifier
+  - requestParameters:dBClusterIdentifier
+  - requestParameters:deletionProtection
+  - p_any_aws_account_ids
+Threshold: 1
+Tests:
+  - Name: RDS Instance Deletion Protection Disabled
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:user"
+        arn: "arn:aws:sts::123456789012:assumed-role/PowerUserRole/user"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+        sessionContext:
+          sessionIssuer:
+            type: Role
+            principalId: "AIDAI23HXS3EXAMPLE"
+            arn: "arn:aws:iam::123456789012:role/PowerUserRole"
+            accountId: "123456789012"
+            userName: PowerUserRole
+      eventTime: "2024-01-15T18:20:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: ModifyDBInstance
+      awsRegion: us-east-1
+      sourceIPAddress: "203.0.113.45"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        dBInstanceIdentifier: "production-mysql"
+        deletionProtection: false
+        applyImmediately: true
+      responseElements:
+        dBInstanceIdentifier: "production-mysql"
+        dBInstanceStatus: "modifying"
+        deletionProtection: false
+        pendingModifiedValues:
+          deletionProtection: false
+      requestID: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      eventID: "f1e2d3c4-b5a6-7890-1234-567890abcdef"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: RDS Cluster Deletion Protection Disabled with Backup Changes - Critical
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/contractor"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: contractor
+      eventTime: "2024-01-15T18:20:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: ModifyDBCluster
+      awsRegion: us-west-2
+      sourceIPAddress: "198.51.100.50"
+      userAgent: "Boto3/1.26.0"
+      requestParameters:
+        dBClusterIdentifier: "aurora-production"
+        deletionProtection: false
+        backupRetentionPeriod: 0
+        applyImmediately: true
+      responseElements:
+        dBClusterIdentifier: "aurora-production"
+        status: "modifying"
+        deletionProtection: false
+        backupRetentionPeriod: 0
+      requestID: "b2c3d4e5-f6a7-8901-bcde-f1234567890a"
+      eventID: "g2f3e4d5-c6b7-8901-2345-678901bcdefg"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: RDS Deletion Protection Disabled and Made Public - Critical
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:attacker"
+        arn: "arn:aws:sts::123456789012:assumed-role/CompromisedRole/attacker"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+      eventTime: "2024-01-15T18:20:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: ModifyDBInstance
+      awsRegion: us-east-1
+      sourceIPAddress: "185.220.101.50"
+      userAgent: "python-requests/2.28.0"
+      requestParameters:
+        dBInstanceIdentifier: "customer-database"
+        deletionProtection: false
+        publiclyAccessible: true
+        applyImmediately: true
+      responseElements:
+        dBInstanceIdentifier: "customer-database"
+        dBInstanceStatus: "modifying"
+        deletionProtection: false
+        publiclyAccessible: true
+      requestID: "c3d4e5f6-a7b8-9012-cdef-1234567890ab"
+      eventID: "h3g4f5e6-d7c8-9012-3456-789012cdefgh"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: RDS Deletion Protection Enabled - No Alert
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:admin"
+        arn: "arn:aws:sts::123456789012:assumed-role/AdminRole/admin"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+      eventTime: "2024-01-15T18:20:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: ModifyDBInstance
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.1.100"
+      userAgent: "console.amazonaws.com"
+      requestParameters:
+        dBInstanceIdentifier: "production-db"
+        deletionProtection: true
+        applyImmediately: true
+      responseElements:
+        dBInstanceIdentifier: "production-db"
+        dBInstanceStatus: "modifying"
+        deletionProtection: true
+      requestID: "d4e5f6a7-b8c9-0123-def0-1234567890bc"
+      eventID: "i4h5g6f7-e8d9-0123-4567-890123defghi"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: RDS Modification Without Deletion Protection Change
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:dba"
+        arn: "arn:aws:sts::123456789012:assumed-role/DBARole/dba"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+      eventTime: "2024-01-15T18:20:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: ModifyDBInstance
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.1.50"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        dBInstanceIdentifier: "production-db"
+        allocatedStorage: 500
+        applyImmediately: false
+      responseElements:
+        dBInstanceIdentifier: "production-db"
+        dBInstanceStatus: "modifying"
+        allocatedStorage: 500
+      requestID: "e5f6a7b8-c9d0-1234-ef01-234567890bcd"
+      eventID: "j5i6h7g8-f9e0-1234-5678-901234efghij"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: RDS Modification Failed
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/developer"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: developer
+      eventTime: "2024-01-15T18:20:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: ModifyDBInstance
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.2.100"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        dBInstanceIdentifier: "production-db"
+        deletionProtection: false
+      errorCode: AccessDenied
+      errorMessage: "User is not authorized to perform: rds:ModifyDBInstance"
+      requestID: "f6a7b8c9-d0e1-2345-f012-34567890bcde"
+      eventID: "k6j7i8h9-g0f1-2345-6789-012345fghijk"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management

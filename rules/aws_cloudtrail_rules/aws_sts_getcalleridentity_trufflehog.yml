@@ -1,0 +1,109 @@
+AnalysisType: rule
+Filename: aws_sts_getcalleridentity_trufflehog.py
+RuleID: "AWS.STS.GetCallerIdentity.TruffleHog"
+DisplayName: "AWS STS GetCallerIdentity via TruffleHog"
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - AWS STS
+  - Discovery:Account Discovery
+Reports:
+  MITRE ATT&CK:
+    - TA0007:T1087.004
+Status: Experimental
+Severity: Medium
+Description: >
+  Detects AWS STS GetCallerIdentity calls made by TruffleHog, a credential scanning
+  tool. Threat actors use TruffleHog to validate whether leaked or stolen AWS access
+  keys are still active. A GetCallerIdentity call with a TruffleHog user agent
+  indicates that credentials from this account have been discovered externally and
+  are being tested for validity.
+Runbook: |
+  1. Query CloudTrail for all API calls using the same userIdentity:accessKeyId in the 24 hours before and after this alert to assess if the credential has been used for unauthorized actions
+  2. Check if sourceIPAddress appears in threat intelligence feeds or is associated with known scanning infrastructure
+  3. Find all other alerts associated with this userIdentity:arn in the past 7 days to determine the scope of potential credential compromise
+Reference: https://github.com/trufflesecurity/trufflehog
+SummaryAttributes:
+  - userAgent
+  - sourceIpAddress
+  - recipientAccountId
+  - p_any_aws_arns
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+  - Name: TruffleHog GetCallerIdentity
+    ExpectedResult: true
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "eventName": "GetCallerIdentity",
+        "eventSource": "sts.amazonaws.com",
+        "eventTime": "2024-01-15T10:30:00Z",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+        "sourceIPAddress": "198.51.100.42",
+        "userAgent": "TruffleHog",
+        "userIdentity": {
+          "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+          "accountId": "123456789012",
+          "arn": "arn:aws:iam::123456789012:user/compromised-user",
+          "type": "IAMUser",
+          "userName": "compromised-user"
+        }
+      }
+  - Name: TruffleHog User Agent Variant
+    ExpectedResult: true
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "eventName": "GetCallerIdentity",
+        "eventSource": "sts.amazonaws.com",
+        "eventTime": "2024-01-15T10:30:00Z",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+        "sourceIPAddress": "198.51.100.42",
+        "userAgent": "trufflehog/3.63.0",
+        "userIdentity": {
+          "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+          "accountId": "123456789012",
+          "arn": "arn:aws:iam::123456789012:user/compromised-user",
+          "type": "IAMUser",
+          "userName": "compromised-user"
+        }
+      }
+  - Name: Normal GetCallerIdentity
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "eventName": "GetCallerIdentity",
+        "eventSource": "sts.amazonaws.com",
+        "eventTime": "2024-01-15T10:30:00Z",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+        "sourceIPAddress": "10.0.0.1",
+        "userAgent": "aws-cli/2.15.0",
+        "userIdentity": {
+          "type": "IAMUser",
+          "userName": "admin-user"
+        }
+      }
+  - Name: Different STS Event with TruffleHog Agent
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "eventName": "AssumeRole",
+        "eventSource": "sts.amazonaws.com",
+        "eventTime": "2024-01-15T10:30:00Z",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+        "sourceIPAddress": "198.51.100.42",
+        "userAgent": "TruffleHog",
+        "userIdentity": {
+          "type": "IAMUser",
+          "userName": "compromised-user"
+        }
+      }

@@ -16,7 +16,6 @@ PackDefinition:
     - Kubernetes.PodUsingHostPIDNamespace
     - Kubernetes.PodUsingIPCNamespace
     - Kubernetes.PrivilegedPodCreated
-    - Kubernetes.SecretEnumeration
     - Kubernetes.ServiceTypeNodePortDeployed
     - Kubernetes.UnauthenticatedAPIRequest
     - Kubernetes.UnauthorizedPodExecution
@@ -33,6 +32,12 @@ PackDefinition:
     - Pod attached to the Node Host Network
     - Pod creation or modification to a Host Path Volume Mount
     - Privileged Pod Created
-    - Secret Enumeration by a User
     - Unauthenticated Kubernetes API Request
     - Unauthorized Kubernetes Pod Execution
+    # Data Models used in these detections
+    - Standard.Amazon.EKS.Audit
+    - Standard.Azure.AKS.Audit
+    - Standard.GCP.AuditLog
+    # Globals used in these detections
+    - panther_base_helpers
+    - panther_kubernetes_helpers

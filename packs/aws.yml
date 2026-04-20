@@ -205,11 +205,8 @@ PackDefinition:
     - AWS.SecurityGroup.TightlyRestrictsOutboundTraffic
     - AWS.VPC.DefaultNetworkACLRestrictsAllTraffic
     - AWS.VPC.DefaultSecurityGroup.Restrictions
-    - CloudTrail.Password.Spraying
     - VPC.DNS.Tunneling
-    - VPCFlow.Port.Scanning
     # Correlation Rules
-    - AWS.S3.Disable.Security.Controls
     - AWS.S3.ObjectExfiltration.FOLLOWED-BY.ObjectDeletion
     - AWS.Administrative.IAM.User.Created
     - AWS.Backdoor.Administrative.IAM.Role.Created
@@ -241,9 +238,7 @@ PackDefinition:
     # Queries
     - AWS EC2 Discovery Commands Executed
     - AWS Potentially Stolen Service Role
-    - Query.CloudTrail.Password.Spraying
     - Query.VPC.DNS.Tunneling
-    - VPC Flow Port Scanning
     # AWS DataModels
     - Standard.AWS.ALB
     - Standard.AWS.CloudTrail
