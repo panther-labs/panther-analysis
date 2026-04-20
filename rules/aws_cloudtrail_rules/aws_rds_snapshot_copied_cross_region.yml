@@ -1,0 +1,167 @@
+AnalysisType: rule
+Filename: aws_rds_snapshot_copied_cross_region.py
+RuleID: "AWS.RDS.SnapshotCopiedCrossRegion"
+DisplayName: "AWS RDS Snapshot Copied Cross-Region"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Exfiltration
+  - Transfer Data to Cloud Account
+  - RDS
+Severity: Medium
+Description: >
+  Detects when RDS snapshots are copied to different AWS regions. While legitimate for
+  disaster recovery, cross-region snapshot copies can be used for data exfiltration or
+  to prepare snapshots for sharing with external accounts.
+Runbook: |
+  1. Find all snapshot copy operations by the user ARN in the past 24 hours to identify bulk copying patterns
+  2. Check if cross-region snapshot copies are normal for this user by searching the past 90 days
+  3. Look for snapshot sharing events in the target region in the 48 hours after this copy
+Reference: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_CopySnapshot.html
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1537  # Transfer Data to Cloud Account
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - eventName
+  - userIdentity:principalId
+  - requestParameters:sourceRegion
+  - awsRegion
+  - requestParameters:sourceDBSnapshotIdentifier
+  - p_any_aws_account_ids
+Threshold: 1
+Tests:
+  - Name: Snapshot Copied Cross-Region
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:user"
+        arn: "arn:aws:sts::123456789012:assumed-role/DeveloperRole/user"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+      eventTime: "2024-01-17T11:00:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: CopyDBSnapshot
+      awsRegion: us-west-2
+      sourceIPAddress: "203.0.113.45"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        sourceDBSnapshotIdentifier: "arn:aws:rds:us-east-1:123456789012:snapshot:prod-backup-2024"
+        targetDBSnapshotIdentifier: "prod-backup-2024-copy"
+        sourceRegion: "us-east-1"
+        kmsKeyId: "arn:aws:kms:us-west-2:123456789012:key/1234abcd-12ab-34cd-56ef-1234567890ab"
+        copyTags: true
+      responseElements:
+        dBSnapshotIdentifier: "prod-backup-2024-copy"
+        dBSnapshotArn: "arn:aws:rds:us-west-2:123456789012:snapshot:prod-backup-2024-copy"
+        status: "copying"
+        sourceRegion: "us-east-1"
+        sourceDBSnapshotIdentifier: "arn:aws:rds:us-east-1:123456789012:snapshot:prod-backup-2024"
+      requestID: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      eventID: "f1e2d3c4-b5a6-7890-1234-567890abcdef"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Cluster Snapshot Copied Cross-Region
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/contractor"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: contractor
+      eventTime: "2024-01-17T11:00:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: CopyDBClusterSnapshot
+      awsRegion: eu-west-1
+      sourceIPAddress: "198.51.100.100"
+      userAgent: "Boto3/1.26.0"
+      requestParameters:
+        sourceDBClusterSnapshotIdentifier: "arn:aws:rds:us-east-1:123456789012:cluster-snapshot:aurora-prod-backup"
+        targetDBClusterSnapshotIdentifier: "aurora-prod-backup-eu"
+        sourceRegion: "us-east-1"
+        kmsKeyId: "arn:aws:kms:eu-west-1:123456789012:key/abcd1234-ab12-cd34-ef56-1234567890ab"
+      responseElements:
+        dBClusterSnapshotIdentifier: "aurora-prod-backup-eu"
+        dBClusterSnapshotArn: "arn:aws:rds:eu-west-1:123456789012:cluster-snapshot:aurora-prod-backup-eu"
+        status: "copying"
+        sourceRegion: "us-east-1"
+      requestID: "b2c3d4e5-f6a7-8901-bcde-f1234567890a"
+      eventID: "g2f3e4d5-c6b7-8901-2345-678901bcdefg"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Snapshot Copied Within Same Region - No Alert
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:admin"
+        arn: "arn:aws:sts::123456789012:assumed-role/AdminRole/admin"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+      eventTime: "2024-01-17T11:00:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: CopyDBSnapshot
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.1.100"
+      userAgent: "console.amazonaws.com"
+      requestParameters:
+        sourceDBSnapshotIdentifier: "original-snapshot"
+        targetDBSnapshotIdentifier: "copy-of-snapshot"
+      responseElements:
+        dBSnapshotIdentifier: "copy-of-snapshot"
+        status: "copying"
+      requestID: "c3d4e5f6-a7b8-9012-cdef-1234567890ab"
+      eventID: "h3g4f5e6-d7c8-9012-3456-789012cdefgh"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Copy Failed
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/developer"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: developer
+      eventTime: "2024-01-17T11:00:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: CopyDBSnapshot
+      awsRegion: us-west-2
+      sourceIPAddress: "10.0.2.100"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        sourceDBSnapshotIdentifier: "arn:aws:rds:us-east-1:123456789012:snapshot:prod-backup"
+        targetDBSnapshotIdentifier: "prod-backup-copy"
+        sourceRegion: "us-east-1"
+      errorCode: AccessDenied
+      errorMessage: "User is not authorized to perform: rds:CopyDBSnapshot"
+      requestID: "d4e5f6a7-b8c9-0123-def0-1234567890bc"
+      eventID: "i4h5g6f7-e8d9-0123-4567-890123defghi"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management

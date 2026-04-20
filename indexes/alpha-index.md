@@ -188,10 +188,36 @@
 - [AWS Privilege Escalation Via User Compromise](../correlation_rules/aws_privilege_escalation_via_user_compromise.yml)
 - [AWS Public RDS Restore](../rules/aws_cloudtrail_rules/aws_rds_publicrestore.yml)
   - Detects the recovery of a new public database instance from a snapshot. It may be part of data exfiltration.
+- [AWS RDS Activity Stream Stopped](../rules/aws_cloudtrail_rules/aws_rds_activity_stream_stopped.yml)
+  - Detects when RDS Database Activity Streams are stopped. Activity Streams provide real-time monitoring of database activity. Disabling them is a clear evasion technique used by attackers to avoid detection before performing malicious operations.
+- [AWS RDS Automated Backup Deleted](../rules/aws_cloudtrail_rules/aws_rds_automated_backup_deleted.yml)
+  - Detects deletion of RDS automated backups. This is a classic ransomware tactic where attackers delete automated backups before encrypting or destroying databases to prevent recovery. Any automated backup deletion should be investigated immediately.
+- [AWS RDS Cluster Failover Initiated](../rules/aws_cloudtrail_rules/aws_rds_cluster_failover.yml)
+  - Detects when RDS cluster or global cluster failovers are manually initiated. Forced failovers cause brief service interruptions and may indicate disaster recovery testing, operational troubleshooting, or disruption attempts.
+- [AWS RDS Deletion Protection Disabled](../rules/aws_cloudtrail_rules/aws_rds_deletion_protection_disabled.yml)
+  - Detects when deletion protection is disabled on an RDS instance or cluster. This is often a precursor to database deletion and may indicate ransomware or data destruction attacks where attackers first disable protections before deleting resources.
+- [AWS RDS Instance Modified to be Publicly Accessible](../rules/aws_cloudtrail_rules/aws_rds_instance_made_public.yml)
+  - Detects when an RDS instance or cluster is modified to become publicly accessible. This exposes the database to the internet and is used by attackers for persistence or data exfiltration. This detects the modification event in real-time, unlike static policy checks.
+- [AWS RDS Instance or Cluster Deleted](../rules/aws_cloudtrail_rules/aws_rds_instance_deletion.yml)
+  - Detects RDS database instance or cluster deletion. Deletions that skip final snapshots result in permanent data loss and may indicate ransomware, insider threats, or compromised credentials being used to destroy data.
+- [AWS RDS Instance or Cluster Rebooted](../rules/aws_cloudtrail_rules/aws_rds_instance_rebooted.yml)
+  - Detects when RDS instances, clusters, or shard groups are rebooted. Unexpected reboots cause service disruption and may indicate DoS attempts, unauthorized testing, or operational issues requiring investigation.
+- [AWS RDS Log File Downloaded](../rules/aws_cloudtrail_rules/aws_rds_log_file_downloaded.yml)
+  - Detects when RDS database log files are downloaded. Log files may contain credentials, sensitive queries, or application secrets. Bulk downloads from unusual locations may indicate credential harvesting or data reconnaissance.
 - [AWS RDS Manual/Public Snapshot Created](../rules/aws_cloudtrail_rules/aws_rds_manual_snapshot_created.yml)
   - A manual snapshot of an RDS database was created. An attacker may use this to exfiltrate the DB contents to another account; use this as a correlation rule.
 - [AWS RDS Master Password Updated](../rules/aws_cloudtrail_rules/aws_rds_master_pass_updated.yml)
   - A sensitive database operation that should be performed carefully or rarely
+- [AWS RDS Security Group Ingress Authorized](../rules/aws_cloudtrail_rules/aws_rds_security_group_ingress_authorized.yml)
+  - Detects when ingress rules are added to RDS security groups. Overly permissive rules, especially 0.0.0.0/0, expose databases to the internet and may indicate attackers opening network access for persistence or data exfiltration.
+- [AWS RDS Snapshot Copied Cross-Region](../rules/aws_cloudtrail_rules/aws_rds_snapshot_copied_cross_region.yml)
+  - Detects when RDS snapshots are copied to different AWS regions. While legitimate for disaster recovery, cross-region snapshot copies can be used for data exfiltration or to prepare snapshots for sharing with external accounts.
+- [AWS RDS Snapshot Deleted](../rules/aws_cloudtrail_rules/aws_rds_snapshot_deleted.yml)
+  - Detects deletion of RDS snapshots. Attackers delete backups to prevent recovery or hide evidence of data exfiltration. Multiple snapshot deletions may indicate ransomware preparing to encrypt databases without recovery options.
+- [AWS RDS Snapshot Enumeration with Public or Shared Flag](../rules/aws_cloudtrail_rules/aws_rds_snapshot_enumeration.yml)
+  - Detects when RDS snapshots are queried with includePublic or includeShared flags. This indicates reconnaissance for publicly accessible or shared snapshots that may contain sensitive data and be exploitable by attackers.
+- [AWS RDS Snapshot Exported to S3](../rules/aws_cloudtrail_rules/aws_rds_snapshot_export.yml)
+  - Detects when an RDS snapshot is exported to S3 using StartExportTask. Attackers use this to exfiltrate database contents by exporting snapshots to buckets they control. While snapshot exports are legitimate for analytics, they provide complete database access.
 - [AWS RDS Snapshot Shared](../rules/aws_cloudtrail_rules/aws_rds_snapshot_shared.yml)
   - An RDS snapshot was shared with another account. This could be an indicator of exfiltration.
 - [AWS Resource Made Public](../rules/aws_cloudtrail_rules/aws_resource_made_public.yml)
@@ -296,6 +322,8 @@
   - An IAM Entity (Group, Policy, Role, or User) was created manually. IAM entities should be created in code to ensure that permissions are tracked and managed correctly.
 - [IAM Policy Modified](../rules/aws_cloudtrail_rules/aws_iam_policy_modified.yml)
   - An IAM Policy was changed.
+- [IAM Role Added to RDS Instance or Cluster](../rules/aws_cloudtrail_rules/aws_rds_iam_role_added.yml)
+  - Detects when IAM roles are added to RDS instances or clusters. While legitimate for features like S3 import/export, attackers may add overly permissive roles to maintain access or escalate privileges for data exfiltration.
 - [IAM Role Created](../rules/aws_cloudtrail_rules/aws_iam_create_role.yml)
   - An IAM role was created.
 - [IAM Role Policy Updated to Allow Internet Access](../rules/aws_cloudtrail_rules/aws_iam_backdoor_role.yml)

@@ -1,0 +1,124 @@
+AnalysisType: rule
+Filename: aws_rds_activity_stream_stopped.py
+RuleID: "AWS.RDS.ActivityStreamStopped"
+DisplayName: "AWS RDS Activity Stream Stopped"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Defense Evasion
+  - Impair Defenses
+  - Disable Cloud Logs
+  - RDS
+Severity: High
+Description: >
+  Detects when RDS Database Activity Streams are stopped. Activity Streams provide real-time
+  monitoring of database activity. Disabling them is a clear evasion technique used by
+  attackers to avoid detection before performing malicious operations.
+Runbook: |
+  1. Find all RDS API calls by the user ARN in the 24 hours before the alert
+  2. Check if activity streams have been stopped by this user in the past 90 days to determine if this is routine maintenance
+  3. Look for sensitive database operations from this user in the 2 hours after the stream was stopped
+Reference: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/DBActivityStreams.html
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562.008  # Disable or Modify Cloud Logs
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - eventName
+  - userIdentity:principalId
+  - requestParameters:resourceArn
+  - p_any_aws_account_ids
+Threshold: 1
+Tests:
+  - Name: Activity Stream Stopped Successfully
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:user"
+        arn: "arn:aws:sts::123456789012:assumed-role/DeveloperRole/user"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+        sessionContext:
+          sessionIssuer:
+            type: Role
+            principalId: "AIDAI23HXS3EXAMPLE"
+            arn: "arn:aws:iam::123456789012:role/DeveloperRole"
+            accountId: "123456789012"
+            userName: DeveloperRole
+      eventTime: "2024-01-15T20:30:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: StopActivityStream
+      awsRegion: us-east-1
+      sourceIPAddress: "203.0.113.45"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        resourceArn: "arn:aws:rds:us-east-1:123456789012:cluster:production-aurora"
+        applyImmediately: true
+      responseElements:
+        kmsKeyId: "arn:aws:kms:us-east-1:123456789012:key/1234abcd-12ab-34cd-56ef-1234567890ab"
+        status: "stopping"
+      requestID: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      eventID: "f1e2d3c4-b5a6-7890-1234-567890abcdef"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Activity Stream Stop Failed
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/developer"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: developer
+      eventTime: "2024-01-15T20:30:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: StopActivityStream
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.1.100"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        resourceArn: "arn:aws:rds:us-east-1:123456789012:cluster:production-aurora"
+      errorCode: AccessDenied
+      errorMessage: "User is not authorized to perform: rds:StopActivityStream"
+      requestID: "b2c3d4e5-f6a7-8901-bcde-f1234567890a"
+      eventID: "g2f3e4d5-c6b7-8901-2345-678901bcdefg"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Different RDS Event
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:user"
+        arn: "arn:aws:sts::123456789012:assumed-role/Admin/user"
+        accountId: "123456789012"
+      eventTime: "2024-01-15T20:30:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: StartActivityStream
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.1.100"
+      requestParameters:
+        resourceArn: "arn:aws:rds:us-east-1:123456789012:cluster:production-aurora"
+      requestID: "c3d4e5f6-a7b8-9012-cdef-1234567890ab"
+      eventID: "h3g4f5e6-d7c8-9012-3456-789012cdefgh"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
