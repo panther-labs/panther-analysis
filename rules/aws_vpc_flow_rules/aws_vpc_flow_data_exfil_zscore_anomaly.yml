@@ -1,0 +1,223 @@
+AnalysisType: scheduled_rule
+Filename: aws_vpc_flow_data_exfil_zscore_anomaly.py
+RuleID: "AWS.VPCFlow.DataExfiltration.ZScore"
+DisplayName: "VPC Flow Log Data Exfiltration Anomaly - Z-Score Detection"
+Enabled: false  # Start disabled for tuning
+ScheduledQueries:
+  - Query.AWS.VPCFlow.DataExfilZScoreAnomaly
+Severity: Medium  # Default; dynamic severity in rule function
+Status: Experimental
+Tags:
+  - AWS
+  - VPC
+  - Data Exfiltration
+  - Anomaly Detection
+  - Statistical Analysis
+  - Exfiltration:Exfiltration Over Web Service
+  - Exfiltration:Transfer Data to Cloud Account
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1567  # Exfiltration Over Web Service
+    - TA0010:T1048  # Exfiltration Over Alternative Protocol
+    - TA0010:T1041  # Exfiltration Over C2 Channel
+Description: |
+  Detects potential data exfiltration via anomalous outbound VPC flow log traffic using z-score
+  statistical analysis.
+
+  This detection uses a lookup table containing 90-day behavioral baselines for each AWS account's
+  outbound traffic patterns, then calculates z-scores to identify suspicious activity in the last
+  7 days.
+
+  **PREREQUISITES:**
+  1. Baseline builder lookup table must be configured: `vpc_flow_data_exfil_baseline_90d`
+  2. VPC flow logs v5+ required for the flowDirection field
+  3. Allow 24 hours for initial baseline to populate
+
+  **Detection Logic:**
+  Baselines hourly outbound bytes, flow count, destination IP diversity, destination port
+  diversity, and source IP diversity per AWS account. Alerts when recent activity shows BOTH:
+  1. Byte volume spike (z-score > 3 standard deviations above baseline)
+  2. At least one diversity spike (z-score > 2): destination IP, destination port, or source IP
+
+  **Why This Matters:**
+  Data exfiltration has a distinct signature: large volumes sent to many new/unusual destinations,
+  or suddenly initiated from many internal hosts simultaneously. Volume alone (e.g., a legitimate
+  scheduled backup) is less suspicious; the combination of volume AND diversity anomalies is a
+  high-fidelity exfil indicator that filters out routine high-bandwidth activity.
+
+  **Complementary Detections:**
+  - `AWS.VPCFlow.UnapprovedOutboundDNS` detects DNS tunneling as an exfil channel
+  - CloudTrail S3 bulk download rules for object-level exfil patterns
+
+Reference: https://attack.mitre.org/techniques/T1048/
+Runbook: |
+  1. Review z_score_bytes and recent_max_bytes_per_hour against baseline_mean_bytes_per_hour for account_id to confirm the volume spike — verify baseline_updated_at is within the past 7 days to ensure the baseline reflects current normal behavior
+  2. Examine all_recent_dst_ips in the 7 days around first_anomaly_hour — check whether destination IPs resolve to known cloud storage, file-sharing, or paste services and compare against primary_dst_ip from the baseline to identify new external destinations
+  3. Query VPC flow logs and CloudTrail for account_id in the 24 hours before first_anomaly_hour to identify which internal source IPs (reflected in recent_max_src_ip_diversity) initiated the transfers, and look for new IAM role assumptions, EC2 launches, or S3 bucket policy changes that could indicate compromised infrastructure
+DedupPeriodMinutes: 360  # 6 hours, match query frequency
+SummaryAttributes:
+  - account_id
+  - anomaly_severity_score
+  - z_score_bytes
+  - z_score_dst_ip_diversity
+Tests:
+  # Positive Tests - Should Alert
+
+  - Name: High Byte Volume and Destination IP Diversity Spike - Critical
+    ExpectedResult: true
+    Log:
+      {
+        "account_id": "123456789012",
+        "baseline_total_bytes": 10000000000,
+        "baseline_active_days": 60,
+        "baseline_mean_bytes_per_hour": 50000000.0,
+        "baseline_stddev_bytes_per_hour": 10000000.0,
+        "baseline_mean_flows_per_hour": 500.0,
+        "baseline_stddev_flows_per_hour": 100.0,
+        "baseline_mean_dst_ip_diversity_per_hour": 20.0,
+        "baseline_stddev_dst_ip_diversity_per_hour": 5.0,
+        "baseline_mean_dst_port_diversity_per_hour": 3.0,
+        "baseline_stddev_dst_port_diversity_per_hour": 1.0,
+        "baseline_mean_src_ip_diversity_per_hour": 5.0,
+        "baseline_stddev_src_ip_diversity_per_hour": 2.0,
+        "primary_dst_ip": "52.84.0.1",
+        "baseline_updated_at": "2024-03-09 00:00:00",
+        "recent_total_bytes": 5000000000,
+        "recent_total_flows": 50000,
+        "recent_active_days": 7,
+        "recent_max_bytes_per_hour": 800000000,
+        "recent_max_flows_per_hour": 8000,
+        "recent_max_dst_ip_diversity_per_hour": 150,
+        "recent_max_dst_port_diversity_per_hour": 5,
+        "recent_max_src_ip_diversity_per_hour": 8,
+        "recent_avg_bytes_per_hour": 600000000.0,
+        "recent_avg_packets_per_hour": 4000000.0,
+        "recent_avg_flows_per_hour": 5000.0,
+        "recent_avg_dst_ip_diversity_per_hour": 120.0,
+        "recent_avg_dst_port_diversity_per_hour": 4.0,
+        "recent_avg_src_ip_diversity_per_hour": 7.0,
+        "z_score_bytes": 55.0,
+        "z_score_flows": 45.0,
+        "z_score_dst_ip_diversity": 20.0,
+        "z_score_dst_port_diversity": 1.0,
+        "z_score_src_ip_diversity": 1.0,
+        "anomaly_severity_score": 122.0,
+        "all_recent_dst_ips": ["198.51.100.1", "203.0.113.50", "185.199.108.1"],
+        "first_anomaly_hour": "2024-03-10 02:00:00",
+        "last_anomaly_hour": "2024-03-10 10:00:00",
+        "detection_timestamp": "2024-03-10 12:00:00",
+        "is_anomalous": true,
+        "is_cold_start_anomaly": false
+      }
+
+  - Name: Byte Volume Spike with Source IP Diversity - Many Internal Hosts Exfiltrating
+    ExpectedResult: true
+    Log:
+      {
+        "account_id": "987654321098",
+        "baseline_total_bytes": 5000000000,
+        "baseline_active_days": 45,
+        "baseline_mean_bytes_per_hour": 20000000.0,
+        "baseline_stddev_bytes_per_hour": 5000000.0,
+        "baseline_mean_flows_per_hour": 200.0,
+        "baseline_stddev_flows_per_hour": 50.0,
+        "baseline_mean_dst_ip_diversity_per_hour": 10.0,
+        "baseline_stddev_dst_ip_diversity_per_hour": 3.0,
+        "baseline_mean_dst_port_diversity_per_hour": 2.0,
+        "baseline_stddev_dst_port_diversity_per_hour": 0.5,
+        "baseline_mean_src_ip_diversity_per_hour": 3.0,
+        "baseline_stddev_src_ip_diversity_per_hour": 1.0,
+        "primary_dst_ip": "54.239.28.1",
+        "baseline_updated_at": "2024-03-10 00:00:00",
+        "recent_total_bytes": 2000000000,
+        "recent_total_flows": 10000,
+        "recent_active_days": 5,
+        "recent_max_bytes_per_hour": 300000000,
+        "recent_max_flows_per_hour": 2000,
+        "recent_max_dst_ip_diversity_per_hour": 15,
+        "recent_max_dst_port_diversity_per_hour": 3,
+        "recent_max_src_ip_diversity_per_hour": 25,
+        "recent_avg_bytes_per_hour": 100000000.0,
+        "recent_avg_packets_per_hour": 500000.0,
+        "recent_avg_flows_per_hour": 1000.0,
+        "recent_avg_dst_ip_diversity_per_hour": 12.0,
+        "recent_avg_dst_port_diversity_per_hour": 2.5,
+        "recent_avg_src_ip_diversity_per_hour": 20.0,
+        "z_score_bytes": 16.0,
+        "z_score_flows": 16.0,
+        "z_score_dst_ip_diversity": 0.67,
+        "z_score_dst_port_diversity": 1.0,
+        "z_score_src_ip_diversity": 17.0,
+        "anomaly_severity_score": 50.67,
+        "all_recent_dst_ips": ["203.0.113.10", "198.51.100.5"],
+        "first_anomaly_hour": "2024-03-11 14:00:00",
+        "last_anomaly_hour": "2024-03-11 20:00:00",
+        "detection_timestamp": "2024-03-11 21:00:00",
+        "is_anomalous": true,
+        "is_cold_start_anomaly": false
+      }
+
+  - Name: Cold Start - No Baseline High Bytes and Destination IP Diversity
+    ExpectedResult: true
+    Log:
+      {
+        "account_id": "111222333444",
+        "baseline_total_bytes": null,
+        "baseline_active_days": null,
+        "baseline_mean_bytes_per_hour": null,
+        "baseline_stddev_bytes_per_hour": null,
+        "baseline_mean_flows_per_hour": null,
+        "baseline_stddev_flows_per_hour": null,
+        "baseline_mean_dst_ip_diversity_per_hour": null,
+        "baseline_stddev_dst_ip_diversity_per_hour": null,
+        "baseline_mean_dst_port_diversity_per_hour": null,
+        "baseline_stddev_dst_port_diversity_per_hour": null,
+        "baseline_mean_src_ip_diversity_per_hour": null,
+        "baseline_stddev_src_ip_diversity_per_hour": null,
+        "primary_dst_ip": null,
+        "baseline_updated_at": null,
+        "recent_total_bytes": 20000000000,
+        "recent_total_flows": 5000,
+        "recent_active_days": 2,
+        "recent_max_bytes_per_hour": 2000000000,
+        "recent_max_flows_per_hour": 2500,
+        "recent_max_dst_ip_diversity_per_hour": 50,
+        "recent_max_dst_port_diversity_per_hour": 8,
+        "recent_max_src_ip_diversity_per_hour": 10,
+        "recent_avg_bytes_per_hour": 800000000.0,
+        "recent_avg_packets_per_hour": 5000000.0,
+        "recent_avg_flows_per_hour": 200.0,
+        "recent_avg_dst_ip_diversity_per_hour": 30.0,
+        "recent_avg_dst_port_diversity_per_hour": 5.0,
+        "recent_avg_src_ip_diversity_per_hour": 6.0,
+        "z_score_bytes": null,
+        "z_score_flows": null,
+        "z_score_dst_ip_diversity": null,
+        "z_score_dst_port_diversity": null,
+        "z_score_src_ip_diversity": null,
+        "anomaly_severity_score": 0,
+        "all_recent_dst_ips": ["198.51.100.1", "203.0.113.2", "185.220.101.3"],
+        "first_anomaly_hour": "2024-03-12 06:00:00",
+        "last_anomaly_hour": "2024-03-12 08:00:00",
+        "detection_timestamp": "2024-03-12 12:00:00",
+        "is_anomalous": false,
+        "is_cold_start_anomaly": true
+      }
+
+  # Negative Tests - Should Not Alert
+
+  - Name: Malformed Row - Missing Account ID
+    ExpectedResult: false
+    Log:
+      {
+        "baseline_total_bytes": 10000000000,
+        "baseline_mean_bytes_per_hour": 50000000.0,
+        "z_score_bytes": 10.0,
+        "anomaly_severity_score": 15.0,
+        "is_anomalous": true,
+        "is_cold_start_anomaly": false
+      }
+
+  # Note: rule() only validates the primary key (account_id); anomaly thresholds
+  # are enforced at the query level (WHERE is_anomalous = TRUE OR is_cold_start_anomaly = TRUE).
+  # All rows reaching rule() with a valid account_id are expected to return true.
