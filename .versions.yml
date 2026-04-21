@@ -418,6 +418,15 @@ versions:
     sha256: 412f2264ba42b3f04b93cd01b5ba81ae5de88eeda0d5fdde2783301d3c49928e
     type: rule
     version: 1
+  AWS.CloudTrail.IMDSCredentialExfiltration:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_imds_credential_exfiltration.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_imds_credential_exfiltration.yml
+    sha256: d7d76ff7be700721c472fec75663e0b15f1e2e76629790e92736172756371494
+    type: rule
+    version: 1
   AWS.CloudTrail.LeastPrivilege:
     history:
       1:
@@ -474,6 +483,15 @@ versions:
         py_file_path: rules/aws_cloudtrail_rules/aws_cloudtrail_password_policy_discovery.py
         yaml_file_path: rules/aws_cloudtrail_rules/aws_cloudtrail_password_policy_discovery.yml
     sha256: 8d3aef349f3ccaea024de12d13e85e434d936b7705d1d5c448fa6665c8242556
+    type: rule
+    version: 1
+  AWS.CloudTrail.PasswordSpraying:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_cloudtrail_password_spraying.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_cloudtrail_password_spraying.yml
+    sha256: 4d1cb352f8c20a9b7d27858d9fd7f655b6671fbacf748fc058233f20e36fca93
     type: rule
     version: 1
   AWS.CloudTrail.ResourceMadePublic:
@@ -798,6 +816,15 @@ versions:
         py_file_path: rules/aws_cloudtrail_rules/aws_config_service_disabled_deleted.py
         yaml_file_path: rules/aws_cloudtrail_rules/aws_config_service_disabled_deleted.yml
     sha256: fd9788afb545b0fab02d02900f3e1330bd022afc71dff6e386d401ac945acf1f
+    type: rule
+    version: 1
+  AWS.Console.GetSigninToken.Abuse:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_console_getsignintoken.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_console_getsignintoken.yml
+    sha256: 72a7f2c25c68048945f5286538385903e49640cd35ceaeec8df81e3aae77a455
     type: rule
     version: 1
   AWS.Console.Login:
@@ -1770,6 +1797,51 @@ versions:
     sha256: 1ddbd635b3068483758f8c63f5f39f4962929cf2e1553f58b8812be64b299c70
     type: correlation_rule
     version: 1
+  AWS.RDS.ActivityStreamStopped:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_rds_activity_stream_stopped.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_rds_activity_stream_stopped.yml
+    sha256: b383f26a7a9b4fb7dfec6377b78bd16354fa0dc08fefdbfb7c35d895292561d5
+    type: rule
+    version: 1
+  AWS.RDS.AutomatedBackupDeleted:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_rds_automated_backup_deleted.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_rds_automated_backup_deleted.yml
+    sha256: 2ffcb99e9f8e3b9ade2a8b8c46c6c3f0d0256c6d66cf2ce317a827b156c2e146
+    type: rule
+    version: 1
+  AWS.RDS.ClusterFailover:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_rds_cluster_failover.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_rds_cluster_failover.yml
+    sha256: ad5492eff7fec7be2c6123176df95a229ac9a60976494840c3f304c898928ae9
+    type: rule
+    version: 1
+  AWS.RDS.DeletionProtectionDisabled:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_rds_deletion_protection_disabled.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_rds_deletion_protection_disabled.yml
+    sha256: d322050579bd9b3fb48eafc4334006115391cb6017655f28e5b50003be540141
+    type: rule
+    version: 1
+  AWS.RDS.IAMRoleAdded:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_rds_iam_role_added.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_rds_iam_role_added.yml
+    sha256: e242cbe503e28c5e49cdd06f709c454298574f96c63966f5aca438297e46428e
+    type: rule
+    version: 1
   AWS.RDS.Instance.AutoMinorVersionUpgradeEnabled:
     history:
       1:
@@ -1828,6 +1900,15 @@ versions:
     sha256: db3eb5cf442f520ed7cc511461e921a362b529e2e4253d29b55a9a8fd137d4eb
     type: policy
     version: 1
+  AWS.RDS.InstanceDeletion:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_rds_instance_deletion.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_rds_instance_deletion.yml
+    sha256: da7e088f4e78478a64510af82785f60daf2445ee38eef62e96260c09c9f11a07
+    type: rule
+    version: 1
   AWS.RDS.InstanceHighAvailability:
     history:
       1:
@@ -1836,6 +1917,33 @@ versions:
         yaml_file_path: policies/aws_rds_policies/aws_rds_instance_high_availability.yml
     sha256: ff791af95cb93e27b2b5e7b237419afb83c858f4ddbccc9cf6de1662a6f54630
     type: policy
+    version: 1
+  AWS.RDS.InstanceMadePublic:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_rds_instance_made_public.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_rds_instance_made_public.yml
+    sha256: 2083632482617b19973996c14170f994f61b2ea30ac26d7ea9fd9abf7aa8e817
+    type: rule
+    version: 1
+  AWS.RDS.InstanceRebooted:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_rds_instance_rebooted.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_rds_instance_rebooted.yml
+    sha256: 87c4bc2cbd97ad5e8e17bb17345b14d83d18b15b7a37dbab308a5ff0cd7e63f9
+    type: rule
+    version: 1
+  AWS.RDS.LogFileDownloaded:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_rds_log_file_downloaded.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_rds_log_file_downloaded.yml
+    sha256: e6b8f2a9a4ae6d6ab99b3ff7e68a3acdaf867278e40b44dcda8d3b262c35bd6e
+    type: rule
     version: 1
   AWS.RDS.ManualSnapshotCreated:
     history:
@@ -1862,6 +1970,51 @@ versions:
         py_file_path: rules/aws_cloudtrail_rules/aws_rds_publicrestore.py
         yaml_file_path: rules/aws_cloudtrail_rules/aws_rds_publicrestore.yml
     sha256: 17e67acd498486375c42712e0c0fd4629f6a09e302220f49006ed56a2217fa88
+    type: rule
+    version: 1
+  AWS.RDS.SecurityGroupIngressAuthorized:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_rds_security_group_ingress_authorized.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_rds_security_group_ingress_authorized.yml
+    sha256: 6f41de2ed1a8040f56f4b975cf6470633442f56b049d9a1b3f23389defe0370e
+    type: rule
+    version: 1
+  AWS.RDS.SnapshotCopiedCrossRegion:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_rds_snapshot_copied_cross_region.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_rds_snapshot_copied_cross_region.yml
+    sha256: 3623fe762c9c954407948a1cf65d9aaadd9f369f7a0bbb4ecd20748b316addd6
+    type: rule
+    version: 1
+  AWS.RDS.SnapshotDeleted:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_rds_snapshot_deleted.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_rds_snapshot_deleted.yml
+    sha256: 8e7cda989265d171ae222041987216f871fd9fb8c00219f65cc292a7bcf3c2da
+    type: rule
+    version: 1
+  AWS.RDS.SnapshotEnumeration:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_rds_snapshot_enumeration.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_rds_snapshot_enumeration.yml
+    sha256: 22649704f68a3e47057dca0e6c3cfe7e873387df3fb8d4c6a8a298635b92826b
+    type: rule
+    version: 1
+  AWS.RDS.SnapshotExport:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_rds_snapshot_export.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_rds_snapshot_export.yml
+    sha256: 2b6e16b778a7f3945dcb78a2b0ed42197c6da4b7e267f90b3ab7f3fa7ac2cf0f
     type: rule
     version: 1
   AWS.RDS.SnapshotShared:
@@ -2282,9 +2435,12 @@ versions:
       2:
         commit_hash: a87c8343e8ec884434488bf7994807c76d3efc90
         yaml_file_path: correlation_rules/aws_s3_disable_security_controls.yml
-    sha256: 0f378b39679c0c6066d68aadf0d82c16fe0945418b87d4d644a4fe50de5ce1cf
+      3:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        yaml_file_path: correlation_rules/aws_s3_disable_security_controls.yml
+    sha256: f985f2e393327382b4d1da3b1ef54b2cebb274ff5b694a9d03a11a658a26f3af
     type: correlation_rule
-    version: 2
+    version: 3
   AWS.S3.DisableBucketLogging:
     history:
       1:
@@ -2344,6 +2500,15 @@ versions:
     sha256: fde51edf895d59abc6093787d286f56802adb6ad33fa3f9fa7b9b51aca480246
     type: rule
     version: 2
+  AWS.S3.SecurityControlDisabling:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_s3_security_control_disabling.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_s3_security_control_disabling.yml
+    sha256: 493a36031658e14c48e771670da37138b7bb06066856a2158193e54758a6f0cf
+    type: rule
+    version: 1
   AWS.S3.ServerAccess.Error:
     history:
       1:
@@ -2448,6 +2613,24 @@ versions:
         yaml_file_path: correlation_rules/aws_sso_access_token_retrieved_by_unauthenticated_ip.yml
     sha256: 810a77f5aaff51b04de838b2541df3eb18a5116c58f7de5c8bee49a323810bc1
     type: correlation_rule
+    version: 1
+  AWS.STS.GetCallerIdentity.TruffleHog:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_sts_getcalleridentity_trufflehog.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_sts_getcalleridentity_trufflehog.yml
+    sha256: 0d54ef8805e3cba528a6ff27f09918f99edfc1591a016f127e4f0f95297a87ab
+    type: rule
+    version: 1
+  AWS.STS.GetSessionToken.Misuse:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_cloudtrail_rules/aws_sts_getsessiontoken_misuse.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_sts_getsessiontoken_misuse.yml
+    sha256: aa4e46fec49b62b9d61097323bc02c167d5172487a89901b1d62e86107644f7b
+    type: rule
     version: 1
   AWS.SecretsManager.BatchRetrieveSecrets:
     history:
@@ -2692,6 +2875,15 @@ versions:
         py_file_path: rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_allowlist.py
         yaml_file_path: rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_allowlist.yml
     sha256: 988911e964cbefc33d0951ee1a17f6c5147cec8d6dbd3c3289b8b0551d6c0e3f
+    type: rule
+    version: 1
+  AWS.VPC.PortScanning:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/aws_vpc_flow_rules/aws_vpc_port_scanning.py
+        yaml_file_path: rules/aws_vpc_flow_rules/aws_vpc_port_scanning.yml
+    sha256: 5888608e25530fdaa3b2f2c8da1499dec737d829d90d3d89bd00f23a07ea9c64
     type: rule
     version: 1
   AWS.VPC.SSHAllowedSignal:
@@ -4434,9 +4626,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: queries/aws_queries/cloudtrail_password_spraying.py
         yaml_file_path: queries/aws_queries/cloudtrail_password_spraying.yml
-    sha256: 7d5ea0ae2e84856d7e8c74ee6f2227631858bdde3d12db2ae3a7cba0400dbbf6
+      2:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: queries/aws_queries/cloudtrail_password_spraying.py
+        yaml_file_path: queries/aws_queries/cloudtrail_password_spraying.yml
+    sha256: 2c2c1822c9d7a3eabc891e8f20cdd73c7897bc2ed46930146ef3d377333de0e7
     type: scheduled_rule
-    version: 1
+    version: 2
   Cloudflare.Firewall.L7DDoS:
     history:
       1:
@@ -5289,6 +5485,24 @@ versions:
     sha256: 7d21e7794128ddc85df8af7628ee2dd92b20db07dbe9908b6683b8abf8c95620
     type: rule
     version: 1
+  Dropbox.BulkDeletes:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/dropbox_rules/dropbox_many_deletes.py
+        yaml_file_path: rules/dropbox_rules/dropbox_many_deletes.yml
+    sha256: 0ee5101631b247cbc8a659b33ba585b1ddfbefed71891e65fe4249ef295ca16e
+    type: rule
+    version: 1
+  Dropbox.BulkDownloads:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/dropbox_rules/dropbox_many_downloads.py
+        yaml_file_path: rules/dropbox_rules/dropbox_many_downloads.yml
+    sha256: c2a17940fbb1c9c7aad63dfc846d343132dfc0e221234ff7c36cb34109453d71
+    type: rule
+    version: 1
   Dropbox.External.Share:
     history:
       1:
@@ -5313,18 +5527,26 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: queries/dropbox_queries/dropbox_many_deletes.py
         yaml_file_path: queries/dropbox_queries/Dropbox_Many_Deletes.yml
-    sha256: 151c6b4b3618a39deb5e10e700bb782b24536aba13d080da05c2f62cfd22d052
+      2:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: queries/dropbox_queries/dropbox_many_deletes.py
+        yaml_file_path: queries/dropbox_queries/Dropbox_Many_Deletes.yml
+    sha256: 2e818fa408873c77d71f5578ef6fb787449aaa669bd0ce0a381deab0840d77e4
     type: scheduled_rule
-    version: 1
+    version: 2
   Dropbox.Many.Downloads:
     history:
       1:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: queries/dropbox_queries/dropbox_many_downloads.py
         yaml_file_path: queries/dropbox_queries/Dropbox_Many_Downloads.yml
-    sha256: e33fa949a27e2fec6f885037e62869f634d7d76c98ca8081798734dff7b7676a
+      2:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: queries/dropbox_queries/dropbox_many_downloads.py
+        yaml_file_path: queries/dropbox_queries/Dropbox_Many_Downloads.yml
+    sha256: 909ac6e60e6904fcda7167ee41f21f6f11861bd07b58809f6967c2cbeb3ff841
     type: scheduled_rule
-    version: 1
+    version: 2
   Dropbox.Ownership.Transfer:
     history:
       1:
@@ -6240,6 +6462,15 @@ versions:
     sha256: de7038b0841adb9f8fd6167206e41e62d1ff460de8c743b1b1c34b9b781de3d8
     type: rule
     version: 1
+  GSuite.Drive.BulkDocumentDeletion:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/gsuite_activityevent_rules/gsuite_drive_many_docs_deleted.py
+        yaml_file_path: rules/gsuite_activityevent_rules/gsuite_drive_many_docs_deleted.yml
+    sha256: 3e128fbcc4d72804042467f147502755ba1ef599c2df1f4d14c2fa03dab8101f
+    type: rule
+    version: 1
   GSuite.Drive.ExternalFileShare:
     history:
       1:
@@ -6259,9 +6490,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: queries/gsuite_queries/gsuite_drive_many_docs_deleted.py
         yaml_file_path: queries/gsuite_queries/gsuite_drive_many_docs_deleted.yml
-    sha256: dea7341871f011c977e78ff15d9df7f9ac50912122a24d230c54faae49cbe8d5
+      2:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: queries/gsuite_queries/gsuite_drive_many_docs_deleted.py
+        yaml_file_path: queries/gsuite_queries/gsuite_drive_many_docs_deleted.yml
+    sha256: f1a65c1ea84a17ee804ad827c99d1e9a7eec98de7b90fbf66ce78edb291ab8cd
     type: scheduled_rule
-    version: 1
+    version: 2
   GSuite.DriveOverlyVisible:
     history:
       1:
@@ -7290,6 +7525,15 @@ versions:
     sha256: 42932ad31510cac676dd5d93c8d1f5e5d2f5a74ed399d829bb8919b3d2fb7533
     type: rule
     version: 2
+  Kubernetes.BulkSecretAccess:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/kubernetes_rules/k8s_secret_enumeration.py
+        yaml_file_path: rules/kubernetes_rules/k8s_secret_enumeration.yml
+    sha256: 685d1cbc2d13c20afafce70fb5a118001a9c1290ad6ef5908798f0b7be71e4c6
+    type: rule
+    version: 1
   Kubernetes.ClientCertificate.Created:
     history:
       1:
@@ -7639,9 +7883,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: queries/kubernetes_queries/kubernetes_secret_enumeration.py
         yaml_file_path: queries/kubernetes_queries/kubernetes_secret_enumeration.yml
-    sha256: b1a9e71ea20aff875d9d9cf549214e3c23c9ada3303954583a9de609bb47bbc7
+      2:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: queries/kubernetes_queries/kubernetes_secret_enumeration.py
+        yaml_file_path: queries/kubernetes_queries/kubernetes_secret_enumeration.yml
+    sha256: d3c816f8bb33f64e929e0882ad27929490b61413ebd5fdb66b8d5c32eb18cdca
     type: scheduled_rule
-    version: 1
+    version: 2
   Kubernetes.Secrets.DumpAllNamespaces:
     history:
       1:
@@ -8782,6 +9030,15 @@ versions:
     sha256: d09c0ffdeb51d6862a46f9704b05a103d4f17a87dac3b2afe76763ce7cb00c09
     type: correlation_rule
     version: 1
+  OpenAI.CredentialStuffing:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/openai_rules/openai_credential_stuffing.py
+        yaml_file_path: rules/openai_rules/openai_credential_stuffing.yml
+    sha256: 3c1574f0b3e92d4e525c7ab62d54a175035ac8fcb783fd9e6bb36d493e1048e2
+    type: rule
+    version: 1
   OpenAI.IP.Allowlist.Changes:
     history:
       1:
@@ -9023,9 +9280,12 @@ versions:
       7:
         commit_hash: ba99f0f8b4db867acd2f8fccbc686da8d23b3969
         yaml_file_path: packs/aws.yml
-    sha256: 86bb27b67980e0c8266f137053c153f4e5588760d7166790da6e679c81dd7aa1
+      8:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        yaml_file_path: packs/aws.yml
+    sha256: 25311d4450b2080d63a85b1704b0795b7a87f8c2d191efa0efb92230805102e1
     type: pack
-    version: 7
+    version: 8
   PantherManaged.AWSDecoy:
     history:
       1:
@@ -9273,9 +9533,12 @@ versions:
       5:
         commit_hash: a87c8343e8ec884434488bf7994807c76d3efc90
         yaml_file_path: packs/gsuite_reports.yml
-    sha256: 210449883010fb06732d584cd27588df1e39b2bcccde0e9c9682c56677ab20b4
+      6:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        yaml_file_path: packs/gsuite_reports.yml
+    sha256: f6dc40109f5629926e9be824374c794eac57c39c2c1444043a70df0fe8d27a14
     type: pack
-    version: 5
+    version: 6
   PantherManaged.GSuite.Reports:
     history:
       1:
@@ -9311,9 +9574,12 @@ versions:
       1:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         yaml_file_path: packs/kubernetes.yml
-    sha256: 511f844278d072d260b64f579245f9fde277b7a9d74c84156a7613258c5f5042
+      2:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        yaml_file_path: packs/kubernetes.yml
+    sha256: 0946675abc5e8867c385f0d330f8242c2581b98cb0e58f6b3796d5be106e17cb
     type: pack
-    version: 1
+    version: 2
   PantherManaged.Kubernetes.Unified:
     history:
       1:
@@ -10644,6 +10910,15 @@ versions:
     sha256: 2c27ea1604e9ff4df3eef4887b9aff3108bdeb741f8c5f2735e0e7a0f91a2334
     type: rule
     version: 1
+  Snowflake.Stream.PasswordSpray:
+    history:
+      1:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: rules/snowflake_rules/snowflake_stream_password_spray.py
+        yaml_file_path: rules/snowflake_rules/snowflake_stream_password_spray.yml
+    sha256: 9aa8117bc0e7d0b77a5b7f327ef740bf468ced1e8a56f62001217857a61f77a9
+    type: rule
+    version: 1
   Snowflake.Stream.PublicRoleGrant:
     history:
       1:
@@ -11731,9 +12006,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: queries/aws_queries/anomalous_vpc_port_activity.py
         yaml_file_path: queries/aws_queries/anomalous_vpc_port_activity.yml
-    sha256: b43a84e7c21dceb7dba6686980a469c9576ad2e28995336a4b985ca70691bdd4
+      2:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: queries/aws_queries/anomalous_vpc_port_activity.py
+        yaml_file_path: queries/aws_queries/anomalous_vpc_port_activity.yml
+    sha256: 2f4b32985eb8615eccefb5e1eeb37c948b428db476b656726d10b9e6d83c4dc8
     type: scheduled_rule
-    version: 1
+    version: 2
   Windows.Credential.Dumping.Tool:
     history:
       1:
@@ -12277,25 +12556,34 @@ versions:
       1:
         commit_hash: ba99f0f8b4db867acd2f8fccbc686da8d23b3969
         yaml_file_path: lookup_tables/okta/okta_ad_pantherflow_baseline_180day.yml
-    sha256: d8b1fb2e12f88c71e8c6eaaf22a2fba43fb62b0dad08f1b45f934745a7128aba
+      2:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        yaml_file_path: lookup_tables/okta/okta_ad_baseline_180day.yml
+    sha256: 02867b640d7e0c3f2fcfdbf863af075ec71a8afea456212a0ae819b80b1f704f
     type: lookup_table
-    version: 1
+    version: 2
   okta_ad_pantherflow_baseline_30d:
     history:
       1:
         commit_hash: ba99f0f8b4db867acd2f8fccbc686da8d23b3969
         yaml_file_path: lookup_tables/okta/okta_ad_pantherflow_baseline_30day.yml
-    sha256: 7d40c8576969035f25c71300f0e94078bb95e812eaf425aa69248bb9dd280f74
+      2:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        yaml_file_path: lookup_tables/okta/okta_ad_baseline_30day.yml
+    sha256: 0767be3980406963987c6964745e7f15123bd5f7e3cc0350844b2200e3fbea9b
     type: lookup_table
-    version: 1
+    version: 2
   okta_ad_pantherflow_baseline_90d:
     history:
       1:
         commit_hash: ba99f0f8b4db867acd2f8fccbc686da8d23b3969
         yaml_file_path: lookup_tables/okta/okta_ad_pantherflow_baseline_90day.yml
-    sha256: 475a71a7682d0a2c2ee6842934d819c370e0fbd9366ec4d16f74ac56f07e49e2
+      2:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        yaml_file_path: lookup_tables/okta/okta_ad_baseline_90day.yml
+    sha256: 6a998ac6a588df99edfd5ee5178d383e9f11597a52053a75a74054c50302c1c4
     type: lookup_table
-    version: 1
+    version: 2
   okta_baseline_180d:
     history:
       1:
@@ -12348,9 +12636,13 @@ versions:
         commit_hash: a87c8343e8ec884434488bf7994807c76d3efc90
         py_file_path: global_helpers/panther_aws_helpers.py
         yaml_file_path: global_helpers/panther_aws_helpers.yml
-    sha256: 6eae1aae1dfaf06454803f059f0bc3aafcc4f5fd12dc9f76125ea1348005edf2
+      3:
+        commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
+        py_file_path: global_helpers/panther_aws_helpers.py
+        yaml_file_path: global_helpers/panther_aws_helpers.yml
+    sha256: 6c1fe5cac9f429a2007da0c326c887862cd6eccd7637b07cefb06587a380efe2
     type: global
-    version: 2
+    version: 3
   panther_azureactivity_helpers:
     history:
       1:
