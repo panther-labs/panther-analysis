@@ -32,7 +32,7 @@ jobs:
           fetch-depth: 1
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7
+        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: ${{ secrets.AWS_BEDROCK_REGION }}
@@ -45,7 +45,7 @@ jobs:
       # Step 1: Style Guide Review
       - name: Style Guide Review
         id: style-review
-        uses: anthropics/claude-code-action@df37d2f0760a4b5683a6e617c9325bc1a36443f6 # v1.0.75
+        uses: anthropics/claude-code-action@905d4eb99ab3d43143d74fb0dcae537f29ac330a # v1.0.97
         with:
           use_bedrock: 'true'
           claude_args: |
@@ -115,7 +115,7 @@ jobs:
 
       # Step 2: Python Logic Review
       - name: Python Logic Review
-        uses: anthropics/claude-code-action@df37d2f0760a4b5683a6e617c9325bc1a36443f6 # v1.0.75
+        uses: anthropics/claude-code-action@905d4eb99ab3d43143d74fb0dcae537f29ac330a # v1.0.97
         with:
           use_bedrock: 'true'
           claude_args: |
@@ -209,7 +209,7 @@ jobs:
 
       # Step 3: YAML Metadata Review
       - name: YAML Metadata Review
-        uses: anthropics/claude-code-action@df37d2f0760a4b5683a6e617c9325bc1a36443f6 # v1.0.75
+        uses: anthropics/claude-code-action@905d4eb99ab3d43143d74fb0dcae537f29ac330a # v1.0.97
         with:
           use_bedrock: 'true'
           claude_args: |
@@ -302,7 +302,7 @@ jobs:
 
       # Step 4: Testing Review
       - name: Testing Review
-        uses: anthropics/claude-code-action@df37d2f0760a4b5683a6e617c9325bc1a36443f6 # v1.0.75
+        uses: anthropics/claude-code-action@905d4eb99ab3d43143d74fb0dcae537f29ac330a # v1.0.97
         with:
           use_bedrock: 'true'
           claude_args: |
@@ -378,7 +378,7 @@ jobs:
 
       # Step 5: Query Review (if applicable)
       - name: Query Review
-        uses: anthropics/claude-code-action@df37d2f0760a4b5683a6e617c9325bc1a36443f6 # v1.0.75
+        uses: anthropics/claude-code-action@905d4eb99ab3d43143d74fb0dcae537f29ac330a # v1.0.97
         with:
           use_bedrock: 'true'
           claude_args: |
@@ -455,7 +455,7 @@ jobs:
 
       # Step 6: Architecture Compliance
       - name: Architecture Compliance Review
-        uses: anthropics/claude-code-action@df37d2f0760a4b5683a6e617c9325bc1a36443f6 # v1.0.75
+        uses: anthropics/claude-code-action@905d4eb99ab3d43143d74fb0dcae537f29ac330a # v1.0.97
         with:
           use_bedrock: 'true'
           claude_args: |

@@ -117,6 +117,8 @@
   - This policy ensures that at least one CloudTrail has management (control plane) operations logged.
 - [AWS CloudTrail Password Policy Discovery](../rules/aws_cloudtrail_rules/aws_cloudtrail_password_policy_discovery.yml)
   - This detection looks for *AccountPasswordPolicy events in AWS CloudTrail logs. If these events occur in a short period of time from the same ARN, it could constitute Password Policy reconnaissance.
+- [AWS CloudTrail Password Spraying](../rules/aws_cloudtrail_rules/aws_cloudtrail_password_spraying.yml)
+  - Detects password spraying attacks by alerting when more than 9 distinct usernames fail to authenticate to the AWS console from the same account and region within 60 minutes.
 - [AWS Cloudtrail Region Enabled](../rules/aws_cloudtrail_rules/aws_cloudtrail_region_enabled.yml)
   - Threat actors who successfully compromise a victim's AWS account, whether through stolen credentials,  exposed access keys, exploited IAM misconfigurations, vulnerabilities in third-party applications,  or the absence of Multi-Factor Authentication (MFA), can exploit unused regions as safe zones  for malicious activities. These regions are often overlooked in monitoring and security setups,  making them an attractive target for attackers to operate undetected.
 - [AWS CloudTrail Retention Lifecycle Too Short](../rules/aws_cloudtrail_rules/aws_cloudtrail_short_lifecycle.yml)
@@ -138,6 +140,8 @@
   - An AWS Config Recorder or Delivery Channel was created
 - [AWS Config Service Disabled](../rules/aws_cloudtrail_rules/aws_config_service_disabled_deleted.yml)
   - An AWS Config Recorder or Delivery Channel was disabled or deleted
+- [AWS Console GetSigninToken Potential Abuse](../rules/aws_cloudtrail_rules/aws_console_getsignintoken.yml)
+  - Detects GetSigninToken calls from non-SSO user agents. An adversary can use tools like aws_consoler to convert compromised CLI credentials into a federated console session, bypassing MFA requirements and obscuring the original access key. The GetSigninToken API creates temporary console access from STS temporary credentials.
 - [AWS Console Login](../rules/aws_cloudtrail_rules/aws_console_login.yml)
 - [AWS Console Sign-In NOT PRECEDED BY Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
   - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta and both log sources configured.
@@ -173,6 +177,8 @@
   - This alert occurs when AWS has detected exposed credentials. It attaches a policy to deny certain actions, effectively quarantining those credentials, and is accompanied by a support case with instructions for detaching the policy.
 - [AWS IAM Group Read Only Events](../rules/aws_cloudtrail_rules/aws_iam_group_read_only_events.yml)
   - This rule captures multiple read/list events related to IAM group management in AWS Cloudtrail.
+- [AWS IMDS Credential Usage Outside Expected Services](../rules/aws_cloudtrail_rules/aws_imds_credential_exfiltration.yml)
+  - Detects when an EC2 instance identity (credentials obtained via IMDS) is used to make API calls outside of expected internal AWS services like SSM. This indicates that IMDS credentials may have been exfiltrated from a compromised instance and are being used externally for lateral movement or privilege escalation.
 - [AWS Macie Disabled/Updated](../rules/aws_cloudtrail_rules/aws_macie_evasion.yml)
   - Amazon Macie is a data security and data privacy service to discover and protect sensitive data. Security teams use Macie to detect open S3 Buckets that could have potentially sensitive data in it along with policy violations, such as missing Encryption. If an attacker disables Macie, it could potentially hide data exfiltration.
 - [AWS Modify Cloud Compute Infrastructure](../rules/aws_cloudtrail_rules/aws_modify_cloud_compute_infrastructure.yml)
@@ -186,10 +192,36 @@
 - [AWS Privilege Escalation Via User Compromise](../correlation_rules/aws_privilege_escalation_via_user_compromise.yml)
 - [AWS Public RDS Restore](../rules/aws_cloudtrail_rules/aws_rds_publicrestore.yml)
   - Detects the recovery of a new public database instance from a snapshot. It may be part of data exfiltration.
+- [AWS RDS Activity Stream Stopped](../rules/aws_cloudtrail_rules/aws_rds_activity_stream_stopped.yml)
+  - Detects when RDS Database Activity Streams are stopped. Activity Streams provide real-time monitoring of database activity. Disabling them is a clear evasion technique used by attackers to avoid detection before performing malicious operations.
+- [AWS RDS Automated Backup Deleted](../rules/aws_cloudtrail_rules/aws_rds_automated_backup_deleted.yml)
+  - Detects deletion of RDS automated backups. This is a classic ransomware tactic where attackers delete automated backups before encrypting or destroying databases to prevent recovery. Any automated backup deletion should be investigated immediately.
+- [AWS RDS Cluster Failover Initiated](../rules/aws_cloudtrail_rules/aws_rds_cluster_failover.yml)
+  - Detects when RDS cluster or global cluster failovers are manually initiated. Forced failovers cause brief service interruptions and may indicate disaster recovery testing, operational troubleshooting, or disruption attempts.
+- [AWS RDS Deletion Protection Disabled](../rules/aws_cloudtrail_rules/aws_rds_deletion_protection_disabled.yml)
+  - Detects when deletion protection is disabled on an RDS instance or cluster. This is often a precursor to database deletion and may indicate ransomware or data destruction attacks where attackers first disable protections before deleting resources.
+- [AWS RDS Instance Modified to be Publicly Accessible](../rules/aws_cloudtrail_rules/aws_rds_instance_made_public.yml)
+  - Detects when an RDS instance or cluster is modified to become publicly accessible. This exposes the database to the internet and is used by attackers for persistence or data exfiltration. This detects the modification event in real-time, unlike static policy checks.
+- [AWS RDS Instance or Cluster Deleted](../rules/aws_cloudtrail_rules/aws_rds_instance_deletion.yml)
+  - Detects RDS database instance or cluster deletion. Deletions that skip final snapshots result in permanent data loss and may indicate ransomware, insider threats, or compromised credentials being used to destroy data.
+- [AWS RDS Instance or Cluster Rebooted](../rules/aws_cloudtrail_rules/aws_rds_instance_rebooted.yml)
+  - Detects when RDS instances, clusters, or shard groups are rebooted. Unexpected reboots cause service disruption and may indicate DoS attempts, unauthorized testing, or operational issues requiring investigation.
+- [AWS RDS Log File Downloaded](../rules/aws_cloudtrail_rules/aws_rds_log_file_downloaded.yml)
+  - Detects when RDS database log files are downloaded. Log files may contain credentials, sensitive queries, or application secrets. Bulk downloads from unusual locations may indicate credential harvesting or data reconnaissance.
 - [AWS RDS Manual/Public Snapshot Created](../rules/aws_cloudtrail_rules/aws_rds_manual_snapshot_created.yml)
   - A manual snapshot of an RDS database was created. An attacker may use this to exfiltrate the DB contents to another account; use this as a correlation rule.
 - [AWS RDS Master Password Updated](../rules/aws_cloudtrail_rules/aws_rds_master_pass_updated.yml)
   - A sensitive database operation that should be performed carefully or rarely
+- [AWS RDS Security Group Ingress Authorized](../rules/aws_cloudtrail_rules/aws_rds_security_group_ingress_authorized.yml)
+  - Detects when ingress rules are added to RDS security groups. Overly permissive rules, especially 0.0.0.0/0, expose databases to the internet and may indicate attackers opening network access for persistence or data exfiltration.
+- [AWS RDS Snapshot Copied Cross-Region](../rules/aws_cloudtrail_rules/aws_rds_snapshot_copied_cross_region.yml)
+  - Detects when RDS snapshots are copied to different AWS regions. While legitimate for disaster recovery, cross-region snapshot copies can be used for data exfiltration or to prepare snapshots for sharing with external accounts.
+- [AWS RDS Snapshot Deleted](../rules/aws_cloudtrail_rules/aws_rds_snapshot_deleted.yml)
+  - Detects deletion of RDS snapshots. Attackers delete backups to prevent recovery or hide evidence of data exfiltration. Multiple snapshot deletions may indicate ransomware preparing to encrypt databases without recovery options.
+- [AWS RDS Snapshot Enumeration with Public or Shared Flag](../rules/aws_cloudtrail_rules/aws_rds_snapshot_enumeration.yml)
+  - Detects when RDS snapshots are queried with includePublic or includeShared flags. This indicates reconnaissance for publicly accessible or shared snapshots that may contain sensitive data and be exploitable by attackers.
+- [AWS RDS Snapshot Exported to S3](../rules/aws_cloudtrail_rules/aws_rds_snapshot_export.yml)
+  - Detects when an RDS snapshot is exported to S3 using StartExportTask. Attackers use this to exfiltrate database contents by exporting snapshots to buckets they control. While snapshot exports are legitimate for analytics, they provide complete database access.
 - [AWS RDS Snapshot Shared](../rules/aws_cloudtrail_rules/aws_rds_snapshot_shared.yml)
   - An RDS snapshot was shared with another account. This could be an indicator of exfiltration.
 - [AWS Resource Made Public](../rules/aws_cloudtrail_rules/aws_resource_made_public.yml)
@@ -210,6 +242,8 @@
   - Detects a ransomware attack pattern where an attacker with compromised AWS credentials exfiltrates data from an S3 bucket to an external AWS account, followed by bulk deletion of objects from the source bucket within a short timeframe. This technique was notably used by the threat actor Bling Libra to extort victims by threatening data destruction or leaks.
 - [AWS S3 Ransomware Note Upload Detection](../rules/aws_cloudtrail_rules/aws_s3_ransomware_note_upload.yml)
   - This rule detects when files with names commonly associated with ransomware notes are uploaded to S3 buckets. Ransomware attackers often drop ransom notes with distinctive filenames like HOW_TO_DECRYPT_FILES.txt, RANSOM_NOTE.txt, FILES_ENCRYPTED.html, or similar patterns to inform victims about the encryption and provide payment instructions.
+- [AWS S3 Security Control Disabling](../rules/aws_cloudtrail_rules/aws_s3_security_control_disabling.yml)
+  - Detects the disabling of 2 or more distinct S3 security controls (logging, versioning, and MFA delete protection) on the same bucket by the same actor within a short timeframe. Threshold is set to 2 rather than 3 because versioning and MFA delete can be disabled together in a single PutBucketVersioning API call, which produces only one unique value — making a threshold of 3 structurally unreachable in that scenario. This pattern is a strong indicator of preparation for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before encrypting or deleting data.
 - [AWS S3 Security Controls Disabled](../correlation_rules/aws_s3_disable_security_controls.yml)
   - Detects the disabling of multiple S3 security controls (logging, versioning and MFA delete protection) on the same bucket within a short timeframe. This pattern is a strong indicator of preparation for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before encrypting or deleting data. Alerting on this activity enables early intervention before actual data loss occurs.
 - [AWS SAML Activity](../rules/aws_cloudtrail_rules/aws_saml_activity.yml)
@@ -232,6 +266,10 @@
   - Returns StartSession events by users who triggered more than 2 StartSession events over the past hour.
 - [AWS SSO Access Token Retrieved by Unauthenticated IP](../correlation_rules/aws_sso_access_token_retrieved_by_unauthenticated_ip.yml)
   - When using AWS in an enterprise environment, best practices dictate to use a single sign-on service for identity and access management. AWS SSO is a popular solution, integrating with third-party providers such as Okta and allowing to centrally manage roles and permissions in multiple AWS accounts.In this post, we demonstrate that AWS SSO is vulnerable by design to device code authentication phishing – just like any identity provider implementing OpenID Connect device code authentication. This technique was first demonstrated by Dr. Nestori Syynimaa for Azure AD. The feature provides a powerful phishing vector for attackers, rendering ineffective controls such as MFA (including Yubikeys) or IP allow-listing at the IdP level.
+- [AWS STS GetCallerIdentity via TruffleHog](../rules/aws_cloudtrail_rules/aws_sts_getcalleridentity_trufflehog.yml)
+  - Detects AWS STS GetCallerIdentity calls made by TruffleHog, a credential scanning tool. Threat actors use TruffleHog to validate whether leaked or stolen AWS access keys are still active. A GetCallerIdentity call with a TruffleHog user agent indicates that credentials from this account have been discovered externally and are being tested for validity.
+- [AWS STS GetSessionToken by IAM User](../rules/aws_cloudtrail_rules/aws_sts_getsessiontoken_misuse.yml)
+  - Detects an IAM user calling STS GetSessionToken to obtain temporary credentials. Attackers who have compromised long-term IAM credentials may use GetSessionToken to generate short-lived session tokens for lateral movement or to bypass IP-based policies that apply only to long-term credentials.
 - [AWS Trusted IPSet Modified](../rules/aws_cloudtrail_rules/aws_ipset_modified.yml)
   - Detects creation and updates of the list of trusted IPs used by GuardDuty and WAF. Potentially to disable security alerts against malicious IPs.
 - [AWS Unsuccessful MFA attempt](../rules/aws_cloudtrail_rules/aws_cloudtrail_unsuccessful_mfa_attempt.yml)
@@ -294,6 +332,8 @@
   - An IAM Entity (Group, Policy, Role, or User) was created manually. IAM entities should be created in code to ensure that permissions are tracked and managed correctly.
 - [IAM Policy Modified](../rules/aws_cloudtrail_rules/aws_iam_policy_modified.yml)
   - An IAM Policy was changed.
+- [IAM Role Added to RDS Instance or Cluster](../rules/aws_cloudtrail_rules/aws_rds_iam_role_added.yml)
+  - Detects when IAM roles are added to RDS instances or clusters. While legitimate for features like S3 import/export, attackers may add overly permissive roles to maintain access or escalate privileges for data exfiltration.
 - [IAM Role Created](../rules/aws_cloudtrail_rules/aws_iam_create_role.yml)
   - An IAM role was created.
 - [IAM Role Policy Updated to Allow Internet Access](../rules/aws_cloudtrail_rules/aws_iam_backdoor_role.yml)
@@ -534,6 +574,8 @@
   - This detection monitors for Roles or ClusterRoles being created with write permissions (create, update, patch, delete, deletecollection). While write permissions are common and often necessary for application operations, tracking role creation helps establish RBAC baselines and identify overly permissive configurations. Severity escalates for write access to sensitive resources like secrets or RBAC objects.
 - [Kubernetes Secret Access Denied](../rules/kubernetes_rules/k8s_secret_access_denied.yml)
   - This detection monitors for failed attempts to read Kubernetes secrets. While occasional failed access attempts may indicate RBAC misconfigurations, repeated failures suggest enumeration or brute-force attempts by compromised accounts. With 15-minute deduplication, 20 or more failed attempts within this window indicates active secret enumeration and should be investigated immediately.
+- [Kubernetes Secret Enumeration by a User](../rules/kubernetes_rules/k8s_secret_enumeration.yml)
+  - Detects when a single user accesses 15 or more distinct secrets within 30 minutes using list, get, or watch verbs. This may indicate secret enumeration to enable lateral or vertical movement and unauthorized access to critical resources. The threshold should be tuned to your environment.
 - [Kubernetes Service Account Token Theft from Pod](../rules/kubernetes_rules/k8s_steal_serviceaccount_token.yml)
   - This detection monitors for commands executed in pods that attempt to read service account tokens from /var/run/secrets/kubernetes.io/serviceaccount/token. Attackers who gain exec access to a pod can steal its service account token to authenticate as that service account to the Kubernetes API server. This enables privilege escalation and lateral movement within the cluster. This is a known attack technique documented by Stratus Red Team.
 - [Kubernetes System Principal Accessed from Non-Cloud Public IP](../rules/kubernetes_rules/k8s_system_principal_public_ip.yml)
@@ -1162,6 +1204,8 @@
   - This detection monitors for Roles or ClusterRoles being created with write permissions (create, update, patch, delete, deletecollection). While write permissions are common and often necessary for application operations, tracking role creation helps establish RBAC baselines and identify overly permissive configurations. Severity escalates for write access to sensitive resources like secrets or RBAC objects.
 - [Kubernetes Secret Access Denied](../rules/kubernetes_rules/k8s_secret_access_denied.yml)
   - This detection monitors for failed attempts to read Kubernetes secrets. While occasional failed access attempts may indicate RBAC misconfigurations, repeated failures suggest enumeration or brute-force attempts by compromised accounts. With 15-minute deduplication, 20 or more failed attempts within this window indicates active secret enumeration and should be investigated immediately.
+- [Kubernetes Secret Enumeration by a User](../rules/kubernetes_rules/k8s_secret_enumeration.yml)
+  - Detects when a single user accesses 15 or more distinct secrets within 30 minutes using list, get, or watch verbs. This may indicate secret enumeration to enable lateral or vertical movement and unauthorized access to critical resources. The threshold should be tuned to your environment.
 - [Kubernetes Service Account Token Theft from Pod](../rules/kubernetes_rules/k8s_steal_serviceaccount_token.yml)
   - This detection monitors for commands executed in pods that attempt to read service account tokens from /var/run/secrets/kubernetes.io/serviceaccount/token. Attackers who gain exec access to a pod can steal its service account token to authenticate as that service account to the Kubernetes API server. This enables privilege escalation and lateral movement within the cluster. This is a known attack technique documented by Stratus Red Team.
 - [Kubernetes System Principal Accessed from Non-Cloud Public IP](../rules/kubernetes_rules/k8s_system_principal_public_ip.yml)
@@ -1706,6 +1750,8 @@
   - This detection monitors for Roles or ClusterRoles being created with write permissions (create, update, patch, delete, deletecollection). While write permissions are common and often necessary for application operations, tracking role creation helps establish RBAC baselines and identify overly permissive configurations. Severity escalates for write access to sensitive resources like secrets or RBAC objects.
 - [Kubernetes Secret Access Denied](../rules/kubernetes_rules/k8s_secret_access_denied.yml)
   - This detection monitors for failed attempts to read Kubernetes secrets. While occasional failed access attempts may indicate RBAC misconfigurations, repeated failures suggest enumeration or brute-force attempts by compromised accounts. With 15-minute deduplication, 20 or more failed attempts within this window indicates active secret enumeration and should be investigated immediately.
+- [Kubernetes Secret Enumeration by a User](../rules/kubernetes_rules/k8s_secret_enumeration.yml)
+  - Detects when a single user accesses 15 or more distinct secrets within 30 minutes using list, get, or watch verbs. This may indicate secret enumeration to enable lateral or vertical movement and unauthorized access to critical resources. The threshold should be tuned to your environment.
 - [Kubernetes Service Account Token Theft from Pod](../rules/kubernetes_rules/k8s_steal_serviceaccount_token.yml)
   - This detection monitors for commands executed in pods that attempt to read service account tokens from /var/run/secrets/kubernetes.io/serviceaccount/token. Attackers who gain exec access to a pod can steal its service account token to authenticate as that service account to the Kubernetes API server. This enables privilege escalation and lateral movement within the cluster. This is a known attack technique documented by Stratus Red Team.
 - [Kubernetes System Principal Accessed from Non-Cloud Public IP](../rules/kubernetes_rules/k8s_system_principal_public_ip.yml)
@@ -2262,6 +2308,8 @@
   - Detects anomalous OpenAI API key activity indicative of potential key compromise,unauthorized access, or preparation for malicious misuse (e.g., C2, phishing, automation).OpenAI API keys provide programmatic access to powerful LLM capabilities. Abuse orcompromise of these keys enables attackers to blend malicious activity into legitimatecloud traffic, bypassing traditional network-based detections.This rule alerts on:- API keys created or updated with elevated or unrestricted permissions (all, models:write, organization:write, api_keys:write, admin)
 - [OpenAI Brute Force Login Success](../correlation_rules/openai_brute_force_login_success.yml)
   - Detects successful credential stuffing or brute force attacks against OpenAI accounts.This rule identifies when a user account experiences 5 or more failed login attemptsfollowed by a successful login within 30 minutes. This pattern indicates:- Successful credential stuffing attack- Successful brute force attack- Compromised user credentials- Automated attack tools successfully gaining accessThe correlation is performed by matching on the user email address to track attemptsagainst the same account across multiple failed attempts and the eventual success.
+- [OpenAI Credential Stuffing](../rules/openai_rules/openai_credential_stuffing.yml)
+  - Detects credential stuffing attacks against OpenAI accounts by tracking the number of distinct source IP addresses submitting failed login attempts against the same email address within a short timeframe. Unlike brute force from a single IP, credential stuffing distributes attempts across many IPs to evade rate limiting. This rule complements OpenAI.BruteForce.Login.Success, which confirms account compromise once a successful login follows the failures.
 - [OpenAI Failed Login (Base Rule)](../rules/openai_rules/openai_login_failed.yml)
   - Base rule for detecting OpenAI failed login attempts. This rule is used primarilyas a building block for correlation rules and does not generate alerts on its own.
 - [OpenAI IP Allowlist Configuration Changes](../rules/openai_rules/openai_ip_allowlist_changes.yml)
@@ -2485,6 +2533,8 @@
   - Detect snowflake logins without multifactor authentication
 - [Snowflake Multiple Failed Logins Followed By Success](../queries/snowflake_queries/snowflake_multiple_failed_logins_followed_by_success.yml)
   - Detecting brute force activity and reporting when a user has incorrectly logged in multiple times and then had a successful login.
+- [Snowflake Password Spray](../rules/snowflake_rules/snowflake_stream_password_spray.yml)
+  - Detects password spraying attacks against Snowflake by tracking the number of distinct user accounts targeted by failed login attempts from the same source IP address within a short timeframe. Unlike brute force against a single account, password spraying distributes attempts across many accounts to evade lockout policies. This rule complements Snowflake.Stream.BruteForceByIp (same IP, any accounts) and Snowflake.PotentialBruteForceSuccess (brute force followed by confirmed login).
 - [Snowflake Successful Login](../rules/snowflake_rules/snowflake_stream_login_success.yml)
   - Track successful login signals for correlation.
 - [Snowflake Table Copied Into Stage](../queries/snowflake_queries/snowflake_table_copied_into_stage_signal.yml)

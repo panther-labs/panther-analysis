@@ -1,0 +1,73 @@
+AnalysisType: rule
+Filename: dropbox_many_deletes.py
+RuleID: "Dropbox.BulkDeletes"
+DisplayName: "Dropbox Many Deletes"
+Status: Experimental
+Enabled: false
+Severity: Medium
+DedupPeriodMinutes: 60
+Threshold: 11
+LogTypes:
+  - Dropbox.TeamEvent
+Description: >
+  Detects when a Dropbox user deletes more than 10 distinct files within 60 minutes.
+  This may indicate accidental or malicious bulk deletion of team files.
+  The threshold should be tuned to your environment.
+Reference: https://help.dropbox.com/delete-restore/delete-files
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1485
+Tags:
+  - Dropbox
+  - Impact
+  - Data Destruction
+Runbook: |
+  1. Query Dropbox.TeamEvent for all file_delete events by actor:user:email in the 2 hours around this alert to identify the full list of assets[0]:path:contextual values deleted
+  2. Check involve_non_team_member and origin:geo_location:ip_address to determine if the deletions originated from an unexpected user or location, and assess whether the deleted files were shared with external parties
+  3. Search for other suspicious activity by this user in the past 24 hours, including bulk downloads prior to deletion, external sharing events, or login anomalies
+Tests:
+  - Name: File Deleted
+    ExpectedResult: true
+    Log:
+      actor:
+        user:
+          email: alice@company.com
+          _tag: team_member
+      event_type:
+        _tag: file_delete
+      assets:
+        - path:
+            contextual: /alice/report.pdf
+      involve_non_team_member: false
+      origin:
+        geo_location:
+          ip_address: 1.2.3.4
+  - Name: File Deleted - Non-Team Member Involved
+    ExpectedResult: true
+    Log:
+      actor:
+        user:
+          email: alice@company.com
+          _tag: team_member
+      event_type:
+        _tag: file_delete
+      assets:
+        - path:
+            contextual: /shared/contract.docx
+      involve_non_team_member: true
+      origin:
+        geo_location:
+          ip_address: 5.6.7.8
+  - Name: Non-Delete Event
+    ExpectedResult: false
+    Log:
+      actor:
+        user:
+          email: alice@company.com
+          _tag: team_member
+      event_type:
+        _tag: file_download
+      assets:
+        - path:
+            contextual: /alice/report.pdf
+      involve_non_team_member: false

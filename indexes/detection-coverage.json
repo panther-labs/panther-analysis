@@ -788,6 +788,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects password spraying attacks by alerting when more than 9 distinct usernames fail to authenticate to the AWS console from the same account and region within 60 minutes.",
+        "DisplayName": "AWS CloudTrail Password Spraying",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_cloudtrail_password_spraying.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Threat actors who successfully compromise a victim's AWS account, whether through stolen credentials,  exposed access keys, exploited IAM misconfigurations, vulnerabilities in third-party applications,  or the absence of Multi-Factor Authentication (MFA), can exploit unused regions as safe zones  for malicious activities. These regions are often overlooked in monitoring and security setups,  making them an attractive target for attackers to operate undetected.",
         "DisplayName": "AWS Cloudtrail Region Enabled",
         "LogTypes": [
@@ -956,6 +965,15 @@
             "AWS.Config.Recorder"
         ],
         "YAMLPath": "policies/aws_config_policies/aws_config_recording_enabled.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects GetSigninToken calls from non-SSO user agents. An adversary can use tools like aws_consoler to convert compromised CLI credentials into a federated console session, bypassing MFA requirements and obscuring the original access key. The GetSigninToken API creates temporary console access from STS temporary credentials.",
+        "DisplayName": "AWS Console GetSigninToken Potential Abuse",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_console_getsignintoken.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -1467,6 +1485,15 @@
         "YAMLPath": "policies/aws_iam_policies/aws_iam_user_not_in_conflicting_groups.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Detects when an EC2 instance identity (credentials obtained via IMDS) is used to make API calls outside of expected internal AWS services like SSM. This indicates that IMDS credentials may have been exfiltrated from a compromised instance and are being used externally for lateral movement or privilege escalation.",
+        "DisplayName": "AWS IMDS Credential Usage Outside Expected Services",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_imds_credential_exfiltration.yml"
+    },
+    {
         "AnalysisType": "Policy",
         "Description": "This policy validates that customer master keys (CMKs) have automatic key rotation enabled.",
         "DisplayName": "AWS KMS CMK Key Rotation",
@@ -1620,6 +1647,42 @@
         "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_publicrestore.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Detects when RDS Database Activity Streams are stopped. Activity Streams provide real-time monitoring of database activity. Disabling them is a clear evasion technique used by attackers to avoid detection before performing malicious operations.",
+        "DisplayName": "AWS RDS Activity Stream Stopped",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_activity_stream_stopped.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects deletion of RDS automated backups. This is a classic ransomware tactic where attackers delete automated backups before encrypting or destroying databases to prevent recovery. Any automated backup deletion should be investigated immediately.",
+        "DisplayName": "AWS RDS Automated Backup Deleted",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_automated_backup_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when RDS cluster or global cluster failovers are manually initiated. Forced failovers cause brief service interruptions and may indicate disaster recovery testing, operational troubleshooting, or disruption attempts.",
+        "DisplayName": "AWS RDS Cluster Failover Initiated",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_cluster_failover.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when deletion protection is disabled on an RDS instance or cluster. This is often a precursor to database deletion and may indicate ransomware or data destruction attacks where attackers first disable protections before deleting resources.",
+        "DisplayName": "AWS RDS Deletion Protection Disabled",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_deletion_protection_disabled.yml"
+    },
+    {
         "AnalysisType": "Policy",
         "Description": "This Policy ensures that RDS Instances have Backups enabled. Backups are an important aspect of disaster recovery that can protect sensitive data from destruction.",
         "DisplayName": "AWS RDS Instance Backup",
@@ -1665,6 +1728,33 @@
         "YAMLPath": "policies/aws_rds_policies/aws_rds_instance_auto_minor_version_upgrade_enabled.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Detects when an RDS instance or cluster is modified to become publicly accessible. This exposes the database to the internet and is used by attackers for persistence or data exfiltration. This detects the modification event in real-time, unlike static policy checks.",
+        "DisplayName": "AWS RDS Instance Modified to be Publicly Accessible",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_instance_made_public.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects RDS database instance or cluster deletion. Deletions that skip final snapshots result in permanent data loss and may indicate ransomware, insider threats, or compromised credentials being used to destroy data.",
+        "DisplayName": "AWS RDS Instance or Cluster Deleted",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_instance_deletion.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when RDS instances, clusters, or shard groups are rebooted. Unexpected reboots cause service disruption and may indicate DoS attempts, unauthorized testing, or operational issues requiring investigation.",
+        "DisplayName": "AWS RDS Instance or Cluster Rebooted",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_instance_rebooted.yml"
+    },
+    {
         "AnalysisType": "Policy",
         "Description": "This Policy checks that an RDS Instance is not accessible from the public internet.",
         "DisplayName": "AWS RDS Instance Public Access",
@@ -1684,6 +1774,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when RDS database log files are downloaded. Log files may contain credentials, sensitive queries, or application secrets. Bulk downloads from unusual locations may indicate credential harvesting or data reconnaissance.",
+        "DisplayName": "AWS RDS Log File Downloaded",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_log_file_downloaded.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "A manual snapshot of an RDS database was created. An attacker may use this to exfiltrate the DB contents to another account; use this as a correlation rule.",
         "DisplayName": "AWS RDS Manual/Public Snapshot Created",
         "LogTypes": [
@@ -1699,6 +1798,51 @@
             "AWS.CloudTrail"
         ],
         "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_master_pass_updated.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when ingress rules are added to RDS security groups. Overly permissive rules, especially 0.0.0.0/0, expose databases to the internet and may indicate attackers opening network access for persistence or data exfiltration.",
+        "DisplayName": "AWS RDS Security Group Ingress Authorized",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_security_group_ingress_authorized.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when RDS snapshots are copied to different AWS regions. While legitimate for disaster recovery, cross-region snapshot copies can be used for data exfiltration or to prepare snapshots for sharing with external accounts.",
+        "DisplayName": "AWS RDS Snapshot Copied Cross-Region",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_snapshot_copied_cross_region.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects deletion of RDS snapshots. Attackers delete backups to prevent recovery or hide evidence of data exfiltration. Multiple snapshot deletions may indicate ransomware preparing to encrypt databases without recovery options.",
+        "DisplayName": "AWS RDS Snapshot Deleted",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_snapshot_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when RDS snapshots are queried with includePublic or includeShared flags. This indicates reconnaissance for publicly accessible or shared snapshots that may contain sensitive data and be exploitable by attackers.",
+        "DisplayName": "AWS RDS Snapshot Enumeration with Public or Shared Flag",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_snapshot_enumeration.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when an RDS snapshot is exported to S3 using StartExportTask. Attackers use this to exfiltrate database contents by exporting snapshots to buckets they control. While snapshot exports are legitimate for analytics, they provide complete database access.",
+        "DisplayName": "AWS RDS Snapshot Exported to S3",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_snapshot_export.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -2049,6 +2193,15 @@
         "YAMLPath": "rules/aws_cloudtrail_rules/aws_s3_ransomware_note_upload.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Detects the disabling of 2 or more distinct S3 security controls (logging, versioning, and MFA delete protection) on the same bucket by the same actor within a short timeframe. Threshold is set to 2 rather than 3 because versioning and MFA delete can be disabled together in a single PutBucketVersioning API call, which produces only one unique value \u2014 making a threshold of 3 structurally unreachable in that scenario. This pattern is a strong indicator of preparation for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before encrypting or deleting data.",
+        "DisplayName": "AWS S3 Security Control Disabling",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_s3_security_control_disabling.yml"
+    },
+    {
         "AnalysisType": "Correlation Rule",
         "Description": "Detects the disabling of multiple S3 security controls (logging, versioning and MFA delete protection) on the same bucket within a short timeframe. This pattern is a strong indicator of preparation for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before encrypting or deleting data. Alerting on this activity enables early intervention before actual data loss occurs.",
         "DisplayName": "AWS S3 Security Controls Disabled",
@@ -2245,6 +2398,24 @@
             "AWS.CloudTrail"
         ],
         "YAMLPath": "correlation_rules/aws_sso_access_token_retrieved_by_unauthenticated_ip.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects AWS STS GetCallerIdentity calls made by TruffleHog, a credential scanning tool. Threat actors use TruffleHog to validate whether leaked or stolen AWS access keys are still active. A GetCallerIdentity call with a TruffleHog user agent indicates that credentials from this account have been discovered externally and are being tested for validity.",
+        "DisplayName": "AWS STS GetCallerIdentity via TruffleHog",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_sts_getcalleridentity_trufflehog.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects an IAM user calling STS GetSessionToken to obtain temporary credentials. Attackers who have compromised long-term IAM credentials may use GetSessionToken to generate short-lived session tokens for lateral movement or to bypass IP-based policies that apply only to long-term credentials.",
+        "DisplayName": "AWS STS GetSessionToken by IAM User",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_sts_getsessiontoken_misuse.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -6110,6 +6281,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when IAM roles are added to RDS instances or clusters. While legitimate for features like S3 import/export, attackers may add overly permissive roles to maintain access or escalate privileges for data exfiltration.",
+        "DisplayName": "IAM Role Added to RDS Instance or Cluster",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_iam_role_added.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "An IAM role was created.",
         "DisplayName": "IAM Role Created",
         "LogTypes": [
@@ -6503,6 +6683,17 @@
             "GCP.AuditLog"
         ],
         "YAMLPath": "rules/kubernetes_rules/k8s_secret_access_denied.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a single user accesses 15 or more distinct secrets within 30 minutes using list, get, or watch verbs. This may indicate secret enumeration to enable lateral or vertical movement and unauthorized access to critical resources. The threshold should be tuned to your environment.",
+        "DisplayName": "Kubernetes Secret Enumeration by a User",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_secret_enumeration.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -7573,6 +7764,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects credential stuffing attacks against OpenAI accounts by tracking the number of distinct source IP addresses submitting failed login attempts against the same email address within a short timeframe. Unlike brute force from a single IP, credential stuffing distributes attempts across many IPs to evade rate limiting. This rule complements OpenAI.BruteForce.Login.Success, which confirms account compromise once a successful login follows the failures.",
+        "DisplayName": "OpenAI Credential Stuffing",
+        "LogTypes": [
+            "OpenAI.Audit"
+        ],
+        "YAMLPath": "rules/openai_rules/openai_credential_stuffing.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Base rule for detecting OpenAI failed login attempts. This rule is used primarilyas a building block for correlation rules and does not generate alerts on its own.",
         "DisplayName": "OpenAI Failed Login (Base Rule)",
         "LogTypes": [
@@ -8455,6 +8655,15 @@
             "Snowflake.AccountUsage"
         ],
         "YAMLPath": "queries/snowflake_queries/snowflake_multiple_failed_logins_followed_by_success.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects password spraying attacks against Snowflake by tracking the number of distinct user accounts targeted by failed login attempts from the same source IP address within a short timeframe. Unlike brute force against a single account, password spraying distributes attempts across many accounts to evade lockout policies. This rule complements Snowflake.Stream.BruteForceByIp (same IP, any accounts) and Snowflake.PotentialBruteForceSuccess (brute force followed by confirmed login).",
+        "DisplayName": "Snowflake Password Spray",
+        "LogTypes": [
+            "Snowflake.LoginHistory"
+        ],
+        "YAMLPath": "rules/snowflake_rules/snowflake_stream_password_spray.yml"
     },
     {
         "AnalysisType": "Rule",

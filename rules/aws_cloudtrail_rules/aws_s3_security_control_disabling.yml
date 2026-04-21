@@ -1,0 +1,408 @@
+AnalysisType: rule
+RuleID: "AWS.S3.SecurityControlDisabling"
+DisplayName: "AWS S3 Security Control Disabling"
+Filename: aws_s3_security_control_disabling.py
+Enabled: true
+Status: Experimental
+LogTypes:
+  - AWS.CloudTrail
+Severity: High
+Threshold: 2
+DedupPeriodMinutes: 90
+Description: >
+  Detects the disabling of 2 or more distinct S3 security controls (logging, versioning, and MFA
+  delete protection) on the same bucket by the same actor within a short timeframe. Threshold is
+  set to 2 rather than 3 because versioning and MFA delete can be disabled together in a single
+  PutBucketVersioning API call, which produces only one unique value — making a threshold of 3
+  structurally unreachable in that scenario. This pattern is a strong indicator of preparation for
+  ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before
+  encrypting or deleting data.
+Runbook: |
+  1. Query CloudTrail for all S3 API calls by the actor ARN on the affected bucket in the 24 hours before and after the bucket logging was disabled to identify if this is part of a larger attack pattern
+  2. Check for subsequent suspicious activities on the same bucket including DeleteObject, DeleteObjects, PutBucketEncryption, or GetObject events in the 6 hours after all three security controls were disabled
+  3. Find all other S3 buckets where this actor ARN has disabled logging, versioning, or MFA delete in the past 7 days to determine if this is a widespread attack
+Reference: https://rhinosecuritylabs.com/aws/s3-ransomware-part-1-attack-vector/
+Tags:
+  - AWS
+  - S3
+  - Ransomware
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1562 # Defense Evasion: Impair Defenses
+    - TA0040:T1485 # Impact: Data Destruction
+Tests:
+  - Name: Match - Bucket Logging Disabled
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.11",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "AAAAAAAAAAAAAAAAAAAAA:user_name",
+            "arn": "arn:aws:sts::111111111111:assumed-role/sample-role-dreamy-yonath/user_name",
+            "accountId": "111111111111",
+            "accessKeyId": "ASIA-MOCKACCESSKEYID-1",
+            "sessionContext":
+              {
+                "sessionIssuer":
+                  {
+                    "type": "Role",
+                    "principalId": "AAAAAAAAAAAAAAAAAAAAA",
+                    "arn": "arn:aws:iam::111111111111:role/sample-role-dreamy-yonath",
+                    "accountId": "111111111111",
+                    "userName": "AdminRole",
+                  },
+                "attributes":
+                  {
+                    "creationDate": "2024-01-15T10:30:00Z",
+                    "mfaAuthenticated": "false",
+                  },
+              },
+          },
+        "eventTime": "2024-01-15T10:45:23Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "PutBucketLogging",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4 Linux/5.10.0-1234-aws exe/x86_64.ubuntu.22",
+        "requestParameters":
+          {
+            "logging": "",
+            "bucketName": "critical-data-bucket",
+            "BucketLoggingStatus": { "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/" },
+          },
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-111111111111",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "111111111111",
+        "eventCategory": "Management",
+      }
+  - Name: Match - Versioning Suspended
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "AAAAAAAAAAAAAAAAAAAAA:user_name",
+            "arn": "arn:aws:sts::111111111111:assumed-role/sample-role-dreamy-yonath/user_name",
+            "accountId": "111111111111",
+            "accessKeyId": "ASIA-MOCKACCESSKEYID-1",
+            "sessionContext":
+              {
+                "attributes":
+                  { "mfaAuthenticated": "false", "creationDate": "2024-01-15T10:30:00Z" },
+                "sessionIssuer":
+                  {
+                    "type": "Role",
+                    "principalId": "AAAAAAAAAAAAAAAAAAAAA",
+                    "arn": "arn:aws:iam::111111111111:role/sample-role-dreamy-yonath",
+                    "accountId": "111111111111",
+                    "userName": "AdminRole",
+                  },
+              },
+          },
+        "eventTime": "2024-01-15T10:50:00Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "PutBucketVersioning",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4 Linux/5.10.0-1234-aws exe/x86_64.ubuntu.22",
+        "requestParameters":
+          {
+            "bucketName": "critical-data-bucket",
+            "host": "critical-data-bucket.s3.amazonaws.com",
+            "VersioningConfiguration": { "Status": "Suspended" },
+          },
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-222222222222",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "111111111111",
+      }
+  - Name: Match - Versioning Disabled (alternate status value)
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "AAAAAAAAAAAAAAAAAAAAA:user_name",
+            "arn": "arn:aws:sts::111111111111:assumed-role/sample-role-dreamy-yonath/user_name",
+            "accountId": "111111111111",
+            "accessKeyId": "ASIA-MOCKACCESSKEYID-1",
+          },
+        "eventTime": "2024-01-15T10:50:00Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "PutBucketVersioning",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4 Linux/5.10.0-1234-aws exe/x86_64.ubuntu.22",
+        "requestParameters":
+          {
+            "bucketName": "critical-data-bucket",
+            "host": "critical-data-bucket.s3.amazonaws.com",
+            "VersioningConfiguration": { "Status": "Disabled" },
+          },
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-333333333333",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "111111111111",
+      }
+  - Name: Match - MFA Delete Disabled
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "AAAAAAAAAAAAAAAAAAAAA:user_name",
+            "arn": "arn:aws:sts::111111111111:assumed-role/sample-role-dreamy-yonath/user_name",
+            "accountId": "111111111111",
+            "accessKeyId": "ASIA-MOCKACCESSKEYID-1",
+            "sessionContext":
+              {
+                "attributes":
+                  { "mfaAuthenticated": "true", "creationDate": "2024-01-15T10:30:00Z" },
+                "sessionIssuer":
+                  {
+                    "type": "Role",
+                    "principalId": "AAAAAAAAAAAAAAAAAAAAA",
+                    "arn": "arn:aws:iam::111111111111:role/sample-role-dreamy-yonath",
+                    "accountId": "111111111111",
+                    "userName": "AdminRole",
+                  },
+              },
+          },
+        "eventTime": "2024-01-15T10:55:00Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "PutBucketVersioning",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4 Linux/5.10.0-1234-aws exe/x86_64.ubuntu.22",
+        "requestParameters":
+          {
+            "bucketName": "critical-data-bucket",
+            "host": "critical-data-bucket.s3.amazonaws.com",
+            "VersioningConfiguration": { "Status": "Enabled", "MfaDelete": "Disabled" },
+          },
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-444444444444",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "111111111111",
+      }
+  - Name: Match - Versioning Suspended and MFA Delete Disabled in Single Call
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "AAAAAAAAAAAAAAAAAAAAA:user_name",
+            "arn": "arn:aws:sts::111111111111:assumed-role/sample-role-dreamy-yonath/user_name",
+            "accountId": "111111111111",
+            "accessKeyId": "ASIA-MOCKACCESSKEYID-1",
+          },
+        "eventTime": "2024-01-15T10:55:00Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "PutBucketVersioning",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4 Linux/5.10.0-1234-aws exe/x86_64.ubuntu.22",
+        "requestParameters":
+          {
+            "bucketName": "critical-data-bucket",
+            "host": "critical-data-bucket.s3.amazonaws.com",
+            "VersioningConfiguration": { "Status": "Suspended", "MfaDelete": "Disabled" },
+          },
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-555555555555",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "111111111111",
+      }
+  - Name: No Match - Bucket Logging Enabled
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.11",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "AAAAAAAAAAAAAAAAAAAAA:user_name",
+            "arn": "arn:aws:sts::111111111111:assumed-role/sample-role-dreamy-yonath/user_name",
+            "accountId": "111111111111",
+            "accessKeyId": "ASIA-MOCKACCESSKEYID-1",
+          },
+        "eventTime": "2024-01-15T10:45:23Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "PutBucketLogging",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4 Linux/5.10.0-1234-aws exe/x86_64.ubuntu.22",
+        "requestParameters":
+          {
+            "logging": [{ "targetBucket": "logging-bucket", "targetPrefix": "logs/" }],
+            "bucketName": "critical-data-bucket",
+            "BucketLoggingStatus":
+              {
+                "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/",
+                "LoggingEnabled":
+                  { "TargetBucket": "logging-bucket", "TargetPrefix": "logs/" },
+              },
+          },
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-666666666666",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "111111111111",
+      }
+  - Name: No Match - Versioning Enabled
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "AAAAAAAAAAAAAAAAAAAAA:user_name",
+            "arn": "arn:aws:sts::111111111111:assumed-role/sample-role-dreamy-yonath/user_name",
+            "accountId": "111111111111",
+            "accessKeyId": "ASIA-MOCKACCESSKEYID-1",
+          },
+        "eventTime": "2024-01-15T10:50:00Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "PutBucketVersioning",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4 Linux/5.10.0-1234-aws exe/x86_64.ubuntu.22",
+        "requestParameters":
+          {
+            "bucketName": "critical-data-bucket",
+            "host": "critical-data-bucket.s3.amazonaws.com",
+            "VersioningConfiguration": { "Status": "Enabled" },
+          },
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-777777777777",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "111111111111",
+      }
+  - Name: No Match - MFA Delete Enabled
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "AAAAAAAAAAAAAAAAAAAAA:user_name",
+            "arn": "arn:aws:sts::111111111111:assumed-role/sample-role-dreamy-yonath/user_name",
+            "accountId": "111111111111",
+            "accessKeyId": "ASIA-MOCKACCESSKEYID-1",
+          },
+        "eventTime": "2024-01-15T10:55:00Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "PutBucketVersioning",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4 Linux/5.10.0-1234-aws exe/x86_64.ubuntu.22",
+        "requestParameters":
+          {
+            "bucketName": "critical-data-bucket",
+            "host": "critical-data-bucket.s3.amazonaws.com",
+            "VersioningConfiguration": { "Status": "Enabled", "MfaDelete": "Enabled" },
+          },
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-888888888888",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "111111111111",
+      }
+  - Name: No Match - Failed API Call (Access Denied)
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity":
+          {
+            "type": "IAMUser",
+            "principalId": "AIDAI23HXS4EXAMPLE",
+            "arn": "arn:aws:iam::111111111111:user/testuser",
+            "accountId": "111111111111",
+            "accessKeyId": "AKIA-MOCKACCESSKEYID-1",
+          },
+        "eventTime": "2024-01-15T10:45:23Z",
+        "eventSource": "s3.amazonaws.com",
+        "eventName": "PutBucketLogging",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4 Linux/5.10.0-1234-aws exe/x86_64.ubuntu.22",
+        "errorCode": "AccessDenied",
+        "errorMessage": "Access Denied",
+        "requestParameters":
+          {
+            "logging": "",
+            "bucketName": "critical-data-bucket",
+            "BucketLoggingStatus": { "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/" },
+          },
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-999999999999",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "111111111111",
+      }
+  - Name: No Match - Non-S3 Event
+    ExpectedResult: false
+    Log:
+      {
+        "eventVersion": "1.08",
+        "userIdentity":
+          {
+            "type": "AssumedRole",
+            "principalId": "AAAAAAAAAAAAAAAAAAAAA:user_name",
+            "arn": "arn:aws:sts::111111111111:assumed-role/AdminRole/user_name",
+            "accountId": "111111111111",
+            "accessKeyId": "ASIAIOSFODNN7EXAMPLE",
+          },
+        "eventTime": "2024-01-15T10:45:23Z",
+        "eventSource": "ec2.amazonaws.com",
+        "eventName": "PutBucketLogging",
+        "awsRegion": "us-east-1",
+        "sourceIPAddress": "1.2.3.4",
+        "userAgent": "aws-cli/2.13.0 Python/3.11.4 Linux/5.10.0-1234-aws exe/x86_64.ubuntu.22",
+        "requestParameters": {},
+        "responseElements": null,
+        "requestID": "ABC123DEF456",
+        "eventID": "12345678-1234-1234-1234-000000000000",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "managementEvent": true,
+        "recipientAccountId": "111111111111",
+      }

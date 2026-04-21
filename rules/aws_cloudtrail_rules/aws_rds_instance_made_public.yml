@@ -1,0 +1,214 @@
+AnalysisType: rule
+Filename: aws_rds_instance_made_public.py
+RuleID: "AWS.RDS.InstanceMadePublic"
+DisplayName: "AWS RDS Instance Modified to be Publicly Accessible"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Persistence
+  - Defense Evasion
+  - Initial Access
+  - Account Manipulation
+  - Disable or Modify Cloud Firewall
+  - External Remote Services
+  - RDS
+Severity: Critical
+Description: >
+  Detects when an RDS instance or cluster is modified to become publicly accessible. This exposes
+  the database to the internet and is used by attackers for persistence or data exfiltration.
+  This detects the modification event in real-time, unlike static policy checks.
+Runbook: |
+  1. Find all RDS modification events by the user ARN in the 24 hours before the alert
+  2. Check if this database has been made public before by searching for ModifyDBInstance events with publiclyAccessible in the past 90 days
+  3. Look for database connection attempts from external IPs in the 6 hours after this modification
+  3. Find all API calls from the sourceIPAddress in the 6 hours before and after the alert to identify other suspicious modifications
+  4. Immediately revert publiclyAccessible to false if unauthorized, then review VPC security groups for overly permissive rules (0.0.0.0/0)
+  5. Check RDS database logs for any access attempts from external IPs in the time window after this modification
+Reference: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html
+Reports:
+  MITRE ATT&CK:
+    - TA0003:T1098  # Account Manipulation
+    - TA0005:T1562.007  # Disable or Modify Cloud Firewall
+    - TA0001:T1133  # External Remote Services
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - eventName
+  - userIdentity:principalId
+  - requestParameters:dBInstanceIdentifier
+  - requestParameters:dBClusterIdentifier
+  - requestParameters:publiclyAccessible
+  - p_any_aws_account_ids
+Threshold: 1
+Tests:
+  - Name: RDS Instance Made Public
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:developer"
+        arn: "arn:aws:sts::123456789012:assumed-role/DeveloperRole/developer"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+        sessionContext:
+          sessionIssuer:
+            type: Role
+            principalId: "AIDAI23HXS3EXAMPLE"
+            arn: "arn:aws:iam::123456789012:role/DeveloperRole"
+            accountId: "123456789012"
+            userName: DeveloperRole
+      eventTime: "2024-01-15T16:45:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: ModifyDBInstance
+      awsRegion: us-east-1
+      sourceIPAddress: "203.0.113.45"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        dBInstanceIdentifier: "production-db"
+        publiclyAccessible: true
+        applyImmediately: true
+      responseElements:
+        dBInstanceIdentifier: "production-db"
+        dBInstanceStatus: "modifying"
+        publiclyAccessible: true
+        pendingModifiedValues:
+          publiclyAccessible: true
+      requestID: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      eventID: "f1e2d3c4-b5a6-7890-1234-567890abcdef"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: RDS Cluster Made Public with Security Group Changes
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/contractor"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: contractor
+      eventTime: "2024-01-15T16:45:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: ModifyDBCluster
+      awsRegion: us-west-2
+      sourceIPAddress: "198.51.100.10"
+      userAgent: "Boto3/1.26.0"
+      requestParameters:
+        dBClusterIdentifier: "aurora-cluster"
+        publiclyAccessible: true
+        vPCSecurityGroupIds:
+          - "sg-0123456789abcdef0"
+        applyImmediately: true
+      responseElements:
+        dBClusterIdentifier: "aurora-cluster"
+        status: "modifying"
+        publiclyAccessible: true
+      requestID: "b2c3d4e5-f6a7-8901-bcde-f1234567890a"
+      eventID: "g2f3e4d5-c6b7-8901-2345-678901bcdefg"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: RDS Instance Made Private - No Alert
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:admin"
+        arn: "arn:aws:sts::123456789012:assumed-role/AdminRole/admin"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+      eventTime: "2024-01-15T16:45:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: ModifyDBInstance
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.1.100"
+      userAgent: "console.amazonaws.com"
+      requestParameters:
+        dBInstanceIdentifier: "production-db"
+        publiclyAccessible: false
+        applyImmediately: true
+      responseElements:
+        dBInstanceIdentifier: "production-db"
+        dBInstanceStatus: "modifying"
+        publiclyAccessible: false
+      requestID: "c3d4e5f6-a7b8-9012-cdef-1234567890ab"
+      eventID: "h3g4f5e6-d7c8-9012-3456-789012cdefgh"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: RDS Modification Without Public Access Change
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:user"
+        arn: "arn:aws:sts::123456789012:assumed-role/DBARole/user"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+      eventTime: "2024-01-15T16:45:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: ModifyDBInstance
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.1.50"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        dBInstanceIdentifier: "production-db"
+        allocatedStorage: 200
+        applyImmediately: false
+      responseElements:
+        dBInstanceIdentifier: "production-db"
+        dBInstanceStatus: "modifying"
+        allocatedStorage: 200
+      requestID: "d4e5f6a7-b8c9-0123-def0-1234567890bc"
+      eventID: "i4h5g6f7-e8d9-0123-4567-890123defghi"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: RDS Modification Failed
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/developer"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: developer
+      eventTime: "2024-01-15T16:45:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: ModifyDBInstance
+      awsRegion: us-east-1
+      sourceIPAddress: "10.0.2.100"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        dBInstanceIdentifier: "production-db"
+        publiclyAccessible: true
+      errorCode: AccessDenied
+      errorMessage: "User is not authorized to perform: rds:ModifyDBInstance"
+      requestID: "e5f6a7b8-c9d0-1234-ef01-234567890bcd"
+      eventID: "j5i6h7g8-f9e0-1234-5678-901234efghij"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
