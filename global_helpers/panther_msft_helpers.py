@@ -5,9 +5,11 @@ def msft_graph_alert_context(event):
     return {
         "category": event.get("category", ""),
         "description": event.get("description", ""),
-        "userStates": event.get("userStates", []),
-        "fileStates": event.get("fileStates", []),
-        "hostStates": event.get("hostStates", []),
+        "evidence": event.get("evidence", []),
+        "serviceSource": event.get("serviceSource", ""),
+        "productName": event.get("productName", ""),
+        "incidentId": event.get("incidentId", ""),
+        "alertWebUrl": event.get("alertWebUrl", ""),
     }
 
 
