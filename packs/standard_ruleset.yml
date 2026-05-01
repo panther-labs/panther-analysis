@@ -5,11 +5,18 @@ Description: This pack groups the standard rules that leverage unified data mode
 PackDefinition:
   IDs:
     # Data Models
+    - Standard.Amazon.EKS.Audit
     - Standard.Asana.Audit
     - Standard.Atlassian.Audit
+    - Standard.AWS.ALB
     - Standard.AWS.CloudTrail
+    - Standard.AWS.VPCFlow
+    - Standard.Azure.AKS.Audit
     - Standard.Azure.Audit.SignIn
     - Standard.Box.Event
+    - Standard.Cloudflare.Firewall
+    - Standard.Cloudflare.HttpReq
+    - Standard.Crowdstrike.FDR
     - Standard.GCP.AuditLog
     - Standard.Github.Audit
     - Standard.GSuite.ActivityEvent
@@ -25,13 +32,15 @@ PackDefinition:
     - Standard.AdminRoleAssigned
     - Standard.BruteForceByIP
     - Standard.BruteForceByUser
+    - Standard.GreyNoiseV3.MaliciousIP
     - Standard.ImpossibleTravel.Login
     - Standard.MFADisabled
     - Standard.NewAWSAccountCreated
     - Standard.NewUserAccountCreated
     # Global Helpers
-    - panther_base_helpers
     - panther_aws_helpers
+    - panther_base_helpers
     - panther_event_type_helpers
+    - panther_greynoise_helpers
     - panther_ipinfo_helpers
     - panther_lookuptable_helpers

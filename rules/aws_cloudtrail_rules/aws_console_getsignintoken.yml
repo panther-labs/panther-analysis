@@ -1,0 +1,89 @@
+AnalysisType: rule
+Filename: aws_console_getsignintoken.py
+RuleID: "AWS.Console.GetSigninToken.Abuse"
+DisplayName: "AWS Console GetSigninToken Potential Abuse"
+Enabled: true
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - AWS STS
+  - Lateral Movement:Remote Services
+  - Defense Evasion:Use Alternate Authentication Material
+Reports:
+  MITRE ATT&CK:
+    - TA0008:T1021.007
+    - TA0005:T1550.001
+Status: Experimental
+Severity: Medium
+Description: >
+  Detects GetSigninToken calls from non-SSO user agents. An adversary can use tools
+  like aws_consoler to convert compromised CLI credentials into a federated console
+  session, bypassing MFA requirements and obscuring the original access key. The
+  GetSigninToken API creates temporary console access from STS temporary credentials.
+Runbook: |
+  1. Query CloudTrail for all API calls by userIdentity:arn in the 6 hours before and after this alert, focusing on ConsoleLogin and console-based actions that may indicate the federated session was used
+  2. Check if sourceIPAddress and userAgent are associated with known internal tooling or if they match patterns of attacker tools like aws_consoler
+  3. Find all other alerts from this userIdentity:accessKeyId in the past 7 days to determine if the underlying credentials are compromised
+Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_enable-console-custom-url.html
+SummaryAttributes:
+  - userAgent
+  - sourceIpAddress
+  - recipientAccountId
+  - p_any_aws_arns
+DedupPeriodMinutes: 60
+Threshold: 1
+Tests:
+  - Name: Suspicious GetSigninToken
+    ExpectedResult: true
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "eventName": "GetSigninToken",
+        "eventSource": "signin.amazonaws.com",
+        "eventTime": "2024-01-15T10:30:00Z",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+        "sourceIPAddress": "203.0.113.50",
+        "userAgent": "python-requests/2.28.0",
+        "userIdentity": {
+          "accessKeyId": "ASIAIOSFODNN7EXAMPLE",
+          "accountId": "123456789012",
+          "arn": "arn:aws:sts::123456789012:assumed-role/MyRole/session",
+          "type": "AssumedRole"
+        }
+      }
+  - Name: Legitimate SSO Portal GetSigninToken
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "eventName": "GetSigninToken",
+        "eventSource": "signin.amazonaws.com",
+        "eventTime": "2024-01-15T10:30:00Z",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+        "sourceIPAddress": "10.0.0.1",
+        "userAgent": "Jersey/${project.version}",
+        "userIdentity": {
+          "type": "AssumedRole",
+          "arn": "arn:aws:sts::123456789012:assumed-role/AWSReservedSSO_Admin/user@example.com"
+        }
+      }
+  - Name: Unrelated Signin Event
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "eventName": "ConsoleLogin",
+        "eventSource": "signin.amazonaws.com",
+        "eventTime": "2024-01-15T10:30:00Z",
+        "eventType": "AwsConsoleSignIn",
+        "recipientAccountId": "123456789012",
+        "sourceIPAddress": "203.0.113.50",
+        "userAgent": "Mozilla/5.0",
+        "userIdentity": {
+          "type": "IAMUser",
+          "userName": "admin"
+        }
+      }

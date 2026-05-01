@@ -1,0 +1,74 @@
+AnalysisType: rule
+Filename: databricks_employee_logon.py
+RuleID: "Databricks.Audit.EmployeeLogon"
+DisplayName: "Databricks Employee Logon"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Databricks.Audit
+Tags:
+  - Databricks
+  - Initial Access
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078 # Valid Accounts
+Severity: Info
+Description: >
+  Detects when a Databricks employee successfully logs into a workspace using GENIE_AUTH authentication.
+  This is typically for legitimate support purposes but should be tracked for awareness.
+Runbook: |
+  1. Query Databricks audit logs for all actions by this Databricks employee (userIdentity.email) in the 24 hours before and after the alert
+  2. Check if there are open support cases or authorized maintenance windows that would explain this employee access
+  3. Find all other Databricks employee logins to this workspace in the past 30 days to identify patterns
+Reference: https://github.com/databricks-solutions/cybersec-workspace-detection-app/blob/main/base/detections/event-based/databricks_employee_logon.py
+Tests:
+  - Name: Databricks Employee Login Success
+    ExpectedResult: true
+    Log:
+      version: "2.0"
+      auditLevel: "WORKSPACE_LEVEL"
+      timestamp: 1234567890000
+      accountId: "12345678-1234-1234-1234-123456789012"
+      workspaceId: "1234567890123456"
+      sourceIPAddress: "198.51.100.1"
+      userAgent: "Mozilla/5.0"
+      sessionId: "session-123"
+      requestId: "req-123"
+      serviceName: "accounts"
+      actionName: "login"
+      userIdentity:
+        email: "support@databricks.com"
+      requestParams:
+        authentication_method: "GENIE_AUTH"
+      response:
+        statusCode: 200
+  - Name: Non-GENIE_AUTH Login
+    ExpectedResult: false
+    Log:
+      version: "2.0"
+      auditLevel: "WORKSPACE_LEVEL"
+      timestamp: 1234567890000
+      accountId: "12345678-1234-1234-1234-123456789012"
+      workspaceId: "1234567890123456"
+      sourceIPAddress: "198.51.100.1"
+      serviceName: "accounts"
+      actionName: "login"
+      userIdentity:
+        email: "user@example.com"
+      requestParams:
+        authentication_method: "SAML"
+      response:
+        statusCode: 200
+  - Name: Failed GENIE_AUTH Login
+    ExpectedResult: false
+    Log:
+      version: "2.0"
+      auditLevel: "WORKSPACE_LEVEL"
+      timestamp: 1234567890000
+      accountId: "12345678-1234-1234-1234-123456789012"
+      serviceName: "accounts"
+      actionName: "login"
+      requestParams:
+        authentication_method: "GENIE_AUTH"
+      response:
+        statusCode: 403

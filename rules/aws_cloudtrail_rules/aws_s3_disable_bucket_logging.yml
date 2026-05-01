@@ -3,6 +3,7 @@ Filename: aws_s3_disable_bucket_logging.py
 RuleID: "AWS.S3.DisableBucketLogging"
 DisplayName: "S3 Bucket Logging Disabled"
 Enabled: true
+CreateAlert: false
 LogTypes:
   - AWS.CloudTrail
 Tags:
@@ -14,7 +15,6 @@ Reports:
     - TA0005:T1562
     - TA0040:T1485
 Severity: Low
-Status: Experimental
 Description: Detects when server access logging is disabled on an S3 bucket, removing audit trail capabilities that could indicate ransomware preparation activity or an attempt to evade detection.
 Runbook: |
   1. Query CloudTrail for all S3 API calls by the userIdentity:arn on the requestParameters:bucketName in the 24 hours before and after the bucket logging was disabled to identify if this is part of a larger attack pattern

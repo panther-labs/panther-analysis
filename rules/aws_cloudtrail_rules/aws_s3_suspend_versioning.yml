@@ -3,6 +3,7 @@ Filename: aws_s3_suspend_versioning.py
 RuleID: "AWS.S3.SuspendVersioning"
 DisplayName: "S3 Bucket Versioning Suspended"
 Enabled: true
+CreateAlert: false
 LogTypes:
   - AWS.CloudTrail
 Tags:
@@ -14,7 +15,6 @@ Reports:
     - TA0005:T1562
     - TA0040:T1485
 Severity: Low
-Status: Experimental
 Description: Detects when S3 bucket versioning is suspended or disabled, which removes the ability to recover previous versions of objects and is a common precursor to ransomware attacks or data destruction.
 Runbook: |
   1. Query CloudTrail for all S3 API calls by the userIdentity:arn on the requestParameters:bucketName in the 24 hours before and after versioning was suspended

@@ -10,7 +10,6 @@ PackDefinition:
     - Google.Workspace.Apps.New.Mobile.App.Installed
     - GSuite.AdvancedProtection
     - GSuite.CalendarMadePublic
-    - GSuite.Drive.Many.Documents.Deleted
     - GSuite.GoogleAccess
     - GSuite.GovernmentBackedAttack
     - GSuite.GroupBannedUser
@@ -44,8 +43,11 @@ PackDefinition:
     - panther_gsuite_helpers
     - panther_event_type_helpers
     - panther_lookuptable_helpers
+    # Scheduled Rules (disabled - depend on disabled scheduled queries)
+    - Google.Workspace.Login.Type.Anomaly
+    - Google.Workspace.OAuth.Token.New.IP
+    - Google.Workspace.Rapid.Multi.IP.Authentication
     # Queries
-    - GSuite Many Docs Deleted Query
     - GSuite Many Docs Downloaded Query
     - Google Workspace Login Type Anomaly
     - Google Workspace Rapid Multi-IP Authentication

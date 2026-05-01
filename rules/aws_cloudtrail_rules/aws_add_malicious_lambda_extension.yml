@@ -1,7 +1,7 @@
 AnalysisType: rule
 Filename: aws_add_malicious_lambda_extension.py
 RuleID: "AWS.Lambda.UpdateFunctionConfiguration"
-DisplayName: "Lambda Configuration with Layers Updated by IAM User"
+DisplayName: "Lambda Configuration Updated with Layers by User"
 Enabled: true
 LogTypes:
   - AWS.CloudTrail
@@ -9,18 +9,17 @@ Reports:
   MITRE ATT&CK:
     - TA0007:T1078
 Severity: High
-Status: Experimental
 CreateAlert: true
 Description: >
-  Detects when Lambda function configuration is updated with layers using direct IAM user credentials instead of assumed roles.
-  Lambda layers can execute code before the main function, making them a stealthy persistence mechanism.
-  This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails,
-  or insider threat activity attempting to inject malicious layers.
+  Detects when Lambda function configuration is updated with layers by an IAM user,
+  federated user, or AWS SSO user. Lambda layers can execute code before the main function,
+  making them a stealthy persistence mechanism. This may indicate compromised credentials,
+  a developer bypassing CI/CD guardrails, or insider threat activity.
 Runbook: |
-  Verify the IAM user and layer ARNs are authorized.
+  Verify the user identity and layer ARNs are authorized.
   Check if layers are from trusted sources (same account, known publishers).
   If unauthorized:
-  - Disable the IAM user access key
+  - Disable the user's access key or revoke the SSO session
   - Revert Lambda configuration to previous version
   - Investigate credential compromise
 Reference: https://stratus-red-team.cloud/attack-techniques/AWS/aws.persistence.lambda-layer-extension/
@@ -101,6 +100,92 @@ Tests:
           "layers": [
             {
               "arn": "arn:aws:lambda:us-west-2:123456789012:layer:my-layer:1"
+            }
+          ]
+        },
+        "requestID": "1",
+        "eventID": "1",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail"
+      }
+  - Name: SSO AssumedRole Updates Lambda Configuration with Layers
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.05",
+        "userIdentity": {
+          "type": "AssumedRole",
+          "principalId": "AROA123456789EXAMPLE:bob.ross",
+          "arn": "arn:aws:sts::123456789012:assumed-role/AWSReservedSSO_DevAdmin_abc123/bob.ross",
+          "accountId": "123456789012",
+          "accessKeyId": "ASIA123456789EXAMPLE",
+          "sessionContext": {
+            "sessionIssuer": {
+              "type": "Role",
+              "principalId": "AROA123456789EXAMPLE",
+              "arn": "arn:aws:iam::123456789012:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin_abc123",
+              "accountId": "123456789012",
+              "userName": "AWSReservedSSO_DevAdmin_abc123"
+            },
+            "webIdFederationData": {},
+            "attributes": {
+              "mfaAuthenticated": "false",
+              "creationDate": "2019-01-01T00:00:00Z"
+            }
+          }
+        },
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "lambda.amazonaws.com",
+        "eventName": "UpdateFunctionConfiguration20150331v2",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "203.0.113.50",
+        "userAgent": "aws-cli/2.13.5 Python/3.11.4",
+        "requestParameters": {
+          "functionName": "production-api"
+        },
+        "responseElements": {
+          "functionName": "production-api",
+          "layers": [
+            {
+              "arn": "arn:aws:lambda:us-west-2:123456789012:layer:suspicious-layer:1"
+            }
+          ]
+        },
+        "requestID": "1",
+        "eventID": "1",
+        "readOnly": false,
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+        "p_log_type": "AWS.CloudTrail"
+      }
+  - Name: FederatedUser Updates Lambda Configuration with Layers
+    ExpectedResult: true
+    Log:
+      {
+        "eventVersion": "1.05",
+        "userIdentity": {
+          "type": "FederatedUser",
+          "principalId": "123456789012:federated-user",
+          "arn": "arn:aws:sts::123456789012:federated-user/federated-user",
+          "accountId": "123456789012",
+          "accessKeyId": "ASIA123456789EXAMPLE"
+        },
+        "eventTime": "2019-01-01T00:00:00Z",
+        "eventSource": "lambda.amazonaws.com",
+        "eventName": "UpdateFunctionConfiguration20150331v2",
+        "awsRegion": "us-west-2",
+        "sourceIPAddress": "203.0.113.50",
+        "userAgent": "aws-cli/2.13.5 Python/3.11.4",
+        "requestParameters": {
+          "functionName": "production-api"
+        },
+        "responseElements": {
+          "functionName": "production-api",
+          "layers": [
+            {
+              "arn": "arn:aws:lambda:us-west-2:123456789012:layer:some-layer:1"
             }
           ]
         },

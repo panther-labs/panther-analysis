@@ -1,0 +1,170 @@
+AnalysisType: rule
+Filename: aws_rds_snapshot_export.py
+RuleID: "AWS.RDS.SnapshotExport"
+DisplayName: "AWS RDS Snapshot Exported to S3"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - AWS.CloudTrail
+Tags:
+  - AWS
+  - Exfiltration
+  - Transfer Data to Cloud Account
+  - RDS
+Severity: High
+Description: >
+  Detects when an RDS snapshot is exported to S3 using StartExportTask. Attackers use this
+  to exfiltrate database contents by exporting snapshots to buckets they control. While
+  snapshot exports are legitimate for analytics, they provide complete database access.
+Runbook: |
+  1. Find all API calls by the user ARN in the 24 hours before the alert to establish normal behavior
+  2. Check if the S3 bucket in requestParameters:s3BucketName has been accessed by this user in the past 90 days
+  3. Look for other StartExportTask events or snapshot operations from this user in the past 7 days
+Reference: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ExportSnapshot.html
+Reports:
+  MITRE ATT&CK:
+    - TA0010:T1537  # Exfiltration: Transfer Data to Cloud Account
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - eventName
+  - userIdentity:principalId
+  - requestParameters:s3BucketName
+  - requestParameters:sourceArn
+  - p_any_aws_account_ids
+Threshold: 1
+Tests:
+  - Name: RDS Snapshot Export Started
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:user"
+        arn: "arn:aws:sts::123456789012:assumed-role/Admin/user"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+      eventTime: "2024-01-15T10:30:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: StartExportTask
+      awsRegion: us-east-1
+      sourceIPAddress: "1.2.3.4"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        sourceArn: "arn:aws:rds:us-east-1:123456789012:snapshot:my-db-snapshot"
+        s3BucketName: "my-export-bucket"
+        s3Prefix: "exports/2024-01-15/"
+        iamRoleArn: "arn:aws:iam::123456789012:role/RDSExportRole"
+        kmsKeyId: "arn:aws:kms:us-east-1:123456789012:key/1234abcd-12ab-34cd-56ef-1234567890ab"
+        exportOnly:
+          - "schema1.table1"
+          - "schema1.table2"
+      responseElements:
+        exportTaskIdentifier: "export-snapshot-2024-01-15-103000"
+        sourceArn: "arn:aws:rds:us-east-1:123456789012:snapshot:my-db-snapshot"
+        snapshotTime: "2024-01-14T00:00:00Z"
+        taskStartTime: "2024-01-15T10:30:00Z"
+        s3Bucket: "my-export-bucket"
+        s3Prefix: "exports/2024-01-15/"
+        iamRoleArn: "arn:aws:iam::123456789012:role/RDSExportRole"
+        kmsKeyId: "arn:aws:kms:us-east-1:123456789012:key/1234abcd-12ab-34cd-56ef-1234567890ab"
+        status: "STARTING"
+        percentProgress: 0
+        totalExtractedDataInGB: 0
+      requestID: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      eventID: "f1e2d3c4-b5a6-7890-1234-567890abcdef"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: RDS Snapshot Export to Suspicious Bucket
+    ExpectedResult: true
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: IAMUser
+        principalId: "AIDAI23HXS3EXAMPLE"
+        arn: "arn:aws:iam::123456789012:user/developer"
+        accountId: "123456789012"
+        accessKeyId: "AKIAIOSFODNN7EXAMPLE"
+        userName: developer
+      eventTime: "2024-01-15T10:30:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: StartExportTask
+      awsRegion: us-east-1
+      sourceIPAddress: "203.0.113.45"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        sourceArn: "arn:aws:rds:us-east-1:123456789012:snapshot:production-db-snapshot"
+        s3BucketName: "temp-export-external-bucket"
+        s3Prefix: "tmp/"
+        iamRoleArn: "arn:aws:iam::123456789012:role/RDSExportRole"
+        kmsKeyId: "arn:aws:kms:us-east-1:123456789012:key/1234abcd-12ab-34cd-56ef-1234567890ab"
+      responseElements:
+        exportTaskIdentifier: "export-snapshot-2024-01-15-103000"
+        sourceArn: "arn:aws:rds:us-east-1:123456789012:snapshot:production-db-snapshot"
+        s3Bucket: "temp-export-external-bucket"
+        status: "STARTING"
+      requestID: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      eventID: "f1e2d3c4-b5a6-7890-1234-567890abcdef"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: RDS Snapshot Export Failed
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:user"
+        arn: "arn:aws:sts::123456789012:assumed-role/Admin/user"
+        accountId: "123456789012"
+        accessKeyId: "ASIAIOSFODNN7EXAMPLE"
+      eventTime: "2024-01-15T10:30:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: StartExportTask
+      awsRegion: us-east-1
+      sourceIPAddress: "1.2.3.4"
+      userAgent: "aws-cli/2.13.0"
+      requestParameters:
+        sourceArn: "arn:aws:rds:us-east-1:123456789012:snapshot:my-db-snapshot"
+        s3BucketName: "my-export-bucket"
+        iamRoleArn: "arn:aws:iam::123456789012:role/RDSExportRole"
+      errorCode: AccessDenied
+      errorMessage: "User is not authorized to perform: rds:StartExportTask"
+      requestID: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      eventID: "f1e2d3c4-b5a6-7890-1234-567890abcdef"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management
+
+  - Name: Different RDS Event
+    ExpectedResult: false
+    Log:
+      eventVersion: "1.08"
+      userIdentity:
+        type: AssumedRole
+        principalId: "AIDAI23HXS3EXAMPLE:user"
+        arn: "arn:aws:sts::123456789012:assumed-role/Admin/user"
+        accountId: "123456789012"
+      eventTime: "2024-01-15T10:30:00Z"
+      eventSource: rds.amazonaws.com
+      eventName: CreateDBSnapshot
+      awsRegion: us-east-1
+      sourceIPAddress: "1.2.3.4"
+      requestParameters:
+        dBSnapshotIdentifier: "my-snapshot"
+        dBInstanceIdentifier: "my-db-instance"
+      requestID: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+      eventID: "f1e2d3c4-b5a6-7890-1234-567890abcdef"
+      readOnly: false
+      eventType: AwsApiCall
+      managementEvent: true
+      recipientAccountId: "123456789012"
+      eventCategory: Management

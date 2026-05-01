@@ -3,6 +3,7 @@ Filename: aws_s3_copy_object_to_external_account_bucket.py
 RuleID: "AWS.S3.CopyObjectToExternalAccountBucket"
 DisplayName: "AWS S3 Object Copied to External Account Bucket"
 Enabled: true
+CreateAlert: false
 LogTypes:
   - AWS.CloudTrail
 Tags:
@@ -14,7 +15,6 @@ Reports:
     - TA0010:T1537
     - TA0040:T1486
 Severity: Medium
-Status: Experimental
 DedupPeriodMinutes: 60
 Description: >
   Detects when an S3 object is copied from one bucket to another bucket in a different AWS account.

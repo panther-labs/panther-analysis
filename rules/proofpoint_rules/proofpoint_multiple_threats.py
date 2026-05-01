@@ -7,8 +7,8 @@ def get_active_threat_count(event):
 
 
 def rule(event):
-    # Must have at least 2 active threats
-    return get_active_threat_count(event) >= 2
+    # Must have at least 3 active threats to reduce overlap with single-vector rules
+    return get_active_threat_count(event) >= 3
 
 
 def severity(event):
@@ -18,9 +18,12 @@ def severity(event):
         return "CRITICAL"
     if active_count >= 3:
         return "HIGH"
-    if active_count >= 2:
-        return "MEDIUM"
     return "DEFAULT"
+
+
+def dedup(event):
+    sender = event.get("sender", "<UNKNOWN_SENDER>")
+    return f"proofpoint:multiple_threats:{sender}"
 
 
 def title(event):

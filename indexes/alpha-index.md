@@ -11,6 +11,7 @@
 - [P](#P)
 - [S](#S)
 - [T](#T)
+- [U](#U)
 - [W](#W)
 - [Z](#Z)
 # A
@@ -116,6 +117,8 @@
   - This policy ensures that at least one CloudTrail has management (control plane) operations logged.
 - [AWS CloudTrail Password Policy Discovery](../rules/aws_cloudtrail_rules/aws_cloudtrail_password_policy_discovery.yml)
   - This detection looks for *AccountPasswordPolicy events in AWS CloudTrail logs. If these events occur in a short period of time from the same ARN, it could constitute Password Policy reconnaissance.
+- [AWS CloudTrail Password Spraying](../rules/aws_cloudtrail_rules/aws_cloudtrail_password_spraying.yml)
+  - Detects password spraying attacks by alerting when more than 9 distinct usernames fail to authenticate to the AWS console from the same account and region within 60 minutes.
 - [AWS Cloudtrail Region Enabled](../rules/aws_cloudtrail_rules/aws_cloudtrail_region_enabled.yml)
   - Threat actors who successfully compromise a victim's AWS account, whether through stolen credentials,  exposed access keys, exploited IAM misconfigurations, vulnerabilities in third-party applications,  or the absence of Multi-Factor Authentication (MFA), can exploit unused regions as safe zones  for malicious activities. These regions are often overlooked in monitoring and security setups,  making them an attractive target for attackers to operate undetected.
 - [AWS CloudTrail Retention Lifecycle Too Short](../rules/aws_cloudtrail_rules/aws_cloudtrail_short_lifecycle.yml)
@@ -137,6 +140,8 @@
   - An AWS Config Recorder or Delivery Channel was created
 - [AWS Config Service Disabled](../rules/aws_cloudtrail_rules/aws_config_service_disabled_deleted.yml)
   - An AWS Config Recorder or Delivery Channel was disabled or deleted
+- [AWS Console GetSigninToken Potential Abuse](../rules/aws_cloudtrail_rules/aws_console_getsignintoken.yml)
+  - Detects GetSigninToken calls from non-SSO user agents. An adversary can use tools like aws_consoler to convert compromised CLI credentials into a federated console session, bypassing MFA requirements and obscuring the original access key. The GetSigninToken API creates temporary console access from STS temporary credentials.
 - [AWS Console Login](../rules/aws_cloudtrail_rules/aws_console_login.yml)
 - [AWS Console Sign-In NOT PRECEDED BY Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
   - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta and both log sources configured.
@@ -172,6 +177,8 @@
   - This alert occurs when AWS has detected exposed credentials. It attaches a policy to deny certain actions, effectively quarantining those credentials, and is accompanied by a support case with instructions for detaching the policy.
 - [AWS IAM Group Read Only Events](../rules/aws_cloudtrail_rules/aws_iam_group_read_only_events.yml)
   - This rule captures multiple read/list events related to IAM group management in AWS Cloudtrail.
+- [AWS IMDS Credential Usage Outside Expected Services](../rules/aws_cloudtrail_rules/aws_imds_credential_exfiltration.yml)
+  - Detects when an EC2 instance identity (credentials obtained via IMDS) is used to make API calls outside of expected internal AWS services like SSM. This indicates that IMDS credentials may have been exfiltrated from a compromised instance and are being used externally for lateral movement or privilege escalation.
 - [AWS Macie Disabled/Updated](../rules/aws_cloudtrail_rules/aws_macie_evasion.yml)
   - Amazon Macie is a data security and data privacy service to discover and protect sensitive data. Security teams use Macie to detect open S3 Buckets that could have potentially sensitive data in it along with policy violations, such as missing Encryption. If an attacker disables Macie, it could potentially hide data exfiltration.
 - [AWS Modify Cloud Compute Infrastructure](../rules/aws_cloudtrail_rules/aws_modify_cloud_compute_infrastructure.yml)
@@ -185,10 +192,36 @@
 - [AWS Privilege Escalation Via User Compromise](../correlation_rules/aws_privilege_escalation_via_user_compromise.yml)
 - [AWS Public RDS Restore](../rules/aws_cloudtrail_rules/aws_rds_publicrestore.yml)
   - Detects the recovery of a new public database instance from a snapshot. It may be part of data exfiltration.
+- [AWS RDS Activity Stream Stopped](../rules/aws_cloudtrail_rules/aws_rds_activity_stream_stopped.yml)
+  - Detects when RDS Database Activity Streams are stopped. Activity Streams provide real-time monitoring of database activity. Disabling them is a clear evasion technique used by attackers to avoid detection before performing malicious operations.
+- [AWS RDS Automated Backup Deleted](../rules/aws_cloudtrail_rules/aws_rds_automated_backup_deleted.yml)
+  - Detects deletion of RDS automated backups. This is a classic ransomware tactic where attackers delete automated backups before encrypting or destroying databases to prevent recovery. Any automated backup deletion should be investigated immediately.
+- [AWS RDS Cluster Failover Initiated](../rules/aws_cloudtrail_rules/aws_rds_cluster_failover.yml)
+  - Detects when RDS cluster or global cluster failovers are manually initiated. Forced failovers cause brief service interruptions and may indicate disaster recovery testing, operational troubleshooting, or disruption attempts.
+- [AWS RDS Deletion Protection Disabled](../rules/aws_cloudtrail_rules/aws_rds_deletion_protection_disabled.yml)
+  - Detects when deletion protection is disabled on an RDS instance or cluster. This is often a precursor to database deletion and may indicate ransomware or data destruction attacks where attackers first disable protections before deleting resources.
+- [AWS RDS Instance Modified to be Publicly Accessible](../rules/aws_cloudtrail_rules/aws_rds_instance_made_public.yml)
+  - Detects when an RDS instance or cluster is modified to become publicly accessible. This exposes the database to the internet and is used by attackers for persistence or data exfiltration. This detects the modification event in real-time, unlike static policy checks.
+- [AWS RDS Instance or Cluster Deleted](../rules/aws_cloudtrail_rules/aws_rds_instance_deletion.yml)
+  - Detects RDS database instance or cluster deletion. Deletions that skip final snapshots result in permanent data loss and may indicate ransomware, insider threats, or compromised credentials being used to destroy data.
+- [AWS RDS Instance or Cluster Rebooted](../rules/aws_cloudtrail_rules/aws_rds_instance_rebooted.yml)
+  - Detects when RDS instances, clusters, or shard groups are rebooted. Unexpected reboots cause service disruption and may indicate DoS attempts, unauthorized testing, or operational issues requiring investigation.
+- [AWS RDS Log File Downloaded](../rules/aws_cloudtrail_rules/aws_rds_log_file_downloaded.yml)
+  - Detects when RDS database log files are downloaded. Log files may contain credentials, sensitive queries, or application secrets. Bulk downloads from unusual locations may indicate credential harvesting or data reconnaissance.
 - [AWS RDS Manual/Public Snapshot Created](../rules/aws_cloudtrail_rules/aws_rds_manual_snapshot_created.yml)
   - A manual snapshot of an RDS database was created. An attacker may use this to exfiltrate the DB contents to another account; use this as a correlation rule.
 - [AWS RDS Master Password Updated](../rules/aws_cloudtrail_rules/aws_rds_master_pass_updated.yml)
   - A sensitive database operation that should be performed carefully or rarely
+- [AWS RDS Security Group Ingress Authorized](../rules/aws_cloudtrail_rules/aws_rds_security_group_ingress_authorized.yml)
+  - Detects when ingress rules are added to RDS security groups. Overly permissive rules, especially 0.0.0.0/0, expose databases to the internet and may indicate attackers opening network access for persistence or data exfiltration.
+- [AWS RDS Snapshot Copied Cross-Region](../rules/aws_cloudtrail_rules/aws_rds_snapshot_copied_cross_region.yml)
+  - Detects when RDS snapshots are copied to different AWS regions. While legitimate for disaster recovery, cross-region snapshot copies can be used for data exfiltration or to prepare snapshots for sharing with external accounts.
+- [AWS RDS Snapshot Deleted](../rules/aws_cloudtrail_rules/aws_rds_snapshot_deleted.yml)
+  - Detects deletion of RDS snapshots. Attackers delete backups to prevent recovery or hide evidence of data exfiltration. Multiple snapshot deletions may indicate ransomware preparing to encrypt databases without recovery options.
+- [AWS RDS Snapshot Enumeration with Public or Shared Flag](../rules/aws_cloudtrail_rules/aws_rds_snapshot_enumeration.yml)
+  - Detects when RDS snapshots are queried with includePublic or includeShared flags. This indicates reconnaissance for publicly accessible or shared snapshots that may contain sensitive data and be exploitable by attackers.
+- [AWS RDS Snapshot Exported to S3](../rules/aws_cloudtrail_rules/aws_rds_snapshot_export.yml)
+  - Detects when an RDS snapshot is exported to S3 using StartExportTask. Attackers use this to exfiltrate database contents by exporting snapshots to buckets they control. While snapshot exports are legitimate for analytics, they provide complete database access.
 - [AWS RDS Snapshot Shared](../rules/aws_cloudtrail_rules/aws_rds_snapshot_shared.yml)
   - An RDS snapshot was shared with another account. This could be an indicator of exfiltration.
 - [AWS Resource Made Public](../rules/aws_cloudtrail_rules/aws_resource_made_public.yml)
@@ -209,6 +242,8 @@
   - Detects a ransomware attack pattern where an attacker with compromised AWS credentials exfiltrates data from an S3 bucket to an external AWS account, followed by bulk deletion of objects from the source bucket within a short timeframe. This technique was notably used by the threat actor Bling Libra to extort victims by threatening data destruction or leaks.
 - [AWS S3 Ransomware Note Upload Detection](../rules/aws_cloudtrail_rules/aws_s3_ransomware_note_upload.yml)
   - This rule detects when files with names commonly associated with ransomware notes are uploaded to S3 buckets. Ransomware attackers often drop ransom notes with distinctive filenames like HOW_TO_DECRYPT_FILES.txt, RANSOM_NOTE.txt, FILES_ENCRYPTED.html, or similar patterns to inform victims about the encryption and provide payment instructions.
+- [AWS S3 Security Control Disabling](../rules/aws_cloudtrail_rules/aws_s3_security_control_disabling.yml)
+  - Detects the disabling of 2 or more distinct S3 security controls (logging, versioning, and MFA delete protection) on the same bucket by the same actor within a short timeframe. Threshold is set to 2 rather than 3 because versioning and MFA delete can be disabled together in a single PutBucketVersioning API call, which produces only one unique value — making a threshold of 3 structurally unreachable in that scenario. This pattern is a strong indicator of preparation for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before encrypting or deleting data.
 - [AWS S3 Security Controls Disabled](../correlation_rules/aws_s3_disable_security_controls.yml)
   - Detects the disabling of multiple S3 security controls (logging, versioning and MFA delete protection) on the same bucket within a short timeframe. This pattern is a strong indicator of preparation for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before encrypting or deleting data. Alerting on this activity enables early intervention before actual data loss occurs.
 - [AWS SAML Activity](../rules/aws_cloudtrail_rules/aws_saml_activity.yml)
@@ -231,6 +266,10 @@
   - Returns StartSession events by users who triggered more than 2 StartSession events over the past hour.
 - [AWS SSO Access Token Retrieved by Unauthenticated IP](../correlation_rules/aws_sso_access_token_retrieved_by_unauthenticated_ip.yml)
   - When using AWS in an enterprise environment, best practices dictate to use a single sign-on service for identity and access management. AWS SSO is a popular solution, integrating with third-party providers such as Okta and allowing to centrally manage roles and permissions in multiple AWS accounts.In this post, we demonstrate that AWS SSO is vulnerable by design to device code authentication phishing – just like any identity provider implementing OpenID Connect device code authentication. This technique was first demonstrated by Dr. Nestori Syynimaa for Azure AD. The feature provides a powerful phishing vector for attackers, rendering ineffective controls such as MFA (including Yubikeys) or IP allow-listing at the IdP level.
+- [AWS STS GetCallerIdentity via TruffleHog](../rules/aws_cloudtrail_rules/aws_sts_getcalleridentity_trufflehog.yml)
+  - Detects AWS STS GetCallerIdentity calls made by TruffleHog, a credential scanning tool. Threat actors use TruffleHog to validate whether leaked or stolen AWS access keys are still active. A GetCallerIdentity call with a TruffleHog user agent indicates that credentials from this account have been discovered externally and are being tested for validity.
+- [AWS STS GetSessionToken by IAM User](../rules/aws_cloudtrail_rules/aws_sts_getsessiontoken_misuse.yml)
+  - Detects an IAM user calling STS GetSessionToken to obtain temporary credentials. Attackers who have compromised long-term IAM credentials may use GetSessionToken to generate short-lived session tokens for lateral movement or to bypass IP-based policies that apply only to long-term credentials.
 - [AWS Trusted IPSet Modified](../rules/aws_cloudtrail_rules/aws_ipset_modified.yml)
   - Detects creation and updates of the list of trusted IPs used by GuardDuty and WAF. Potentially to disable security alerts against malicious IPs.
 - [AWS Unsuccessful MFA attempt](../rules/aws_cloudtrail_rules/aws_cloudtrail_unsuccessful_mfa_attempt.yml)
@@ -293,6 +332,8 @@
   - An IAM Entity (Group, Policy, Role, or User) was created manually. IAM entities should be created in code to ensure that permissions are tracked and managed correctly.
 - [IAM Policy Modified](../rules/aws_cloudtrail_rules/aws_iam_policy_modified.yml)
   - An IAM Policy was changed.
+- [IAM Role Added to RDS Instance or Cluster](../rules/aws_cloudtrail_rules/aws_rds_iam_role_added.yml)
+  - Detects when IAM roles are added to RDS instances or clusters. While legitimate for features like S3 import/export, attackers may add overly permissive roles to maintain access or escalate privileges for data exfiltration.
 - [IAM Role Created](../rules/aws_cloudtrail_rules/aws_iam_create_role.yml)
   - An IAM role was created.
 - [IAM Role Policy Updated to Allow Internet Access](../rules/aws_cloudtrail_rules/aws_iam_backdoor_role.yml)
@@ -305,10 +346,10 @@
   - A user has subsequent logins from two geographic locations that are very far apart
 - [KMS CMK Disabled or Deleted](../rules/aws_cloudtrail_rules/aws_kms_cmk_loss.yml)
   - A KMS Customer Managed Key was disabled or scheduled for deletion. This could potentially lead to permanent loss of encrypted data.
-- [Lambda Code Updated by IAM User](../rules/aws_cloudtrail_rules/aws_overwrite_lambda_code.yml)
-  - Detects when Lambda function code is updated using direct IAM user credentials instead of assumed roles. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity. Modern best practice uses roles for programmatic access, making IAM user activity on Lambda code updates a high-confidence security signal.
-- [Lambda Configuration with Layers Updated by IAM User](../rules/aws_cloudtrail_rules/aws_add_malicious_lambda_extension.yml)
-  - Detects when Lambda function configuration is updated with layers using direct IAM user credentials instead of assumed roles. Lambda layers can execute code before the main function, making them a stealthy persistence mechanism. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity attempting to inject malicious layers.
+- [Lambda Code Updated by User](../rules/aws_cloudtrail_rules/aws_overwrite_lambda_code.yml)
+  - Detects when Lambda function code is updated by an IAM user, federated user, or AWS SSO user. This may indicate compromised credentials, a developer bypassing CI/CD guardrails, or insider threat activity.
+- [Lambda Configuration Updated with Layers by User](../rules/aws_cloudtrail_rules/aws_add_malicious_lambda_extension.yml)
+  - Detects when Lambda function configuration is updated with layers by an IAM user, federated user, or AWS SSO user. Lambda layers can execute code before the main function, making them a stealthy persistence mechanism. This may indicate compromised credentials, a developer bypassing CI/CD guardrails, or insider threat activity.
 - [Lambda CRUD Actions](../rules/aws_cloudtrail_rules/aws_lambda_crud.yml)
   - Unauthorized lambda Create, Read, Update, or Delete event occurred.
 - [Logins Without MFA](../rules/aws_cloudtrail_rules/aws_console_login_without_mfa.yml)
@@ -533,6 +574,8 @@
   - This detection monitors for Roles or ClusterRoles being created with write permissions (create, update, patch, delete, deletecollection). While write permissions are common and often necessary for application operations, tracking role creation helps establish RBAC baselines and identify overly permissive configurations. Severity escalates for write access to sensitive resources like secrets or RBAC objects.
 - [Kubernetes Secret Access Denied](../rules/kubernetes_rules/k8s_secret_access_denied.yml)
   - This detection monitors for failed attempts to read Kubernetes secrets. While occasional failed access attempts may indicate RBAC misconfigurations, repeated failures suggest enumeration or brute-force attempts by compromised accounts. With 15-minute deduplication, 20 or more failed attempts within this window indicates active secret enumeration and should be investigated immediately.
+- [Kubernetes Secret Enumeration by a User](../rules/kubernetes_rules/k8s_secret_enumeration.yml)
+  - Detects when a single user accesses 15 or more distinct secrets within 30 minutes using list, get, or watch verbs. This may indicate secret enumeration to enable lateral or vertical movement and unauthorized access to critical resources. The threshold should be tuned to your environment.
 - [Kubernetes Service Account Token Theft from Pod](../rules/kubernetes_rules/k8s_steal_serviceaccount_token.yml)
   - This detection monitors for commands executed in pods that attempt to read service account tokens from /var/run/secrets/kubernetes.io/serviceaccount/token. Attackers who gain exec access to a pod can steal its service account token to authenticate as that service account to the Kubernetes API server. This enables privilege escalation and lateral movement within the cluster. This is a known attack technique documented by Stratus Red Team.
 - [Kubernetes System Principal Accessed from Non-Cloud Public IP](../rules/kubernetes_rules/k8s_system_principal_public_ip.yml)
@@ -805,6 +848,20 @@
 
 ## AWS WAFWebACL
 
+- [AWS WAF Managed Admin Protection Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_admin_protection.yml)
+  - Detects AWS WAF Admin Protection managed rule group matches. Blocks external access to exposed administrative pages such as /admin, /wp-admin, and similar paths.
+- [AWS WAF Managed Anti-DDoS Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_anti_ddos.yml)
+  - Detects AWS WAF Anti-DDoS managed rule group matches. Rules include ChallengeAllDuringEvent, ChallengeDDoSRequests, and DDoSRequests which activate during detected DDoS events to challenge or block suspicious traffic to protected resources.
+- [AWS WAF Managed Bot Control Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_bot_control.yml)
+  - Detects AWS WAF Bot Control managed rule group matches. Covers automated browser detection, HTTP library user agents, scraping frameworks, known bot data centers, and targeted bot protections including token abuse and coordinated activity.
+- [AWS WAF Managed Core Rule Set Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_core_rule_set.yml)
+  - Detects AWS WAF Core Rule Set (CRS) managed rule group matches. Covers XSS, LFI, RFI, SSRF, size restrictions, restricted extensions, and bad bot user agents across all WAF sources.
+- [AWS WAF Managed IP Reputation Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_ip_reputation.yml)
+  - Detects AWS WAF IP Reputation and Anonymous IP List managed rule group matches. Flags requests from IPs on Amazon threat intelligence lists including known bots, reconnaissance sources, DDoS participants, TOR nodes, temporary proxies, and hosting/cloud provider IPs.
+- [AWS WAF Managed Known Bad Inputs Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_known_bad_inputs.yml)
+  - Detects AWS WAF Known Bad Inputs managed rule group matches. Covers Log4Shell (CVE-2021-44228), Java deserialization RCE, localhost Host header abuse, PROPFIND method, and exploitable paths.
+- [AWS WAF Managed SQL Database Passthrough Rule](../rules/aws_waf_rules/aws_waf_managed_sql_database.yml)
+  - Detects AWS WAF SQL Database managed rule group matches. Covers SQL injection patterns in query arguments, request body, cookies, and URI path, including extended patterns not covered by the Core Rule Set.
 - [AWS WAF ReactJS RCE Attempt via Body](../rules/aws_waf_rules/aws_waf_reactjsrce_body.yml)
   - Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating React2Shell (CVE-2025-55182) ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.
 
@@ -1147,6 +1204,8 @@
   - This detection monitors for Roles or ClusterRoles being created with write permissions (create, update, patch, delete, deletecollection). While write permissions are common and often necessary for application operations, tracking role creation helps establish RBAC baselines and identify overly permissive configurations. Severity escalates for write access to sensitive resources like secrets or RBAC objects.
 - [Kubernetes Secret Access Denied](../rules/kubernetes_rules/k8s_secret_access_denied.yml)
   - This detection monitors for failed attempts to read Kubernetes secrets. While occasional failed access attempts may indicate RBAC misconfigurations, repeated failures suggest enumeration or brute-force attempts by compromised accounts. With 15-minute deduplication, 20 or more failed attempts within this window indicates active secret enumeration and should be investigated immediately.
+- [Kubernetes Secret Enumeration by a User](../rules/kubernetes_rules/k8s_secret_enumeration.yml)
+  - Detects when a single user accesses 15 or more distinct secrets within 30 minutes using list, get, or watch verbs. This may indicate secret enumeration to enable lateral or vertical movement and unauthorized access to critical resources. The threshold should be tuned to your environment.
 - [Kubernetes Service Account Token Theft from Pod](../rules/kubernetes_rules/k8s_steal_serviceaccount_token.yml)
   - This detection monitors for commands executed in pods that attempt to read service account tokens from /var/run/secrets/kubernetes.io/serviceaccount/token. Attackers who gain exec access to a pod can steal its service account token to authenticate as that service account to the Kubernetes API server. This enables privilege escalation and lateral movement within the cluster. This is a known attack technique documented by Stratus Red Team.
 - [Kubernetes System Principal Accessed from Non-Cloud Public IP](../rules/kubernetes_rules/k8s_system_principal_public_ip.yml)
@@ -1342,9 +1401,88 @@
 
 # D
 
+- [Databricks](#databricks)
 - [Docusign](#docusign)
 - [Dropbox](#dropbox)
 - [Duo](#duo)
+
+
+## Databricks
+
+- [Databricks Access to Multiple Workspaces](../rules/databricks_rules/databricks_access_to_multiple_workspaces.yml)
+  - Detects users accessing 5 or more distinct workspaces within 24 hours, which may indicate lateral movement, reconnaissance, or compromised credentials.
+- [Databricks Access Token Revoked](../rules/databricks_rules/databricks_access_token_revoked.yml)
+  - Detects revocation of Databricks access tokens. Token revocation may be routine credential rotation or could indicate an attacker covering their tracks after using a compromised token.
+- [Databricks Account Admin Privileged Role Assignment](../rules/databricks_rules/databricks_account_admin_privileged_role_assignment.yml)
+  - Detects when account-level admin privileges are granted in Databricks through direct role assignments or administrative group membership. Account admins have extensive control across all workspaces and should be carefully monitored. Successful grants are elevated to HIGH severity.
+- [Databricks Account-Level Configuration Changes](../rules/databricks_rules/databricks_config_changes_account_level.yml)
+  - Detects configuration changes at the Databricks account level, including account settings, metastore configurations, and SSO settings. Account-level changes affect all workspaces and should be monitored for unauthorized modifications.
+- [Databricks Attempted Logon From Denied IP](../rules/databricks_rules/databricks_attempted_logon_from_denied_ip.yml)
+  - Detects blocked login attempts from IP addresses explicitly denied by workspace IP access control policies. This excludes known service agents and telemetry operations. While these attempts were successfully blocked, they may indicate reconnaissance or unauthorized access attempts.
+- [Databricks Data Downloads From Control Plane](../rules/databricks_rules/databricks_data_downloads_from_control_plane.yml)
+  - Detects high volume data downloads from the control plane which may indicate data exfiltration. Monitors download actions including query results, notebooks, and models.
+- [Databricks Data Movement with Explicit Credentials](../rules/databricks_rules/databricks_data_movement_explicit_credentials.yml)
+  - Detects creation or modification of storage credentials, connections, and external locations that could facilitate data exfiltration. These operations establish direct paths to external storage and may indicate data movement preparation. Mount point creation is covered separately by Databricks.Audit.MountPointCreation.
+- [Databricks Delta Sharing IP Access Failures](../rules/databricks_rules/databricks_delta_sharing_ip_access_failures.yml)
+  - Detects blocked Delta Sharing access attempts due to IP access list restrictions, which may indicate unauthorized access attempts from unexpected locations.
+- [Databricks Delta Sharing Recipient Without IP ACLs](../rules/databricks_rules/databricks_delta_sharing_recipient_without_ip_acls.yml)
+  - Detects creation of Delta Sharing recipients without IP access list restrictions, which could allow unauthorized data access from any location.
+- [Databricks Destructive Activities](../rules/databricks_rules/databricks_destructive_activities.yml)
+  - Detects high volume destructive activities by a single user which may indicate malicious data destruction, ransomware, or insider threats.
+- [Databricks Employee Logon](../rules/databricks_rules/databricks_employee_logon.yml)
+  - Detects when a Databricks employee successfully logs into a workspace using GENIE_AUTH authentication. This is typically for legitimate support purposes but should be tracked for awareness.
+- [Databricks Global Init Script Changes](../rules/databricks_rules/databricks_global_init_script_changes.yml)
+  - Detects modifications to global initialization scripts which run on all clusters at startup. These scripts can be used for persistence or to execute malicious code across the environment. All script creations, updates, and deletions are monitored.
+- [Databricks Group Created](../rules/databricks_rules/databricks_group_created.yml)
+  - Detects creation of user groups in Databricks. Group creation may be part of normal administration or could indicate privilege escalation preparation by creating a group that will later receive elevated permissions.
+- [Databricks Group Deleted](../rules/databricks_rules/databricks_group_deleted.yml)
+  - Detects group deletions in Databricks accounts. While often part of normal cleanup processes, unauthorized group deletions could indicate access control dismantling. Successful deletions are elevated to HIGH severity.
+- [Databricks High Priority Configuration Changes](../rules/databricks_rules/databricks_config_changes_high_priority.yml)
+  - Detects high-priority security configuration changes including audit logging modifications, IP access list changes, and security-critical workspace settings. Severity is elevated for successful changes to high-risk settings.
+- [Databricks Install Library on All Clusters](../rules/databricks_rules/databricks_install_library_all_clusters.yml)
+  - Detects use of the deprecated installLibraryOnAllClusters action. This anti-pattern can introduce security risks by installing potentially malicious libraries across the entire environment without proper review or controls.
+- [Databricks Long-Lifetime Token Generated](../rules/databricks_rules/databricks_long_lifetime_token_generated.yml)
+  - Detects generation of personal access tokens (PATs) with lifetime exceeding 72 hours. Long-lived tokens increase the risk of credential theft and unauthorized access if compromised. Tokens with lifetime >90 days are elevated to MEDIUM, >1 year to HIGH severity.
+- [Databricks Metastore Admin Privilege Granted](../rules/databricks_rules/databricks_metastore_admin_privilege_granted.yml)
+  - Detects when metastore admin privileges are granted in Databricks through direct metastore ownership changes or addition to metastore admin groups. Metastore admins have extensive control over data access and governance policies in Unity Catalog.
+- [Databricks MFA Key Change](../rules/databricks_rules/databricks_mfa_key_change.yml)
+  - Detects addition or deletion of MFA keys on Databricks accounts. MFA key deletion may indicate an attacker weakening account security, while unexpected additions may indicate enrollment of attacker-controlled authenticators.
+- [Databricks Mount Point Creation](../rules/databricks_rules/databricks_mount_point_creation.yml)
+  - Detects creation of legacy mount points in Databricks. Mount points are deprecated in favor of Unity Catalog external locations and can pose security risks by bypassing access controls. This anti-pattern should be avoided in modern Databricks deployments.
+- [Databricks Non-SSO Login Detected](../rules/databricks_rules/databricks_non_sso_login.yml)
+  - Detects successful logins that bypass SSO (SAML). In organizations that enforce SSO, non-SAML logins may indicate credential compromise, misconfigured service accounts, or unauthorized access methods.
+- [Databricks Potential Privilege Escalation](../rules/databricks_rules/databricks_potential_privilege_escalation.yml)
+  - Detects potential privilege escalation through high volume permission modifications (≥25 per hour) by the same user. Monitors various permission-related actions across account, workspace, and Unity Catalog.
+- [Databricks Principal Removed From Group](../rules/databricks_rules/databricks_principal_removed_from_group.yml)
+  - Detects when principals (users or service principals) are removed from groups in Databricks accounts. This is often legitimate administrative activity but should be monitored for unauthorized membership changes.
+- [Databricks Repeated Access to Secrets](../rules/databricks_rules/databricks_repeated_access_to_secrets.yml)
+  - Detects repeated secret access (≥10 times in 60 minutes) which may indicate credential harvesting or unauthorized secret enumeration.
+- [Databricks Repeated Failed Login Attempts](../rules/databricks_rules/databricks_repeated_failed_login_attempts.yml)
+  - Detects repeated failed login attempts within a 60-minute window, which may indicate credential stuffing, brute force attacks, or compromised credentials.
+- [Databricks Repeated Unauthorized UC Data Requests](../rules/databricks_rules/databricks_repeated_unauthorized_uc_data_requests.yml)
+  - Detects repeated unauthorized Unity Catalog data access attempts (>15 per hour) including credential generation failures and Delta Sharing access denials.
+- [Databricks Repeated Unauthorized Unity Catalog Requests](../rules/databricks_rules/databricks_repeated_unauthorized_uc_requests.yml)
+  - Detects repeated unauthorized Unity Catalog API requests (>25 per hour) which may indicate reconnaissance, privilege enumeration, or unauthorized data access attempts.
+- [Databricks SSO Configuration Changed](../rules/databricks_rules/databricks_sso_config_changed.yml)
+  - Detects modifications to single sign-on (SSO) configurations in Databricks. While SSO changes may be part of planned identity provider updates, unauthorized modifications could indicate attempts to tamper with authentication mechanisms. Successful changes are elevated to MEDIUM severity.
+- [Databricks Terms of Service Changes](../rules/databricks_rules/databricks_terms_of_service_changes.yml)
+  - Detects Terms of Service acceptance or distribution events for compliance tracking. These events should be monitored for audit and governance purposes.
+- [Databricks TruffleHog Scan Detected](../rules/databricks_rules/databricks_trufflehog_scan_detected.yml)
+  - Detects TruffleHog secret scanning activity in Databricks. TruffleHog is a tool used to scan repositories and systems for exposed credentials and secrets. While it can be used legitimately for security audits, unauthorized scanning may indicate credential harvesting attempts. External IP sources are elevated to HIGH severity.
+- [Databricks User Account Created](../rules/databricks_rules/databricks_user_account_created.yml)
+  - Detects creation of new user accounts in Databricks. Account creation may be part of normal onboarding or could indicate an attacker establishing persistence.
+- [Databricks User Account Deleted](../rules/databricks_rules/databricks_user_account_deleted.yml)
+  - Detects user account deletions in Databricks. While often part of normal offboarding processes, unauthorized deletions could indicate malicious activity or insider threats. Successful deletions are elevated to HIGH severity.
+- [Databricks User Password Changed](../rules/databricks_rules/databricks_user_password_changed.yml)
+  - Detects password change events on Databricks accounts. May indicate legitimate password rotation or an unauthorized reset following account compromise.
+- [Databricks User Role Modified](../rules/databricks_rules/databricks_user_role_modified.yml)
+  - Detects when user roles are modified or users are added to administrative groups in Databricks. This is often legitimate administrative activity but should be monitored for unauthorized changes.
+- [Databricks Verbose Audit Logging Disabled](../rules/databricks_rules/databricks_verbose_audit_logging_disabled.yml)
+  - Detects when verbose audit logging is disabled in a Databricks workspace. Disabling verbose audit logging significantly reduces the visibility of security-relevant events and is a common technique used by attackers to hide malicious activity. Successful disabling is elevated to CRITICAL severity.
+- [Databricks Workspace Admin Privileged Role Assignment](../rules/databricks_rules/databricks_workspace_admin_privileged_role_assignment.yml)
+  - Detects when workspace-level admin privileges are granted in Databricks through direct role assignments or administrative group membership. This simplified version detects direct admin grants and additions to admin groups. For nested group resolution (detecting when groups are added to admin groups), consider implementing a correlation rule. Successful grants to the system 'admins' group are elevated to HIGH severity.
+- [Databricks Workspace-Level Configuration Changes](../rules/databricks_rules/databricks_config_changes_workspace_level.yml)
+  - Detects configuration changes at the Databricks workspace level. Workspace-level changes affect a single workspace and include settings like cluster configurations, notebook settings, and workspace-specific security controls.
 
 
 ## Docusign
@@ -1612,6 +1750,8 @@
   - This detection monitors for Roles or ClusterRoles being created with write permissions (create, update, patch, delete, deletecollection). While write permissions are common and often necessary for application operations, tracking role creation helps establish RBAC baselines and identify overly permissive configurations. Severity escalates for write access to sensitive resources like secrets or RBAC objects.
 - [Kubernetes Secret Access Denied](../rules/kubernetes_rules/k8s_secret_access_denied.yml)
   - This detection monitors for failed attempts to read Kubernetes secrets. While occasional failed access attempts may indicate RBAC misconfigurations, repeated failures suggest enumeration or brute-force attempts by compromised accounts. With 15-minute deduplication, 20 or more failed attempts within this window indicates active secret enumeration and should be investigated immediately.
+- [Kubernetes Secret Enumeration by a User](../rules/kubernetes_rules/k8s_secret_enumeration.yml)
+  - Detects when a single user accesses 15 or more distinct secrets within 30 minutes using list, get, or watch verbs. This may indicate secret enumeration to enable lateral or vertical movement and unauthorized access to critical resources. The threshold should be tuned to your environment.
 - [Kubernetes Service Account Token Theft from Pod](../rules/kubernetes_rules/k8s_steal_serviceaccount_token.yml)
   - This detection monitors for commands executed in pods that attempt to read service account tokens from /var/run/secrets/kubernetes.io/serviceaccount/token. Attackers who gain exec access to a pod can steal its service account token to authenticate as that service account to the Kubernetes API server. This enables privilege escalation and lateral movement within the cluster. This is a known attack technique documented by Stratus Red Team.
 - [Kubernetes System Principal Accessed from Non-Cloud Public IP](../rules/kubernetes_rules/k8s_system_principal_public_ip.yml)
@@ -2012,6 +2152,10 @@
   - A user has subsequent logins from two geographic locations that are very far apart
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
+- [Okta AD Agent Authentication Anomaly - Z-Score Detection](../rules/okta_rules/okta_ad_agent_auth_zscore_anomaly.yml)
+  - Detects potential Okta AD Agent token theft and credential abuse using statistical z-score analysis.This detection uses a lookup table containing 90-day behavioral baselines for each user's AD Agentauthentication patterns, then calculates z-scores to identify suspicious activity in the last 7 days.**PREREQUISITES:**1. Baseline builder query must run first: `Query.Okta.ADAgentBaselineBuilder`2. Lookup table must be configured: `okta_ad_pantherflow_baseline_90d`3. Allow 24 hours for initial baseline to populate**Detection Logic:**- Calculates mean and standard deviation for hourly authentication volume, IP diversity,  country diversity, and device diversity- Alerts when recent activity shows BOTH:  1. Volume spike (z-score > 3 standard deviations)  2. Geographic/IP diversity spike (z-score > 2 standard deviations)**Why This Matters:**Token theft attacks have a distinct signature: stolen credentials are used from multiplelocations/IPs simultaneously or in rapid succession. This creates both a volume spike anda diversity spike that this detection identifies.**Complementary Detection:**This rule complements `Okta.ADAgent.TokenAbuse.Behavioral` which detects admin actions(token creation, agent configuration) from new sources. This rule detects the actual USEof stolen tokens through authentication patterns.
+- [Okta AD Agent Token Abuse - Behavioral](../rules/okta_rules/okta_ad_agent_token_abuse_behavioral.yml)
+  - Detects potential Okta AD Agent token theft and abuse using behavioral analysis.Instead of relying on hardcoded service account patterns, this detection identifieswhen AD agent-related activities (API token creation, agent registration, config changes)occur from previously unseen IP addresses or user agents. This behavioral approachadapts to your environment and catches anomalous access patterns that may indicatecompromised credentials or unauthorized token generation.**What This Detection Catches:**- API token creation from new IPs or user agents- New AD agent registrations from unexpected sources- AD agent configuration changes from new locations**Complementary Detection:**Use alongside `Okta.ADAgent.AuthenticationAnomaly.ZScore` which detects the actualUSE of stolen tokens through authentication pattern anomalies.
 - [Okta Admin Access Granted](../queries/okta_queries/okta_admin_access_granted.yml)
   - Audit instances of admin access granted in your okta tenant
 - [Okta Admin Role Assigned](../rules/okta_rules/okta_admin_role_assigned.yml)
@@ -2026,6 +2170,8 @@
   - When a client wants to renew an access token, it sends the refresh token with the access token request to the /token Okta endpoint.Okta validates the incoming refresh token, issues a new set of tokens and invalidates the refresh token that was passed with the initial request.This detection alerts when a previously used refresh token is used again with the token request
 - [Okta App Unauthorized Access Attempt](../rules/okta_rules/okta_app_unauthorized_access_attempt.yml)
   - Detects when a user is denied access to an Okta application
+- [Okta Authentication Bypass via Skeleton Key Injection - Behavioral](../rules/okta_rules/okta_skeleton_key_bypass_behavioral.yml)
+  - Detects potential Okta authentication bypass via skeleton key injection using behavioral z-score analysis.Skeleton key attacks in Okta involve manipulating authentication policies to weaken MFA requirements(disabling requireFactor, zeroing maxSessionLifetime) and bulk-enrolling attacker-controlledauthenticators on victim accounts. This detection builds a 90-day behavioral baseline for eachadmin's policy change and factor enrollment patterns, then identifies anomalous spikes in the last7 days.**Detection Logic:**- Z-score: Spike in security-weakening policy changes (> 2σ above baseline)- Z-score: Spike in admin-on-behalf-of MFA factor enrollments (> 3σ above baseline)- Cold-start: First-time security weakening (no prior baseline - immediate high-confidence signal)- Cold-start: First-time admin-enrolled factors for other users**Why This Matters:**Skeleton key attacks require two steps: weaken authentication policies to reduce MFA friction,then enroll attacker-controlled authenticators on victim accounts. This detection catches bothsteps using behavioral baselines that adapt to legitimate admin workflows.**Complementary Detection:**Use alongside `Okta.ADAgent.TokenAbuse.Behavioral` for admin credential theft scenarios.
 - [Okta Cleartext Passwords Extracted via SCIM Application](../rules/okta_rules/okta_password_extraction_via_scim.yml)
   - An application admin has extracted cleartext user passwords via SCIM app. Malcious actors can extract plaintext passwords by creating a SCIM application under their control and configuring it to sync passwords from Okta.
 - [Okta Group Admin Role Assigned](../rules/okta_rules/okta_group_admin_role_assigned.yml)
@@ -2068,6 +2214,10 @@
   - An admin user has granted access to Okta Support to your account
 - [Okta Support Reset Credential](../rules/okta_rules/okta_support_reset.yml)
   - A Password or MFA factor was reset by Okta Support
+- [Okta SWA Bulk Access, New Source, and Credential Extraction - Behavioral](../rules/okta_rules/okta_swa_bulk_access_behavioral.yml)
+  - Detects Okta SWA (Secure Web Authentication) bulk credential extraction, abuse, and access frompreviously unseen IP addresses or user agents using behavioral z-score and source novelty analysis.SWA apps store credentials in Okta's encrypted vault. Admin accounts with SWA access can view orrotate credentials for users across many apps. This detection builds a 90-day behavioral baselinefor each admin's SWA access, credential change patterns, and known source IPs/user agents, thenidentifies anomalous spikes or new sources in the last 7 days.**Detection Logic:**- Z-score: SWA authentication volume spike (> 3σ above baseline)- Z-score: Unique SWA app diversity spike (many different apps accessed in one hour) (> 3σ)- Z-score: Credential extraction volume spike (> 3σ)- Z-score: Victim diversity spike (credential changes across many users) (> 2σ)- Cold-start: First-time bulk SWA access (>= 10 events, no prior baseline)- Cold-start: First-time credential extraction (>= 5 extractions, no prior baseline)- New source: SWA access from IP address not seen in 90-day baseline- New source: SWA access from user agent not seen in 90-day baseline- Critical compound: New IP + any credential extraction events**Why This Matters:**SWA credential extraction is a powerful lateral movement technique. An attacker with admin accesscan silently retrieve plaintext credentials for hundreds of SWA-protected applications withouttriggering MFA or generating obvious authentication failures. New source detection catches theinitial access phase when a compromised admin account is used from an unfamiliar device or location.**Complementary Detection:**Use alongside `Okta.SWA.OffHoursAccess.Behavioral` which detects the same attack vectoroccurring outside normal business hours.
+- [Okta SWA Off-Hours Credential Access - Behavioral](../rules/okta_rules/okta_swa_offhours_access_behavioral.yml)
+  - Detects Okta SWA credential access occurring outside normal business hours using behavioralz-score analysis on temporal patterns.Compromised admin accounts often access SWA credentials at unusual times - late at night,during weekends, or from a different geographic location than normal. This detection buildsa 90-day baseline for each admin's temporal credential access patterns, then identifiesanomalous shifts toward off-hours, late-night, and weekend activity in the last 7 days.**Detection Logic:**- Z-score: Off-hours ratio spike (> 3σ above normal off-hours proportion)- Z-score: Late-night ratio spike (2 AM - 6 AM accesses) (> 2σ)- Z-score: Weekend ratio spike (> 2σ)- Cold-start: First-time off-hours credential access (>= 3 events, no prior baseline)- Cold-start: First-time late-night access (>= 2 events, no prior baseline)- Cold-start: First-time weekend access (>= 2 events, no prior baseline)- Compound: Geographic shift + off-hours activity (high-confidence indicator)**Why This Matters:**Attackers using stolen admin credentials typically operate at off-hours to avoid detectionand minimize interference with active users. A sudden shift in the time distribution ofSWA credential accesses is a strong indicator of account compromise.**Complementary Detection:**Use alongside `Okta.SWA.BulkAccess.Behavioral` which detects the same attack vectorbased on volume rather than temporal patterns.
 - [Okta ThreatInsight Security Threat Detected](../rules/okta_rules/okta_threatinsight_security_threat_detected.yml)
   - Okta ThreatInsight identified request from potentially malicious IP address
 - [Okta User Account Locked](../rules/okta_rules/okta_user_account_locked.yml)
@@ -2158,6 +2308,8 @@
   - Detects anomalous OpenAI API key activity indicative of potential key compromise,unauthorized access, or preparation for malicious misuse (e.g., C2, phishing, automation).OpenAI API keys provide programmatic access to powerful LLM capabilities. Abuse orcompromise of these keys enables attackers to blend malicious activity into legitimatecloud traffic, bypassing traditional network-based detections.This rule alerts on:- API keys created or updated with elevated or unrestricted permissions (all, models:write, organization:write, api_keys:write, admin)
 - [OpenAI Brute Force Login Success](../correlation_rules/openai_brute_force_login_success.yml)
   - Detects successful credential stuffing or brute force attacks against OpenAI accounts.This rule identifies when a user account experiences 5 or more failed login attemptsfollowed by a successful login within 30 minutes. This pattern indicates:- Successful credential stuffing attack- Successful brute force attack- Compromised user credentials- Automated attack tools successfully gaining accessThe correlation is performed by matching on the user email address to track attemptsagainst the same account across multiple failed attempts and the eventual success.
+- [OpenAI Credential Stuffing](../rules/openai_rules/openai_credential_stuffing.yml)
+  - Detects credential stuffing attacks against OpenAI accounts by tracking the number of distinct source IP addresses submitting failed login attempts against the same email address within a short timeframe. Unlike brute force from a single IP, credential stuffing distributes attempts across many IPs to evade rate limiting. This rule complements OpenAI.BruteForce.Login.Success, which confirms account compromise once a successful login follows the failures.
 - [OpenAI Failed Login (Base Rule)](../rules/openai_rules/openai_login_failed.yml)
   - Base rule for detecting OpenAI failed login attempts. This rule is used primarilyas a building block for correlation rules and does not generate alerts on its own.
 - [OpenAI IP Allowlist Configuration Changes](../rules/openai_rules/openai_ip_allowlist_changes.yml)
@@ -2234,13 +2386,13 @@
 - [Proofpoint High Impostor Score Detected](../rules/proofpoint_rules/proofpoint_high_impostor_score.yml)
   - This rule alerts when Proofpoint detects a high impostor score (50+), indicating potential Business Email Compromise (BEC) or impersonation attacks. The impostor score measures the likelihood that the sender is impersonating a trusted entity. Severity is dynamic based on the score: CRITICAL (80+), HIGH (65+), MEDIUM (50+).
 - [Proofpoint Malware Detected](../rules/proofpoint_rules/proofpoint_malware_detected.yml)
-  - This rule alerts when Proofpoint detects malware in an email message. It triggers when emails are quarantined with the malware rule or when the malware score is 85 or higher.
+  - This rule alerts when Proofpoint detects malware in an email message. It triggers when emails are quarantined with the malware rule or when the malware score is 90 or higher. Events quarantined to the Virus folder or with the notcleaned rule are handled by the Virus Detected rule instead.
 - [Proofpoint Multiple Threats Detected](../rules/proofpoint_rules/proofpoint_multiple_threats.yml)
-  - This rule alerts when multiple active threats are detected in a single email message. This could indicate a sophisticated multi-vector attack combining malware, phishing URLs, and malicious attachments. Severity is dynamic: CRITICAL (5+ threats), HIGH (3-4 threats), MEDIUM (2 threats).
+  - This rule alerts when three or more active threats are detected in a single email message. This indicates a sophisticated multi-vector attack combining malware, phishing URLs, and malicious attachments. Severity is dynamic: CRITICAL (5+ threats), HIGH (3-4 threats).
 - [Proofpoint Phishing Email Detected](../rules/proofpoint_rules/proofpoint_phishing_detected.yml)
-  - This rule alerts when Proofpoint detects phishing attempts in email. It triggers when emails are quarantined with the phish rule, have a high phish score (80+), or contain active phishing threats in the threats map.
+  - This rule alerts when Proofpoint detects phishing attempts in email. It triggers when emails are quarantined with the phish rule, have a high phish score (90+), or contain active phishing threats in the threats map.
 - [Proofpoint Virus Detected](../rules/proofpoint_rules/proofpoint_virus_detected.yml)
-  - This rule alerts when Proofpoint detects a virus in an email that cannot be disinfected. It triggers when emails are quarantined to the Virus folder, have the notcleaned quarantine rule applied, or have a malware score of 95+.
+  - This rule alerts when Proofpoint detects a virus in an email that cannot be disinfected. It triggers when emails are quarantined to the Virus folder or have the notcleaned quarantine rule applied.
 
 
 ## PushSecurity
@@ -2265,6 +2417,7 @@
 
 # S
 
+- [SOCRadar](#socradar)
 - [Salesforce](#salesforce)
 - [SentinelOne](#sentinelone)
 - [Slack](#slack)
@@ -2272,6 +2425,12 @@
 - [Snyk](#snyk)
 - [Sublime](#sublime)
 - [Suricata](#suricata)
+
+
+## SOCRadar
+
+- [SOCRadar Alert Passthrough](../rules/socradar_rules/socradar_alert_passthrough.yml)
+  - Surfaces all open SOCRadar security incidents as Panther alerts. Severity is mapped dynamically from SOCRadar's alarm_risk_level (CRITICAL/HIGH/MEDIUM/LOW/INFO). SOCRadar performs the underlying threat detection; this rule ensures every open incident is visible in Panther for triage and response.
 
 
 ## Salesforce
@@ -2360,7 +2519,7 @@
   - Monitor for malicious IPs interacting with Snowflake as part of ongoing cyber threat activity reported May 31st, 2024
 - [Snowflake Configuration Drift](../queries/snowflake_queries/snowflake_0108977_configuration_drift.yml)
   - Monitor for configuration drift made by malicious actors as part of ongoing cyber threat activity reported May 31st, 2024
-- [Snowflake Data Exfiltration](../correlation_rules/snowflake_data_exfiltration.yml)
+- [Snowflake Data Exfiltration](../correlation_rules/snowflake_data_exfiltration_streaming.yml)
   - Detects multi-step Snowflake data exfiltration by identifying temporary stage creation, table data copied to stage, and file downloads. This technique was used in the April 2024 Snowflake breach (UNC5537) targeting accounts without MFA. The correlation of all three steps provides high-confidence evidence of active data theft beyond legitimate ETL operations.
 - [Snowflake External Data Share](../rules/snowflake_rules/snowflake_stream_external_shares.yml)
   - Detect when an external share has been initiated from one source cloud to another target cloud.
@@ -2374,6 +2533,8 @@
   - Detect snowflake logins without multifactor authentication
 - [Snowflake Multiple Failed Logins Followed By Success](../queries/snowflake_queries/snowflake_multiple_failed_logins_followed_by_success.yml)
   - Detecting brute force activity and reporting when a user has incorrectly logged in multiple times and then had a successful login.
+- [Snowflake Password Spray](../rules/snowflake_rules/snowflake_stream_password_spray.yml)
+  - Detects password spraying attacks against Snowflake by tracking the number of distinct user accounts targeted by failed login attempts from the same source IP address within a short timeframe. Unlike brute force against a single account, password spraying distributes attempts across many accounts to evade lockout policies. This rule complements Snowflake.Stream.BruteForceByIp (same IP, any accounts) and Snowflake.PotentialBruteForceSuccess (brute force followed by confirmed login).
 - [Snowflake Successful Login](../rules/snowflake_rules/snowflake_stream_login_success.yml)
   - Track successful login signals for correlation.
 - [Snowflake Table Copied Into Stage](../queries/snowflake_queries/snowflake_table_copied_into_stage_signal.yml)
@@ -2521,6 +2682,25 @@
 
 - [Tracebit Alert](../rules/tracebit_rules/tracebit_alert.yml)
   - Tracebit maintains security canaries across your organization to detect potential intrusions.This alert indicates that Tracebit has detected activity on security canaries.
+
+
+# U
+
+- [Upwind](#upwind)
+
+
+## Upwind
+
+- [Upwind API Detection Passthrough](../rules/upwind_rules/upwind_api_detection_passthrough.yml)
+  - Re-raises Upwind API security detections in Panther. Covers broken authentication, authorization flaws, injection, mass assignment, token misuse, and sensitive data exposure patterns detected at the API layer.
+- [Upwind Network Detection Passthrough](../rules/upwind_rules/upwind_network_detection_passthrough.yml)
+  - Re-raises Upwind network security detections in Panther. Covers port scans, DoS activity, DNS anomalies, DNS-over-HTTPS abuse, and other anomalous network behaviors.
+- [Upwind Posture Detection Passthrough](../rules/upwind_rules/upwind_posture_detection_passthrough.yml)
+  - Re-raises Upwind cloud posture and CSPM detections in Panther. Covers cloud misconfigurations, exposed secrets, configuration drift, and CSPM policy violations.
+- [Upwind Runtime Detection Passthrough](../rules/upwind_rules/upwind_runtime_detection_passthrough.yml)
+  - Re-raises Upwind runtime security detections in Panther. Covers process execution anomalies, syscall-based threats, container escapes, and other host/container behavioral threats.
+- [Upwind Vulnerability Detection Passthrough](../rules/upwind_rules/upwind_vulnerability_detection_passthrough.yml)
+  - Re-raises Upwind vulnerability detections in Panther. Covers exploitable CVEs identified in runtime containers, VMs, and serverless environments, prioritized by active exposure.
 
 
 # W

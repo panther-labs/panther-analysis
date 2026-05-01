@@ -2,6 +2,8 @@ from panther_core import PantherEvent
 
 
 def rule(event: PantherEvent) -> bool:
+    if event.deep_get("id", "applicationName") != "drive":
+        return False
     return event.get("name") == "download"
 
 

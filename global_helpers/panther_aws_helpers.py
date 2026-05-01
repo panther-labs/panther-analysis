@@ -41,6 +41,17 @@ def aws_rule_context(event):
     }
 
 
+def aws_rds_context(event):
+    context = aws_rule_context(event)
+    context["db_identifier"] = event.deep_get(
+        "requestParameters", "dBInstanceIdentifier"
+    ) or event.deep_get("requestParameters", "dBClusterIdentifier", default="N/A")
+    context["db_instance_arn"] = event.deep_get(
+        "responseElements", "dBInstanceArn"
+    ) or event.deep_get("responseElements", "dBClusterArn", default="N/A")
+    return context
+
+
 def aws_guardduty_context(event):
     return {
         "description": event.get("description", "<MISSING DESCRIPTION>"),
@@ -268,3 +279,125 @@ def get_actor_user(event):
     else:
         actor_user = "UnknownUser"
     return actor_user
+
+
+# ---- AWS WAF Managed Rule Group Helpers ----
+
+
+def _waf_normalize_groups(rule_groups):
+    """Normalize rule_groups to a list."""
+    if isinstance(rule_groups, str):
+        return [rule_groups]
+    return rule_groups
+
+
+def _waf_matches_any_group(value, rule_groups):
+    """Check if value contains any of the rule group names."""
+    return any(group in value for group in rule_groups)
+
+
+def _waf_rule_group_has_match(group):
+    """Check if a ruleGroupList entry has any terminating or non-terminating matches."""
+    terminating = group.get("terminatingRule") or {}
+    if terminating.get("ruleId"):
+        return True
+    for match in group.get("nonTerminatingMatchingRules", []) or []:
+        if match.get("ruleId"):
+            return True
+    return False
+
+
+def _waf_rule_group_matched_id(group):
+    """Extract the matched rule ID from a ruleGroupList entry."""
+    terminating = group.get("terminatingRule") or {}
+    if terminating.get("ruleId"):
+        return terminating.get("ruleId")
+    for match in group.get("nonTerminatingMatchingRules", []) or []:
+        if match.get("ruleId"):
+            return match.get("ruleId")
+    return None
+
+
+def waf_rule_group_matches(event, rule_groups):
+    """Check if any of the given WAF rule groups matched in the event."""
+    rule_groups = _waf_normalize_groups(rule_groups)
+
+    if _waf_matches_any_group(event.get("terminatingRuleId", ""), rule_groups):
+        return True
+
+    for matching_rule in event.get("nonTerminatingMatchingRules", []) or []:
+        if _waf_matches_any_group(matching_rule.get("ruleId", ""), rule_groups):
+            return True
+
+    for group in event.get("ruleGroupList", []) or []:
+        if not _waf_matches_any_group(group.get("ruleGroupId", ""), rule_groups):
+            continue
+        if _waf_rule_group_has_match(group):
+            return True
+
+    return False
+
+
+def waf_get_matched_rule(event, rule_groups):
+    """Extract the specific rule ID that matched within the given rule groups."""
+    rule_groups = _waf_normalize_groups(rule_groups)
+
+    for group in event.get("ruleGroupList", []) or []:
+        if not _waf_matches_any_group(group.get("ruleGroupId", ""), rule_groups):
+            continue
+        matched = _waf_rule_group_matched_id(group)
+        if matched:
+            return matched
+    return event.get("terminatingRuleId", "unknown")
+
+
+def waf_alert_context(event, rule_groups):
+    """Build standard alert context for WAF managed rule group detections."""
+    if isinstance(rule_groups, str):
+        rule_groups = [rule_groups]
+
+    http_request = event.get("httpRequest", {})
+    headers = http_request.get("headers", [])
+    user_agent = next(
+        (h.get("value") for h in headers if h.get("name", "").lower() == "user-agent"), None
+    )
+
+    context = {
+        "rule_groups": rule_groups,
+        "matched_rule": waf_get_matched_rule(event, rule_groups),
+        "client_ip": http_request.get("clientIp"),
+        "country": http_request.get("country"),
+        "http_method": http_request.get("httpMethod"),
+        "uri": http_request.get("uri"),
+        "user_agent": user_agent,
+        "action": event.get("action"),
+        "source": event.get("httpSourceName"),
+        "source_id": event.get("httpSourceId"),
+        "terminating_rule_id": event.get("terminatingRuleId"),
+        "terminating_rule_type": event.get("terminatingRuleType"),
+    }
+
+    terminating_matches = event.get("terminatingRuleMatchDetails", [])
+    if terminating_matches:
+        context["matched_data"] = [
+            {
+                "condition_type": m.get("conditionType"),
+                "location": m.get("location"),
+                "matched_strings": m.get("matchedData", []),
+            }
+            for m in terminating_matches
+        ]
+
+    return context
+
+
+def waf_severity(event):
+    """Dynamic severity based on WAF action."""
+    action = event.get("action", "")
+    if action == "ALLOW":
+        return "CRITICAL"
+    if action == "BLOCK":
+        return "HIGH"
+    if action == "COUNT":
+        return "MEDIUM"
+    return "DEFAULT"

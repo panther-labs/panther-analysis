@@ -788,6 +788,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects password spraying attacks by alerting when more than 9 distinct usernames fail to authenticate to the AWS console from the same account and region within 60 minutes.",
+        "DisplayName": "AWS CloudTrail Password Spraying",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_cloudtrail_password_spraying.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Threat actors who successfully compromise a victim's AWS account, whether through stolen credentials,  exposed access keys, exploited IAM misconfigurations, vulnerabilities in third-party applications,  or the absence of Multi-Factor Authentication (MFA), can exploit unused regions as safe zones  for malicious activities. These regions are often overlooked in monitoring and security setups,  making them an attractive target for attackers to operate undetected.",
         "DisplayName": "AWS Cloudtrail Region Enabled",
         "LogTypes": [
@@ -956,6 +965,15 @@
             "AWS.Config.Recorder"
         ],
         "YAMLPath": "policies/aws_config_policies/aws_config_recording_enabled.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects GetSigninToken calls from non-SSO user agents. An adversary can use tools like aws_consoler to convert compromised CLI credentials into a federated console session, bypassing MFA requirements and obscuring the original access key. The GetSigninToken API creates temporary console access from STS temporary credentials.",
+        "DisplayName": "AWS Console GetSigninToken Potential Abuse",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_console_getsignintoken.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -1467,6 +1485,15 @@
         "YAMLPath": "policies/aws_iam_policies/aws_iam_user_not_in_conflicting_groups.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Detects when an EC2 instance identity (credentials obtained via IMDS) is used to make API calls outside of expected internal AWS services like SSM. This indicates that IMDS credentials may have been exfiltrated from a compromised instance and are being used externally for lateral movement or privilege escalation.",
+        "DisplayName": "AWS IMDS Credential Usage Outside Expected Services",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_imds_credential_exfiltration.yml"
+    },
+    {
         "AnalysisType": "Policy",
         "Description": "This policy validates that customer master keys (CMKs) have automatic key rotation enabled.",
         "DisplayName": "AWS KMS CMK Key Rotation",
@@ -1620,6 +1647,42 @@
         "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_publicrestore.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Detects when RDS Database Activity Streams are stopped. Activity Streams provide real-time monitoring of database activity. Disabling them is a clear evasion technique used by attackers to avoid detection before performing malicious operations.",
+        "DisplayName": "AWS RDS Activity Stream Stopped",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_activity_stream_stopped.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects deletion of RDS automated backups. This is a classic ransomware tactic where attackers delete automated backups before encrypting or destroying databases to prevent recovery. Any automated backup deletion should be investigated immediately.",
+        "DisplayName": "AWS RDS Automated Backup Deleted",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_automated_backup_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when RDS cluster or global cluster failovers are manually initiated. Forced failovers cause brief service interruptions and may indicate disaster recovery testing, operational troubleshooting, or disruption attempts.",
+        "DisplayName": "AWS RDS Cluster Failover Initiated",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_cluster_failover.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when deletion protection is disabled on an RDS instance or cluster. This is often a precursor to database deletion and may indicate ransomware or data destruction attacks where attackers first disable protections before deleting resources.",
+        "DisplayName": "AWS RDS Deletion Protection Disabled",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_deletion_protection_disabled.yml"
+    },
+    {
         "AnalysisType": "Policy",
         "Description": "This Policy ensures that RDS Instances have Backups enabled. Backups are an important aspect of disaster recovery that can protect sensitive data from destruction.",
         "DisplayName": "AWS RDS Instance Backup",
@@ -1665,6 +1728,33 @@
         "YAMLPath": "policies/aws_rds_policies/aws_rds_instance_auto_minor_version_upgrade_enabled.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Detects when an RDS instance or cluster is modified to become publicly accessible. This exposes the database to the internet and is used by attackers for persistence or data exfiltration. This detects the modification event in real-time, unlike static policy checks.",
+        "DisplayName": "AWS RDS Instance Modified to be Publicly Accessible",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_instance_made_public.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects RDS database instance or cluster deletion. Deletions that skip final snapshots result in permanent data loss and may indicate ransomware, insider threats, or compromised credentials being used to destroy data.",
+        "DisplayName": "AWS RDS Instance or Cluster Deleted",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_instance_deletion.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when RDS instances, clusters, or shard groups are rebooted. Unexpected reboots cause service disruption and may indicate DoS attempts, unauthorized testing, or operational issues requiring investigation.",
+        "DisplayName": "AWS RDS Instance or Cluster Rebooted",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_instance_rebooted.yml"
+    },
+    {
         "AnalysisType": "Policy",
         "Description": "This Policy checks that an RDS Instance is not accessible from the public internet.",
         "DisplayName": "AWS RDS Instance Public Access",
@@ -1684,6 +1774,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when RDS database log files are downloaded. Log files may contain credentials, sensitive queries, or application secrets. Bulk downloads from unusual locations may indicate credential harvesting or data reconnaissance.",
+        "DisplayName": "AWS RDS Log File Downloaded",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_log_file_downloaded.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "A manual snapshot of an RDS database was created. An attacker may use this to exfiltrate the DB contents to another account; use this as a correlation rule.",
         "DisplayName": "AWS RDS Manual/Public Snapshot Created",
         "LogTypes": [
@@ -1699,6 +1798,51 @@
             "AWS.CloudTrail"
         ],
         "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_master_pass_updated.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when ingress rules are added to RDS security groups. Overly permissive rules, especially 0.0.0.0/0, expose databases to the internet and may indicate attackers opening network access for persistence or data exfiltration.",
+        "DisplayName": "AWS RDS Security Group Ingress Authorized",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_security_group_ingress_authorized.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when RDS snapshots are copied to different AWS regions. While legitimate for disaster recovery, cross-region snapshot copies can be used for data exfiltration or to prepare snapshots for sharing with external accounts.",
+        "DisplayName": "AWS RDS Snapshot Copied Cross-Region",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_snapshot_copied_cross_region.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects deletion of RDS snapshots. Attackers delete backups to prevent recovery or hide evidence of data exfiltration. Multiple snapshot deletions may indicate ransomware preparing to encrypt databases without recovery options.",
+        "DisplayName": "AWS RDS Snapshot Deleted",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_snapshot_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when RDS snapshots are queried with includePublic or includeShared flags. This indicates reconnaissance for publicly accessible or shared snapshots that may contain sensitive data and be exploitable by attackers.",
+        "DisplayName": "AWS RDS Snapshot Enumeration with Public or Shared Flag",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_snapshot_enumeration.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when an RDS snapshot is exported to S3 using StartExportTask. Attackers use this to exfiltrate database contents by exporting snapshots to buckets they control. While snapshot exports are legitimate for analytics, they provide complete database access.",
+        "DisplayName": "AWS RDS Snapshot Exported to S3",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_snapshot_export.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -2049,6 +2193,15 @@
         "YAMLPath": "rules/aws_cloudtrail_rules/aws_s3_ransomware_note_upload.yml"
     },
     {
+        "AnalysisType": "Rule",
+        "Description": "Detects the disabling of 2 or more distinct S3 security controls (logging, versioning, and MFA delete protection) on the same bucket by the same actor within a short timeframe. Threshold is set to 2 rather than 3 because versioning and MFA delete can be disabled together in a single PutBucketVersioning API call, which produces only one unique value \u2014 making a threshold of 3 structurally unreachable in that scenario. This pattern is a strong indicator of preparation for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before encrypting or deleting data.",
+        "DisplayName": "AWS S3 Security Control Disabling",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_s3_security_control_disabling.yml"
+    },
+    {
         "AnalysisType": "Correlation Rule",
         "Description": "Detects the disabling of multiple S3 security controls (logging, versioning and MFA delete protection) on the same bucket within a short timeframe. This pattern is a strong indicator of preparation for ransomware or data destruction attacks, as attackers typically disable recovery mechanisms before encrypting or deleting data. Alerting on this activity enables early intervention before actual data loss occurs.",
         "DisplayName": "AWS S3 Security Controls Disabled",
@@ -2248,6 +2401,24 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects AWS STS GetCallerIdentity calls made by TruffleHog, a credential scanning tool. Threat actors use TruffleHog to validate whether leaked or stolen AWS access keys are still active. A GetCallerIdentity call with a TruffleHog user agent indicates that credentials from this account have been discovered externally and are being tested for validity.",
+        "DisplayName": "AWS STS GetCallerIdentity via TruffleHog",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_sts_getcalleridentity_trufflehog.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects an IAM user calling STS GetSessionToken to obtain temporary credentials. Attackers who have compromised long-term IAM credentials may use GetSessionToken to generate short-lived session tokens for lateral movement or to bypass IP-based policies that apply only to long-term credentials.",
+        "DisplayName": "AWS STS GetSessionToken by IAM User",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_sts_getsessiontoken_misuse.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects creation and updates of the list of trusted IPs used by GuardDuty and WAF. Potentially to disable security alerts against malicious IPs.",
         "DisplayName": "AWS Trusted IPSet Modified",
         "LogTypes": [
@@ -2374,6 +2545,69 @@
             "AWS.WAF.WebACL"
         ],
         "YAMLPath": "policies/aws_waf_policies/aws_waf_logging_configured.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects AWS WAF Admin Protection managed rule group matches. Blocks external access to exposed administrative pages such as /admin, /wp-admin, and similar paths.",
+        "DisplayName": "AWS WAF Managed Admin Protection Passthrough Rule",
+        "LogTypes": [
+            "AWS.WAFWebACL"
+        ],
+        "YAMLPath": "rules/aws_waf_rules/aws_waf_managed_admin_protection.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects AWS WAF Anti-DDoS managed rule group matches. Rules include ChallengeAllDuringEvent, ChallengeDDoSRequests, and DDoSRequests which activate during detected DDoS events to challenge or block suspicious traffic to protected resources.",
+        "DisplayName": "AWS WAF Managed Anti-DDoS Passthrough Rule",
+        "LogTypes": [
+            "AWS.WAFWebACL"
+        ],
+        "YAMLPath": "rules/aws_waf_rules/aws_waf_managed_anti_ddos.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects AWS WAF Bot Control managed rule group matches. Covers automated browser detection, HTTP library user agents, scraping frameworks, known bot data centers, and targeted bot protections including token abuse and coordinated activity.",
+        "DisplayName": "AWS WAF Managed Bot Control Passthrough Rule",
+        "LogTypes": [
+            "AWS.WAFWebACL"
+        ],
+        "YAMLPath": "rules/aws_waf_rules/aws_waf_managed_bot_control.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects AWS WAF Core Rule Set (CRS) managed rule group matches. Covers XSS, LFI, RFI, SSRF, size restrictions, restricted extensions, and bad bot user agents across all WAF sources.",
+        "DisplayName": "AWS WAF Managed Core Rule Set Passthrough Rule",
+        "LogTypes": [
+            "AWS.WAFWebACL"
+        ],
+        "YAMLPath": "rules/aws_waf_rules/aws_waf_managed_core_rule_set.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects AWS WAF IP Reputation and Anonymous IP List managed rule group matches. Flags requests from IPs on Amazon threat intelligence lists including known bots, reconnaissance sources, DDoS participants, TOR nodes, temporary proxies, and hosting/cloud provider IPs.",
+        "DisplayName": "AWS WAF Managed IP Reputation Passthrough Rule",
+        "LogTypes": [
+            "AWS.WAFWebACL"
+        ],
+        "YAMLPath": "rules/aws_waf_rules/aws_waf_managed_ip_reputation.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects AWS WAF Known Bad Inputs managed rule group matches. Covers Log4Shell (CVE-2021-44228), Java deserialization RCE, localhost Host header abuse, PROPFIND method, and exploitable paths.",
+        "DisplayName": "AWS WAF Managed Known Bad Inputs Passthrough Rule",
+        "LogTypes": [
+            "AWS.WAFWebACL"
+        ],
+        "YAMLPath": "rules/aws_waf_rules/aws_waf_managed_known_bad_inputs.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects AWS WAF SQL Database managed rule group matches. Covers SQL injection patterns in query arguments, request body, cookies, and URI path, including extended patterns not covered by the Core Rule Set.",
+        "DisplayName": "AWS WAF Managed SQL Database Passthrough Rule",
+        "LogTypes": [
+            "AWS.WAFWebACL"
+        ],
+        "YAMLPath": "rules/aws_waf_rules/aws_waf_managed_sql_database.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -3733,6 +3967,339 @@
             "GitLab.Production"
         ],
         "YAMLPath": "rules/gitlab_rules/gitlab_production_password_reset_multiple_emails.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects users accessing 5 or more distinct workspaces within 24 hours, which may indicate lateral movement, reconnaissance, or compromised credentials.",
+        "DisplayName": "Databricks Access to Multiple Workspaces",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_access_to_multiple_workspaces.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects revocation of Databricks access tokens. Token revocation may be routine credential rotation or could indicate an attacker covering their tracks after using a compromised token.",
+        "DisplayName": "Databricks Access Token Revoked",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_access_token_revoked.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when account-level admin privileges are granted in Databricks through direct role assignments or administrative group membership. Account admins have extensive control across all workspaces and should be carefully monitored. Successful grants are elevated to HIGH severity.",
+        "DisplayName": "Databricks Account Admin Privileged Role Assignment",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_account_admin_privileged_role_assignment.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects configuration changes at the Databricks account level, including account settings, metastore configurations, and SSO settings. Account-level changes affect all workspaces and should be monitored for unauthorized modifications.",
+        "DisplayName": "Databricks Account-Level Configuration Changes",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_config_changes_account_level.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects blocked login attempts from IP addresses explicitly denied by workspace IP access control policies. This excludes known service agents and telemetry operations. While these attempts were successfully blocked, they may indicate reconnaissance or unauthorized access attempts.",
+        "DisplayName": "Databricks Attempted Logon From Denied IP",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_attempted_logon_from_denied_ip.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects high volume data downloads from the control plane which may indicate data exfiltration. Monitors download actions including query results, notebooks, and models.",
+        "DisplayName": "Databricks Data Downloads From Control Plane",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_data_downloads_from_control_plane.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects creation or modification of storage credentials, connections, and external locations that could facilitate data exfiltration. These operations establish direct paths to external storage and may indicate data movement preparation. Mount point creation is covered separately by Databricks.Audit.MountPointCreation.",
+        "DisplayName": "Databricks Data Movement with Explicit Credentials",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_data_movement_explicit_credentials.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects blocked Delta Sharing access attempts due to IP access list restrictions, which may indicate unauthorized access attempts from unexpected locations.",
+        "DisplayName": "Databricks Delta Sharing IP Access Failures",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_delta_sharing_ip_access_failures.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects creation of Delta Sharing recipients without IP access list restrictions, which could allow unauthorized data access from any location.",
+        "DisplayName": "Databricks Delta Sharing Recipient Without IP ACLs",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_delta_sharing_recipient_without_ip_acls.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects high volume destructive activities by a single user which may indicate malicious data destruction, ransomware, or insider threats.",
+        "DisplayName": "Databricks Destructive Activities",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_destructive_activities.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a Databricks employee successfully logs into a workspace using GENIE_AUTH authentication. This is typically for legitimate support purposes but should be tracked for awareness.",
+        "DisplayName": "Databricks Employee Logon",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_employee_logon.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects modifications to global initialization scripts which run on all clusters at startup. These scripts can be used for persistence or to execute malicious code across the environment. All script creations, updates, and deletions are monitored.",
+        "DisplayName": "Databricks Global Init Script Changes",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_global_init_script_changes.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects creation of user groups in Databricks. Group creation may be part of normal administration or could indicate privilege escalation preparation by creating a group that will later receive elevated permissions.",
+        "DisplayName": "Databricks Group Created",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_group_created.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects group deletions in Databricks accounts. While often part of normal cleanup processes, unauthorized group deletions could indicate access control dismantling. Successful deletions are elevated to HIGH severity.",
+        "DisplayName": "Databricks Group Deleted",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_group_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects high-priority security configuration changes including audit logging modifications, IP access list changes, and security-critical workspace settings. Severity is elevated for successful changes to high-risk settings.",
+        "DisplayName": "Databricks High Priority Configuration Changes",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_config_changes_high_priority.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects use of the deprecated installLibraryOnAllClusters action. This anti-pattern can introduce security risks by installing potentially malicious libraries across the entire environment without proper review or controls.",
+        "DisplayName": "Databricks Install Library on All Clusters",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_install_library_all_clusters.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects generation of personal access tokens (PATs) with lifetime exceeding 72 hours. Long-lived tokens increase the risk of credential theft and unauthorized access if compromised. Tokens with lifetime >90 days are elevated to MEDIUM, >1 year to HIGH severity.",
+        "DisplayName": "Databricks Long-Lifetime Token Generated",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_long_lifetime_token_generated.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when metastore admin privileges are granted in Databricks through direct metastore ownership changes or addition to metastore admin groups. Metastore admins have extensive control over data access and governance policies in Unity Catalog.",
+        "DisplayName": "Databricks Metastore Admin Privilege Granted",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_metastore_admin_privilege_granted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects addition or deletion of MFA keys on Databricks accounts. MFA key deletion may indicate an attacker weakening account security, while unexpected additions may indicate enrollment of attacker-controlled authenticators.",
+        "DisplayName": "Databricks MFA Key Change",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_mfa_key_change.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects creation of legacy mount points in Databricks. Mount points are deprecated in favor of Unity Catalog external locations and can pose security risks by bypassing access controls. This anti-pattern should be avoided in modern Databricks deployments.",
+        "DisplayName": "Databricks Mount Point Creation",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_mount_point_creation.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects successful logins that bypass SSO (SAML). In organizations that enforce SSO, non-SAML logins may indicate credential compromise, misconfigured service accounts, or unauthorized access methods.",
+        "DisplayName": "Databricks Non-SSO Login Detected",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_non_sso_login.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects potential privilege escalation through high volume permission modifications (\u226525 per hour) by the same user. Monitors various permission-related actions across account, workspace, and Unity Catalog.",
+        "DisplayName": "Databricks Potential Privilege Escalation",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_potential_privilege_escalation.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when principals (users or service principals) are removed from groups in Databricks accounts. This is often legitimate administrative activity but should be monitored for unauthorized membership changes.",
+        "DisplayName": "Databricks Principal Removed From Group",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_principal_removed_from_group.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects repeated secret access (\u226510 times in 60 minutes) which may indicate credential harvesting or unauthorized secret enumeration.",
+        "DisplayName": "Databricks Repeated Access to Secrets",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_repeated_access_to_secrets.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects repeated failed login attempts within a 60-minute window, which may indicate credential stuffing, brute force attacks, or compromised credentials.",
+        "DisplayName": "Databricks Repeated Failed Login Attempts",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_repeated_failed_login_attempts.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects repeated unauthorized Unity Catalog data access attempts (>15 per hour) including credential generation failures and Delta Sharing access denials.",
+        "DisplayName": "Databricks Repeated Unauthorized UC Data Requests",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_repeated_unauthorized_uc_data_requests.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects repeated unauthorized Unity Catalog API requests (>25 per hour) which may indicate reconnaissance, privilege enumeration, or unauthorized data access attempts.",
+        "DisplayName": "Databricks Repeated Unauthorized Unity Catalog Requests",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_repeated_unauthorized_uc_requests.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects modifications to single sign-on (SSO) configurations in Databricks. While SSO changes may be part of planned identity provider updates, unauthorized modifications could indicate attempts to tamper with authentication mechanisms. Successful changes are elevated to MEDIUM severity.",
+        "DisplayName": "Databricks SSO Configuration Changed",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_sso_config_changed.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects Terms of Service acceptance or distribution events for compliance tracking. These events should be monitored for audit and governance purposes.",
+        "DisplayName": "Databricks Terms of Service Changes",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_terms_of_service_changes.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects TruffleHog secret scanning activity in Databricks. TruffleHog is a tool used to scan repositories and systems for exposed credentials and secrets. While it can be used legitimately for security audits, unauthorized scanning may indicate credential harvesting attempts. External IP sources are elevated to HIGH severity.",
+        "DisplayName": "Databricks TruffleHog Scan Detected",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_trufflehog_scan_detected.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects creation of new user accounts in Databricks. Account creation may be part of normal onboarding or could indicate an attacker establishing persistence.",
+        "DisplayName": "Databricks User Account Created",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_user_account_created.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects user account deletions in Databricks. While often part of normal offboarding processes, unauthorized deletions could indicate malicious activity or insider threats. Successful deletions are elevated to HIGH severity.",
+        "DisplayName": "Databricks User Account Deleted",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_user_account_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects password change events on Databricks accounts. May indicate legitimate password rotation or an unauthorized reset following account compromise.",
+        "DisplayName": "Databricks User Password Changed",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_user_password_changed.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when user roles are modified or users are added to administrative groups in Databricks. This is often legitimate administrative activity but should be monitored for unauthorized changes.",
+        "DisplayName": "Databricks User Role Modified",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_user_role_modified.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when verbose audit logging is disabled in a Databricks workspace. Disabling verbose audit logging significantly reduces the visibility of security-relevant events and is a common technique used by attackers to hide malicious activity. Successful disabling is elevated to CRITICAL severity.",
+        "DisplayName": "Databricks Verbose Audit Logging Disabled",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_verbose_audit_logging_disabled.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when workspace-level admin privileges are granted in Databricks through direct role assignments or administrative group membership. This simplified version detects direct admin grants and additions to admin groups. For nested group resolution (detecting when groups are added to admin groups), consider implementing a correlation rule. Successful grants to the system 'admins' group are elevated to HIGH severity.",
+        "DisplayName": "Databricks Workspace Admin Privileged Role Assignment",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_workspace_admin_privileged_role_assignment.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects configuration changes at the Databricks workspace level. Workspace-level changes affect a single workspace and include settings like cluster configurations, notebook settings, and workspace-specific security controls.",
+        "DisplayName": "Databricks Workspace-Level Configuration Changes",
+        "LogTypes": [
+            "Databricks.Audit"
+        ],
+        "YAMLPath": "rules/databricks_rules/databricks_config_changes_workspace_level.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -5714,6 +6281,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when IAM roles are added to RDS instances or clusters. While legitimate for features like S3 import/export, attackers may add overly permissive roles to maintain access or escalate privileges for data exfiltration.",
+        "DisplayName": "IAM Role Added to RDS Instance or Cluster",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "rules/aws_cloudtrail_rules/aws_rds_iam_role_added.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "An IAM role was created.",
         "DisplayName": "IAM Role Created",
         "LogTypes": [
@@ -6110,6 +6686,17 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when a single user accesses 15 or more distinct secrets within 30 minutes using list, get, or watch verbs. This may indicate secret enumeration to enable lateral or vertical movement and unauthorized access to critical resources. The threshold should be tuned to your environment.",
+        "DisplayName": "Kubernetes Secret Enumeration by a User",
+        "LogTypes": [
+            "Amazon.EKS.Audit",
+            "Azure.MonitorActivity",
+            "GCP.AuditLog"
+        ],
+        "YAMLPath": "rules/kubernetes_rules/k8s_secret_enumeration.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "This detection monitors for commands executed in pods that attempt to read service account tokens from /var/run/secrets/kubernetes.io/serviceaccount/token. Attackers who gain exec access to a pod can steal its service account token to authenticate as that service account to the Kubernetes API server. This enables privilege escalation and lateral movement within the cluster. This is a known attack technique documented by Stratus Red Team.",
         "DisplayName": "Kubernetes Service Account Token Theft from Pod",
         "LogTypes": [
@@ -6150,8 +6737,8 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects when Lambda function code is updated using direct IAM user credentials instead of assumed roles. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity. Modern best practice uses roles for programmatic access, making IAM user activity on Lambda code updates a high-confidence security signal.",
-        "DisplayName": "Lambda Code Updated by IAM User",
+        "Description": "Detects when Lambda function code is updated by an IAM user, federated user, or AWS SSO user. This may indicate compromised credentials, a developer bypassing CI/CD guardrails, or insider threat activity.",
+        "DisplayName": "Lambda Code Updated by User",
         "LogTypes": [
             "AWS.CloudTrail"
         ],
@@ -6159,8 +6746,8 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects when Lambda function configuration is updated with layers using direct IAM user credentials instead of assumed roles. Lambda layers can execute code before the main function, making them a stealthy persistence mechanism. This is unusual and may indicate: compromised IAM user credentials, a developer bypassing CI/CD guardrails, or insider threat activity attempting to inject malicious layers.",
-        "DisplayName": "Lambda Configuration with Layers Updated by IAM User",
+        "Description": "Detects when Lambda function configuration is updated with layers by an IAM user, federated user, or AWS SSO user. Lambda layers can execute code before the main function, making them a stealthy persistence mechanism. This may indicate compromised credentials, a developer bypassing CI/CD guardrails, or insider threat activity.",
+        "DisplayName": "Lambda Configuration Updated with Layers by User",
         "LogTypes": [
             "AWS.CloudTrail"
         ],
@@ -6687,6 +7274,24 @@
         "YAMLPath": "queries/github_queries/nx_supply_chain_s1ngularity_repository_query.yml"
     },
     {
+        "AnalysisType": "Scheduled Rule",
+        "Description": "Detects potential Okta AD Agent token theft and credential abuse using statistical z-score analysis.This detection uses a lookup table containing 90-day behavioral baselines for each user's AD Agentauthentication patterns, then calculates z-scores to identify suspicious activity in the last 7 days.**PREREQUISITES:**1. Baseline builder query must run first: `Query.Okta.ADAgentBaselineBuilder`2. Lookup table must be configured: `okta_ad_pantherflow_baseline_90d`3. Allow 24 hours for initial baseline to populate**Detection Logic:**- Calculates mean and standard deviation for hourly authentication volume, IP diversity,  country diversity, and device diversity- Alerts when recent activity shows BOTH:  1. Volume spike (z-score > 3 standard deviations)  2. Geographic/IP diversity spike (z-score > 2 standard deviations)**Why This Matters:**Token theft attacks have a distinct signature: stolen credentials are used from multiplelocations/IPs simultaneously or in rapid succession. This creates both a volume spike anda diversity spike that this detection identifies.**Complementary Detection:**This rule complements `Okta.ADAgent.TokenAbuse.Behavioral` which detects admin actions(token creation, agent configuration) from new sources. This rule detects the actual USEof stolen tokens through authentication patterns.",
+        "DisplayName": "Okta AD Agent Authentication Anomaly - Z-Score Detection",
+        "LogTypes": [
+            "Okta.SystemLog"
+        ],
+        "YAMLPath": "rules/okta_rules/okta_ad_agent_auth_zscore_anomaly.yml"
+    },
+    {
+        "AnalysisType": "Scheduled Rule",
+        "Description": "Detects potential Okta AD Agent token theft and abuse using behavioral analysis.Instead of relying on hardcoded service account patterns, this detection identifieswhen AD agent-related activities (API token creation, agent registration, config changes)occur from previously unseen IP addresses or user agents. This behavioral approachadapts to your environment and catches anomalous access patterns that may indicatecompromised credentials or unauthorized token generation.**What This Detection Catches:**- API token creation from new IPs or user agents- New AD agent registrations from unexpected sources- AD agent configuration changes from new locations**Complementary Detection:**Use alongside `Okta.ADAgent.AuthenticationAnomaly.ZScore` which detects the actualUSE of stolen tokens through authentication pattern anomalies.",
+        "DisplayName": "Okta AD Agent Token Abuse - Behavioral",
+        "LogTypes": [
+            "Okta.SystemLog"
+        ],
+        "YAMLPath": "rules/okta_rules/okta_ad_agent_token_abuse_behavioral.yml"
+    },
+    {
         "AnalysisType": "Scheduled Query",
         "Description": "Audit instances of admin access granted in your okta tenant",
         "DisplayName": "Okta Admin Access Granted",
@@ -6748,6 +7353,15 @@
             "Okta.SystemLog"
         ],
         "YAMLPath": "rules/okta_rules/okta_app_unauthorized_access_attempt.yml"
+    },
+    {
+        "AnalysisType": "Scheduled Rule",
+        "Description": "Detects potential Okta authentication bypass via skeleton key injection using behavioral z-score analysis.Skeleton key attacks in Okta involve manipulating authentication policies to weaken MFA requirements(disabling requireFactor, zeroing maxSessionLifetime) and bulk-enrolling attacker-controlledauthenticators on victim accounts. This detection builds a 90-day behavioral baseline for eachadmin's policy change and factor enrollment patterns, then identifies anomalous spikes in the last7 days.**Detection Logic:**- Z-score: Spike in security-weakening policy changes (> 2\u03c3 above baseline)- Z-score: Spike in admin-on-behalf-of MFA factor enrollments (> 3\u03c3 above baseline)- Cold-start: First-time security weakening (no prior baseline - immediate high-confidence signal)- Cold-start: First-time admin-enrolled factors for other users**Why This Matters:**Skeleton key attacks require two steps: weaken authentication policies to reduce MFA friction,then enroll attacker-controlled authenticators on victim accounts. This detection catches bothsteps using behavioral baselines that adapt to legitimate admin workflows.**Complementary Detection:**Use alongside `Okta.ADAgent.TokenAbuse.Behavioral` for admin credential theft scenarios.",
+        "DisplayName": "Okta Authentication Bypass via Skeleton Key Injection - Behavioral",
+        "LogTypes": [
+            "Okta.SystemLog"
+        ],
+        "YAMLPath": "rules/okta_rules/okta_skeleton_key_bypass_behavioral.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -6942,6 +7556,24 @@
         "YAMLPath": "rules/okta_rules/okta_support_reset.yml"
     },
     {
+        "AnalysisType": "Scheduled Rule",
+        "Description": "Detects Okta SWA (Secure Web Authentication) bulk credential extraction, abuse, and access frompreviously unseen IP addresses or user agents using behavioral z-score and source novelty analysis.SWA apps store credentials in Okta's encrypted vault. Admin accounts with SWA access can view orrotate credentials for users across many apps. This detection builds a 90-day behavioral baselinefor each admin's SWA access, credential change patterns, and known source IPs/user agents, thenidentifies anomalous spikes or new sources in the last 7 days.**Detection Logic:**- Z-score: SWA authentication volume spike (> 3\u03c3 above baseline)- Z-score: Unique SWA app diversity spike (many different apps accessed in one hour) (> 3\u03c3)- Z-score: Credential extraction volume spike (> 3\u03c3)- Z-score: Victim diversity spike (credential changes across many users) (> 2\u03c3)- Cold-start: First-time bulk SWA access (>= 10 events, no prior baseline)- Cold-start: First-time credential extraction (>= 5 extractions, no prior baseline)- New source: SWA access from IP address not seen in 90-day baseline- New source: SWA access from user agent not seen in 90-day baseline- Critical compound: New IP + any credential extraction events**Why This Matters:**SWA credential extraction is a powerful lateral movement technique. An attacker with admin accesscan silently retrieve plaintext credentials for hundreds of SWA-protected applications withouttriggering MFA or generating obvious authentication failures. New source detection catches theinitial access phase when a compromised admin account is used from an unfamiliar device or location.**Complementary Detection:**Use alongside `Okta.SWA.OffHoursAccess.Behavioral` which detects the same attack vectoroccurring outside normal business hours.",
+        "DisplayName": "Okta SWA Bulk Access, New Source, and Credential Extraction - Behavioral",
+        "LogTypes": [
+            "Okta.SystemLog"
+        ],
+        "YAMLPath": "rules/okta_rules/okta_swa_bulk_access_behavioral.yml"
+    },
+    {
+        "AnalysisType": "Scheduled Rule",
+        "Description": "Detects Okta SWA credential access occurring outside normal business hours using behavioralz-score analysis on temporal patterns.Compromised admin accounts often access SWA credentials at unusual times - late at night,during weekends, or from a different geographic location than normal. This detection buildsa 90-day baseline for each admin's temporal credential access patterns, then identifiesanomalous shifts toward off-hours, late-night, and weekend activity in the last 7 days.**Detection Logic:**- Z-score: Off-hours ratio spike (> 3\u03c3 above normal off-hours proportion)- Z-score: Late-night ratio spike (2 AM - 6 AM accesses) (> 2\u03c3)- Z-score: Weekend ratio spike (> 2\u03c3)- Cold-start: First-time off-hours credential access (>= 3 events, no prior baseline)- Cold-start: First-time late-night access (>= 2 events, no prior baseline)- Cold-start: First-time weekend access (>= 2 events, no prior baseline)- Compound: Geographic shift + off-hours activity (high-confidence indicator)**Why This Matters:**Attackers using stolen admin credentials typically operate at off-hours to avoid detectionand minimize interference with active users. A sudden shift in the time distribution ofSWA credential accesses is a strong indicator of account compromise.**Complementary Detection:**Use alongside `Okta.SWA.BulkAccess.Behavioral` which detects the same attack vectorbased on volume rather than temporal patterns.",
+        "DisplayName": "Okta SWA Off-Hours Credential Access - Behavioral",
+        "LogTypes": [
+            "Okta.SystemLog"
+        ],
+        "YAMLPath": "rules/okta_rules/okta_swa_offhours_access_behavioral.yml"
+    },
+    {
         "AnalysisType": "Rule",
         "Description": "Okta ThreatInsight identified request from potentially malicious IP address",
         "DisplayName": "Okta ThreatInsight Security Threat Detected",
@@ -7132,6 +7764,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects credential stuffing attacks against OpenAI accounts by tracking the number of distinct source IP addresses submitting failed login attempts against the same email address within a short timeframe. Unlike brute force from a single IP, credential stuffing distributes attempts across many IPs to evade rate limiting. This rule complements OpenAI.BruteForce.Login.Success, which confirms account compromise once a successful login follows the failures.",
+        "DisplayName": "OpenAI Credential Stuffing",
+        "LogTypes": [
+            "OpenAI.Audit"
+        ],
+        "YAMLPath": "rules/openai_rules/openai_credential_stuffing.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Base rule for detecting OpenAI failed login attempts. This rule is used primarilyas a building block for correlation rules and does not generate alerts on its own.",
         "DisplayName": "OpenAI Failed Login (Base Rule)",
         "LogTypes": [
@@ -7313,7 +7954,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "This rule alerts when Proofpoint detects malware in an email message. It triggers when emails are quarantined with the malware rule or when the malware score is 85 or higher.",
+        "Description": "This rule alerts when Proofpoint detects malware in an email message. It triggers when emails are quarantined with the malware rule or when the malware score is 90 or higher. Events quarantined to the Virus folder or with the notcleaned rule are handled by the Virus Detected rule instead.",
         "DisplayName": "Proofpoint Malware Detected",
         "LogTypes": [
             "Proofpoint.Event"
@@ -7322,7 +7963,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "This rule alerts when multiple active threats are detected in a single email message. This could indicate a sophisticated multi-vector attack combining malware, phishing URLs, and malicious attachments. Severity is dynamic: CRITICAL (5+ threats), HIGH (3-4 threats), MEDIUM (2 threats).",
+        "Description": "This rule alerts when three or more active threats are detected in a single email message. This indicates a sophisticated multi-vector attack combining malware, phishing URLs, and malicious attachments. Severity is dynamic: CRITICAL (5+ threats), HIGH (3-4 threats).",
         "DisplayName": "Proofpoint Multiple Threats Detected",
         "LogTypes": [
             "Proofpoint.Event"
@@ -7331,7 +7972,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "This rule alerts when Proofpoint detects phishing attempts in email. It triggers when emails are quarantined with the phish rule, have a high phish score (80+), or contain active phishing threats in the threats map.",
+        "Description": "This rule alerts when Proofpoint detects phishing attempts in email. It triggers when emails are quarantined with the phish rule, have a high phish score (90+), or contain active phishing threats in the threats map.",
         "DisplayName": "Proofpoint Phishing Email Detected",
         "LogTypes": [
             "Proofpoint.Event"
@@ -7340,7 +7981,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "This rule alerts when Proofpoint detects a virus in an email that cannot be disinfected. It triggers when emails are quarantined to the Virus folder, have the notcleaned quarantine rule applied, or have a malware score of 95+.",
+        "Description": "This rule alerts when Proofpoint detects a virus in an email that cannot be disinfected. It triggers when emails are quarantined to the Virus folder or have the notcleaned quarantine rule applied.",
         "DisplayName": "Proofpoint Virus Detected",
         "LogTypes": [
             "Proofpoint.Event"
@@ -7957,9 +8598,9 @@
         "Description": "Detects multi-step Snowflake data exfiltration by identifying temporary stage creation, table data copied to stage, and file downloads. This technique was used in the April 2024 Snowflake breach (UNC5537) targeting accounts without MFA. The correlation of all three steps provides high-confidence evidence of active data theft beyond legitimate ETL operations.",
         "DisplayName": "Snowflake Data Exfiltration",
         "LogTypes": [
-            "Snowflake.AccountUsage"
+            "Snowflake.QueryHistory"
         ],
-        "YAMLPath": "correlation_rules/snowflake_data_exfiltration.yml"
+        "YAMLPath": "correlation_rules/snowflake_data_exfiltration_streaming.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -8014,6 +8655,15 @@
             "Snowflake.AccountUsage"
         ],
         "YAMLPath": "queries/snowflake_queries/snowflake_multiple_failed_logins_followed_by_success.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects password spraying attacks against Snowflake by tracking the number of distinct user accounts targeted by failed login attempts from the same source IP address within a short timeframe. Unlike brute force against a single account, password spraying distributes attempts across many accounts to evade lockout policies. This rule complements Snowflake.Stream.BruteForceByIp (same IP, any accounts) and Snowflake.PotentialBruteForceSuccess (brute force followed by confirmed login).",
+        "DisplayName": "Snowflake Password Spray",
+        "LogTypes": [
+            "Snowflake.LoginHistory"
+        ],
+        "YAMLPath": "rules/snowflake_rules/snowflake_stream_password_spray.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -8195,6 +8845,15 @@
             "Snyk.OrgAudit"
         ],
         "YAMLPath": "rules/snyk_rules/snyk_user_mgmt.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Surfaces all open SOCRadar security incidents as Panther alerts. Severity is mapped dynamically from SOCRadar's alarm_risk_level (CRITICAL/HIGH/MEDIUM/LOW/INFO). SOCRadar performs the underlying threat detection; this rule ensures every open incident is visible in Panther for triage and response.",
+        "DisplayName": "SOCRadar Alert Passthrough",
+        "LogTypes": [
+            "SOCRadar.Incidents"
+        ],
+        "YAMLPath": "rules/socradar_rules/socradar_alert_passthrough.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -8517,6 +9176,51 @@
             "OnePassword.SignInAttempt"
         ],
         "YAMLPath": "rules/onepassword_rules/onepassword_unusual_client.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Re-raises Upwind API security detections in Panther. Covers broken authentication, authorization flaws, injection, mass assignment, token misuse, and sensitive data exposure patterns detected at the API layer.",
+        "DisplayName": "Upwind API Detection Passthrough",
+        "LogTypes": [
+            "Upwind.Detections"
+        ],
+        "YAMLPath": "rules/upwind_rules/upwind_api_detection_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Re-raises Upwind network security detections in Panther. Covers port scans, DoS activity, DNS anomalies, DNS-over-HTTPS abuse, and other anomalous network behaviors.",
+        "DisplayName": "Upwind Network Detection Passthrough",
+        "LogTypes": [
+            "Upwind.Detections"
+        ],
+        "YAMLPath": "rules/upwind_rules/upwind_network_detection_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Re-raises Upwind cloud posture and CSPM detections in Panther. Covers cloud misconfigurations, exposed secrets, configuration drift, and CSPM policy violations.",
+        "DisplayName": "Upwind Posture Detection Passthrough",
+        "LogTypes": [
+            "Upwind.Detections"
+        ],
+        "YAMLPath": "rules/upwind_rules/upwind_posture_detection_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Re-raises Upwind runtime security detections in Panther. Covers process execution anomalies, syscall-based threats, container escapes, and other host/container behavioral threats.",
+        "DisplayName": "Upwind Runtime Detection Passthrough",
+        "LogTypes": [
+            "Upwind.Detections"
+        ],
+        "YAMLPath": "rules/upwind_rules/upwind_runtime_detection_passthrough.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Re-raises Upwind vulnerability detections in Panther. Covers exploitable CVEs identified in runtime containers, VMs, and serverless environments, prioritized by active exposure.",
+        "DisplayName": "Upwind Vulnerability Detection Passthrough",
+        "LogTypes": [
+            "Upwind.Detections"
+        ],
+        "YAMLPath": "rules/upwind_rules/upwind_vulnerability_detection_passthrough.yml"
     },
     {
         "AnalysisType": "Rule",

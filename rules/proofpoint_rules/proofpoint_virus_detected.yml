@@ -17,8 +17,8 @@ Tags:
 Severity: High
 Description: >
   This rule alerts when Proofpoint detects a virus in an email that cannot
-  be disinfected. It triggers when emails are quarantined to the Virus folder,
-  have the notcleaned quarantine rule applied, or have a malware score of 95+.
+  be disinfected. It triggers when emails are quarantined to the Virus folder
+  or have the notcleaned quarantine rule applied.
 Runbook: |
   1. Confirm the email was quarantined and immediately verify endpoint protection status on recipient systems
   2. Block the sender domain/IP within 15 minutes and search for similar emails from the last 7 days
@@ -84,8 +84,8 @@ Tests:
           classification: "malware"
           threatStatus: "active"
           threat: "update.exe"
-  - Name: High Malware Score Without Quarantine - Backup Check
-    ExpectedResult: true
+  - Name: High Malware Score Without Quarantine - No Alert
+    ExpectedResult: false
     Log:
       messageTime: "2026-01-08T14:30:00Z"
       sender: "highscore@malware.net"
