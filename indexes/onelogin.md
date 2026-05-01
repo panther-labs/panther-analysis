@@ -32,6 +32,8 @@
   - User locked or suspended from their account.
 - [OneLogin User Password Changed](../rules/onelogin_rules/onelogin_password_changed.yml)
   - A user password was updated.
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 
