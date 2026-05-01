@@ -1,4 +1,6 @@
 def rule(event):
+    if event.deep_get("id", "applicationName") != "drive":
+        return False
     return event.get("name") == "trash"
 
 
