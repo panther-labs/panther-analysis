@@ -1,7 +1,7 @@
 from panther_otx_helpers import (
     get_otx_object,
     otx_alert_context,
-    otx_severity_from_pulse,
+    otx_severity,
     severity_greater_than,
 )
 
@@ -14,7 +14,7 @@ INDICATOR_FIELDS = (
     "p_any_emails",
 )
 
-MATCHED_INDICATORS = {}  # {indicator: {adversary, malware_families, indicator_type}}
+MATCHED_INDICATORS = {}  # {indicator: indicator_type}
 
 
 def rule(event):
@@ -32,11 +32,7 @@ def rule(event):
             indicator_type = otx.indicator_type(value)
             if not indicator_type:
                 continue
-            MATCHED_INDICATORS[value] = {
-                "adversary": otx.adversary(value),
-                "malware_families": otx.malware_families(value),
-                "indicator_type": indicator_type,
-            }
+            MATCHED_INDICATORS[value] = indicator_type
 
     return bool(MATCHED_INDICATORS)
 
@@ -44,19 +40,15 @@ def rule(event):
 def title(event):
     log_type = event.get("p_log_type", "Unknown")
     if len(MATCHED_INDICATORS) == 1:
-        indicator, info = next(iter(MATCHED_INDICATORS.items()))
-        ioc_type = info.get("indicator_type", "indicator")
+        indicator, ioc_type = next(iter(MATCHED_INDICATORS.items()))
         return f"OTX: Known threat {ioc_type} [{indicator}] detected in {log_type}"
     return f"OTX: {len(MATCHED_INDICATORS)} threat indicators detected in {log_type}"
 
 
-def severity(event):  # pylint: disable=unused-argument
+def severity(event):
     highest = None
-    for info in MATCHED_INDICATORS.values():
-        sev = otx_severity_from_pulse(
-            info.get("adversary", ""),
-            info.get("malware_families", []),
-        )
+    for indicator in MATCHED_INDICATORS:
+        sev = otx_severity(event, indicator)
         if highest is None or severity_greater_than(sev, highest):
             highest = sev
     return highest or "DEFAULT"
@@ -66,8 +58,8 @@ def alert_context(event):
     if not MATCHED_INDICATORS:
         return {}
     ctx = {}
-    for indicator, info in MATCHED_INDICATORS.items():
+    for indicator, indicator_type in MATCHED_INDICATORS.items():
         indicator_ctx = otx_alert_context(event, indicator)
-        indicator_ctx["MatchedIndicatorType"] = info.get("indicator_type")
+        indicator_ctx["MatchedIndicatorType"] = indicator_type
         ctx[indicator] = indicator_ctx
     return ctx
