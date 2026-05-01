@@ -197,5 +197,7 @@
   - This detection identifies when Kubernetes system principals (service accounts with usernames starting with "system:", "eks:", or "aks:") are accessed from non-cloud provider public IP addresses. System principals should only operate from within the cluster (private IPs) or from legitimate cloud infrastructure. Access from external public IPs indicates potential service account token theft or compromise, often following initial access to a cluster.
 - [Kubernetes System Role Modified or Deleted](../rules/kubernetes_rules/k8s_system_role_modified.yml)
   - This detection monitors for modifications or deletions of system ClusterRoles/Roles (those starting with "system:"). These are built-in Kubernetes roles for control plane components like kube-scheduler, kube-controller-manager, and system:admin. Tampering with system roles can break cluster functionality, create privilege escalation backdoors, or disable security controls. Legitimate modifications to system roles are extremely rare outside of cluster upgrades.
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 
 

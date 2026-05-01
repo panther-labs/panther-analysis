@@ -1,0 +1,38 @@
+AnalysisType: saved_query
+QueryName: "Query.OTX.PulsesSummary"
+Description: >
+  Group OTX pulse rows by pulse and summarize the indicators each pulse contains.
+  The OTX.Pulses lookup table stores one indicator per row; this query reconstructs
+  the pulse view with counts by indicator type, adversary, malware families,
+  industries, and target countries.
+Tags:
+  - OTX
+  - Threat Intelligence
+  - Lookup Table
+Query: |
+  SELECT
+      id AS pulse_id,
+      ANY_VALUE(name) AS pulse_name,
+      ANY_VALUE(adversary) AS adversary,
+      ANY_VALUE(malware_families) AS malware_families,
+      ANY_VALUE(tags) AS tags,
+      ANY_VALUE(industries) AS industries,
+      ANY_VALUE(target_countries) AS target_countries,
+      ANY_VALUE(attack_ids) AS attack_ids,
+      ANY_VALUE(tlp) AS tlp,
+      ANY_VALUE(created) AS pulse_created,
+      ANY_VALUE(modified) AS pulse_modified,
+      COUNT(*) AS indicator_count,
+      ARRAY_AGG(DISTINCT indicator_type) WITHIN GROUP (ORDER BY indicator_type) AS indicator_types,
+      COUNT_IF(indicator_type ILIKE 'IPv4' OR indicator_type ILIKE 'IPv6') AS ip_count,
+      COUNT_IF(indicator_type ILIKE 'domain' OR indicator_type ILIKE 'hostname') AS domain_count,
+      COUNT_IF(indicator_type ILIKE 'FileHash-%') AS hash_count,
+      COUNT_IF(indicator_type ILIKE 'URL' OR indicator_type ILIKE 'URI') AS url_count,
+      COUNT_IF(indicator_type ILIKE 'email') AS email_count,
+      COUNT_IF(indicator_type ILIKE 'CVE') AS cve_count,
+      CONCAT('https://otx.alienvault.com/pulse/', id) AS otx_url
+  FROM panther_lookups.public.otx_pulses
+  WHERE p_occurs_since('30 days')
+  GROUP BY id
+  ORDER BY pulse_modified DESC
+  LIMIT 200

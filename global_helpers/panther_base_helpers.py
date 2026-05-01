@@ -26,6 +26,19 @@ class PantherUnexpectedAlert(Exception):
 
 EMAIL_REGEX = re.compile(r"[\w.+%-]+@[\w.-]+\.[a-zA-Z]{2,}")
 
+SEVERITY_LEVELS = {
+    "INFO": 0,
+    "LOW": 1,
+    "MEDIUM": 2,
+    "HIGH": 3,
+    "CRITICAL": 4,
+}
+
+
+def severity_greater_than(sev1: str, sev2: str) -> bool:
+    """Compare two Panther severity strings; unknown values rank below INFO."""
+    return SEVERITY_LEVELS.get(sev1, -1) > SEVERITY_LEVELS.get(sev2, -1)
+
 
 def deep_get(dictionary: dict, *keys, default=None):
     """Safely return the value of an arbitrarily nested map
