@@ -4,19 +4,12 @@ from collections.abc import Sequence
 from typing import Union
 
 from dateutil import parser
+from panther_base_helpers import severity_greater_than  # re-exported for rule imports
 from panther_lookuptable_helpers import LookupTableMatches
 
-_SEVERITIES = {
-    "INFO": 0,
-    "LOW": 1,
-    "MEDIUM": 2,
-    "HIGH": 3,
-    "CRITICAL": 4,
-}
-
-
-def severity_greater_than(sev1: str, sev2: str) -> bool:
-    return _SEVERITIES.get(sev1, -1) > _SEVERITIES.get(sev2, -1)
+# `severity_greater_than` is re-exported above so rules importing it from this
+# module continue to work; the canonical definition lives in panther_base_helpers.
+_ = severity_greater_than
 
 
 def otx_severity_from_pulse(adversary: str, malware_families: list, default: str = "MEDIUM") -> str:
