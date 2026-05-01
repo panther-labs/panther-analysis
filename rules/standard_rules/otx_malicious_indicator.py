@@ -5,6 +5,15 @@ from panther_otx_helpers import (
     severity_greater_than,
 )
 
+INDICATOR_FIELDS = (
+    "p_any_ip_addresses",
+    "p_any_domain_names",
+    "p_any_md5_hashes",
+    "p_any_sha1_hashes",
+    "p_any_sha256_hashes",
+    "p_any_emails",
+)
+
 MATCHED_INDICATORS = {}  # {indicator: {adversary, malware_families, indicator_type}}
 
 
@@ -16,15 +25,18 @@ def rule(event):
     if not otx:
         return False
 
-    for ip_addr in event.get("p_any_ip_addresses", []):
-        indicator_type = otx.indicator_type(ip_addr)
-        if not indicator_type:
-            continue
-        MATCHED_INDICATORS[ip_addr] = {
-            "adversary": otx.adversary(ip_addr),
-            "malware_families": otx.malware_families(ip_addr),
-            "indicator_type": indicator_type,
-        }
+    for field in INDICATOR_FIELDS:
+        for value in event.get(field, []) or []:
+            if value in MATCHED_INDICATORS:
+                continue
+            indicator_type = otx.indicator_type(value)
+            if not indicator_type:
+                continue
+            MATCHED_INDICATORS[value] = {
+                "adversary": otx.adversary(value),
+                "malware_families": otx.malware_families(value),
+                "indicator_type": indicator_type,
+            }
 
     return bool(MATCHED_INDICATORS)
 
@@ -39,15 +51,15 @@ def title(event):
 
 
 def severity(event):  # pylint: disable=unused-argument
-    highest = "INFO"
+    highest = None
     for info in MATCHED_INDICATORS.values():
         sev = otx_severity_from_pulse(
             info.get("adversary", ""),
             info.get("malware_families", []),
         )
-        if severity_greater_than(sev, highest):
+        if highest is None or severity_greater_than(sev, highest):
             highest = sev
-    return highest or "MEDIUM"
+    return highest or "DEFAULT"
 
 
 def alert_context(event):

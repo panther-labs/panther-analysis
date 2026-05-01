@@ -180,3 +180,62 @@ Tests:
             indicator: "198.51.100.20"
             indicator_type: "IPv4"
             indicator_created: "2024-04-10T00:00:00"
+  - Name: "Malicious Domain Detected"
+    ExpectedResult: true
+    Log:
+      p_any_domain_names:
+        - "evil.example.com"
+      p_log_type: "Cloudflare.HttpRequest"
+      p_enrichment:
+        pulses_otx:
+          "evil.example.com":
+            id: "pulse-domain-001"
+            name: "Phishing Domain"
+            description: "Domain hosting credential phishing pages."
+            created: "2024-05-01T00:00:00"
+            tags:
+              - "phishing"
+            malware_families: []
+            adversary: "FIN7"
+            attack_ids:
+              - "T1566.002"
+            indicator: "evil.example.com"
+            indicator_type: "domain"
+            indicator_created: "2024-05-01T00:00:00"
+  - Name: "Malicious File Hash Detected"
+    ExpectedResult: true
+    Log:
+      p_any_sha256_hashes:
+        - "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      p_log_type: "Crowdstrike.FDREvent"
+      p_enrichment:
+        pulses_otx:
+          "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855":
+            id: "pulse-hash-001"
+            name: "Emotet Loader"
+            description: "Known Emotet loader binary."
+            created: "2024-06-01T00:00:00"
+            malware_families:
+              - "Emotet"
+            adversary: ""
+            indicator: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            indicator_type: "FileHash-SHA256"
+            indicator_created: "2024-06-01T00:00:00"
+  - Name: "Malicious Email Detected"
+    ExpectedResult: true
+    Log:
+      p_any_emails:
+        - "attacker@evil.example.com"
+      p_log_type: "GSuite.ActivityEvent"
+      p_enrichment:
+        pulses_otx:
+          "attacker@evil.example.com":
+            id: "pulse-email-001"
+            name: "Phishing Sender"
+            description: "Email address used in widespread phishing campaign."
+            created: "2024-07-01T00:00:00"
+            malware_families: []
+            adversary: ""
+            indicator: "attacker@evil.example.com"
+            indicator_type: "email"
+            indicator_created: "2024-07-01T00:00:00"

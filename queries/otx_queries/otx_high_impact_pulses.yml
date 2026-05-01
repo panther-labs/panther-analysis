@@ -1,0 +1,60 @@
+AnalysisType: saved_query
+QueryName: "Query.OTX.HighImpactPulses"
+Description: >
+  Identify high-impact OTX pulses by grouping per-indicator rows and surfacing
+  pulses with a named adversary or known malware families. Each pulse is scored
+  CRITICAL (adversary AND malware), HIGH (one of the two), or filtered out.
+  Results are ordered by severity and indicator volume to highlight the most
+  noteworthy threats reported recently.
+Tags:
+  - OTX
+  - Threat Intelligence
+  - Lookup Table
+Query: |
+  WITH pulse_summary AS (
+      SELECT
+          id AS pulse_id,
+          ANY_VALUE(name) AS pulse_name,
+          ANY_VALUE(description) AS description,
+          ANY_VALUE(adversary) AS adversary,
+          ANY_VALUE(malware_families) AS malware_families,
+          ANY_VALUE(industries) AS industries,
+          ANY_VALUE(target_countries) AS target_countries,
+          ANY_VALUE(attack_ids) AS attack_ids,
+          ANY_VALUE(tags) AS tags,
+          ANY_VALUE(tlp) AS tlp,
+          ANY_VALUE(modified) AS pulse_modified,
+          COUNT(*) AS indicator_count,
+          ARRAY_SIZE(ARRAY_AGG(DISTINCT indicator_type)) AS distinct_indicator_types,
+          ARRAY_AGG(DISTINCT indicator_type) WITHIN GROUP (ORDER BY indicator_type) AS indicator_types
+      FROM panther_lookups.public.otx_pulses
+      WHERE p_occurs_since('30 days')
+      GROUP BY id
+  )
+  SELECT
+      pulse_id,
+      pulse_name,
+      description,
+      adversary,
+      malware_families,
+      industries,
+      target_countries,
+      attack_ids,
+      tags,
+      tlp,
+      indicator_count,
+      distinct_indicator_types,
+      indicator_types,
+      pulse_modified,
+      CASE
+          WHEN adversary IS NOT NULL AND adversary <> '' AND ARRAY_SIZE(malware_families) > 0
+              THEN 'CRITICAL'
+          ELSE 'HIGH'
+      END AS pulse_severity,
+      CONCAT('https://otx.alienvault.com/pulse/', pulse_id) AS otx_url
+  FROM pulse_summary
+  WHERE
+      (adversary IS NOT NULL AND adversary <> '')
+      OR ARRAY_SIZE(malware_families) > 0
+  ORDER BY pulse_severity, indicator_count DESC, pulse_modified DESC
+  LIMIT 100
