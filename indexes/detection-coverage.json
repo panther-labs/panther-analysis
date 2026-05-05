@@ -6907,7 +6907,7 @@
         "Description": "The Microsoft Graph security API federates queries to all onboarded security providers, including Azure AD Identity Protection, Microsoft 365, Microsoft Defender (Cloud, Endpoint, Identity) and Microsoft Sentinel",
         "DisplayName": "Microsoft Graph Passthrough",
         "LogTypes": [
-            "MicrosoftGraph.SecurityAlert"
+            "MicrosoftGraph.SecurityAlertV2"
         ],
         "YAMLPath": "rules/microsoft_rules/microsoft_graph_passthrough.yml"
     },
@@ -7860,6 +7860,34 @@
             "Osquery.Differential"
         ],
         "YAMLPath": "rules/osquery_rules/osquery_ossec.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.",
+        "DisplayName": "OTX Threat Intelligence Indicator Match",
+        "LogTypes": [
+            "AWS.ALB",
+            "AWS.CloudTrail",
+            "AWS.VPCFlow",
+            "Amazon.EKS.Audit",
+            "Asana.Audit",
+            "Atlassian.Audit",
+            "Azure.Audit",
+            "Azure.MonitorActivity",
+            "Box.Event",
+            "Cloudflare.Firewall",
+            "Cloudflare.HttpRequest",
+            "Crowdstrike.FDREvent",
+            "GCP.AuditLog",
+            "GSuite.ActivityEvent",
+            "Notion.AuditLogs",
+            "Okta.SystemLog",
+            "OneLogin.Events",
+            "OnePassword.SignInAttempt",
+            "Zendesk.Audit",
+            "Zoom.Activity"
+        ],
+        "YAMLPath": "rules/standard_rules/otx_malicious_indicator.yml"
     },
     {
         "AnalysisType": "Rule",

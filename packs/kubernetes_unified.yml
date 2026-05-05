@@ -18,6 +18,8 @@ PackDefinition:
     - Kubernetes.Pod.HostPath.Volume
     - Kubernetes.Pod.Privileged.Created
     - Kubernetes.Pod.StealServiceAccountToken
+    - Kubernetes.Role.NodeProxyPermissions
+    - Kubernetes.Role.PodExec
     - Kubernetes.Service.NodePort.Deployed
     # Data Models
     - Standard.Amazon.EKS.Audit
@@ -25,4 +27,6 @@ PackDefinition:
     - Standard.GCP.AuditLog
     # Globals used in these detections
     - panther_base_helpers
+    - panther_event_type_helpers
+    - panther_gcp_helpers
     - panther_kubernetes_helpers
