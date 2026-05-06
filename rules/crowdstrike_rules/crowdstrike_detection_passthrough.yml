@@ -159,6 +159,48 @@ Tests:
         "p_schema_version": 0,
         "timestamp": "2021-03-24 18:19:49",
       }
+  - Name: Informational Severity Finding
+    ExpectedResult: true
+    Log:
+      {
+        "cid": "00000000006e49842267fc5837c4e2fc",
+        "Technique": "Informational Activity",
+        "AgentIdString": "00000000000000000000000000000000",
+        "Name": "NGAV",
+        "Hostname": "macbook",
+        "CommandLine": "/Applications/app.app/Contents/MacOS/pup app",
+        "Objective": "Falcon Detection Method",
+        "Nonce": 1,
+        "SHA256String": "00000000009d4244ff0eff80712145e92dfbdc1990483402aca903f70c020e60",
+        "ExternalApiType": "Event_EppDetectionSummaryEvent",
+        "PatternDispositionValue": 0,
+        "CompositeId": "00000000000000000000000000000000:ind:00000000006e49842267fc5837c4e2fc:222222222222222222-33333-444444",
+        "Severity": 1,
+        "PatternDispositionDescription": "Detection, standard detection.",
+        "SeverityName": "Informational",
+        "MD5String": "000000000034829cb7cd82035c444f38",
+        "EventUUID": "000000000034829cb7cd82035c444f38",
+        "UserName": "bobert",
+        "FilePath": "/Applications/app.app/Contents/MacOS/",
+        "timestamp": "2021-09-18 20:38:52Z",
+        "ParentCommandLine": "/usr/libexec/runningboardd",
+        "Description": "Informational sample detection.",
+        "LocalIP": "1.1.1.1",
+        "ProcessEndTime": "1970-01-01 00:00:00Z",
+        "SHA1String": "0000000000000000000000000000000000000000",
+        "OriginSourceIpAddress": "",
+        "GrandParentImageFileName": "/sbin/launchd",
+        "MachineDomain": "",
+        "ParentImageFileName": "/usr/libexec/runningboardd",
+        "FalconHostLink": "https://falcon.us-2.crowdstrike.com/activity/detections/detail/00000000000000000000000000000000/222222222222222222?",
+        "UTCTimestamp": "2021-09-18 20:38:52Z",
+        "FileName": "pup app",
+        "EventType": "Event_ExternalApiEvent",
+        "CustomerIdString": "00000000006e49842267fc5837c4e2fc",
+        "Tactic": "Malware",
+        "SensorId": "00000000000000000000000000000000",
+        "eid": 118,
+      }
   - Name: Non-match (FDREvent)
     ExpectedResult: false
     Log:

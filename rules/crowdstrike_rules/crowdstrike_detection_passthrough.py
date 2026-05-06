@@ -2,6 +2,7 @@ import uuid
 
 from panther_crowdstrike_fdr_helpers import (
     crowdstrike_detection_alert_context,
+    crowdstrike_severity,
     get_crowdstrike_field,
 )
 
@@ -26,7 +27,7 @@ def alert_context(event):
 
 
 def severity(event):
-    return get_crowdstrike_field(event, "SeverityName")
+    return crowdstrike_severity(event)
 
 
 def dedup(event):
