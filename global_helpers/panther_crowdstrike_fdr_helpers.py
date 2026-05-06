@@ -59,3 +59,22 @@ def get_crowdstrike_field(event, field_name, default=None):
         or event.deep_get("unknown_payload", field_name)
         or default
     )
+
+
+_CROWDSTRIKE_SEVERITY_MAP = {
+    "informational": "INFO",
+    "low": "LOW",
+    "medium": "MEDIUM",
+    "high": "HIGH",
+    "critical": "CRITICAL",
+}
+
+
+def crowdstrike_severity(event) -> str:
+    """Maps CrowdStrike SeverityName to a Panther severity level.
+
+    CrowdStrike uses "Informational" where Panther expects "INFO"; this
+    normalizes all variants case-insensitively and falls back to DEFAULT.
+    """
+    severity_name = get_crowdstrike_field(event, "SeverityName", default="")
+    return _CROWDSTRIKE_SEVERITY_MAP.get(severity_name.lower(), "DEFAULT")
