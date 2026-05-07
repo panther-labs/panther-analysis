@@ -4,15 +4,12 @@ from collections.abc import Sequence
 from typing import Union
 
 from dateutil import parser
+from panther_base_helpers import severity_greater_than  # re-exported for rule imports
 from panther_lookuptable_helpers import LookupTableMatches
 
-_SEVERITIES = {
-    "INFO": 0,
-    "LOW": 1,
-    "MEDIUM": 2,
-    "HIGH": 3,
-    "CRITICAL": 4,
-}
+# `severity_greater_than` is re-exported above so rules importing it from this
+# module continue to work; the canonical definition lives in panther_base_helpers.
+_ = severity_greater_than
 
 
 def greynoise_severity_decode(classification: str, default: str) -> str:
@@ -21,10 +18,6 @@ def greynoise_severity_decode(classification: str, default: str) -> str:
     if classification == "benign":
         return "LOW"
     return default
-
-
-def severity_greater_than(sev1: str, sev2: str) -> bool:
-    return _SEVERITIES.get(sev1, -1) > _SEVERITIES.get(sev2, -1)
 
 
 # GreyNoise V3 API Helpers

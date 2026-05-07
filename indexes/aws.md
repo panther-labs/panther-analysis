@@ -12,6 +12,8 @@
 
 - [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
   - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 
 
 ## AWS BedrockModelInvocation
@@ -313,6 +315,8 @@
   - A console password, access key, or user has been created.
 - [New User Account Created](../rules/indicator_creation_rules/new_user_account_logging.yml)
   - A new account was created
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [RoleAssumes by Multiple Useragents](../queries/aws_queries/anomalous_role_assume_query.yml)
   - RoleAssumes with multiple Useragents could indicate compromised credentials.
 - [Root Account Access Key Created](../rules/aws_cloudtrail_rules/aws_root_access_key_created.yml)
@@ -535,6 +539,8 @@
   - This detection monitors for a new admission controller being created in the cluster. Admission controllers allows an attack to intercept all API requests made within a cluster, allowing for enumeration of resources and common actions. This can be a very powerful tool to understand where to pivot to next.
 - [New DaemonSet Deployed to Kubernetes](../queries/kubernetes_queries/kubernetes_new_daemonset_deployed_query.yml)
   - This detection monitors for a new DaemonSet deployed to a kubernetes cluster. A daemonset is a workload that guarantees the presence of exactly one instance of a specific pod on every node in the cluster. This can be a very powerful tool for establishing peristence.
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [Pod attached to the Node Host Network](../queries/kubernetes_queries/kubernetes_pod_attached_to_node_host_network_query.yml)
   - This detection monitor for the creation of pods which are attached to the host's network. This allows a pod to listen to all network traffic for all deployed computer on that particular node and communicate with other compute on the network namespace. Attackers can use this to capture secrets passed in arguments or connections.
 - [Pod Created or Modified Using the Host IPC Namespace](../queries/kubernetes_queries/kubernetes_pod_using_host_ipc_namespace_query.yml)
@@ -771,6 +777,8 @@
   - Checks for the log status `SKIPDATA`, which indicates that data was lost either to an internal server error or due to capacity constraints.
 - [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
   - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [VPC Flow Logs Inbound Port Allowlist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_allowlist.yml)
   - VPC Flow Logs observed inbound traffic violating the port allowlist.
 - [VPC Flow Logs Inbound Port Blocklist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_blocklist.yml)

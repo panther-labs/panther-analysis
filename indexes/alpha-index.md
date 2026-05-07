@@ -41,6 +41,7 @@
 - [AWS VPCFlow](#aws-vpcflow)
 - [AWS WAF](#aws-waf)
 - [AWS WAFWebACL](#aws-wafwebacl)
+- [Anthropic](#anthropic)
 - [AppOmni](#appomni)
 - [Asana](#asana)
 - [Atlassian](#atlassian)
@@ -63,6 +64,8 @@
 
 - [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
   - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 
 
 ## AWS BedrockModelInvocation
@@ -364,6 +367,8 @@
   - A console password, access key, or user has been created.
 - [New User Account Created](../rules/indicator_creation_rules/new_user_account_logging.yml)
   - A new account was created
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [RoleAssumes by Multiple Useragents](../queries/aws_queries/anomalous_role_assume_query.yml)
   - RoleAssumes with multiple Useragents could indicate compromised credentials.
 - [Root Account Access Key Created](../rules/aws_cloudtrail_rules/aws_root_access_key_created.yml)
@@ -586,6 +591,8 @@
   - This detection monitors for a new admission controller being created in the cluster. Admission controllers allows an attack to intercept all API requests made within a cluster, allowing for enumeration of resources and common actions. This can be a very powerful tool to understand where to pivot to next.
 - [New DaemonSet Deployed to Kubernetes](../queries/kubernetes_queries/kubernetes_new_daemonset_deployed_query.yml)
   - This detection monitors for a new DaemonSet deployed to a kubernetes cluster. A daemonset is a workload that guarantees the presence of exactly one instance of a specific pod on every node in the cluster. This can be a very powerful tool for establishing peristence.
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [Pod attached to the Node Host Network](../queries/kubernetes_queries/kubernetes_pod_attached_to_node_host_network_query.yml)
   - This detection monitor for the creation of pods which are attached to the host's network. This allows a pod to listen to all network traffic for all deployed computer on that particular node and communicate with other compute on the network namespace. Attackers can use this to capture secrets passed in arguments or connections.
 - [Pod Created or Modified Using the Host IPC Namespace](../queries/kubernetes_queries/kubernetes_pod_using_host_ipc_namespace_query.yml)
@@ -822,6 +829,8 @@
   - Checks for the log status `SKIPDATA`, which indicates that data was lost either to an internal server error or due to capacity constraints.
 - [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
   - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [VPC Flow Logs Inbound Port Allowlist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_allowlist.yml)
   - VPC Flow Logs observed inbound traffic violating the port allowlist.
 - [VPC Flow Logs Inbound Port Blocklist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_blocklist.yml)
@@ -866,6 +875,44 @@
   - Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating React2Shell (CVE-2025-55182) ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.
 
 
+## Anthropic
+
+- [Anthropic Admin API Key Created](../rules/anthropic_rules/anthropic_admin_api_key_created.yml)
+  - Detects when a new admin API key is created. Admin API keys have elevated privileges and their creation should be verified as authorized. The admin_api_key_id and scopes fields identify the key and its permissions.
+- [Anthropic Admin API Key Deleted](../rules/anthropic_rules/anthropic_admin_api_key_deleted.yml)
+  - Detects when an admin API key is deleted. Unauthorized deletion could indicate an attacker revoking legitimate credentials to disrupt operations or covering tracks after using a compromised key.
+- [Anthropic Artifact Shared Publicly](../rules/anthropic_rules/anthropic_artifact_shared_publicly.yml)
+  - Detects when an artifact's sharing audience is changed to public. Public artifacts are accessible to anyone with the link, which could expose sensitive content outside the organization.
+- [Anthropic Excessive Chat Access Failures](../rules/anthropic_rules/anthropic_excessive_chat_access_failures.yml)
+  - Detects when a single actor generates more than 50 chat access failures within a 10-minute window. Could indicate automated chat enumeration or unauthorized bulk access attempts. The claude_chat_id field identifies which chats were targeted — sequential or patterned IDs suggest scripted enumeration, while scattered IDs suggest shared-link browsing.
+- [Anthropic Integration Connected](../rules/anthropic_rules/anthropic_integration_connected.yml)
+  - Tracks when a user connects an external integration (e.g., GitHub, Google Drive) to their Anthropic account. Logged for compliance visibility into external data pathways. The integration_type field identifies which service was connected.
+- [Anthropic IP Restriction Deleted](../rules/anthropic_rules/anthropic_ip_restriction_deleted.yml)
+  - Detects when an organization IP restriction is deleted. IP restrictions are a critical network-level access control — removing them allows access from any IP address, which could indicate an attacker widening the attack surface after gaining admin access.
+- [Anthropic MCP Server Created](../rules/anthropic_rules/anthropic_mcp_server_created.yml)
+  - Detects when a new MCP (Model Context Protocol) server integration is created. Each MCP server is a new external data pathway that could be used for data exfiltration. Every new integration should be verified as approved, especially when created by external contractors or service accounts.
+- [Anthropic MCP Server Deleted](../rules/anthropic_rules/anthropic_mcp_server_deleted.yml)
+  - Detects when an MCP server integration is deleted from the organization. Removing an approved integration could indicate an attacker covering tracks or unauthorized configuration changes. The mcp_server_name and mcp_server_id fields identify which integration was removed.
+- [Anthropic Organization Settings Updated](../rules/anthropic_rules/anthropic_org_settings_updated.yml)
+  - Detects when organization-wide settings are modified in Anthropic. These changes can affect security posture for all users (e.g., SSO configuration, data retention, access controls). The updates field identifies which settings were changed.
+- [Anthropic Organization User Deleted](../rules/anthropic_rules/anthropic_org_user_deleted.yml)
+  - Tracks when a user is removed from the Anthropic organization. Logged for compliance visibility into user lifecycle changes. The deleted_user_id and deleted_user_email fields identify who was removed.
+- [Anthropic Primary Owner Transferred](../rules/anthropic_rules/anthropic_primary_owner_transferred.yml)
+  - Detects when the primary owner role of the Anthropic organization is transferred to another member. This is an extremely high-privilege action that gives full control of the organization. The previous_owner_id and new_owner_id fields identify who gave up and received ownership.
+- [Anthropic Role Granted](../rules/anthropic_rules/anthropic_role_granted.yml)
+  - Tracks all role grants in the Anthropic organization. Currently used to build visibility into the role taxonomy as the log source matures. Once sufficient data is collected on org-level vs project-level role patterns, this rule can be refined to alert at higher severity for elevated roles.
+- [Anthropic Service Key Created](../rules/anthropic_rules/anthropic_service_key_created.yml)
+  - Detects when a new service key is created. Service keys provide programmatic access and their creation should be verified as authorized. The service_key_id, service_name, key_name, and scopes fields identify the key and its permissions.
+- [Anthropic Service Key Revoked](../rules/anthropic_rules/anthropic_service_key_revoked.yml)
+  - Detects when a service key is revoked. Unauthorized revocation could indicate an attacker disrupting integrations or covering tracks after using a compromised key. The service_key_id and service_name fields identify which key was revoked.
+- [Anthropic Spend Limit Deleted](../rules/anthropic_rules/anthropic_spend_limit_deleted.yml)
+  - Detects when a platform spend limit is deleted. A deleted spend limit without a subsequent recreate could indicate an attacker removing financial guardrails to enable large-scale API usage or data exfiltration. Note that normal admin workflow often involves a delete immediately followed by a create (editing a limit).
+- [Anthropic SSO Disabled](../rules/anthropic_rules/anthropic_sso_disabled.yml)
+  - Detects when SSO is disabled or an SSO connection is deactivated for the organization. Disabling SSO allows users to bypass the identity provider and use weaker authentication methods. This is a critical security posture change that could indicate an attacker attempting to maintain access without IdP visibility.
+- [Anthropic SSO Login Failed](../rules/anthropic_rules/anthropic_sso_login_failed.yml)
+  - Detects failed SSO login attempts to the Anthropic organization. The actor is unauthenticated so no email is available — only the source IP. Every failure is alerted on as SSO failures should be rare in normal operation.
+
+
 ## AppOmni
 
 - [AppOmni Alert Passthrough](../rules/appomni_rules/appomni_alert_passthrough.yml)
@@ -905,6 +952,8 @@
   - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Impossible Travel for Login Action](../rules/standard_rules/impossible_travel_login.yml)
   - A user has subsequent logins from two geographic locations that are very far apart
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 
@@ -923,6 +972,8 @@
   - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 
@@ -1218,6 +1269,8 @@
   - Detects when users authenticate via device code flow for the first time in the past 14 days. Device code flow can be exploited through phishing attacks to steal tokens and impersonate victims.  This baseline detection helps identify new device code usage patterns that may indicate account compromise.
 - [Microsoft Entra ID Graph Email Access by Unusual Public Client](../queries/azure_queries/Entra_ID_Graph_Email_Access_Unusual_Public_Client_Query.yml)
   - Detects when a public client application accesses email data via Microsoft Graph API  from an application the user has not used in the past 14 days.  This pattern can indicate OAuth phishing where attackers trick users into granting malicious applications access to read or send emails on their behalf.
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 
@@ -1255,6 +1308,8 @@
   - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [Malicious Content Detected](../rules/box_rules/box_malicious_content.yml)
   - Box has detect malicious content, such as a virus.
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 
@@ -1307,6 +1362,8 @@
   - Detects React2Shell (CVE-2025-55182) RCE attempts blocked by Cloudflare WAF
 - [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
   - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 
 
 ## Crowdstrike
@@ -1397,6 +1454,8 @@
   - Okta Logins from an IP Address not found in CrowdStrike's AIP List
 - [Okta Login From CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/okta_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_FDREvent.yml)
   - Okta Logins from an IP Address not found in CrowdStrike's AIP List (crowdstrike_fdrevent table)
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 
 
 # D
@@ -1758,6 +1817,8 @@
   - This detection identifies when Kubernetes system principals (service accounts with usernames starting with "system:", "eks:", or "aks:") are accessed from non-cloud provider public IP addresses. System principals should only operate from within the cluster (private IPs) or from legitimate cloud infrastructure. Access from external public IPs indicates potential service account token theft or compromise, often following initial access to a cluster.
 - [Kubernetes System Role Modified or Deleted](../rules/kubernetes_rules/k8s_system_role_modified.yml)
   - This detection monitors for modifications or deletions of system ClusterRoles/Roles (those starting with "system:"). These are built-in Kubernetes roles for control plane components like kube-scheduler, kube-controller-manager, and system:admin. Tampering with system roles can break cluster functionality, create privilege escalation backdoors, or disable security controls. Legitimate modifications to system roles are extremely rare outside of cluster upgrades.
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 
 
 ## GitHub
@@ -1974,6 +2035,8 @@
   - A Workspace Admin Has Modified The Trusted Domains List
 - [Malware Detected in Email](../rules/gsuite_activityevent_rules/gsuite_malware_in_email.yml)
   - Detects when malware is found in an email received by a user. Identifies different malware families including known malicious programs, viruses, worms, harmful content, and unwanted content. Severity is dynamically assigned based on the malware type, with known malicious programs and viruses triggering high-severity alerts.
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [Spam Email Surge](../rules/gsuite_activityevent_rules/gsuite_spam_email.yml)
   - Detects a high number of spam emails received by a single user in a short timeframe. This could indicate the user's email has appeared in data leaks and is being targeted for spam.
 - [Suspicious GSuite Login](../rules/gsuite_activityevent_rules/gsuite_suspicious_logins.yml)
@@ -2109,6 +2172,8 @@
   - A Notion User exported an existing workspace.
 - [Notion Workspace public page added](../rules/notion_rules/notion_workspace_settings_public_homepage_added.yml)
   - A Notion page was set to public in your worksace.
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 
@@ -2232,6 +2297,8 @@
   - Suspicious Activity Reporting provides an end user with the option to report unrecognized activity from an account activity email notification.This detection alerts when a user marks the raised activity as suspicious.
 - [Okta Username Above 52 Characters Security Advisory](../queries/okta_queries/okta_52_char_username_threat_hunt.yml)
   - On October 30, 2024, a vulnerability was internally identified in generating the cache key for AD/LDAP DelAuth. The Bcrypt algorithm was used to generate the cache key where we hash a combined string of userId + username + password. Under a specific set of conditions, listed below, this could allow users to authenticate by providing the username with the stored cache key of a previous successful authentication. Customers meeting the pre-conditions should investigate their Okta System Log for unexpected authentications from usernames greater than 52 characters between the period of July 23rd, 2024 to October 30th, 2024. https://trust.okta.com/security-advisories/okta-ad-ldap-delegated-authentication-username/
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [Potential Compromised Okta Credentials](../correlation_rules/potential_compromised_okta_credentials.yml)
   - Identifies high-confidence credential compromise by detecting Okta login without Push Security verification followed by Push Security phishing attack within 60 minutes. This sequence indicates an attacker authenticated to Okta with stolen credentials then attempted MFA fatigue or push bombing attacks. The correlation of both events provides strong evidence of active account compromise requiring immediate response.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
@@ -2272,6 +2339,8 @@
   - User locked or suspended from their account.
 - [OneLogin User Password Changed](../rules/onelogin_rules/onelogin_password_changed.yml)
   - A user password was updated.
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 
@@ -2294,6 +2363,8 @@
   - Alerts when a user defined list of sensitive items in 1Password is accessed
 - [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
   - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 - [Unusual 1Password Client Detected](../rules/onepassword_rules/onepassword_unusual_client.yml)
@@ -2785,6 +2856,8 @@
   - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 - [Zendesk Account Owner Changed](../rules/zendesk_rules/zendesk_new_owner.yml)
@@ -2807,6 +2880,8 @@
   - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
 - [New User Account Created](../rules/indicator_creation_rules/new_user_account_logging.yml)
   - A new account was created
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
 - [Zoom All Meetings Secured With One Option Disabled](../rules/zoom_operation_rules/zoom_all_meetings_secured_with_one_option_disabled.yml)

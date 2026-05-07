@@ -29,6 +29,8 @@ Tests:
     ExpectedResult: true
     Log:
       name: trash
+      id:
+        applicationName: drive
       actor:
         email: user@example.com
       parameters:
@@ -40,6 +42,8 @@ Tests:
     ExpectedResult: true
     Log:
       name: trash
+      id:
+        applicationName: drive
       actor:
         email: user@example.com
       parameters:
@@ -51,6 +55,8 @@ Tests:
     ExpectedResult: false
     Log:
       name: view
+      id:
+        applicationName: drive
       actor:
         email: user@example.com
       parameters:
@@ -60,8 +66,18 @@ Tests:
     ExpectedResult: false
     Log:
       name: download
+      id:
+        applicationName: drive
       actor:
         email: user@example.com
       parameters:
         doc_title: "Q4 Financial Report"
         doc_type: spreadsheet
+  - Name: Gmail Trash - Not Drive
+    ExpectedResult: false
+    Log:
+      name: trash
+      id:
+        applicationName: gmail
+      actor:
+        email: user@example.com

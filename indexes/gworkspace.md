@@ -108,6 +108,8 @@
   - A Workspace Admin Has Modified The Trusted Domains List
 - [Malware Detected in Email](../rules/gsuite_activityevent_rules/gsuite_malware_in_email.yml)
   - Detects when malware is found in an email received by a user. Identifies different malware families including known malicious programs, viruses, worms, harmful content, and unwanted content. Severity is dynamically assigned based on the malware type, with known malicious programs and viruses triggering high-severity alerts.
+- [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
+  - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [Spam Email Surge](../rules/gsuite_activityevent_rules/gsuite_spam_email.yml)
   - Detects a high number of spam emails received by a single user in a short timeframe. This could indicate the user's email has appeared in data leaks and is being targeted for spam.
 - [Suspicious GSuite Login](../rules/gsuite_activityevent_rules/gsuite_suspicious_logins.yml)

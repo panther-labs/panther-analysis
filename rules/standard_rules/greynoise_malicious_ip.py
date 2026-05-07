@@ -44,10 +44,10 @@ def title(event):
 
 
 def severity(event):  # pylint: disable=unused-argument
-    highest = "INFO"
+    highest = None
     for classification in MATCHED_IPS.values():
         sev = greynoise_severity_decode(classification, "DEFAULT")
-        if severity_greater_than(sev, highest):
+        if highest is None or severity_greater_than(sev, highest):
             highest = sev
     return highest or "DEFAULT"
 

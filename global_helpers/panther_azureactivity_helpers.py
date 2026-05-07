@@ -74,10 +74,17 @@ def azure_parse_json_string(json_str):
 
 
 def extract_resource_name_from_id(resource_id, resource_type, default="<UNKNOWN>"):
-    """Extract resource name from Azure resourceId path.
+    """Extract resource name from Azure resourceId path (case-insensitive).
 
     Azure resourceId paths follow the format:
     /subscriptions/{sub}/resourceGroups/{rg}/providers/{provider}/{resourceType}/{name}/...
+
+    Azure Monitor Activity logs frequently deliver resourceId fully uppercased
+    (e.g. ``/SUBSCRIPTIONS/<id>/RESOURCEGROUPS/RG/PROVIDERS/MICROSOFT.STORAGE/
+    STORAGEACCOUNTS/ACCOUNT``), so segment markers must be compared
+    case-insensitively. The returned name preserves the original casing from
+    ``resource_id`` so downstream correlation still matches the authoritative
+    resource name.
 
     Args:
         resource_id: Full Azure resource ID path
@@ -85,20 +92,17 @@ def extract_resource_name_from_id(resource_id, resource_type, default="<UNKNOWN>
         default: Default value if extraction fails (can be None or str)
 
     Returns:
-        Extracted resource name or default value
+        Extracted resource name (original case) or default value
 
     """
     if not resource_id:
         return default
 
     parts = resource_id.split("/")
-    if resource_type in parts:
-        try:
-            idx = parts.index(resource_type)
-            if idx + 1 < len(parts):
-                return parts[idx + 1]
-        except (ValueError, IndexError):
-            pass
+    lower_marker = resource_type.lower()
+    for idx, part in enumerate(parts):
+        if part.lower() == lower_marker and idx + 1 < len(parts):
+            return parts[idx + 1]
 
     return default
 
