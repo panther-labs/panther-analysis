@@ -9,16 +9,27 @@ def rule(event):
     return event.get("type") == PARENT_EVENT_TYPE
 
 
-def _extract_update_types(updates):
-    """Extract update type values from the updates list.
+def _extract_update_type(entry_str):
+    """Extract the first type value from a single serialized update entry."""
+    match = re.search(r"'type':\s*'([^']+)'", entry_str)
+    if not match:
+        match = re.search(r'"type":\s*"([^"]+)"', entry_str)
+    return match.group(1) if match else None
 
-    Uses string parsing because Panther's event wrapper intercepts
-    .get("type") on nested objects, returning the parent event's type.
+
+def _extract_update_types(updates):
+    """Extract top-level update type values from the updates list.
+
+    Serializes each entry individually to avoid capturing type values
+    from nested objects. Uses string parsing because Panther's event
+    wrapper intercepts .get("type") on nested objects.
     """
-    matches = re.findall(r"'type':\s*'([^']+)'", str(updates))
-    if not matches:
-        matches = re.findall(r'"type":\s*"([^"]+)"', str(updates))
-    return [m for m in matches if m != PARENT_EVENT_TYPE]
+    result = []
+    for entry in updates:
+        update_type = _extract_update_type(str(entry))
+        if update_type and update_type != PARENT_EVENT_TYPE:
+            result.append(update_type)
+    return result
 
 
 def title(event):
