@@ -219,7 +219,15 @@ echo ""
 echo "═══════════════════════════════════════════════════"
 
 # ─── Check if review found issues ───────────────────────────────
-if ! echo "$review_output" | grep -qE '⚠️|❌'; then
+has_issues=false
+# Check for emoji markers
+echo "$review_output" | grep -qE '⚠️|❌' && has_issues=true
+# Check for text markers (in case LLM omits emojis)
+echo "$review_output" | grep -qiE 'ISSUES FOUND|WARNING:|Issue:|Error:' && has_issues=true
+# Check for explicit PASS
+echo "$review_output" | grep -qF "**Overall:** PASS" && has_issues=false
+
+if ! $has_issues; then
     echo "✅ No issues found. Proceeding with push."
     exit 0
 fi
