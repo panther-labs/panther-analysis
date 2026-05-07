@@ -1,0 +1,55 @@
+AnalysisType: rule
+RuleID: Anthropic.Activity.Admin.API.Key.Deleted
+DisplayName: "Anthropic Admin API Key Deleted"
+Enabled: true
+Status: Experimental
+Filename: anthropic_admin_api_key_deleted.py
+LogTypes:
+  - Anthropic.Activity
+Severity: Medium
+Description: >
+  Detects when an admin API key is deleted. Unauthorized deletion could
+  indicate an attacker revoking legitimate credentials to disrupt operations
+  or covering tracks after using a compromised key.
+Runbook: |
+  1. Find all Anthropic.Activity events by actor:email_address in the 6 hours before and after the alert to determine if this is part of routine key rotation
+  2. Check if an admin_api_key_created event occurred near this deletion to determine if this is a key rotation or a standalone deletion
+  3. Check if actor:ip_address is associated with known VPN/proxy services or matches previously seen IP addresses for this actor
+Tags:
+  - Anthropic
+  - Credential Access
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1098.001
+Tests:
+  - Name: Admin API key deleted
+    ExpectedResult: true
+    Log:
+      {
+        "id": "activity_01ABC123",
+        "created_at": "2026-05-07T10:00:00Z",
+        "organization_id": "org_01XYZ",
+        "type": "admin_api_key_deleted",
+        "actor": {
+          "type": "user_actor",
+          "email_address": "admin@example.com",
+          "user_id": "user_01ABC",
+          "ip_address": "10.0.0.1",
+          "user_agent": "Mozilla/5.0"
+        }
+      }
+  - Name: Non-matching event type
+    ExpectedResult: false
+    Log:
+      {
+        "id": "activity_01DEF456",
+        "created_at": "2026-05-07T10:00:00Z",
+        "organization_id": "org_01XYZ",
+        "type": "admin_api_key_created",
+        "actor": {
+          "type": "user_actor",
+          "email_address": "admin@example.com",
+          "user_id": "user_01ABC",
+          "ip_address": "10.0.0.1"
+        }
+      }

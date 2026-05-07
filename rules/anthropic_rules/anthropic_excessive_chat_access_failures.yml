@@ -1,0 +1,77 @@
+AnalysisType: rule
+RuleID: Anthropic.Activity.Excessive.Chat.Access.Failures
+DisplayName: "Anthropic Excessive Chat Access Failures"
+Enabled: true
+Status: Experimental
+Filename: anthropic_excessive_chat_access_failures.py
+LogTypes:
+  - Anthropic.Activity
+Severity: Medium
+Threshold: 50
+DedupPeriodMinutes: 10
+Description: >
+  Detects when a single actor generates more than 50 chat access failures
+  within a 10-minute window. Could indicate automated chat enumeration
+  or unauthorized bulk access attempts. The claude_chat_id field identifies
+  which chats were targeted — sequential or patterned IDs suggest scripted
+  enumeration, while scattered IDs suggest shared-link browsing.
+Runbook: |
+  1. Find all Anthropic.Activity events by actor:email_address in the 1 hour before and after the alert to establish whether this is part of normal browsing or an isolated burst
+  2. Compare the actor's claude_chat_access_failed count to their claude_chat_viewed count in the same window — a high failure-to-success ratio suggests enumeration rather than shared-link browsing
+  3. Check if actor:ip_address appears in threat intelligence feeds or is associated with known VPN/proxy services
+Tags:
+  - Anthropic
+  - Access Control
+  - Enumeration
+Reports:
+  MITRE ATT&CK:
+    - TA0007:T1087
+Tests:
+  - Name: Chat access failure event
+    ExpectedResult: true
+    Log:
+      {
+        "id": "evt_01ABC123",
+        "created_at": "2026-04-28T08:00:00Z",
+        "organization_id": "org_123",
+        "type": "claude_chat_access_failed",
+        "claude_chat_id": "chat_01ABC",
+        "actor": {
+          "type": "user_actor",
+          "email_address": "user@example.com",
+          "user_id": "user_01XYZ",
+          "ip_address": "192.168.1.1",
+          "user_agent": "Mozilla/5.0"
+        }
+      }
+  - Name: Non-matching event type
+    ExpectedResult: false
+    Log:
+      {
+        "id": "evt_01DEF456",
+        "created_at": "2026-04-28T08:00:00Z",
+        "organization_id": "org_123",
+        "type": "claude_chat_viewed",
+        "claude_chat_id": "chat_01DEF",
+        "actor": {
+          "type": "user_actor",
+          "email_address": "user@example.com",
+          "user_id": "user_01XYZ",
+          "ip_address": "192.168.1.1"
+        }
+      }
+  - Name: API actor access failure
+    ExpectedResult: true
+    Log:
+      {
+        "id": "evt_01GHI789",
+        "created_at": "2026-04-28T08:00:00Z",
+        "organization_id": "org_123",
+        "type": "claude_chat_access_failed",
+        "claude_chat_id": "chat_01GHI",
+        "actor": {
+          "type": "api_actor",
+          "api_key_id": "key_01ABC",
+          "ip_address": "10.0.0.1"
+        }
+      }

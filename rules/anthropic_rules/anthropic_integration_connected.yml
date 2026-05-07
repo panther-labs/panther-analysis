@@ -1,0 +1,57 @@
+AnalysisType: rule
+RuleID: Anthropic.Activity.Integration.Connected
+DisplayName: "Anthropic Integration Connected"
+Enabled: true
+Status: Experimental
+Filename: anthropic_integration_connected.py
+LogTypes:
+  - Anthropic.Activity
+Severity: Info
+Description: >
+  Tracks when a user connects an external integration (e.g., GitHub, Google Drive)
+  to their Anthropic account. Logged for compliance visibility into external data
+  pathways. The integration_type field identifies which service was connected.
+Runbook: |
+  1. Find all Anthropic.Activity events by actor:email_address in the 1 hour before and after the alert to understand the context of the integration connection
+  2. Check if actor:email_address has connected other integrations in the past 30 days to identify unusual patterns
+  3. Check if actor:ip_address matches previously seen IP addresses for this actor
+Tags:
+  - Anthropic
+  - Compliance
+  - Integrations
+Reports:
+  MITRE ATT&CK:
+    - TA0009:T1530
+Tests:
+  - Name: GitHub integration connected
+    ExpectedResult: true
+    Log:
+      {
+        "id": "activity_01ABC123",
+        "created_at": "2026-05-06T17:38:28Z",
+        "organization_id": "org_01XYZ",
+        "type": "integration_user_connected",
+        "integration_type": "github",
+        "actor": {
+          "type": "user_actor",
+          "email_address": "user@example.com",
+          "user_id": "user_01ABC",
+          "ip_address": "10.0.0.1",
+          "user_agent": "Mozilla/5.0"
+        }
+      }
+  - Name: Non-matching event type
+    ExpectedResult: false
+    Log:
+      {
+        "id": "activity_01DEF456",
+        "created_at": "2026-05-06T17:38:28Z",
+        "organization_id": "org_01XYZ",
+        "type": "claude_chat_created",
+        "actor": {
+          "type": "user_actor",
+          "email_address": "user@example.com",
+          "user_id": "user_01DEF",
+          "ip_address": "10.0.0.2"
+        }
+      }
