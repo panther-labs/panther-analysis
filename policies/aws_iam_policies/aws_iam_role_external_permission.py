@@ -22,7 +22,8 @@ accounts = [
 PERMISSION = "lambda:AddPermission"
 
 # CONFIGURATION_REQUIRED: modify policy to contain specified permission, above
-mock_policy_has_permission = json.loads("""
+mock_policy_has_permission = json.loads(
+    """
 {
     "PolicyDocument": {
         "Version": "2012-10-17",
@@ -38,9 +39,11 @@ mock_policy_has_permission = json.loads("""
         ]
     }
 }
-""")
+"""
+)
 
-mock_policy_no_permission = json.loads("""
+mock_policy_no_permission = json.loads(
+    """
 {
     "PolicyDocument": {
         "Version": "2012-10-17",
@@ -53,7 +56,8 @@ mock_policy_no_permission = json.loads("""
         ]
     }
 }
-""")
+"""
+)
 
 
 # check to see if the account that is granted permission is third party
