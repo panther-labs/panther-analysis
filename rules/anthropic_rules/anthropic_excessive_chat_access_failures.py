@@ -6,8 +6,12 @@ def rule(event):
 
 
 def title(event):
-    actor_email = event.deep_get("actor", "email_address", default="<UNKNOWN_EMAIL_ADDRESS>")
-    return f"Anthropic: Excessive chat access failures from [{actor_email}]"
+    actor = (
+        event.deep_get("actor", "email_address")
+        or event.deep_get("actor", "api_key_id")
+        or event.deep_get("actor", "ip_address", default="<UNKNOWN_ACTOR>")
+    )
+    return f"Anthropic: Excessive chat access failures from [{actor}]"
 
 
 def dedup(event):
