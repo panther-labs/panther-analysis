@@ -36,5 +36,5 @@ def anthropic_alert_context(event):
         "deleted_user_id": event.get("deleted_user_id"),
         "deleted_user_email": event.get("deleted_user_email"),
     }
-    context.update({k: v for k, v in optional_context.items() if v})
+    context.update({k: v for k, v in optional_context.items() if v is not None})
     return context

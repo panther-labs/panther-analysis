@@ -11,7 +11,11 @@ def title(event):
 
 
 def dedup(event):
-    return event.deep_get("actor", "email_address", default="<UNKNOWN_EMAIL_ADDRESS>")
+    return (
+        event.deep_get("actor", "email_address")
+        or event.deep_get("actor", "api_key_id")
+        or event.deep_get("actor", "ip_address", default="<UNKNOWN_ACTOR>")
+    )
 
 
 def alert_context(event):

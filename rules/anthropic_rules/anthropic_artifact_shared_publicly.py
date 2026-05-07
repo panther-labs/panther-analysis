@@ -7,14 +7,12 @@ def rule(event):
     audience = event.get("audience")
     if audience is None:
         return False
-    # In production, audience is a list of dicts like [{"type": "public"}].
-    # The test framework may serialize nested objects differently, so we
-    # check both structured access and string representation.
     if isinstance(audience, list):
         for entry in audience:
             if isinstance(entry, dict) and entry.get("type") == "public":
                 return True
-    # Fallback for test framework compatibility
+        return False
+    # Fallback for non-list audience (test framework compatibility)
     audience_str = str(audience)
     return ": 'public'" in audience_str or ': "public"' in audience_str
 
