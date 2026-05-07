@@ -1,4 +1,4 @@
-from panther_anthropic_helpers import anthropic_alert_context
+from panther_anthropic_helpers import anthropic_actor_id, anthropic_alert_context
 
 
 def rule(event):
@@ -6,20 +6,11 @@ def rule(event):
 
 
 def title(event):
-    actor = (
-        event.deep_get("actor", "email_address")
-        or event.deep_get("actor", "api_key_id")
-        or event.deep_get("actor", "ip_address", default="<UNKNOWN_ACTOR>")
-    )
-    return f"Anthropic: Excessive chat access failures from [{actor}]"
+    return f"Anthropic: Excessive chat access failures from [{anthropic_actor_id(event)}]"
 
 
 def dedup(event):
-    return (
-        event.deep_get("actor", "email_address")
-        or event.deep_get("actor", "api_key_id")
-        or event.deep_get("actor", "ip_address", default="<UNKNOWN_ACTOR>")
-    )
+    return anthropic_actor_id(event)
 
 
 def alert_context(event):

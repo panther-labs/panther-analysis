@@ -1,6 +1,15 @@
 from panther_base_helpers import pantherflow_investigation
 
 
+def anthropic_actor_id(event):
+    """Returns the best available actor identifier, cascading through email, API key, then IP."""
+    return (
+        event.deep_get("actor", "email_address")
+        or event.deep_get("actor", "api_key_id")
+        or event.deep_get("actor", "ip_address", default="<UNKNOWN_ACTOR>")
+    )
+
+
 def anthropic_alert_context(event):
     """Returns common context for Anthropic Activity alerts"""
     context = {

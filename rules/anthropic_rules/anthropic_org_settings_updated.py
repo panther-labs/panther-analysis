@@ -1,4 +1,4 @@
-from panther_anthropic_helpers import anthropic_alert_context
+from panther_anthropic_helpers import anthropic_actor_id, anthropic_alert_context
 
 
 def rule(event):
@@ -6,7 +6,7 @@ def rule(event):
 
 
 def title(event):
-    actor_email = event.deep_get("actor", "email_address", default="<UNKNOWN_EMAIL_ADDRESS>")
+    actor_email = anthropic_actor_id(event)
     updates = event.get("updates", [])
     if updates and isinstance(updates, list):
         update_types = ", ".join(u.get("type", "unknown") for u in updates if isinstance(u, dict))
@@ -15,7 +15,7 @@ def title(event):
 
 
 def dedup(event):
-    return event.deep_get("actor", "email_address", default="<UNKNOWN_EMAIL_ADDRESS>")
+    return anthropic_actor_id(event)
 
 
 def alert_context(event):
