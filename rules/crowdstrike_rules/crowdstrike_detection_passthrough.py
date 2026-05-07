@@ -26,7 +26,19 @@ def alert_context(event):
 
 
 def severity(event):
-    return get_crowdstrike_field(event, "SeverityName")
+    # First, try returning the severity based on the SeverityName
+    sevname = get_crowdstrike_field(event, "SeverityName").upper()
+    allowed_values = ("INFO", "LOW", "MEDIUM", "HIGH", "CRITICAL")
+    if sevname == "INFORMATIONAL":
+        sevname = "INFO"
+    if sevname in allowed_values:
+        return sevname
+
+    # Else, fallback on the numerical value, falling back on MEDIUM if we still don't have a value
+    sevval = get_crowdstrike_field(event, "Severity")
+    return {1: "INFO", 2: "LOW", 3: "MEDIUM", 4: "HIGH", 5: "CRITICAL", 6: "CRITICAL"}.get(
+        sevval, "DEFAULT"
+    )
 
 
 def dedup(event):
