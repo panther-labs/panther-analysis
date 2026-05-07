@@ -3,7 +3,7 @@ set -euo pipefail
 
 # ─── Configuration ───────────────────────────────────────────────
 REVIEW_EXTENSIONS='\.py$|\.yml$|\.yaml$|\.sql$'
-EXCLUDE_PATTERNS='\.env|credentials|secrets|\.pem|\.key'
+EXCLUDE_PATTERNS='\.env$|\.pem$|\.key$|credentials\.json|secrets\.json|\.secret'
 MAX_FILES=100
 
 # ─── Determine changed files ────────────────────────────────────
@@ -195,8 +195,10 @@ echo "⏳ Running review (this may take 30-60 seconds)..."
 echo ""
 
 err_file=$(mktemp)
-trap 'rm -f "$err_file" "${fix_log:-}"' EXIT
-review_output=$(claude --print "$review_prompt" 2>"$err_file") || {
+trap 'rm -f "$err_file" "${fix_log:-}" "${prompt_file:-}" "${fix_prompt_file:-}"' EXIT
+prompt_file=$(mktemp)
+printf '%s' "$review_prompt" > "$prompt_file"
+review_output=$(claude --print - < "$prompt_file" 2>"$err_file") || {
     stderr_output=$(cat "$err_file" 2>/dev/null)
     echo "⚠️  Claude review failed."
     [[ -n "${stderr_output:-}" ]] && echo "Error: $stderr_output"
@@ -220,12 +222,16 @@ echo "════════════════════════�
 
 # ─── Check if review found issues ───────────────────────────────
 has_issues=false
-# Check for emoji markers
-echo "$review_output" | grep -qE '⚠️|❌' && has_issues=true
-# Check for text markers (in case LLM omits emojis)
-echo "$review_output" | grep -qiE 'ISSUES FOUND|WARNING:|Issue:|Error:' && has_issues=true
-# Check for explicit PASS
-echo "$review_output" | grep -qF "**Overall:** PASS" && has_issues=false
+# Check for explicit PASS first (case-insensitive, flexible formatting)
+if echo "$review_output" | grep -qiE '\*{0,2}Overall:?\*{0,2}\s*\*{0,2}PASS\*{0,2}'; then
+    has_issues=false
+# Check for explicit ISSUES FOUND
+elif echo "$review_output" | grep -qiE '\*{0,2}Overall:?\*{0,2}\s*\*{0,2}ISSUES FOUND\*{0,2}'; then
+    has_issues=true
+# Fallback: check for emoji markers in findings (not in meta-commentary)
+elif echo "$review_output" | grep -qE '⚠️|❌'; then
+    has_issues=true
+fi
 
 if ! $has_issues; then
     echo "✅ No issues found. Proceeding with push."
@@ -259,8 +265,11 @@ $(printf '%s\n' "${changed_files[@]}")"
 
         # Run Claude in background with a spinner
         fix_log=$(mktemp)
-        claude -p "$fix_prompt" --allowedTools "Edit,Read" --permission-mode acceptEdits > "$fix_log" &
+        fix_prompt_file=$(mktemp)
+        printf '%s' "$fix_prompt" > "$fix_prompt_file"
+        claude -p - --allowedTools "Edit,Read" --permission-mode acceptEdits < "$fix_prompt_file" > "$fix_log" &
         claude_pid=$!
+        trap 'kill "$claude_pid" 2>/dev/null; rm -f "$err_file" "${fix_log:-}" "${prompt_file:-}" "${fix_prompt_file:-}"' EXIT
         spin='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
         while kill -0 "$claude_pid" 2>/dev/null; do
             for (( i=0; i<${#spin}; i++ )); do
