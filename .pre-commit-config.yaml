@@ -21,3 +21,11 @@ repos:
       #   language: system
       #   pass_filenames: false
       #   stages: [pre-commit]
+
+      - id: claude-review
+        name: Claude Code Review
+        entry: bash .scripts/claude_review.sh
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+        always_run: true
