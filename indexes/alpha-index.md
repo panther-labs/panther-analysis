@@ -41,6 +41,7 @@
 - [AWS VPCFlow](#aws-vpcflow)
 - [AWS WAF](#aws-waf)
 - [AWS WAFWebACL](#aws-wafwebacl)
+- [Anthropic](#anthropic)
 - [AppOmni](#appomni)
 - [Asana](#asana)
 - [Atlassian](#atlassian)
@@ -872,6 +873,44 @@
   - Detects AWS WAF SQL Database managed rule group matches. Covers SQL injection patterns in query arguments, request body, cookies, and URI path, including extended patterns not covered by the Core Rule Set.
 - [AWS WAF ReactJS RCE Attempt via Body](../rules/aws_waf_rules/aws_waf_reactjsrce_body.yml)
   - Detects AWS WAF ReactJSRCE_BODY managed rule matches indicating React2Shell (CVE-2025-55182) ReactJS RCE attempts via HTTP body. Monitors all WAF sources: ALB, CloudFront, API Gateway, AppSync.
+
+
+## Anthropic
+
+- [Anthropic Admin API Key Created](../rules/anthropic_rules/anthropic_admin_api_key_created.yml)
+  - Detects when a new admin API key is created. Admin API keys have elevated privileges and their creation should be verified as authorized. The admin_api_key_id and scopes fields identify the key and its permissions.
+- [Anthropic Admin API Key Deleted](../rules/anthropic_rules/anthropic_admin_api_key_deleted.yml)
+  - Detects when an admin API key is deleted. Unauthorized deletion could indicate an attacker revoking legitimate credentials to disrupt operations or covering tracks after using a compromised key.
+- [Anthropic Artifact Shared Publicly](../rules/anthropic_rules/anthropic_artifact_shared_publicly.yml)
+  - Detects when an artifact's sharing audience is changed to public. Public artifacts are accessible to anyone with the link, which could expose sensitive content outside the organization.
+- [Anthropic Excessive Chat Access Failures](../rules/anthropic_rules/anthropic_excessive_chat_access_failures.yml)
+  - Detects when a single actor generates more than 50 chat access failures within a 10-minute window. Could indicate automated chat enumeration or unauthorized bulk access attempts. The claude_chat_id field identifies which chats were targeted — sequential or patterned IDs suggest scripted enumeration, while scattered IDs suggest shared-link browsing.
+- [Anthropic Integration Connected](../rules/anthropic_rules/anthropic_integration_connected.yml)
+  - Tracks when a user connects an external integration (e.g., GitHub, Google Drive) to their Anthropic account. Logged for compliance visibility into external data pathways. The integration_type field identifies which service was connected.
+- [Anthropic IP Restriction Deleted](../rules/anthropic_rules/anthropic_ip_restriction_deleted.yml)
+  - Detects when an organization IP restriction is deleted. IP restrictions are a critical network-level access control — removing them allows access from any IP address, which could indicate an attacker widening the attack surface after gaining admin access.
+- [Anthropic MCP Server Created](../rules/anthropic_rules/anthropic_mcp_server_created.yml)
+  - Detects when a new MCP (Model Context Protocol) server integration is created. Each MCP server is a new external data pathway that could be used for data exfiltration. Every new integration should be verified as approved, especially when created by external contractors or service accounts.
+- [Anthropic MCP Server Deleted](../rules/anthropic_rules/anthropic_mcp_server_deleted.yml)
+  - Detects when an MCP server integration is deleted from the organization. Removing an approved integration could indicate an attacker covering tracks or unauthorized configuration changes. The mcp_server_name and mcp_server_id fields identify which integration was removed.
+- [Anthropic Organization Settings Updated](../rules/anthropic_rules/anthropic_org_settings_updated.yml)
+  - Detects when organization-wide settings are modified in Anthropic. These changes can affect security posture for all users (e.g., SSO configuration, data retention, access controls). The updates field identifies which settings were changed.
+- [Anthropic Organization User Deleted](../rules/anthropic_rules/anthropic_org_user_deleted.yml)
+  - Tracks when a user is removed from the Anthropic organization. Logged for compliance visibility into user lifecycle changes. The deleted_user_id and deleted_user_email fields identify who was removed.
+- [Anthropic Primary Owner Transferred](../rules/anthropic_rules/anthropic_primary_owner_transferred.yml)
+  - Detects when the primary owner role of the Anthropic organization is transferred to another member. This is an extremely high-privilege action that gives full control of the organization. The previous_owner_id and new_owner_id fields identify who gave up and received ownership.
+- [Anthropic Role Granted](../rules/anthropic_rules/anthropic_role_granted.yml)
+  - Tracks all role grants in the Anthropic organization. Currently used to build visibility into the role taxonomy as the log source matures. Once sufficient data is collected on org-level vs project-level role patterns, this rule can be refined to alert at higher severity for elevated roles.
+- [Anthropic Service Key Created](../rules/anthropic_rules/anthropic_service_key_created.yml)
+  - Detects when a new service key is created. Service keys provide programmatic access and their creation should be verified as authorized. The service_key_id, service_name, key_name, and scopes fields identify the key and its permissions.
+- [Anthropic Service Key Revoked](../rules/anthropic_rules/anthropic_service_key_revoked.yml)
+  - Detects when a service key is revoked. Unauthorized revocation could indicate an attacker disrupting integrations or covering tracks after using a compromised key. The service_key_id and service_name fields identify which key was revoked.
+- [Anthropic Spend Limit Deleted](../rules/anthropic_rules/anthropic_spend_limit_deleted.yml)
+  - Detects when a platform spend limit is deleted. A deleted spend limit without a subsequent recreate could indicate an attacker removing financial guardrails to enable large-scale API usage or data exfiltration. Note that normal admin workflow often involves a delete immediately followed by a create (editing a limit).
+- [Anthropic SSO Disabled](../rules/anthropic_rules/anthropic_sso_disabled.yml)
+  - Detects when SSO is disabled or an SSO connection is deactivated for the organization. Disabling SSO allows users to bypass the identity provider and use weaker authentication methods. This is a critical security posture change that could indicate an attacker attempting to maintain access without IdP visibility.
+- [Anthropic SSO Login Failed](../rules/anthropic_rules/anthropic_sso_login_failed.yml)
+  - Detects failed SSO login attempts to the Anthropic organization. The actor is unauthenticated so no email is available — only the source IP. Every failure is alerted on as SSO failures should be rare in normal operation.
 
 
 ## AppOmni
