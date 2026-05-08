@@ -11,6 +11,11 @@ import threading
 import time
 from pathlib import Path
 
+
+def eprint(*args, **kwargs):
+    """Print to stderr so output is visible when run via pre-commit."""
+    print(*args, file=sys.stderr, **kwargs)
+
 # ─── Configuration ───────────────────────────────────────────────
 REVIEW_EXTENSIONS = {".py", ".yml", ".yaml", ".sql"}
 EXCLUDE_PATTERNS = re.compile(r"\.env$|\.pem$|\.key$|credentials\.json|secrets\.json|\.secret")
@@ -200,10 +205,10 @@ def run_claude_with_spinner(cmd, prompt, spinner_msg="Working..."):
         chars = "\u280b\u2819\u2839\u2838\u283c\u2834\u2826\u2827\u2807\u280f"
         i = 0
         while not stop_spinner.is_set():
-            print(f"\r   {chars[i % len(chars)]} {spinner_msg}", end="", flush=True)
+            eprint(f"\r   {chars[i % len(chars)]} {spinner_msg}", end="", flush=True)
             i += 1
             time.sleep(0.1)
-        print("\r" + " " * (len(spinner_msg) + 10) + "\r", end="")
+        eprint("\r" + " " * (len(spinner_msg) + 10) + "\r", end="")
 
     spin_thread = threading.Thread(target=spinner, daemon=True)
     spin_thread.start()
@@ -216,6 +221,7 @@ def run_claude_with_spinner(cmd, prompt, spinner_msg="Working..."):
                 stdout=subprocess.PIPE,
                 stderr=sys.stderr,
                 text=True,
+                cwd=REPO_ROOT,
             )
         return result.stdout.strip(), "", result.returncode == 0
     finally:
@@ -262,7 +268,7 @@ def prompt_user(message, valid_choices):
     """Prompt the user for input via /dev/tty."""
     try:
         with open("/dev/tty", "r") as tty:
-            print(message, flush=True)
+            eprint(message, flush=True)
             answer = tty.readline().strip().lower()
             return answer if answer in valid_choices else None
     except (OSError, EOFError):
@@ -281,40 +287,40 @@ def is_interactive():
 def main():
     # Skip in non-interactive environments (GitHub Desktop, IDE git, CI)
     if not is_interactive():
-        print("Skipping Claude review (non-interactive environment).")
+        eprint("Skipping Claude review (non-interactive environment).")
         return 0
 
     # Check for claude CLI
     if not shutil.which("claude"):
-        print("\u274c 'claude' CLI not found.")
-        print()
-        print("Setup:")
-        print("  1. Install the Claude CLI: https://docs.anthropic.com/en/docs/claude-code/overview")
-        print("  2. Run: make install-pre-commit-hooks")
-        print()
-        print("To skip this check: git push --no-verify")
+        eprint("\u274c 'claude' CLI not found.")
+        eprint()
+        eprint("Setup:")
+        eprint("  1. Install the Claude CLI: https://docs.anthropic.com/en/docs/claude-code/overview")
+        eprint("  2. Run: make install-pre-commit-hooks")
+        eprint()
+        eprint("To skip this check: git push --no-verify")
         return 1
 
     # Determine remote branch
     remote_branch = get_remote_branch()
     if not remote_branch:
-        print("\u26a0\ufe0f  Could not determine remote branch to diff against. Skipping review.")
+        eprint("\u26a0\ufe0f  Could not determine remote branch to diff against. Skipping review.")
         return 0
 
     # Get changed files
     changed_files = get_changed_files(remote_branch)
     if not changed_files:
-        print("\u2705 No reviewable files changed (.py, .yml, .yaml, .sql). Skipping review.")
+        eprint("\u2705 No reviewable files changed (.py, .yml, .yaml, .sql). Skipping review.")
         return 0
 
     # Print header
-    print("\u2500" * 50)
-    print(f"\U0001f50d Claude Code Review \u2014 pre-push")
-    print(f"   Reviewing {len(changed_files)} file(s) against {remote_branch}")
-    print("\u2500" * 50)
+    eprint("\u2500" * 50)
+    eprint(f"\U0001f50d Claude Code Review \u2014 pre-push")
+    eprint(f"   Reviewing {len(changed_files)} file(s) against {remote_branch}")
+    eprint("\u2500" * 50)
     for f in changed_files:
-        print(f"   {f}")
-    print()
+        eprint(f"   {f}")
+    eprint()
 
     # Build prompt
     file_contents = read_file_contents(changed_files)
@@ -322,50 +328,50 @@ def main():
     review_prompt = build_review_prompt(changed_files, file_contents, style_guides)
 
     # Run review
-    print("\u23f3 Running review (this may take 30-60 seconds)...")
-    print()
+    eprint("\u23f3 Running review (this may take 30-60 seconds)...")
+    eprint()
 
     review_output, review_success = run_claude_review(review_prompt)
 
     if not review_success or not review_output:
-        print("\u26a0\ufe0f  Claude review failed.")
-        print()
+        eprint("\u26a0\ufe0f  Claude review failed.")
+        eprint()
         answer = prompt_user("Push anyway? (y/n)", {"y", "n"})
         return 0 if answer == "y" else 1
 
     # Display results
-    print("\u2550" * 50)
-    print("\U0001f4cb REVIEW RESULTS")
-    print("\u2550" * 50)
-    print()
-    print(review_output)
-    print()
-    print("\u2550" * 50)
+    eprint("\u2550" * 50)
+    eprint("\U0001f4cb REVIEW RESULTS")
+    eprint("\u2550" * 50)
+    eprint()
+    eprint(review_output)
+    eprint()
+    eprint("\u2550" * 50)
 
     # Check for issues
     if not check_for_issues(review_output):
-        print("\u2705 No issues found. Proceeding with push.")
+        eprint("\u2705 No issues found. Proceeding with push.")
         return 0
 
     # Offer options
-    print()
-    print("Options:")
-    print("  f) Apply fixes automatically")
-    print("  p) Push anyway")
-    print("  a) Abort")
-    print()
+    eprint()
+    eprint("Options:")
+    eprint("  f) Apply fixes automatically")
+    eprint("  p) Push anyway")
+    eprint("  a) Abort")
+    eprint()
     answer = prompt_user("Choose (f/p/a):", {"f", "p", "a"})
 
     if answer == "p":
-        print("\u2705 Pushing...")
+        eprint("\u2705 Pushing...")
         return 0
     if answer != "f":
-        print("\u274c Push aborted. Fix the findings and try again.")
+        eprint("\u274c Push aborted. Fix the findings and try again.")
         return 1
 
     # Apply fixes
-    print()
-    print("\u23f3 Applying fixes (this may take 30-60 seconds)...")
+    eprint()
+    eprint("\u23f3 Applying fixes (this may take 30-60 seconds)...")
 
     fix_prompt = f"""You are fixing issues found during code review in a Panther SIEM detection rules repository.
 
@@ -381,50 +387,60 @@ Files to fix:
     fix_output, fix_success = run_claude_fix(fix_prompt)
 
     if not fix_success:
-        print("\u26a0\ufe0f  Auto-fix failed. Please fix manually.")
+        eprint("\u26a0\ufe0f  Auto-fix failed. Please fix manually.")
         if fix_output:
-            print(fix_output)
+            eprint(fix_output)
         return 1
 
-    print("\u2705 Done.")
+    eprint("\u2705 Done.")
     if fix_output:
-        print()
-        print(fix_output)
-        print()
+        eprint()
+        eprint(fix_output)
+        eprint()
 
     # Run formatters
-    print()
-    print("\u23f3 Running formatters...")
+    eprint()
+    eprint("\u23f3 Running formatters...")
     subprocess.run(["make", "fmt"], cwd=REPO_ROOT, capture_output=True)
 
     # Stage and show diff
     subprocess.run(["git", "add", *changed_files], cwd=REPO_ROOT)
 
-    print()
-    print("\u2500" * 50)
-    print("\U0001f4ca Changes applied:")
-    print("\u2500" * 50)
-    subprocess.run(["git", "diff", "--cached", "--stat", "--", *changed_files], cwd=REPO_ROOT)
-    print("\u2500" * 50)
-    print()
+    eprint()
+    eprint("\u2500" * 50)
+    eprint("\U0001f4ca Changes applied:")
+    eprint("\u2500" * 50)
+    subprocess.run(
+        ["git", "diff", "--cached", "--stat", "--", *changed_files],
+        cwd=REPO_ROOT,
+        stderr=sys.stderr,
+    )
+    eprint("\u2500" * 50)
+    eprint()
 
     # Commit options
-    print("  a) Amend into last commit (git commit --amend --no-edit)")
-    print("  n) Create new commit")
-    print("  s) Leave staged, I'll handle it")
-    print()
+    eprint("  a) Amend into last commit (git commit --amend --no-edit)")
+    eprint("  n) Create new commit")
+    eprint("  s) Leave staged, I'll handle it")
+    eprint()
     fix_answer = prompt_user("Choose (a/n/s):", {"a", "n", "s"})
 
     if fix_answer == "a":
-        subprocess.run(["git", "commit", "--amend", "--no-edit"], cwd=REPO_ROOT)
-        print("\u2705 Amended into last commit. Push when ready.")
+        result = subprocess.run(["git", "commit", "--amend", "--no-edit"], cwd=REPO_ROOT)
+        if result.returncode == 0:
+            eprint("\u2705 Amended into last commit. Push when ready.")
+        else:
+            eprint("\u26a0\ufe0f  Commit failed (pre-commit hooks?). Changes are still staged.")
     elif fix_answer == "n":
-        subprocess.run(
+        result = subprocess.run(
             ["git", "commit", "-m", "fix: apply review findings"], cwd=REPO_ROOT
         )
-        print("\u2705 Created new commit. Push when ready.")
+        if result.returncode == 0:
+            eprint("\u2705 Created new commit. Push when ready.")
+        else:
+            eprint("\u26a0\ufe0f  Commit failed (pre-commit hooks?). Changes are still staged.")
     else:
-        print("\u2705 Changes staged. Handle it your way.")
+        eprint("\u2705 Changes staged. Handle it your way.")
 
     return 1  # Block push so user can review before pushing again
 
