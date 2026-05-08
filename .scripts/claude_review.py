@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pre-push hook that runs a Claude Code review on changed detection files."""
+"""Pre-commit hook that runs a Claude Code review on changed detection files."""
 
 import os
 import re
@@ -37,17 +37,9 @@ def run_git(*args):
         return None
 
 
-def get_remote_branch():
-    """Determine the remote branch to diff against."""
-    for candidate in ["HEAD@{upstream}", "origin/develop", "origin/main"]:
-        if run_git("rev-parse", "--verify", candidate) is not None:
-            return candidate
-    return None
-
-
-def get_changed_files(remote_branch):
-    """Get reviewable changed files between HEAD and remote branch."""
-    output = run_git("diff", "--name-only", "--diff-filter=ACMR", f"{remote_branch}...HEAD")
+def get_changed_files():
+    """Get reviewable staged files."""
+    output = run_git("diff", "--cached", "--name-only", "--diff-filter=ACMR")
     if not output:
         return []
 
@@ -301,22 +293,16 @@ def main():
         eprint("To skip this check: git push --no-verify")
         return 1
 
-    # Determine remote branch
-    remote_branch = get_remote_branch()
-    if not remote_branch:
-        eprint("\u26a0\ufe0f  Could not determine remote branch to diff against. Skipping review.")
-        return 0
-
     # Get changed files
-    changed_files = get_changed_files(remote_branch)
+    changed_files = get_changed_files()
     if not changed_files:
-        eprint("\u2705 No reviewable files changed (.py, .yml, .yaml, .sql). Skipping review.")
+        eprint("\u2705 No reviewable files staged (.py, .yml, .yaml, .sql). Skipping review.")
         return 0
 
     # Print header
     eprint("\u2500" * 50)
-    eprint(f"\U0001f50d Claude Code Review \u2014 pre-push")
-    eprint(f"   Reviewing {len(changed_files)} file(s) against {remote_branch}")
+    eprint(f"\U0001f50d Claude Code Review \u2014 pre-commit")
+    eprint(f"   Reviewing {len(changed_files)} staged file(s)")
     eprint("\u2500" * 50)
     for f in changed_files:
         eprint(f"   {f}")
@@ -403,46 +389,27 @@ Files to fix:
     eprint("\u23f3 Running formatters...")
     subprocess.run(["make", "fmt"], cwd=REPO_ROOT, capture_output=True)
 
-    # Stage and show diff
-    subprocess.run(["git", "add", *changed_files], cwd=REPO_ROOT)
-
+    # Show diff for review before staging
     eprint()
     eprint("\u2500" * 50)
     eprint("\U0001f4ca Changes applied:")
     eprint("\u2500" * 50)
     subprocess.run(
-        ["git", "diff", "--cached", "--stat", "--", *changed_files],
+        ["git", "diff", "--", *changed_files],
         cwd=REPO_ROOT,
         stderr=sys.stderr,
     )
     eprint("\u2500" * 50)
     eprint()
 
-    # Commit options
-    eprint("  a) Amend into last commit (git commit --amend --no-edit)")
-    eprint("  n) Create new commit")
-    eprint("  s) Leave staged, I'll handle it")
-    eprint()
-    fix_answer = prompt_user("Choose (a/n/s):", {"a", "n", "s"})
+    answer = prompt_user("Stage these changes? (y/n)", {"y", "n"})
+    if answer != "y":
+        eprint("\u274c Changes not staged. Review the diff and stage manually.")
+        return 1
 
-    if fix_answer == "a":
-        result = subprocess.run(["git", "commit", "--amend", "--no-edit"], cwd=REPO_ROOT)
-        if result.returncode == 0:
-            eprint("\u2705 Amended into last commit. Push when ready.")
-        else:
-            eprint("\u26a0\ufe0f  Commit failed (pre-commit hooks?). Changes are still staged.")
-    elif fix_answer == "n":
-        result = subprocess.run(
-            ["git", "commit", "-m", "fix: apply review findings"], cwd=REPO_ROOT
-        )
-        if result.returncode == 0:
-            eprint("\u2705 Created new commit. Push when ready.")
-        else:
-            eprint("\u26a0\ufe0f  Commit failed (pre-commit hooks?). Changes are still staged.")
-    else:
-        eprint("\u2705 Changes staged. Handle it your way.")
-
-    return 1  # Block push so user can review before pushing again
+    subprocess.run(["git", "add", *changed_files], cwd=REPO_ROOT)
+    eprint("\u2705 Fixes staged. Continuing with commit...")
+    return 0  # Let the commit proceed with the fixed files
 
 
 if __name__ == "__main__":
