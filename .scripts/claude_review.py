@@ -403,6 +403,7 @@ Files to fix:
     subprocess.run(
         ["git", "diff", "--", *changed_files],
         cwd=REPO_ROOT,
+        stdout=sys.stderr,
         stderr=sys.stderr,
     )
     eprint("\u2500" * 50)
