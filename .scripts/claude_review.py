@@ -54,12 +54,11 @@ def get_changed_files():
 
 
 def read_file_contents(files):
-    """Read contents of each file into a prompt block."""
+    """Read staged contents of each file (from git index, not working tree)."""
     parts = []
     for f in files:
-        path = REPO_ROOT / f
-        if path.is_file():
-            content = path.read_text(encoding="utf-8", errors="replace")
+        content = run_git("show", f":{f}")
+        if content is not None:
             parts.append(f"--- FILE: {f} ---\n{content}\n--- END: {f} ---")
     return "\n\n".join(parts)
 
@@ -242,13 +241,20 @@ def run_claude_fix(prompt):
 
 def check_for_issues(review_output):
     """Determine if the review found issues."""
-    # Check for explicit PASS/ISSUES FOUND (flexible markdown formatting)
-    if re.search(r"\*{0,2}Overall:?\*{0,2}\s*\*{0,2}PASS\*{0,2}", review_output, re.IGNORECASE):
-        return False
+    # Match only the verdict line: **Overall:** PASS or **Overall:** ISSUES FOUND
+    # Use MULTILINE so ^ anchors to line start, preventing body text matches
     if re.search(
-        r"\*{0,2}Overall:?\*{0,2}\s*\*{0,2}ISSUES FOUND\*{0,2}", review_output, re.IGNORECASE
+        r"^\*{0,2}Overall:?\*{0,2}\s*\*{0,2}ISSUES FOUND\*{0,2}",
+        review_output,
+        re.IGNORECASE | re.MULTILINE,
     ):
         return True
+    if re.search(
+        r"^\*{0,2}Overall:?\*{0,2}\s*\*{0,2}PASS\*{0,2}",
+        review_output,
+        re.IGNORECASE | re.MULTILINE,
+    ):
+        return False
     # Fallback: check for emoji markers
     if "\u26a0\ufe0f" in review_output or "\u274c" in review_output:
         return True
@@ -290,7 +296,7 @@ def main():
         eprint("  1. Install the Claude CLI: https://docs.anthropic.com/en/docs/claude-code/overview")
         eprint("  2. Run: make install-pre-commit-hooks")
         eprint()
-        eprint("To skip this check: git push --no-verify")
+        eprint("To skip this check: git commit --no-verify")
         return 1
 
     # Get changed files
@@ -322,7 +328,7 @@ def main():
     if not review_success or not review_output:
         eprint("\u26a0\ufe0f  Claude review failed.")
         eprint()
-        answer = prompt_user("Push anyway? (y/n)", {"y", "n"})
+        answer = prompt_user("Commit anyway? (y/n)", {"y", "n"})
         return 0 if answer == "y" else 1
 
     # Display results
@@ -336,23 +342,23 @@ def main():
 
     # Check for issues
     if not check_for_issues(review_output):
-        eprint("\u2705 No issues found. Proceeding with push.")
+        eprint("\u2705 No issues found. Proceeding with commit.")
         return 0
 
     # Offer options
     eprint()
     eprint("Options:")
     eprint("  f) Apply fixes automatically")
-    eprint("  p) Push anyway")
+    eprint("  p) Commit anyway")
     eprint("  a) Abort")
     eprint()
     answer = prompt_user("Choose (f/p/a):", {"f", "p", "a"})
 
     if answer == "p":
-        eprint("\u2705 Pushing...")
+        eprint("\u2705 Committing...")
         return 0
     if answer != "f":
-        eprint("\u274c Push aborted. Fix the findings and try again.")
+        eprint("\u274c Commit aborted. Fix the findings and try again.")
         return 1
 
     # Apply fixes
