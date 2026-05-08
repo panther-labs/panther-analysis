@@ -225,11 +225,11 @@ def run_claude_with_spinner(cmd, prompt, spinner_msg="Working..."):
 
 
 def run_claude_review(prompt):
-    """Run Claude in print mode for review. Returns (output, error)."""
-    stdout, stderr, success = run_claude_with_spinner(
+    """Run Claude in print mode for review. Returns (output, success)."""
+    stdout, _stderr, success = run_claude_with_spinner(
         ["claude", "--print", "-"], prompt, "Reviewing..."
     )
-    return stdout, stderr
+    return stdout, success
 
 
 def run_claude_fix(prompt):
@@ -254,7 +254,8 @@ def check_for_issues(review_output):
     # Fallback: check for emoji markers
     if "\u26a0\ufe0f" in review_output or "\u274c" in review_output:
         return True
-    return False
+    # If we can't determine the verdict, assume issues (fail safe)
+    return True
 
 
 def prompt_user(message, valid_choices):
@@ -268,7 +269,21 @@ def prompt_user(message, valid_choices):
         return None
 
 
+def is_interactive():
+    """Check if we can prompt the user (terminal or /dev/tty available)."""
+    try:
+        with open("/dev/tty", "r"):
+            return True
+    except OSError:
+        return False
+
+
 def main():
+    # Skip in non-interactive environments (GitHub Desktop, IDE git, CI)
+    if not is_interactive():
+        print("Skipping Claude review (non-interactive environment).")
+        return 0
+
     # Check for claude CLI
     if not shutil.which("claude"):
         print("\u274c 'claude' CLI not found.")
@@ -310,12 +325,10 @@ def main():
     print("\u23f3 Running review (this may take 30-60 seconds)...")
     print()
 
-    review_output, review_err = run_claude_review(review_prompt)
+    review_output, review_success = run_claude_review(review_prompt)
 
-    if not review_output:
+    if not review_success or not review_output:
         print("\u26a0\ufe0f  Claude review failed.")
-        if review_err:
-            print(f"Error: {review_err}")
         print()
         answer = prompt_user("Push anyway? (y/n)", {"y", "n"})
         return 0 if answer == "y" else 1
