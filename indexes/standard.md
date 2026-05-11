@@ -90,6 +90,28 @@ Detects when Multi-Factor Authentication (MFA) is disabled
   - Zendesk
 
 
+[OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)  
+Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
+  - AWS ALB
+  - AWS CloudTrail
+  - AWS EKS
+  - AWS VPCFlow
+  - Asana
+  - Atlassian
+  - Azure
+  - Box
+  - Cloudflare
+  - Crowdstrike
+  - GCP
+  - Google Workspace
+  - Notion
+  - Okta
+  - OneLogin
+  - OnePassword
+  - Zendesk
+  - Zoom
+
+
 [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)  
 Detects when an entity signs in from a nation associated with cyber attacks
   - AWS CloudTrail

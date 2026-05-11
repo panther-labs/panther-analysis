@@ -1,145 +1,30 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code working in this repository.
 
-## Overview
+**The canonical agent guide is [AGENTS.md](AGENTS.md). Read it first.** It covers the rules, conventions, gotchas, and workflow for this repo and is shared across all AI coding tools (Claude Code, Cursor, etc.).
 
-This is the Panther Analysis repository, containing security detection rules, policies, queries, and supporting infrastructure for the Panther SIEM platform. The codebase is built around a dual-file architecture using Python (`.py`) and YAML (`.yml`) files for each detection.
+## Critical reminders (do not skip)
 
-## Common Development Commands
+These are the highest-impact rules from `AGENTS.md` — re-stated here because mistakes are costly:
 
-### Testing
-- `make test` - Run all tests (unit tests + panther_analysis_tool tests)
-- `pipenv run panther_analysis_tool test` - Run all detection tests
-- `pipenv run panther_analysis_tool test --path rules/aws_cloudtrail_rules/` - Test specific path
-- `pipenv run panther_analysis_tool test --path rules/aws_cloudtrail_rules/ --filter RuleID=Aws.Example.Rule` - Test specific rule
-- `pipenv run panther_analysis_tool test --filter Severity=Critical` - Test by severity
-- `pipenv run panther_analysis_tool test --filter LogTypes=AWS.GuardDuty` - Test by log type
-- `make global-helpers-unit-test` - Run unit tests for global helpers
-- `make data-models-unit-test` - Run unit tests for data models
+1. **This repo is public.** Never commit customer data, real account IDs, real emails, real IPs, secrets, or internal Panther customer context. Redact all sample logs in unit tests.
+2. **All PRs target the `develop` branch**, not `main`. When using `gh pr create`, pass `--base develop` explicitly.
+3. **Detections are dual-file.** Every `.py` has a matching `.yml` (with the same basename). Always commit them together. The YAML `Filename:` must exactly match the `.py` filename.
+4. **Use safe field access** in detection code: `event.get("field", "")` and `event.deep_get("a", "b", default="")`. Never use `event["field"]`. `deep_get` is a method on `event` — do not import it from `panther_base_helpers`.
+5. **Always include positive AND negative unit tests** in the YAML `Tests:` block, with redacted sample logs.
+6. **Run the trio before pushing:** `make fmt && make lint && make test`. Don't disable lints or skip hooks to make CI green — fix the underlying issue.
+7. **Test scoping:** when iterating on a single rule, use `pipenv run panther_analysis_tool test --path <dir>` or `--filter RuleID=<id>` rather than running the full suite.
+8. **Correlation rules** require `pat validate` against a live Panther instance — `pat test` is not sufficient. See [`style_guides/CORRELATION_RULES_STYLE_GUIDE.md`](style_guides/CORRELATION_RULES_STYLE_GUIDE.md).
 
-### Linting and Formatting
-- `make lint` - Run all linters (pylint, bandit, isort, black)
-- `make fmt` - Format code using isort and black
-- `make run-pre-commit-hooks` - Run pre-commit hooks on all files
+## Quick command reference
 
-### Environment Setup
-- `make install` - Install all dependencies
-- `make install-pre-commit-hooks` - Install git pre-commit hooks
-- `pipenv shell` - Activate virtual environment
-
-### Build and Package
-- `pipenv run panther_analysis_tool zip` - Create zip file of detections
-- `pipenv run panther_analysis_tool zip --filter Severity=Critical` - Zip critical detections only
-- `pipenv run panther_analysis_tool upload --api-key KEY --api-host HOST` - Upload to Panther instance
-
-## Repository Architecture
-
-### Core Detection Types
-- **Rules** (`/rules/`): Analyze logs to detect malicious activity
-- **Policies** (`/policies/`): Check cloud resource configurations for compliance
-- **Queries** (`/queries/`): Scheduled queries and signals for threat hunting
-- **Correlation Rules** (`/correlation_rules/`): Multi-step attack pattern detection
-
-### Dual-File Structure
-Every detection consists of two files:
-- `.py` file: Contains the detection logic (required `rule()` or `policy()` function)
-- `.yml` file: Contains metadata, configuration, and unit tests
-
-### Global Helpers (`/global_helpers/`)
-Reusable utility functions organized by platform:
-- `panther_base_helpers`: Core utilities and common functions
-- `panther_aws_helpers`: AWS-specific helper functions
-- Platform-specific helpers: `panther_okta_helpers`, `panther_github_helpers`, etc.
-
-### Data Models (`/data_models/`)
-Normalize log data across different sources with field mappings and transformations.
-
-### Packs (`/packs/`)
-Group related detections for deployment. Each pack is a YAML file listing detection IDs.
-
-
-## Key Development Patterns
-
-### Detection Function Structure
-```python
-def rule(event):
-    # Main detection logic (required)
-    return boolean_condition
-
-def title(event):
-    # Dynamic alert title (optional)
-    return "Alert title"
-
-def alert_context(event):
-    # Additional context (optional)
-    return {"key": "value"}
-
-def severity(event):
-    # Dynamic severity (optional)
-    return "HIGH"
+```bash
+make install                                                          # setup
+make fmt && make lint && make test                                    # before pushing
+pipenv run panther_analysis_tool test --path rules/<dir>/             # scoped test
+pipenv run panther_analysis_tool test --filter RuleID=<RuleID>        # one rule
+pipenv run panther_analysis_tool validate --api-token ... --api-host  # correlation rules
 ```
 
-### Safe Field Access
-Always use safe field access methods:
-- `event.get('field', default)`
-- `event.deep_get('nested', 'field', default=None)`
-- Helper functions from `panther_base_helpers`
-
-### Testing Requirements
-Every detection must include test cases in the YAML file:
-```yaml
-Tests:
-  - Name: "Test description"
-    ExpectedResult: true
-    Log: {...}
-```
-
-### Helper Function Usage
-Import and use global helpers via `GlobalID`:
-```python
-from panther_base_helpers import panther_base_helpers
-from panther_aws_helpers import aws_rule_context
-```
-
-## File Organization Conventions
-
-### Naming Patterns
-- **RuleID**: `LogType.Source.DetectionName` (e.g., "AWS.CloudTrail.Created")
-- **Filename**: Snake case matching detection purpose
-- **DisplayName**: Human-readable description in title case
-
-### Directory Structure
-- Rules grouped by log source: `aws_cloudtrail_rules/`, `okta_rules/`, etc.
-- Policies grouped by service: `aws_iam_policies/`, `aws_s3_policies/`, etc.
-- Queries grouped by platform: `aws_queries/`, `crowdstrike_queries/`, etc.
-
-## Important Development Notes
-
-### Required Metadata Fields
-- `AnalysisType`: "rule", "policy", or "scheduled_rule"
-- `Filename`: Must match the Python filename
-- `RuleID`/`PolicyID`: Unique identifier
-- `DisplayName`: Human-readable name
-- `Enabled`: Boolean flag
-- `LogTypes`: Array of log types (for rules)
-- `ResourceTypes`: Array of resource types (for policies)
-- `Severity`: "INFO", "LOW", "MEDIUM", "HIGH", or "CRITICAL"
-
-### Testing Best Practices
-- Include both positive and negative test cases
-- Test edge cases and error conditions
-- Use realistic log samples from actual sources
-- Validate alert context and title generation
-
-### Code Style Requirements
-- Python 3.11 compatibility
-- Black formatting (line length 100)
-- Pylint compliance
-- Use of type hints where appropriate
-- Comprehensive docstrings for complex functions
-
-### Security Considerations
-- Never hardcode credentials or secrets
-- Implement proper error handling for external API calls
-- Follow principle of least privilege in helper functions
+For everything else — directory layout, metadata fields, MITRE format, naming conventions, `alert_context` reuse, deprecation flow, PR process, common gotchas — see **[AGENTS.md](AGENTS.md)** and the [`style_guides/`](style_guides/) directory.

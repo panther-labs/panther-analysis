@@ -1,10 +1,15 @@
 from panther_msft_helpers import msft_graph_alert_context
 
+SEVERITY_MAP = {
+    "informational": "INFO",
+    "low": "LOW",
+    "medium": "MEDIUM",
+    "high": "HIGH",
+}
+
 
 def rule(event):
-    return (
-        event.get("status") == "newAlert" and event.get("severity", "").lower() != "informational"
-    )
+    return event.get("status") == "new" and event.get("severity", "").lower() != "informational"
 
 
 def title(event):
@@ -16,9 +21,7 @@ def dedup(event):
 
 
 def severity(event):
-    if event.get("severity", "").lower() == "informational":
-        return "INFO"
-    return event.get("severity")
+    return SEVERITY_MAP.get(event.get("severity", "").lower(), "INFO")
 
 
 def alert_context(event):
