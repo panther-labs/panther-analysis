@@ -1,0 +1,55 @@
+AnalysisType: rule
+RuleID: Anthropic.Activity.Admin.API.Key.Created
+DisplayName: "Anthropic Admin API Key Created"
+Enabled: true
+Status: Experimental
+Filename: anthropic_admin_api_key_created.py
+LogTypes:
+  - Anthropic.Activity
+Severity: Medium
+Description: >
+  Detects when a new admin API key is created. Admin API keys have elevated
+  privileges and their creation should be verified as authorized. The
+  admin_api_key_id and scopes fields identify the key and its permissions.
+Runbook: |
+  1. Find all Anthropic.Activity events by actor:email_address in the 6 hours before and after the alert to determine if this is part of routine admin work
+  2. Check if actor:email_address has created admin API keys in the past 90 days to determine if this is a first-time action
+  3. Check if actor:ip_address is associated with known VPN/proxy services or matches previously seen IP addresses for this actor
+Tags:
+  - Anthropic
+  - Credential Access
+Reports:
+  MITRE ATT&CK:
+    - TA0006:T1098.001  # Account Manipulation: Additional Cloud Credentials
+Tests:
+  - Name: Admin API key created
+    ExpectedResult: true
+    Log:
+      {
+        "id": "activity_01ABC123",
+        "created_at": "2026-05-07T10:00:00Z",
+        "organization_id": "org_01XYZ",
+        "type": "admin_api_key_created",
+        "actor": {
+          "type": "user_actor",
+          "email_address": "admin@example.com",
+          "user_id": "user_01ABC",
+          "ip_address": "10.0.0.1",
+          "user_agent": "Mozilla/5.0"
+        }
+      }
+  - Name: Non-matching event type
+    ExpectedResult: false
+    Log:
+      {
+        "id": "activity_01DEF456",
+        "created_at": "2026-05-07T10:00:00Z",
+        "organization_id": "org_01XYZ",
+        "type": "admin_api_key_updated",
+        "actor": {
+          "type": "user_actor",
+          "email_address": "admin@example.com",
+          "user_id": "user_01ABC",
+          "ip_address": "10.0.0.1"
+        }
+      }
