@@ -93,6 +93,9 @@ install: ## Install all project dependencies (dev included)
 ## install-pre-commit-hooks: Install pre-commit hooks into .git/hooks
 install-pre-commit-hooks: ## Install pre-commit hooks into .git/hooks
 	pipenv run pre-commit install
+	@cp .scripts/pre-commit-wrapper.sh .git/hooks/pre-commit
+	@chmod +x .git/hooks/pre-commit
+	@echo "✅ Pre-commit hooks installed (with Claude review)."
 
 ## test: Run unit tests and panther_analysis_tool tests
 test: global-helpers-unit-test data-models-unit-test ## Run unit tests and panther_analysis_tool tests
