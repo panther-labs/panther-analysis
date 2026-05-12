@@ -208,6 +208,159 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "Detects when a new admin API key is created. Admin API keys have elevated privileges and their creation should be verified as authorized. The admin_api_key_id and scopes fields identify the key and its permissions.",
+        "DisplayName": "Anthropic Admin API Key Created",
+        "LogTypes": [
+            "Anthropic.Activity"
+        ],
+        "YAMLPath": "rules/anthropic_rules/anthropic_admin_api_key_created.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when an admin API key is deleted. Unauthorized deletion could indicate an attacker revoking legitimate credentials to disrupt operations or covering tracks after using a compromised key.",
+        "DisplayName": "Anthropic Admin API Key Deleted",
+        "LogTypes": [
+            "Anthropic.Activity"
+        ],
+        "YAMLPath": "rules/anthropic_rules/anthropic_admin_api_key_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when an artifact's sharing audience is changed to public. Public artifacts are accessible to anyone with the link, which could expose sensitive content outside the organization.",
+        "DisplayName": "Anthropic Artifact Shared Publicly",
+        "LogTypes": [
+            "Anthropic.Activity"
+        ],
+        "YAMLPath": "rules/anthropic_rules/anthropic_artifact_shared_publicly.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a single actor generates more than 50 chat access failures within a 10-minute window. Could indicate automated chat enumeration or unauthorized bulk access attempts. The claude_chat_id field identifies which chats were targeted \u2014 sequential or patterned IDs suggest scripted enumeration, while scattered IDs suggest shared-link browsing.",
+        "DisplayName": "Anthropic Excessive Chat Access Failures",
+        "LogTypes": [
+            "Anthropic.Activity"
+        ],
+        "YAMLPath": "rules/anthropic_rules/anthropic_excessive_chat_access_failures.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Tracks when a user connects an external integration (e.g., GitHub, Google Drive) to their Anthropic account. Logged for compliance visibility into external data pathways. The integration_type field identifies which service was connected.",
+        "DisplayName": "Anthropic Integration Connected",
+        "LogTypes": [
+            "Anthropic.Activity"
+        ],
+        "YAMLPath": "rules/anthropic_rules/anthropic_integration_connected.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when an organization IP restriction is deleted. IP restrictions are a critical network-level access control \u2014 removing them allows access from any IP address, which could indicate an attacker widening the attack surface after gaining admin access.",
+        "DisplayName": "Anthropic IP Restriction Deleted",
+        "LogTypes": [
+            "Anthropic.Activity"
+        ],
+        "YAMLPath": "rules/anthropic_rules/anthropic_ip_restriction_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a new MCP (Model Context Protocol) server integration is created. Each MCP server is a new external data pathway that could be used for data exfiltration. Every new integration should be verified as approved, especially when created by external contractors or service accounts.",
+        "DisplayName": "Anthropic MCP Server Created",
+        "LogTypes": [
+            "Anthropic.Activity"
+        ],
+        "YAMLPath": "rules/anthropic_rules/anthropic_mcp_server_created.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when an MCP server integration is deleted from the organization. Removing an approved integration could indicate an attacker covering tracks or unauthorized configuration changes. The mcp_server_name and mcp_server_id fields identify which integration was removed.",
+        "DisplayName": "Anthropic MCP Server Deleted",
+        "LogTypes": [
+            "Anthropic.Activity"
+        ],
+        "YAMLPath": "rules/anthropic_rules/anthropic_mcp_server_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when organization-wide settings are modified in Anthropic. These changes can affect security posture for all users (e.g., SSO configuration, data retention, access controls). The updates field identifies which settings were changed.",
+        "DisplayName": "Anthropic Organization Settings Updated",
+        "LogTypes": [
+            "Anthropic.Activity"
+        ],
+        "YAMLPath": "rules/anthropic_rules/anthropic_org_settings_updated.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Tracks when a user is removed from the Anthropic organization. Logged for compliance visibility into user lifecycle changes. The deleted_user_id and deleted_user_email fields identify who was removed.",
+        "DisplayName": "Anthropic Organization User Deleted",
+        "LogTypes": [
+            "Anthropic.Activity"
+        ],
+        "YAMLPath": "rules/anthropic_rules/anthropic_org_user_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when the primary owner role of the Anthropic organization is transferred to another member. This is an extremely high-privilege action that gives full control of the organization. The previous_owner_id and new_owner_id fields identify who gave up and received ownership.",
+        "DisplayName": "Anthropic Primary Owner Transferred",
+        "LogTypes": [
+            "Anthropic.Activity"
+        ],
+        "YAMLPath": "rules/anthropic_rules/anthropic_primary_owner_transferred.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Tracks all role grants in the Anthropic organization. Currently used to build visibility into the role taxonomy as the log source matures. Once sufficient data is collected on org-level vs project-level role patterns, this rule can be refined to alert at higher severity for elevated roles.",
+        "DisplayName": "Anthropic Role Granted",
+        "LogTypes": [
+            "Anthropic.Activity"
+        ],
+        "YAMLPath": "rules/anthropic_rules/anthropic_role_granted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a new service key is created. Service keys provide programmatic access and their creation should be verified as authorized. The service_key_id, service_name, key_name, and scopes fields identify the key and its permissions.",
+        "DisplayName": "Anthropic Service Key Created",
+        "LogTypes": [
+            "Anthropic.Activity"
+        ],
+        "YAMLPath": "rules/anthropic_rules/anthropic_service_key_created.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a service key is revoked. Unauthorized revocation could indicate an attacker disrupting integrations or covering tracks after using a compromised key. The service_key_id and service_name fields identify which key was revoked.",
+        "DisplayName": "Anthropic Service Key Revoked",
+        "LogTypes": [
+            "Anthropic.Activity"
+        ],
+        "YAMLPath": "rules/anthropic_rules/anthropic_service_key_revoked.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when a platform spend limit is deleted. A deleted spend limit without a subsequent recreate could indicate an attacker removing financial guardrails to enable large-scale API usage or data exfiltration. Note that normal admin workflow often involves a delete immediately followed by a create (editing a limit).",
+        "DisplayName": "Anthropic Spend Limit Deleted",
+        "LogTypes": [
+            "Anthropic.Activity"
+        ],
+        "YAMLPath": "rules/anthropic_rules/anthropic_spend_limit_deleted.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects when SSO is disabled or an SSO connection is deactivated for the organization. Disabling SSO allows users to bypass the identity provider and use weaker authentication methods. This is a critical security posture change that could indicate an attacker attempting to maintain access without IdP visibility.",
+        "DisplayName": "Anthropic SSO Disabled",
+        "LogTypes": [
+            "Anthropic.Activity"
+        ],
+        "YAMLPath": "rules/anthropic_rules/anthropic_sso_disabled.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "Detects failed SSO login attempts to the Anthropic organization. The actor is unauthenticated so no email is available \u2014 only the source IP. Every failure is alerted on as SSO failures should be rare in normal operation.",
+        "DisplayName": "Anthropic SSO Login Failed",
+        "LogTypes": [
+            "Anthropic.Activity"
+        ],
+        "YAMLPath": "rules/anthropic_rules/anthropic_sso_login_failed.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "",
         "DisplayName": "AppOmni Alert Passthrough",
         "LogTypes": [

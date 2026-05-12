@@ -1,0 +1,56 @@
+AnalysisType: rule
+RuleID: Anthropic.Activity.Spend.Limit.Deleted
+DisplayName: "Anthropic Spend Limit Deleted"
+Enabled: true
+Status: Experimental
+Filename: anthropic_spend_limit_deleted.py
+LogTypes:
+  - Anthropic.Activity
+Severity: Medium
+Description: >
+  Detects when a platform spend limit is deleted. A deleted spend limit without
+  a subsequent recreate could indicate an attacker removing financial guardrails
+  to enable large-scale API usage or data exfiltration. Note that normal admin
+  workflow often involves a delete immediately followed by a create (editing a limit).
+Runbook: |
+  1. Find all Anthropic.Activity events with type platform_spend_limit_created by actor:email_address in the 10 minutes after the alert to determine if this was a delete-then-recreate (normal edit) or a standalone deletion
+  2. Check if actor:email_address has performed other administrative actions (claude_organization_settings_updated, role_assignment_granted) in the 6 hours around the alert to assess if this is part of routine admin work
+  3. Find all alerts for actor:email_address in the past 7 days to check for signs of account compromise preceding this action
+Tags:
+  - Anthropic
+  - Financial Controls
+Reports:
+  MITRE ATT&CK:
+    - TA0040:T1496  # Resource Hijacking
+Tests:
+  - Name: Spend limit deleted
+    ExpectedResult: true
+    Log:
+      {
+        "id": "activity_01ABC123",
+        "created_at": "2026-04-30T09:46:26Z",
+        "organization_id": "org_01XYZ",
+        "type": "platform_spend_limit_deleted",
+        "actor": {
+          "type": "user_actor",
+          "email_address": "admin@example.com",
+          "user_id": "user_01ABC",
+          "ip_address": "10.0.0.1",
+          "user_agent": "Mozilla/5.0"
+        }
+      }
+  - Name: Spend limit created - not a match
+    ExpectedResult: false
+    Log:
+      {
+        "id": "activity_01DEF456",
+        "created_at": "2026-04-30T09:46:27Z",
+        "organization_id": "org_01XYZ",
+        "type": "platform_spend_limit_created",
+        "actor": {
+          "type": "user_actor",
+          "email_address": "admin@example.com",
+          "user_id": "user_01ABC",
+          "ip_address": "10.0.0.1"
+        }
+      }
