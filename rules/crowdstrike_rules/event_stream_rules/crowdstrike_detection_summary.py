@@ -21,7 +21,7 @@ def dedup(event: PantherEvent):
 
 def severity(event: PantherEvent):
     # First, try returning the severity based on the SeverityName
-    sevname = event.deep_get("event", "SeverityName").upper()
+    sevname = str(event.deep_get("event", "SeverityName")).upper()
     allowed_values = ("INFO", "LOW", "MEDIUM", "HIGH", "CRITICAL")
     if sevname == "INFORMATIONAL":
         sevname = "INFO"
