@@ -7,6 +7,15 @@ on:
         description: "Branch to release from"
         required: true
         default: "main"
+      bump:
+        description: "Version bump type"
+        required: true
+        default: "minor"
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
 
 permissions:
   contents: read
@@ -41,11 +50,18 @@ jobs:
           export AWS_REGION=${{ secrets.AWS_REGION }}
           export AWS_DEFAULT_REGION=${{ secrets.AWS_REGION }}
           export OLD_VERSION=$(gh release list | grep Latest | awk '{print $1}')
-          export NEW_VERSION=$(echo $OLD_VERSION | awk -F. '{printf "%s.%d.0", $1, $2+1}')
+          export NEW_VERSION=$(echo $OLD_VERSION | awk -F. -v bump="${{ github.event.inputs.bump }}" '{
+            major=substr($1,2)+0; minor=$2+0; patch=$3+0;
+            if (bump=="major") { major++; minor=0; patch=0 }
+            else if (bump=="patch") { patch++ }
+            else { minor++; patch=0 }
+            printf "v%d.%d.%d", major, minor, patch
+          }')
+          export RELEASE_SHA=$(git rev-parse HEAD)
           pip3 install --user pipenv
           rm -rf $(pipenv --venv)
           make install
           pipenv run panther_analysis_tool release --kms-key ${{ secrets.KMS_KEY_ARN }}
           openssl dgst -binary -sha512 panther-analysis-all.zip > ${{ secrets.DIGEST_FILE }}
           aws kms verify --key-id ${{ secrets.KMS_KEY_ARN }} --signing-algorithm ${{ secrets.SIGNING_ALGORITHM }} --message fileb://${{ secrets.DIGEST_FILE }} --message-type DIGEST --output json --signature $(cat panther-analysis-all.sig) | jq '.SignatureValid'
-          gh release create $NEW_VERSION panther-analysis-all.* --title $NEW_VERSION --latest --generate-notes
+          gh release create $NEW_VERSION panther-analysis-all.* --title $NEW_VERSION --target $RELEASE_SHA --latest --generate-notes
