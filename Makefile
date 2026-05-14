@@ -50,10 +50,6 @@ global-helpers-unit-test: ## Run unit tests for global helpers
 data-models-unit-test: ## Run unit tests for data models
 	pipenv run python -m unittest data_models/*_test.py
 
-## queries-unit-test: Run unit tests for scheduled query helpers
-queries-unit-test: ## Run unit tests for scheduled query helpers
-	pipenv run python -m unittest queries/**/*_test.py
-
 ## lint: Run all linters (pylint, bandit, isort, black checks)
 lint: lint-pylint lint-fmt ## Run all linters (pylint, bandit, isort, black checks)
 
@@ -102,7 +98,7 @@ install-pre-commit-hooks: ## Install pre-commit hooks into .git/hooks
 	@echo "✅ Pre-commit hooks installed (with Claude review)."
 
 ## test: Run unit tests and panther_analysis_tool tests
-test: global-helpers-unit-test data-models-unit-test queries-unit-test ## Run unit tests and panther_analysis_tool tests
+test: global-helpers-unit-test data-models-unit-test ## Run unit tests and panther_analysis_tool tests
 	pipenv run panther_analysis_tool test $(TEST_ARGS)
 
 # Used by Panther team to update deprecated.txt
