@@ -20,6 +20,11 @@ Tests:
     Log:
       query_text: "create USER testuser password='☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺☺' default_role = 'READONLY' must_change_password = true;"
       user_name: admin
+  - Name: IF NOT EXISTS syntax extracts correct username
+    ExpectedResult: true
+    Log:
+      query_text: "CREATE USER IF NOT EXISTS SERVICE_ACCOUNT_XYZ DEFAULT_ROLE = SERVICE_ROLE TYPE='SERVICE' RSA_PUBLIC_KEY = 'REDACTED'"
+      user_name: PANTHER_ADMIN
   - Name: Unknown User
     ExpectedResult: true
     Log:
