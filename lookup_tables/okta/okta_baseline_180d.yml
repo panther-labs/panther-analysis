@@ -374,11 +374,11 @@ Query: |
       GROUP BY user_email, event_hour
   ),
 
-  swa_known_sources AS (
+  swa_events AS (
       SELECT
           actor:alternateId::string AS user_email,
-          ARRAY_SLICE(ARRAY_COMPACT(ARRAY_AGG(DISTINCT client:ipAddress::string)), 0, 50) AS swa_known_ips,
-          ARRAY_SLICE(ARRAY_COMPACT(ARRAY_AGG(DISTINCT client:userAgent:rawUserAgent::string)), 0, 50) AS swa_known_user_agents
+          client:ipAddress::string AS ip_address,
+          client:userAgent:rawUserAgent::string AS ua
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '187 days'
           AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
@@ -389,7 +389,26 @@ Query: |
               OR debugContext:debugData:signOnMode::string LIKE '%AUTO%LOGIN%'
               OR debugContext:debugData:signOnMode::string LIKE '%BROWSER%PLUGIN%'
           )
+  ),
+  swa_known_ips_ranked AS (
+      SELECT user_email,
+             ARRAY_SLICE(ARRAY_AGG(ip_address) WITHIN GROUP (ORDER BY cnt DESC), 0, 50) AS swa_known_ips
+      FROM (SELECT user_email, ip_address, COUNT(*) AS cnt FROM swa_events WHERE ip_address IS NOT NULL GROUP BY user_email, ip_address)
       GROUP BY user_email
+  ),
+  swa_known_uas_ranked AS (
+      SELECT user_email,
+             ARRAY_SLICE(ARRAY_AGG(ua) WITHIN GROUP (ORDER BY cnt DESC), 0, 50) AS swa_known_user_agents
+      FROM (SELECT user_email, ua, COUNT(*) AS cnt FROM swa_events WHERE ua IS NOT NULL GROUP BY user_email, ua)
+      GROUP BY user_email
+  ),
+  swa_known_sources AS (
+      SELECT
+          COALESCE(i.user_email, u.user_email) AS user_email,
+          i.swa_known_ips,
+          u.swa_known_user_agents
+      FROM swa_known_ips_ranked i
+      FULL OUTER JOIN swa_known_uas_ranked u ON i.user_email = u.user_email
   ),
 
   swa_access_stats AS (
