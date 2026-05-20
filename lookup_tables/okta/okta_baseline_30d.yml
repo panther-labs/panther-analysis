@@ -68,6 +68,7 @@ Query: |
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '37 days'
           AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND actor:alternateId::string LIKE '%@%'
+          AND actor:alternateId::string != 'system@okta.com'
   ),
 
   tunnel_features AS (
@@ -153,47 +154,74 @@ Query: |
 
   country_dist AS (
       SELECT user_email, OBJECT_AGG(country, cnt) AS country_distribution
-      FROM (SELECT user_email, country, COUNT(*) AS cnt FROM base WHERE country IS NOT NULL GROUP BY user_email, country)
+      FROM (
+          SELECT user_email, country, COUNT(*) AS cnt FROM base WHERE country IS NOT NULL GROUP BY user_email, country
+          QUALIFY ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) <= 50
+      )
       GROUP BY user_email
   ),
   city_dist AS (
       SELECT user_email, OBJECT_AGG(city, cnt) AS city_distribution
-      FROM (SELECT user_email, city, COUNT(*) AS cnt FROM base WHERE city IS NOT NULL GROUP BY user_email, city)
+      FROM (
+          SELECT user_email, city, COUNT(*) AS cnt FROM base WHERE city IS NOT NULL GROUP BY user_email, city
+          QUALIFY ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) <= 50
+      )
       GROUP BY user_email
   ),
   browser_dist AS (
       SELECT user_email, OBJECT_AGG(browser, cnt) AS browser_distribution
-      FROM (SELECT user_email, browser, COUNT(*) AS cnt FROM base WHERE browser IS NOT NULL GROUP BY user_email, browser)
+      FROM (
+          SELECT user_email, browser, COUNT(*) AS cnt FROM base WHERE browser IS NOT NULL GROUP BY user_email, browser
+          QUALIFY ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) <= 50
+      )
       GROUP BY user_email
   ),
   os_dist AS (
       SELECT user_email, OBJECT_AGG(os, cnt) AS os_distribution
-      FROM (SELECT user_email, os, COUNT(*) AS cnt FROM base WHERE os IS NOT NULL GROUP BY user_email, os)
+      FROM (
+          SELECT user_email, os, COUNT(*) AS cnt FROM base WHERE os IS NOT NULL GROUP BY user_email, os
+          QUALIFY ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) <= 50
+      )
       GROUP BY user_email
   ),
   asn_dist AS (
       SELECT user_email, OBJECT_AGG(asn, cnt) AS asn_distribution
-      FROM (SELECT user_email, asn, COUNT(*) AS cnt FROM base WHERE asn IS NOT NULL GROUP BY user_email, asn)
+      FROM (
+          SELECT user_email, asn, COUNT(*) AS cnt FROM base WHERE asn IS NOT NULL GROUP BY user_email, asn
+          QUALIFY ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) <= 50
+      )
       GROUP BY user_email
   ),
   isp_dist AS (
       SELECT user_email, OBJECT_AGG(isp, cnt) AS isp_distribution
-      FROM (SELECT user_email, isp, COUNT(*) AS cnt FROM base WHERE isp IS NOT NULL GROUP BY user_email, isp)
+      FROM (
+          SELECT user_email, isp, COUNT(*) AS cnt FROM base WHERE isp IS NOT NULL GROUP BY user_email, isp
+          QUALIFY ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) <= 50
+      )
       GROUP BY user_email
   ),
   domain_dist AS (
       SELECT user_email, OBJECT_AGG(domain, cnt) AS domain_distribution
-      FROM (SELECT user_email, domain, COUNT(*) AS cnt FROM base WHERE domain IS NOT NULL GROUP BY user_email, domain)
+      FROM (
+          SELECT user_email, domain, COUNT(*) AS cnt FROM base WHERE domain IS NOT NULL GROUP BY user_email, domain
+          QUALIFY ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) <= 50
+      )
       GROUP BY user_email
   ),
   device_dist AS (
       SELECT user_email, OBJECT_AGG(device, cnt) AS device_distribution
-      FROM (SELECT user_email, device, COUNT(*) AS cnt FROM base WHERE device IS NOT NULL GROUP BY user_email, device)
+      FROM (
+          SELECT user_email, device, COUNT(*) AS cnt FROM base WHERE device IS NOT NULL GROUP BY user_email, device
+          QUALIFY ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) <= 50
+      )
       GROUP BY user_email
   ),
   ip_dist AS (
       SELECT user_email, OBJECT_AGG(ip_address, cnt) AS ip_distribution
-      FROM (SELECT user_email, ip_address, COUNT(*) AS cnt FROM base WHERE ip_address IS NOT NULL GROUP BY user_email, ip_address)
+      FROM (
+          SELECT user_email, ip_address, COUNT(*) AS cnt FROM base WHERE ip_address IS NOT NULL GROUP BY user_email, ip_address
+          QUALIFY ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) <= 50
+      )
       GROUP BY user_email
   ),
   mfa_dist AS (
@@ -203,12 +231,16 @@ Query: |
           FROM base
           WHERE mfa_factor IS NOT NULL AND mfa_factor NOT LIKE '%@%'
           GROUP BY user_email, mfa_factor
+          QUALIFY ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) <= 50
       )
       GROUP BY user_email
   ),
   app_dist AS (
       SELECT user_email, OBJECT_AGG(app, cnt) AS app_distribution
-      FROM (SELECT user_email, app, COUNT(*) AS cnt FROM base WHERE app IS NOT NULL GROUP BY user_email, app)
+      FROM (
+          SELECT user_email, app, COUNT(*) AS cnt FROM base WHERE app IS NOT NULL GROUP BY user_email, app
+          QUALIFY ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) <= 50
+      )
       GROUP BY user_email
   ),
   hour_dist AS (
@@ -223,6 +255,7 @@ Query: |
           FROM tunnel_features
           WHERE tunnel_type = 'VPN' AND tunnel_operator IS NOT NULL
           GROUP BY user_email, tunnel_operator
+          QUALIFY ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) <= 50
       )
       GROUP BY user_email
   ),
@@ -233,6 +266,7 @@ Query: |
           FROM tunnel_features
           WHERE tunnel_type IS NOT NULL
           GROUP BY user_email, tunnel_type
+          QUALIFY ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) <= 50
       )
       GROUP BY user_email
   ),
@@ -340,11 +374,11 @@ Query: |
       GROUP BY user_email, event_hour
   ),
 
-  swa_known_sources AS (
+  swa_events AS (
       SELECT
           actor:alternateId::string AS user_email,
-          ARRAY_COMPACT(ARRAY_AGG(DISTINCT client:ipAddress::string)) AS swa_known_ips,
-          ARRAY_COMPACT(ARRAY_AGG(DISTINCT client:userAgent:rawUserAgent::string)) AS swa_known_user_agents
+          client:ipAddress::string AS ip_address,
+          client:userAgent:rawUserAgent::string AS ua
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '37 days'
           AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
@@ -355,7 +389,26 @@ Query: |
               OR debugContext:debugData:signOnMode::string LIKE '%AUTO%LOGIN%'
               OR debugContext:debugData:signOnMode::string LIKE '%BROWSER%PLUGIN%'
           )
+  ),
+  swa_known_ips_ranked AS (
+      SELECT user_email,
+             ARRAY_SLICE(ARRAY_AGG(ip_address) WITHIN GROUP (ORDER BY cnt DESC), 0, 50) AS swa_known_ips
+      FROM (SELECT user_email, ip_address, COUNT(*) AS cnt FROM swa_events WHERE ip_address IS NOT NULL GROUP BY user_email, ip_address)
       GROUP BY user_email
+  ),
+  swa_known_uas_ranked AS (
+      SELECT user_email,
+             ARRAY_SLICE(ARRAY_AGG(ua) WITHIN GROUP (ORDER BY cnt DESC), 0, 50) AS swa_known_user_agents
+      FROM (SELECT user_email, ua, COUNT(*) AS cnt FROM swa_events WHERE ua IS NOT NULL GROUP BY user_email, ua)
+      GROUP BY user_email
+  ),
+  swa_known_sources AS (
+      SELECT
+          COALESCE(i.user_email, u.user_email) AS user_email,
+          i.swa_known_ips,
+          u.swa_known_user_agents
+      FROM swa_known_ips_ranked i
+      FULL OUTER JOIN swa_known_uas_ranked u ON i.user_email = u.user_email
   ),
 
   swa_access_stats AS (
