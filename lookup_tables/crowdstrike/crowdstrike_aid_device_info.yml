@@ -15,60 +15,12 @@ Query: |
       ARRAY_UNIQUE_AGG(aip) AS aips,
       MAX_BY(event, p_event_time) AS details
   FROM panther_logs.public.crowdstrike_fdrevent
-  WHERE p_occurs_since(10d)
+  WHERE p_occurs_since('10d')
       AND fdr_event_type = 'aid_master'
   GROUP BY aid
 LogTypeMap:
   PrimaryKey: aid
   AssociatedLogTypes:
-    - LogType: Crowdstrike.AIDMaster
-      Selectors:
-        - "aid"
-    - LogType: Crowdstrike.ActivityAudit
-      Selectors:
-        - "aid"
-    - LogType: Crowdstrike.CriticalFile
-      Selectors:
-        - "aid"
-    - LogType: Crowdstrike.DetectionSummary
-      Selectors:
-        - "SensorId"
-    - LogType: Crowdstrike.DNSRequest
-      Selectors:
-        - "aid"
     - LogType: Crowdstrike.FDREvent
-      Selectors:
-        - "aid"
-    - LogType: Crowdstrike.GroupIdentity
-      Selectors:
-        - "aid"
-    - LogType: Crowdstrike.ManagedAssets
-      Selectors:
-        - "aid"
-    - LogType: Crowdstrike.NetworkConnect
-      Selectors:
-        - "aid"
-    - LogType: Crowdstrike.NetworkListen
-      Selectors:
-        - "aid"
-    - LogType: Crowdstrike.NotManagedAssets
-      Selectors:
-        - "aid"
-    - LogType: Crowdstrike.ProcessRollup2
-      Selectors:
-        - "aid"
-    - LogType: Crowdstrike.ProcessRollup2Stats
-      Selectors:
-        - "aid"
-    - LogType: Crowdstrike.SyntheticProcessRollup2
-      Selectors:
-        - "aid"
-    - LogType: Crowdstrike.Unknown
-      Selectors:
-        - "aid"
-    - LogType: Crowdstrike.UserIdentity
-      Selectors:
-        - "aid"
-    - LogType: Crowdstrike.UserLogonLogoff
       Selectors:
         - "aid"
