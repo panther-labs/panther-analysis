@@ -7,7 +7,12 @@ def title(event):
 
 
 def severity(event):
-    return event.get("severity")
+    sev = event.get("severity", "").upper()
+    if sev == "INFORMATIONAL":
+        return "INFO"
+    if sev in ("INFO", "LOW", "MEDIUM", "HIGH", "CRITICAL"):
+        return sev
+    return "DEFAULT"
 
 
 def dedup(event):
