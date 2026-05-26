@@ -48,6 +48,8 @@
   - Search for activity related to a specific SessionID in Okta panther_logs.okta_systemlog
 - [Okta Investigate User Activity](../queries/okta_queries/okta_activity_audit.yml)
   - Audit user activity across your environment. Customize to filter on specific users, time ranges, etc
+- [Okta Legacy API Authentication Without MFA Challenge](../rules/okta_rules/okta_legacy_api_auth_no_mfa.yml)
+  - An Okta session was established through the legacy /api/v1/authn API without an MFA challenge. Legacy sessions use the '102' prefix on externalSessionId, vs the modern Identity Engine 'idx' prefix. These sessions bypass the modern CHALLENGE -> auth_via_mfa -> session.start flow and may indicate a legacy global session policy gap or attacker tooling using single-factor authentication. See the okta_legacy_api_auth_no_mfa_skill for the full investigation workflow.
 - [Okta Login From CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_Query.yml)
   - Okta Logins from an IP Address not found in CrowdStrike's AIP List
 - [Okta Login From CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/okta_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_FDREvent.yml)
@@ -66,6 +68,10 @@
   - This rule looks for the same session being used from two devices, indicating a compromised session token.
 - [Okta Rate Limits](../rules/okta_rules/okta_rate_limits.yml)
   - Potential DoS/Bruteforce attack or hitting limits (system degradation)
+- [Okta Service App Acquired Dangerous Management Scope Token](../rules/okta_rules/okta_service_app_dangerous_scope_token_grant.yml)
+  - An Okta service application obtained an OAuth2 access token via the client_credentials grant type with one or more dangerous management scopes (okta.users.manage, okta.factors.manage, okta.apps.manage, okta.groups.manage, okta.policies.manage). Pre-exploitation signal — fires at capability acquisition before the scopes are used. client_credentials grants have no user subject, so management scopes granted to a service app are effectively org-wide administrative access. See the okta_service_app_dangerous_scope_token_grant_skill for the full investigation workflow.
+- [Okta Service App Deactivated User MFA Factor](../rules/okta_rules/okta_service_app_mfa_factor_deactivate.yml)
+  - An Okta service application (actor.type = PublicClientAppEntity) deactivated a user's MFA factor. Service apps removing end-user MFA is rarely benign — it usually indicates a compromised app credential or attacker-granted okta.factors.manage scope used to weaken account security before takeover. See the okta_service_app_mfa_deletion_skill for the full investigation workflow.
 - [Okta Sign-In from VPN Anonymizer](../rules/okta_rules/okta_anonymizing_vpn_login.yml)
   - A user is attempting to sign-in to Okta from a known VPN anonymizer.  The threat actor would access the compromised account using anonymizing proxy services.
 - [Okta Support Access](../queries/okta_queries/okta_support_access.yml)
