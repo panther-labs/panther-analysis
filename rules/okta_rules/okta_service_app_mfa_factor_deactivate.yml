@@ -134,3 +134,26 @@ Tests:
           },
         "p_log_type": "Okta.SystemLog",
       }
+  - Name: Service app deactivation with failed outcome (should not fire)
+    ExpectedResult: false
+    Log:
+      {
+        "published": "2026-05-20 10:15:00.000",
+        "eventType": "user.mfa.factor.deactivate",
+        "version": "0",
+        "severity": "INFO",
+        "actor":
+          {
+            "alternateId": "acme-service-app",
+            "displayName": "Acme Service App",
+            "id": "0oaservice12345",
+            "type": "PublicClientAppEntity",
+          },
+        "client":
+          {
+            "ipAddress": "1.2.3.4",
+          },
+        "outcome":
+          { "result": "FAILURE", "reason": "Unauthorized" },
+        "p_log_type": "Okta.SystemLog",
+      }

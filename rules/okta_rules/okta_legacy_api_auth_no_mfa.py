@@ -1,6 +1,5 @@
 from panther_okta_helpers import okta_alert_context
 
-
 LEGACY_SESSION_PREFIX = "102"
 AUTOMATION_KEYWORDS = ["python", "curl", "requests", "powershell", "urllib", "okta-sdk"]
 

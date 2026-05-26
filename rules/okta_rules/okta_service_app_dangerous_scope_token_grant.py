@@ -1,6 +1,5 @@
 from panther_okta_helpers import okta_alert_context
 
-
 DANGEROUS_SCOPES = [
     "okta.users.manage",
     "okta.factors.manage",

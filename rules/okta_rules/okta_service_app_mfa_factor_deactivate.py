@@ -1,11 +1,12 @@
 from panther_okta_helpers import okta_alert_context
 
-
 SERVICE_APP_ACTOR_TYPE = "PublicClientAppEntity"
 
 
 def rule(event):
     if event.get("eventType") != "user.mfa.factor.deactivate":
+        return False
+    if event.deep_get("outcome", "result") != "SUCCESS":
         return False
     return event.deep_get("actor", "type", default="") == SERVICE_APP_ACTOR_TYPE
 
