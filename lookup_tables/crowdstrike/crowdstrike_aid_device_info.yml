@@ -1,0 +1,26 @@
+AnalysisType: lookup_table
+LookupName: crowdstrike_aid_device_info
+Enabled: false
+Refresh:
+  PeriodMinutes: 1440
+Description: |
+  Maps Crowdstrike AIDs (Agent IDs) to actual devices, listing the known IPs,
+  hardware, and software specs of the device as most recently recorded by
+  Crowdstrike (within the last 90 days).
+Reference: https://falcon.crowdstrike.com/documentation
+Query: |
+  SELECT
+      aid,
+      MAX_BY(ComputerName, p_event_time) AS ComputerName,
+      ARRAY_UNIQUE_AGG(aip) AS aips,
+      MAX_BY(event, p_event_time) AS details
+  FROM panther_logs.public.crowdstrike_fdrevent
+  WHERE p_occurs_since('10d')
+      AND fdr_event_type = 'aid_master'
+  GROUP BY aid
+LogTypeMap:
+  PrimaryKey: aid
+  AssociatedLogTypes:
+    - LogType: Crowdstrike.FDREvent
+      Selectors:
+        - "aid"

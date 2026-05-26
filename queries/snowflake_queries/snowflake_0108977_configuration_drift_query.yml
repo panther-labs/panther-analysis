@@ -18,7 +18,14 @@ Query: |
       end_time
   FROM snowflake.account_usage.query_history
     WHERE ((execution_status = 'SUCCESS'
-      AND query_type NOT in ('SELECT')
+      AND query_type NOT in ('SELECT', 'EXPLAIN')
+      AND (
+        user_name NOT in ('PANTHER_ADMIN', 'PANTHERACCOUNTADMIN')
+        AND NOT (
+          role_name LIKE 'PANTHER_READONLY%'
+          AND query_text LIKE 'COPY INTO @panther_lookups.public.panther_lut_export_stage%'
+        )
+      )
       AND user_name NOT in ('PANTHER_ADMIN', 'PANTHERACCOUNTADMIN')
       AND (query_text ILIKE '%create role%'
           OR query_text ILIKE '%manage grants%'

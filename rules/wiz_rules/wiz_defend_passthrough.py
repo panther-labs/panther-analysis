@@ -7,12 +7,17 @@ def title(event):
 
 
 def severity(event):
-    return event.get("severity")
+    sev = (event.get("severity", "") or "").upper()
+    if sev == "INFORMATIONAL":
+        return "INFO"
+    if sev in ("INFO", "LOW", "MEDIUM", "HIGH", "CRITICAL"):
+        return sev
+    return "DEFAULT"
 
 
 def dedup(event):
     # For lower-severity events, dedup based on specific source rule to reduce overall alert volume
-    if event.get("severity") in ("INFO", "LOW"):
+    if event.get("severity") in ("INFO", "INFORMATIONAL", "LOW"):
         dedup_str = str(event.get("tdrId"))
         if dedup_str:
             return dedup_str
