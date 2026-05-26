@@ -250,7 +250,7 @@ Prompt: |
 
   ```mermaid
   graph LR
-      A["App Created<br/>app.lifecycle.create"] --> B["Admin Consent Granted<br/>app.oauth2.admin.consent.grant<br/>okta.users.manage + okta.factors.manage"]
+      A["App Created<br/>application.lifecycle.create"] --> B["Admin Consent Granted<br/>app.oauth2.admin.consent.grant<br/>okta.users.manage + okta.factors.manage"]
       B --> C["Token Acquired ← THIS SKILL<br/>app.oauth2.token.grant.access_token<br/>client_credentials + private_key_jwt"]
       C --> D["MFA Deleted ← okta_service_app_mfa_deletion_skill<br/>user.mfa.factor.deactivate<br/>actor.type = PublicClientAppEntity"]
       D --> E["Session Created<br/>user.session.start<br/>102 prefix ← okta_legacy_api_auth_no_mfa_skill"]
