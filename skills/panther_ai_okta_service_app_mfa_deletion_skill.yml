@@ -25,41 +25,33 @@ Prompt: |
 
   ---
 
-  ## Step 2: Detect the MFA Deletion Events
+  ## Step 2: Confirm the Rule Fired
 
-  Query for all `user.mfa.factor.deactivate` events where `actor:type = 'PublicClientAppEntity'` in the relevant time window (default: last 30 days):
+  This skill is the investigation companion for the **`Okta.ServiceApp.MFA.Factor.Deactivate`** detection rule. Query the signals table for matching firings in the relevant window (default: last 30 days) — these are the entries that triggered the alert(s) you are triaging:
 
   ```sql
   SELECT
       p_event_time,
-      eventType,
-      displayMessage,
-      actor:id AS actor_id,
-      actor:type AS actor_type,
-      actor:alternateId AS actor_alternate_id,
-      actor:displayName AS actor_display_name,
-      client:ipAddress AS client_ip,
-      client:geographicalContext:city AS city,
-      client:geographicalContext:country AS country,
-      outcome:result AS outcome_result,
-      outcome:reason AS outcome_reason,
-      target,
-      severity
-  FROM panther_logs.public.okta_systemlog
+      p_alert_id,
+      p_alert_creation_time,
+      p_alert_severity,
+      p_alert_context,
+      p_any_usernames,
+      p_any_ip_addresses
+  FROM panther_signals.public.correlation_signals
   WHERE p_occurs_since('30 d')
-    AND actor:type = 'PublicClientAppEntity'
-    AND eventType = 'user.mfa.factor.deactivate'
+    AND p_rule_id = 'Okta.ServiceApp.MFA.Factor.Deactivate'
   ORDER BY p_event_time DESC
   LIMIT 50
   ```
 
-  Record:
-  - **Actor ID** (the service app ID)
-  - **Actor display name**
-  - **Client IP address**
-  - **Target user(s)** (victim accounts whose MFA was removed)
-  - **Factor types** reset (from `outcome:reason`)
-  - **Timestamp** of the deletions
+  If the query returns zero rows, the rule has not fired in the window — stop and report that there is nothing to investigate. Otherwise extract from `p_alert_context` (populated by `okta_alert_context`):
+
+  - **Service app actor**: `actor.displayName`, `actor.id`
+  - **Source IP**: `client.ipAddress`
+  - **Target victim**: `target[0].alternateId`
+  - **Factor type removed**: `outcome.reason`
+  - **Incident timestamp**: `p_event_time` — use this as `<INCIDENT_TIMESTAMP>` for the queries below
 
   ---
 
@@ -180,23 +172,15 @@ Prompt: |
 
   ---
 
-  ## Notes on Detection Logic
+  ## Linked Detection Rule
 
-  When building a Panther rule to detect this:
-  ```python
-  def rule(event):
-      return (
-          event.get('eventType') == 'user.mfa.factor.deactivate'
-          and event.deep_get('actor', 'type') == 'PublicClientAppEntity'
-      )
-  ```
+  This skill is the investigation companion for the **`Okta.ServiceApp.MFA.Factor.Deactivate`** detection rule (`rules/okta_rules/okta_service_app_mfa_factor_deactivate.py`). When that rule fires, follow the workflow above.
 
-  Alert fields to surface:
-  - `actor.displayName` — the service app name
-  - `actor.id` — service app ID
-  - `client.ipAddress` — source IP
-  - `target[0].alternateId` — victim user email
-  - `outcome.reason` — which factor type was deleted
+  The rule fires when:
+  - `eventType = user.mfa.factor.deactivate`
+  - `actor.type = PublicClientAppEntity`
+
+  Alert context surfaced via `okta_alert_context` includes the service app actor, source IP, target user, and `outcome.reason` (the factor type that was removed).
 ToolMessage: "Investigating Okta service app MFA deletion activity..."
 Enabled: true
 Tags:

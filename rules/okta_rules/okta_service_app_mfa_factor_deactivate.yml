@@ -1,0 +1,136 @@
+AnalysisType: rule
+Filename: okta_service_app_mfa_factor_deactivate.py
+RuleID: "Okta.ServiceApp.MFA.Factor.Deactivate"
+DisplayName: "Okta Service App Deactivated User MFA Factor"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Okta.SystemLog
+Tags:
+  - Okta
+  - Identity & Access Management
+  - Credential Access
+  - Defense Evasion:Modify Authentication Process
+Reports:
+  MITRE ATT&CK:
+    - TA0005:T1556.006
+Severity: High
+Description: >
+  An Okta service application (actor.type = PublicClientAppEntity) deactivated a user's MFA factor.
+  Service apps removing end-user MFA is rarely benign — it usually indicates a compromised app credential
+  or attacker-granted okta.factors.manage scope used to weaken account security before takeover.
+  See the okta_service_app_mfa_deletion_skill for the full investigation workflow.
+Reference: https://developer.okta.com/docs/reference/api/event-types/#user.mfa.factor.deactivate
+Runbook: |
+  1. Identify the service app from alert_context actor.displayName and actor.id, and the victim user from target[0].alternateId
+  2. Query Okta system logs in the 4 hours before the alert for app.oauth2.token.grant.access_token (grantType=client_credentials) and app.oauth2.admin.consent.grant events that gave this service app okta.factors.manage scope
+  3. Query Okta system logs in the 2 hours after the alert for user.mfa.factor.activate or device.user.add events on the same victim — attackers often enroll their own factor immediately after deletion
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - eventType
+  - p_any_ip_addresses
+  - p_any_usernames
+Tests:
+  - Name: Service app deactivates user MFA factor
+    ExpectedResult: true
+    Log:
+      {
+        "published": "2026-05-20 10:15:00.000",
+        "eventType": "user.mfa.factor.deactivate",
+        "version": "0",
+        "severity": "INFO",
+        "displayMessage": "Reset factor for user",
+        "actor":
+          {
+            "alternateId": "acme-service-app",
+            "displayName": "Acme Service App",
+            "id": "0oaservice12345",
+            "type": "PublicClientAppEntity",
+          },
+        "client":
+          {
+            "device": "Unknown",
+            "ipAddress": "1.2.3.4",
+            "userAgent":
+              {
+                "browser": "UNKNOWN",
+                "os": "Unknown",
+                "rawUserAgent": "python-requests/2.31.0",
+              },
+            "zone": "null",
+          },
+        "outcome":
+          { "reason": "Reset factor for user", "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "alternateId": "homer@springfield.gov",
+              "displayName": "Homer Simpson",
+              "id": "00uvictim123",
+              "type": "User",
+            },
+          ],
+        "p_log_type": "Okta.SystemLog",
+      }
+  - Name: User resets own MFA factor (actor.type = User, should not fire)
+    ExpectedResult: false
+    Log:
+      {
+        "published": "2026-05-20 10:15:00.000",
+        "eventType": "user.mfa.factor.deactivate",
+        "version": "0",
+        "severity": "INFO",
+        "displayMessage": "User reset factor",
+        "actor":
+          {
+            "alternateId": "homer@springfield.gov",
+            "displayName": "Homer Simpson",
+            "id": "00uself123",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "1.2.3.4",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Mac OS X",
+                "rawUserAgent": "Mozilla/5.0 (Macintosh)",
+              },
+            "zone": "null",
+          },
+        "outcome":
+          { "reason": "User reset OKTA_VERIFY_PUSH factor", "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "alternateId": "homer@springfield.gov",
+              "displayName": "Homer Simpson",
+              "id": "00uself123",
+              "type": "User",
+            },
+          ],
+        "p_log_type": "Okta.SystemLog",
+      }
+  - Name: Service app, different event type (should not fire)
+    ExpectedResult: false
+    Log:
+      {
+        "published": "2026-05-20 10:15:00.000",
+        "eventType": "user.mfa.factor.activate",
+        "version": "0",
+        "severity": "INFO",
+        "actor":
+          {
+            "alternateId": "acme-service-app",
+            "displayName": "Acme Service App",
+            "id": "0oaservice12345",
+            "type": "PublicClientAppEntity",
+          },
+        "client":
+          {
+            "ipAddress": "1.2.3.4",
+          },
+        "p_log_type": "Okta.SystemLog",
+      }

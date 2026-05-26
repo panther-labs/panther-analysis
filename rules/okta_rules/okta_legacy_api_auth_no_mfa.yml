@@ -1,0 +1,118 @@
+AnalysisType: rule
+Filename: okta_legacy_api_auth_no_mfa.py
+RuleID: "Okta.Legacy.API.Auth.No.MFA"
+DisplayName: "Okta Legacy API Authentication Without MFA Challenge"
+Enabled: true
+Status: Experimental
+LogTypes:
+  - Okta.SystemLog
+Tags:
+  - Okta
+  - Identity & Access Management
+  - Credential Access
+  - Initial Access:Valid Accounts
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1078.004
+    - TA0005:T1556
+Severity: Medium
+Description: >
+  An Okta session was established through the legacy /api/v1/authn API without an MFA challenge.
+  Legacy sessions use the '102' prefix on externalSessionId, vs the modern Identity Engine 'idx' prefix.
+  These sessions bypass the modern CHALLENGE -> auth_via_mfa -> session.start flow and may indicate
+  a legacy global session policy gap or attacker tooling using single-factor authentication.
+  See the okta_legacy_api_auth_no_mfa_skill for the full investigation workflow.
+Reference: https://developer.okta.com/docs/reference/api/authn/
+Runbook: |
+  1. Identify the actor (alert_context actor.alternateId) and source IP (client.ipAddress) — check whether the IP is known automation infrastructure or a workforce range
+  2. Query Okta system logs in the 10 minutes around p_event_time filtered on authenticationContext.externalSessionId — confirm there is no user.authentication.auth_via_mfa event in the chain
+  3. Query Okta system logs in the 4 hours after the alert filtered on the same session_id — look for system.api_token.create, user.mfa.factor.activate, or application.user_membership.add that indicate persistence or lateral movement
+DedupPeriodMinutes: 60
+SummaryAttributes:
+  - eventType
+  - p_any_ip_addresses
+  - p_any_usernames
+Tests:
+  - Name: Legacy 102 session from python-requests (HIGH severity)
+    ExpectedResult: true
+    Log:
+      {
+        "published": "2026-05-20 10:15:00.000",
+        "eventType": "user.session.start",
+        "version": "0",
+        "severity": "INFO",
+        "actor":
+          {
+            "alternateId": "homer@springfield.gov",
+            "displayName": "Homer Simpson",
+            "id": "00uvictim123",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Unknown",
+            "ipAddress": "1.2.3.4",
+            "userAgent":
+              {
+                "browser": "UNKNOWN",
+                "os": "Unknown",
+                "rawUserAgent": "python-requests/2.31.0",
+              },
+            "zone": "null",
+          },
+        "outcome":
+          { "result": "SUCCESS", "reason": "Sign-on policy evaluation resulted in ALLOW" },
+        "authenticationcontext":
+          { "externalSessionId": "102abcdef0123456789" },
+        "p_log_type": "Okta.SystemLog",
+      }
+  - Name: Legacy 102 session from browser (MEDIUM severity)
+    ExpectedResult: true
+    Log:
+      {
+        "published": "2026-05-20 10:15:00.000",
+        "eventType": "user.session.start",
+        "version": "0",
+        "severity": "INFO",
+        "actor":
+          {
+            "alternateId": "homer@springfield.gov",
+            "displayName": "Homer Simpson",
+            "id": "00uvictim123",
+            "type": "User",
+          },
+        "client":
+          {
+            "device": "Computer",
+            "ipAddress": "1.2.3.4",
+            "userAgent":
+              {
+                "browser": "CHROME",
+                "os": "Mac OS X",
+                "rawUserAgent": "Mozilla/5.0 (Macintosh) Chrome/124.0",
+              },
+            "zone": "null",
+          },
+        "outcome": { "result": "SUCCESS" },
+        "authenticationcontext":
+          { "externalSessionId": "102browser987654321" },
+        "p_log_type": "Okta.SystemLog",
+      }
+  - Name: Modern idx session (should not fire)
+    ExpectedResult: false
+    Log:
+      {
+        "eventType": "user.session.start",
+        "outcome": { "result": "SUCCESS" },
+        "authenticationcontext": { "externalSessionId": "idxmodernsession123" },
+        "p_log_type": "Okta.SystemLog",
+      }
+  - Name: Legacy 102 session but failed outcome (should not fire)
+    ExpectedResult: false
+    Log:
+      {
+        "eventType": "user.session.start",
+        "outcome": { "result": "FAILURE" },
+        "authenticationcontext": { "externalSessionId": "102failedxyz000" },
+        "p_log_type": "Okta.SystemLog",
+      }

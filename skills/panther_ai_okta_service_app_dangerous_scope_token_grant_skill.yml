@@ -46,51 +46,35 @@ Prompt: |
 
   ---
 
-  ## Step 2: Detect the Dangerous Scope Grants
+  ## Step 2: Confirm the Rule Fired
 
-  Query for successful `client_credentials` token grants with management scopes:
+  This skill is the investigation companion for the **`Okta.ServiceApp.DangerousScope.TokenGrant`** detection rule. Query the signals table for matching firings in the relevant window (default: last 30 days) — these are the entries that triggered the alert(s) you are triaging:
 
   ```sql
   SELECT
       p_event_time,
-      eventType,
-      displayMessage,
-      actor:id AS actor_id,
-      actor:type AS actor_type,
-      actor:alternateId AS actor_alternate_id,
-      actor:displayName AS actor_display_name,
-      client:ipAddress AS client_ip,
-      client:userAgent:rawUserAgent AS user_agent,
-      outcome:result AS outcome_result,
-      outcome:reason AS outcome_reason,
-      debugContext:debugData:grantType AS grant_type,
-      debugContext:debugData:grantedScopes AS granted_scopes,
-      debugContext:debugData:requestedScopes AS requested_scopes,
-      debugContext:debugData:clientAuthType AS client_auth_type,
-      target,
-      severity
-  FROM panther_logs.public.okta_systemlog
+      p_alert_id,
+      p_alert_creation_time,
+      p_alert_severity,
+      p_alert_context,
+      p_any_actor_ids,
+      p_any_ip_addresses
+  FROM panther_signals.public.correlation_signals
   WHERE p_occurs_since('30 d')
-    AND eventType = 'app.oauth2.token.grant.access_token'
-    AND debugContext:debugData:grantType = 'client_credentials'
-    AND outcome:result = 'SUCCESS'
-    AND (
-      debugContext:debugData:grantedScopes RLIKE '(.*, )?okta[.]users[.]manage(,.*)?'
-      OR debugContext:debugData:grantedScopes RLIKE '(.*, )?okta[.]factors[.]manage(,.*)?'
-      OR debugContext:debugData:grantedScopes RLIKE '(.*, )?okta[.]apps[.]manage(,.*)?'
-      OR debugContext:debugData:grantedScopes RLIKE '(.*, )?okta[.]groups[.]manage(,.*)?'
-      OR debugContext:debugData:grantedScopes RLIKE '(.*, )?okta[.]policies[.]manage(,.*)?'
-    )
+    AND p_rule_id = 'Okta.ServiceApp.DangerousScope.TokenGrant'
   ORDER BY p_event_time DESC
   LIMIT 50
   ```
 
-  Record:
-  - **Actor app ID and name** — the service app that obtained the token
-  - **Granted scopes** — which management capabilities were acquired
-  - **Client auth type** — `private_key_jwt` indicates EC keypair registered; `client_secret_post` indicates shared secret
-  - **Source IP** and **user agent**
-  - **Timestamps** of each successful grant
+  If the query returns zero rows, the rule has not fired in the window — stop and report that there is nothing to investigate. Otherwise extract from `p_alert_context` (populated by `okta_alert_context`):
+
+  - **Service app actor**: `actor.displayName`, `actor.id`, `actor.alternateId` (use `actor.id` as `<SERVICE_APP_ACTOR_ID>` below)
+  - **Granted scopes**: `debug_context.debugData.grantedScopes` (comma-separated string)
+  - **Requested scopes**: `debug_context.debugData.requestedScopes`
+  - **Client auth type**: `debug_context.debugData.clientAuthType` (`private_key_jwt` = EC keypair, `client_secret_post` = shared secret)
+  - **Source IP**: `client.ipAddress`
+  - **User agent**: `client.userAgent.rawUserAgent`
+  - **Incident timestamp**: `p_event_time` — use as `<INCIDENT_TIMESTAMP>` in the queries below
 
   ---
 
@@ -303,69 +287,19 @@ Prompt: |
 
   ---
 
-  ## Detection Rule Logic
+  ## Linked Detection Rule
 
-  ```python
-  DANGEROUS_SCOPES = [
-      'okta.users.manage',
-      'okta.factors.manage',
-      'okta.apps.manage',
-      'okta.groups.manage',
-      'okta.policies.manage',
-  ]
+  This skill is the investigation companion for the **`Okta.ServiceApp.DangerousScope.TokenGrant`** detection rule (`rules/okta_rules/okta_service_app_dangerous_scope_token_grant.py`). When that rule fires, follow the workflow above.
 
-  def rule(event):
-      """
-      Detects Okta service app token grants via client_credentials with dangerous management scopes.
+  The rule fires when:
+  - `eventType = app.oauth2.token.grant.access_token`
+  - `outcome.result = SUCCESS`
+  - `debugContext.debugData.grantType = client_credentials`
+  - `debugContext.debugData.grantedScopes` contains at least one dangerous management scope: `okta.users.manage`, `okta.factors.manage`, `okta.apps.manage`, `okta.groups.manage`, or `okta.policies.manage` (exact-token match — `okta.users.manage.self` does not trigger)
 
-      The signal fires at capability acquisition — as soon as a service app proves it holds
-      org-wide administrative access. This precedes any destructive use of that access.
+  Severity is dynamic — HIGH when `okta.users.manage` or `okta.factors.manage` is granted (enables the MFA-deletion chain), MEDIUM for the other management scopes. Alert context is surfaced via `okta_alert_context` and includes the service app actor, source IP, user agent, and `debug_context.debugData` (grantType, grantedScopes, requestedScopes, clientAuthType).
 
-      Key schema notes for Okta.SystemLog:
-      - Grant type is nested at: debugContext.debugData.grantType
-      - Granted scopes are nested at: debugContext.debugData.grantedScopes (comma-separated string)
-      - For client_credentials grants, 'target' contains only the Access Token — no User entry
-      """
-      if event.get('eventType') != 'app.oauth2.token.grant.access_token':
-          return False
-      if event.deep_get('outcome', 'result') != 'SUCCESS':
-          return False
-      grant_type = event.deep_get('debugContext', 'debugData', 'grantType') or ''
-      if grant_type != 'client_credentials':
-          return False
-      granted_scopes = event.deep_get('debugContext', 'debugData', 'grantedScopes') or ''
-      scopes = {s.strip() for s in granted_scopes.split(',')}
-      return any(scope in scopes for scope in DANGEROUS_SCOPES)
-
-  def title(event):
-      app_name = event.deep_get('actor', 'displayName') or 'Unknown App'
-      app_id = event.deep_get('actor', 'alternateId') or event.deep_get('actor', 'id') or 'unknown'
-      scopes = event.deep_get('debugContext', 'debugData', 'grantedScopes') or 'unknown scopes'
-      ip = event.deep_get('client', 'ipAddress') or 'unknown IP'
-      return f"Okta Service App Dangerous Scope Grant: {app_name} ({app_id}) acquired [{scopes}] from {ip}"
-
-  def severity(event):
-      granted_scopes = event.deep_get('debugContext', 'debugData', 'grantedScopes') or ''
-      scopes = {s.strip() for s in granted_scopes.split(',')}
-      # Critical scopes: direct user and factor management (enables MFA deletion chain)
-      if 'okta.users.manage' in scopes or 'okta.factors.manage' in scopes:
-          return 'HIGH'
-      return 'MEDIUM'
-
-  def alert_context(event):
-      return {
-          'app_actor_id': event.deep_get('actor', 'id'),
-          'app_alternate_id': event.deep_get('actor', 'alternateId'),
-          'app_name': event.deep_get('actor', 'displayName'),
-          'granted_scopes': event.deep_get('debugContext', 'debugData', 'grantedScopes'),
-          'requested_scopes': event.deep_get('debugContext', 'debugData', 'requestedScopes'),
-          'client_auth_type': event.deep_get('debugContext', 'debugData', 'clientAuthType'),
-          'source_ip': event.deep_get('client', 'ipAddress'),
-          'user_agent': event.deep_get('client', 'userAgent', 'rawUserAgent'),
-      }
-  ```
-
-  **Tuning note:** All `client_credentials` grants returning management scopes are suspicious — there are very few legitimate production use cases for `okta.users.manage` or `okta.factors.manage` via unattended service auth. If you have known automation, allowlist by `actor:id` (the app ID).
+  **Tuning note:** All `client_credentials` grants returning management scopes are suspicious — there are very few legitimate production use cases for `okta.users.manage` or `okta.factors.manage` via unattended service auth. If you have known automation, allowlist by `actor.id` (the app ID).
 
   ---
 
