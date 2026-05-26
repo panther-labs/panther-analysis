@@ -1,13 +1,207 @@
-AnalysisType: skill
-SkillName: okta_service_app_mfa_deletion_skill
-DisplayName: Okta Service App MFA Deletion Investigation
-Description: 'Use this skill when investigating Okta MFA/factor deletion events performed by a service application (actor.type = PublicClientAppEntity). This covers the full investigation workflow: detecting the deletion event, profiling the service app actor, investigating the source IP, examining preceding setup activity (app creation, OAuth consent grants), and summarizing what happened before and after the factor removal.'
-Prompt: "\n# Okta Service App MFA Deletion Investigation Skill\n\nYou are investigating an Okta MFA deletion event performed by a **service application** (actor.type = `PublicClientAppEntity`). Follow this step-by-step workflow.\n\n---\n\n## Step 1: Discover the Schema\n\nBefore querying, retrieve the Okta.SystemLog schema:\n{{tool:panther_ai_log_types_get_schema}}\n\nKey fields for this investigation:\n- `actor:type` — filter on `PublicClientAppEntity`\n- `actor:id`, `actor:displayName`, `actor:alternateId`\n- `client:ipAddress`\n- `eventType` — target `user.mfa.factor.deactivate`\n- `outcome:result`, `outcome:reason`\n- `target` — the victim user\n- `p_event_time`\n\n---\n\n## Step 2: Detect the MFA Deletion Events\n\nQuery for all `user.mfa.factor.deactivate` events where `actor:type = 'PublicClientAppEntity'` in the relevant time window (default: last 30 days):\n\n```sql\nSELECT \n    p_event_time,\n    eventType,\n    displayMessage,\n    actor:id AS actor_id,\n    actor:type AS actor_type,\n    actor:alternateId AS actor_alternate_id,\n    actor:displayName AS actor_display_name,\n    client:ipAddress AS client_ip,\n    client:geographicalContext:city AS city,\n    client:geographicalContext:country AS country,\n    outcome:result AS outcome_result,\n    outcome:reason AS outcome_reason,\n    target,\n    severity\nFROM panther_logs.public.okta_systemlog\nWHERE p_occurs_since('30 d')\n  AND actor:type = 'PublicClientAppEntity'\n  AND eventType = 'user.mfa.factor.deactivate'\nORDER BY p_event_time DESC\nLIMIT 50\n```\n\nRecord:\n- **Actor ID** (the service app ID)\n- **Actor display name**\n- **Client IP address**\n- **Target user(s)** (victim accounts whose MFA was removed)\n- **Factor types** reset (from `outcome:reason`)\n- **Timestamp** of the deletions\n\n---\n\n## Step 3: Investigate the Source IP\n\nFor each IP associated with the MFA deletion:\n{{tool:panther_ai_general_indicator_check_skill}}\n\nAlso look at **all activity from this IP** in a ±2 hour window around the incident:\n\n```sql\nSELECT \n    p_event_time,\n    eventType,\n    displayMessage,\n    actor:id AS actor_id,\n    actor:type AS actor_type,\n    actor:alternateId AS actor_alternate_id,\n    actor:displayName AS actor_display_name,\n    client:ipAddress AS client_ip,\n    outcome:result AS outcome_result,\n    outcome:reason AS outcome_reason,\n    target,\n    severity\nFROM panther_logs.public.okta_systemlog\nWHERE p_occurs_around('<INCIDENT_TIMESTAMP>', '2 h')\n  AND client:ipAddress = '<SOURCE_IP>'\nORDER BY p_event_time ASC\nLIMIT 100\n```\n\n---\n\n## Step 4: Examine Preceding Events (Setup Activity)\n\nLook for setup activity that enabled the service app to perform MFA deletion. Key patterns to search for **before** the deletion timestamp on the same IP or by the same admin user:\n\n- `application.lifecycle.create` — new OAuth2 app created\n- `app.oauth2.client.lifecycle.create` — service/public client app registered\n- `app.oauth2.admin.consent.grant` — admin granted `okta.factors.manage` scope\n- `app.oauth2.credentials.lifecycle.create` — client secret or keypair created\n- `application.user_membership.add` — victim added to app\n- `app.oauth2.token.grant` FAILURE events — attacker testing authentication methods\n\nCritical consent scopes to flag:\n- `okta.factors.manage` — allows MFA factor management\n- `okta.users.manage` — allows user account manipulation\n\n---\n\n## Step 5: Examine Following Events (Post-Deletion Impact)\n\nQuery for all activity involving the **victim user** after the MFA deletion:\n\n```sql\nSELECT \n    p_event_time,\n    eventType,\n    displayMessage,\n    actor:id AS actor_id,\n    actor:type AS actor_type,\n    actor:alternateId AS actor_alternate_id,\n    actor:displayName AS actor_display_name,\n    client:ipAddress AS client_ip,\n    outcome:result AS outcome_result,\n    outcome:reason AS outcome_reason,\n    target,\n    severity\nFROM panther_logs.public.okta_systemlog\nWHERE p_occurs_around('<INCIDENT_TIMESTAMP>', '2 h')\n  AND ARRAY_CONTAINS('<VICTIM_EMAIL>'::variant, p_any_usernames)\nORDER BY p_event_time ASC\nLIMIT 100\n```\n\nLook for:\n- `policy.evaluate_sign_on` with `outcome_reason = 'Sign-on policy evaluation resulted in ENROLL'` — victim forced to re-enroll (MFA gap window)\n- `user.mfa.factor.activate` — new MFA factor enrolled (attacker-controlled device?)\n- `device.user.add` — new device registered\n- `user.session.start` / `user.authentication.sso` — access during MFA gap window\n- New IP addresses used after factor re-enrollment\n\n---\n\n## Step 6: Summarize Findings\n\nPresent a structured summary with:\n\n### Attack Chain Timeline\nUse a Mermaid timeline diagram showing key events from app creation through MFA deletion through post-deletion activity.\n\n### Key Indicators\n| Indicator | Value |\n|---|---|\n| Service App Actor ID | |\n| Service App Display Name | |\n| Source IP | |\n| IP Geolocation | |\n| Admin Who Created App | |\n| OAuth Scopes Granted | |\n| Victim User(s) | |\n| Factors Deleted | |\n| MFA Gap Window | |\n| New Device Enrolled | |\n| Post-Deletion Access | |\n\n### Risk Assessment\nEvaluate:\n- Was this a sanctioned adversary emulation or unauthorized activity?\n- Were `okta.factors.manage` + `okta.users.manage` admin consents granted by a legitimate admin?\n- Was the victim's MFA re-enrolled on a known vs. unknown device/IP?\n- Was there any access to sensitive apps during the MFA gap window?\n\n### MITRE ATT&CK Mapping\n- **T1556.006** — Modify Authentication Process: Multi-Factor Authentication\n- **T1098** — Account Manipulation\n- **T1550.001** — Use Alternate Authentication Material: Application Access Token\n\n---\n\n## Notes on Detection Logic\n\nWhen building a Panther rule to detect this:\n```python\ndef rule(event):\n    return (\n        event.get('eventType') == 'user.mfa.factor.deactivate'\n        and event.deep_get('actor', 'type') == 'PublicClientAppEntity'\n    )\n```\n\nAlert fields to surface:\n- `actor.displayName` — the service app name\n- `actor.id` — service app ID\n- `client.ipAddress` — source IP\n- `target[0].alternateId` — victim user email\n- `outcome.reason` — which factor type was deleted\n"
-ToolMessage: Investigating Okta service app MFA deletion activity...
+AnalysisType: "skill"
+SkillName: "okta_service_app_mfa_deletion_skill"
+DisplayName: "Okta Service App MFA Deletion Investigation"
+Description: "Use this skill when investigating Okta MFA/factor deletion events performed by a service application (actor.type = PublicClientAppEntity). This covers the full investigation workflow: detecting the deletion event, profiling the service app actor, investigating the source IP, examining preceding setup activity (app creation, OAuth consent grants), and summarizing what happened before and after the factor removal."
+Prompt: |
+  # Okta Service App MFA Deletion Investigation Skill
+
+  You are investigating an Okta MFA deletion event performed by a **service application** (actor.type = `PublicClientAppEntity`). Follow this step-by-step workflow.
+
+  ---
+
+  ## Step 1: Discover the Schema
+
+  Before querying, retrieve the Okta.SystemLog schema:
+  {{tool:panther_ai_log_types_get_schema}}
+
+  Key fields for this investigation:
+  - `actor:type` — filter on `PublicClientAppEntity`
+  - `actor:id`, `actor:displayName`, `actor:alternateId`
+  - `client:ipAddress`
+  - `eventType` — target `user.mfa.factor.deactivate`
+  - `outcome:result`, `outcome:reason`
+  - `target` — the victim user
+  - `p_event_time`
+
+  ---
+
+  ## Step 2: Detect the MFA Deletion Events
+
+  Query for all `user.mfa.factor.deactivate` events where `actor:type = 'PublicClientAppEntity'` in the relevant time window (default: last 30 days):
+
+  ```sql
+  SELECT
+      p_event_time,
+      eventType,
+      displayMessage,
+      actor:id AS actor_id,
+      actor:type AS actor_type,
+      actor:alternateId AS actor_alternate_id,
+      actor:displayName AS actor_display_name,
+      client:ipAddress AS client_ip,
+      client:geographicalContext:city AS city,
+      client:geographicalContext:country AS country,
+      outcome:result AS outcome_result,
+      outcome:reason AS outcome_reason,
+      target,
+      severity
+  FROM panther_logs.public.okta_systemlog
+  WHERE p_occurs_since('30 d')
+    AND actor:type = 'PublicClientAppEntity'
+    AND eventType = 'user.mfa.factor.deactivate'
+  ORDER BY p_event_time DESC
+  LIMIT 50
+  ```
+
+  Record:
+  - **Actor ID** (the service app ID)
+  - **Actor display name**
+  - **Client IP address**
+  - **Target user(s)** (victim accounts whose MFA was removed)
+  - **Factor types** reset (from `outcome:reason`)
+  - **Timestamp** of the deletions
+
+  ---
+
+  ## Step 3: Investigate the Source IP
+
+  For each IP associated with the MFA deletion:
+  {{tool:panther_ai_general_indicator_check_skill}}
+
+  Also look at **all activity from this IP** in a ±2 hour window around the incident:
+
+  ```sql
+  SELECT
+      p_event_time,
+      eventType,
+      displayMessage,
+      actor:id AS actor_id,
+      actor:type AS actor_type,
+      actor:alternateId AS actor_alternate_id,
+      actor:displayName AS actor_display_name,
+      client:ipAddress AS client_ip,
+      outcome:result AS outcome_result,
+      outcome:reason AS outcome_reason,
+      target,
+      severity
+  FROM panther_logs.public.okta_systemlog
+  WHERE p_occurs_around('<INCIDENT_TIMESTAMP>', '2 h')
+    AND client:ipAddress = '<SOURCE_IP>'
+  ORDER BY p_event_time ASC
+  LIMIT 100
+  ```
+
+  ---
+
+  ## Step 4: Examine Preceding Events (Setup Activity)
+
+  Look for setup activity that enabled the service app to perform MFA deletion. Key patterns to search for **before** the deletion timestamp on the same IP or by the same admin user:
+
+  - `application.lifecycle.create` — new OAuth2 app created
+  - `app.oauth2.client.lifecycle.create` — service/public client app registered
+  - `app.oauth2.admin.consent.grant` — admin granted `okta.factors.manage` scope
+  - `app.oauth2.credentials.lifecycle.create` — client secret or keypair created
+  - `application.user_membership.add` — victim added to app
+  - `app.oauth2.token.grant` FAILURE events — attacker testing authentication methods
+
+  Critical consent scopes to flag:
+  - `okta.factors.manage` — allows MFA factor management
+  - `okta.users.manage` — allows user account manipulation
+
+  ---
+
+  ## Step 5: Examine Following Events (Post-Deletion Impact)
+
+  Query for all activity involving the **victim user** after the MFA deletion:
+
+  ```sql
+  SELECT
+      p_event_time,
+      eventType,
+      displayMessage,
+      actor:id AS actor_id,
+      actor:type AS actor_type,
+      actor:alternateId AS actor_alternate_id,
+      actor:displayName AS actor_display_name,
+      client:ipAddress AS client_ip,
+      outcome:result AS outcome_result,
+      outcome:reason AS outcome_reason,
+      target,
+      severity
+  FROM panther_logs.public.okta_systemlog
+  WHERE p_occurs_around('<INCIDENT_TIMESTAMP>', '2 h')
+    AND ARRAY_CONTAINS('<VICTIM_EMAIL>'::variant, p_any_usernames)
+  ORDER BY p_event_time ASC
+  LIMIT 100
+  ```
+
+  Look for:
+  - `policy.evaluate_sign_on` with `outcome_reason = 'Sign-on policy evaluation resulted in ENROLL'` — victim forced to re-enroll (MFA gap window)
+  - `user.mfa.factor.activate` — new MFA factor enrolled (attacker-controlled device?)
+  - `device.user.add` — new device registered
+  - `user.session.start` / `user.authentication.sso` — access during MFA gap window
+  - New IP addresses used after factor re-enrollment
+
+  ---
+
+  ## Step 6: Summarize Findings
+
+  Present a structured summary with:
+
+  ### Attack Chain Timeline
+  Use a Mermaid timeline diagram showing key events from app creation through MFA deletion through post-deletion activity.
+
+  ### Key Indicators
+  | Indicator | Value |
+  |---|---|
+  | Service App Actor ID | |
+  | Service App Display Name | |
+  | Source IP | |
+  | IP Geolocation | |
+  | Admin Who Created App | |
+  | OAuth Scopes Granted | |
+  | Victim User(s) | |
+  | Factors Deleted | |
+  | MFA Gap Window | |
+  | New Device Enrolled | |
+  | Post-Deletion Access | |
+
+  ### Risk Assessment
+  Evaluate:
+  - Was this a sanctioned adversary emulation or unauthorized activity?
+  - Were `okta.factors.manage` + `okta.users.manage` admin consents granted by a legitimate admin?
+  - Was the victim's MFA re-enrolled on a known vs. unknown device/IP?
+  - Was there any access to sensitive apps during the MFA gap window?
+
+  ### MITRE ATT&CK Mapping
+  - **T1556.006** — Modify Authentication Process: Multi-Factor Authentication
+  - **T1098** — Account Manipulation
+  - **T1550.001** — Use Alternate Authentication Material: Application Access Token
+
+  ---
+
+  ## Notes on Detection Logic
+
+  When building a Panther rule to detect this:
+  ```python
+  def rule(event):
+      return (
+          event.get('eventType') == 'user.mfa.factor.deactivate'
+          and event.deep_get('actor', 'type') == 'PublicClientAppEntity'
+      )
+  ```
+
+  Alert fields to surface:
+  - `actor.displayName` — the service app name
+  - `actor.id` — service app ID
+  - `client.ipAddress` — source IP
+  - `target[0].alternateId` — victim user email
+  - `outcome.reason` — which factor type was deleted
+ToolMessage: "Investigating Okta service app MFA deletion activity..."
 Enabled: true
 Tags:
-    - okta
-    - mfa
-    - credential-access
-    - defense-evasion
-    - investigation
+  - okta
+  - mfa
+  - credential-access
+  - defense-evasion
+  - investigation

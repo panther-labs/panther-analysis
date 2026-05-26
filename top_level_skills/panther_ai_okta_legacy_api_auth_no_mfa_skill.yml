@@ -1,14 +1,326 @@
-AnalysisType: skill
-SkillName: okta_legacy_api_auth_no_mfa_skill
-DisplayName: Okta Legacy API Auth Without MFA Challenge
-Description: 'Use this skill when investigating Okta user.session.start events where authentication occurred via the legacy API (/api/v1/authn) without an MFA challenge. The fingerprint is: session ID starting with ''102'' (not ''idx''), policy.evaluate_sign_on outcome = ALLOW (not CHALLENGE), no preceding user.authentication.auth_via_mfa event, and often a non-browser user agent (e.g., python-requests). This covers detection, triage, and post-authentication impact analysis.'
-Prompt: "\n# Okta Legacy API Authentication Without MFA Challenge\n\nYou are investigating an Okta session that was authenticated through the **legacy `/api/v1/authn` API** without completing an MFA challenge. Follow this step-by-step workflow.\n\n---\n\n## Background: The Detection Signal\n\nOkta uses two distinct authentication pipelines:\n- **Identity Engine (modern):** Session IDs start with `idx`. Users go through a CHALLENGE flow — `policy.evaluate_sign_on` returns `CHALLENGE`, followed by `user.authentication.auth_via_mfa`, then `user.session.start`.\n- **Legacy API (`/api/v1/authn`):** Session IDs start with `102`. Authentication may bypass MFA if a legacy global session policy allows 1FA. The `policy.evaluate_sign_on` event returns `ALLOW` immediately, with **no** `user.authentication.auth_via_mfa` event in the chain.\n\n**The key fingerprint:**\n| Field | Legacy API (suspicious) | Identity Engine (normal) |\n|---|---|---|\n| `authenticationContext:externalSessionId` | Starts with `102` | Starts with `idx` |\n| `policy.evaluate_sign_on outcome` | `ALLOW` (no challenge) | `CHALLENGE` → `ALLOW` |\n| `user.authentication.auth_via_mfa` | **Absent** | Present before session.start |\n| `client:userAgent:rawUserAgent` | Often `python-requests`, `curl`, or automation | Browser User-Agent |\n| `client:device` | Often `Unknown` | `Computer` or `Mobile` |\n| `target` in `user.session.start` | Often `null` | Contains AppInstance |\n\n---\n\n## Step 1: Discover the Schema\n\nBefore querying, retrieve the Okta.SystemLog schema:\n{{tool:panther_ai_log_types_get_schema}}\n\nKey fields for this investigation:\n- `authenticationContext:externalSessionId` — session ID; `102` prefix = legacy API\n- `eventType` — filter on `user.session.start`, `user.authentication.auth_via_mfa`, `policy.evaluate_sign_on`\n- `outcome:result` — `ALLOW` without preceding `CHALLENGE` = MFA bypass\n- `client:userAgent:rawUserAgent` — identify automation tools\n- `client:device` — `Unknown` = non-browser client\n- `actor:alternateId`, `actor:id` — victim user identity\n- `client:ipAddress` — source of authentication\n\n---\n\n## Step 2: Find Legacy API Sessions Without MFA\n\nQuery for `user.session.start` events where the session ID uses the legacy `102` prefix:\n\n```sql\nSELECT \n    p_event_time,\n    actor:alternateId AS actor_email,\n    actor:displayName AS actor_name,\n    actor:type AS actor_type,\n    client:ipAddress AS client_ip,\n    client:userAgent:rawUserAgent AS user_agent,\n    client:device AS client_device,\n    authenticationContext:externalSessionId AS session_id,\n    authenticationContext:authenticationProvider AS auth_provider,\n    outcome:result AS outcome_result,\n    outcome:reason AS outcome_reason,\n    target\nFROM panther_logs.public.okta_systemlog\nWHERE p_occurs_since('30 d')\n  AND eventType = 'user.session.start'\n  AND outcome:result = 'SUCCESS'\n  AND authenticationContext:externalSessionId LIKE '102%'\nORDER BY p_event_time DESC\nLIMIT 50\n```\n\nRecord:\n- **Victim user(s)** — who authenticated via legacy API\n- **Source IP** — where the authentication came from\n- **User agent** — what client tool was used (e.g., `python-requests`)\n- **Session ID** — full `102...` value for follow-on queries\n- **Timestamp** — when the session was established\n\n---\n\n## Step 3: Confirm No MFA in the Authentication Chain\n\nFor each suspicious session, verify there is **no** `user.authentication.auth_via_mfa` event associated with it:\n\n```sql\nSELECT \n    p_event_time,\n    eventType,\n    displayMessage,\n    actor:alternateId AS actor_email,\n    client:ipAddress AS client_ip,\n    client:userAgent:rawUserAgent AS user_agent,\n    authenticationContext:externalSessionId AS session_id,\n    authenticationContext:credentialProvider AS cred_provider,\n    authenticationContext:credentialType AS cred_type,\n    outcome:result AS outcome_result,\n    outcome:reason AS outcome_reason,\n    target\nFROM panther_logs.public.okta_systemlog\nWHERE p_occurs_around('<SESSION_START_TIMESTAMP>', '10 m')\n  AND authenticationContext:externalSessionId = '<SESSION_ID>'\nORDER BY p_event_time ASC\nLIMIT 50\n```\n\n**Expected pattern for a confirmed bypass:**\n1. `user.authentication.verify` → `SUCCESS` (identity confirmed via password only)\n2. `policy.evaluate_sign_on` → `ALLOW` with reason `\"Sign-on policy evaluation resulted in ALLOW\"` (NOT `CHALLENGE`)\n3. `user.session.start` → `SUCCESS` (target: null, no app context)\n4. **No** `user.authentication.auth_via_mfa` event anywhere in the chain\n\n**Contrast with a normal session:**\n1. `policy.evaluate_sign_on` → `CHALLENGE`\n2. `user.authentication.auth_via_mfa` → `SUCCESS` (MFA passed)\n3. `user.session.start` → `SUCCESS`\n\n---\n\n## Step 4: Profile the Source IP\n\nFor each IP associated with a legacy API authentication:\n{{tool:panther_ai_general_indicator_check_skill}}\n\nAlso review **all Okta activity from this IP** in a ±2 hour window:\n\n```sql\nSELECT \n    p_event_time,\n    eventType,\n    displayMessage,\n    actor:alternateId AS actor_email,\n    actor:type AS actor_type,\n    client:ipAddress AS client_ip,\n    client:userAgent:rawUserAgent AS user_agent,\n    authenticationContext:externalSessionId AS session_id,\n    outcome:result AS outcome_result,\n    outcome:reason AS outcome_reason,\n    target\nFROM panther_logs.public.okta_systemlog\nWHERE p_occurs_around('<SESSION_START_TIMESTAMP>', '2 h')\n  AND client:ipAddress = '<SOURCE_IP>'\nORDER BY p_event_time ASC\nLIMIT 100\n```\n\n---\n\n## Step 5: Examine Post-Authentication Activity\n\nDetermine what the attacker did after establishing the session. Query all activity in the session:\n\n```sql\nSELECT \n    p_event_time,\n    eventType,\n    legacyEventType,\n    displayMessage,\n    actor:alternateId AS actor_email,\n    client:ipAddress AS client_ip,\n    client:userAgent:rawUserAgent AS user_agent,\n    authenticationContext:externalSessionId AS session_id,\n    outcome:result AS outcome_result,\n    outcome:reason AS outcome_reason,\n    target\nFROM panther_logs.public.okta_systemlog\nWHERE p_occurs_around('<SESSION_START_TIMESTAMP>', '4 h')\n  AND authenticationContext:externalSessionId = '<SESSION_ID>'\nORDER BY p_event_time ASC\nLIMIT 100\n```\n\n**High-value post-authentication events to look for:**\n\n| Event Type | Significance |\n|---|---|\n| `user.account.update_profile` | Profile manipulation |\n| `user.mfa.factor.deactivate` | MFA removal via API |\n| `user.mfa.factor.activate` | Attacker-controlled factor enrolled |\n| `app.oauth2.token.grant` | Token obtained for downstream access |\n| `system.api_token.create` | Persistent API access established |\n| `user.authentication.sso` | SSO access to downstream apps |\n| `application.user_membership.add` | User added to applications |\n| `user.lifecycle.suspend` / `deactivate` | Account takeover actions |\n| `device.user.add` | New device registered |\n\n---\n\n## Step 6: Check for Scope — Other Users on Same IP\n\nDetermine if this is a targeted attack or broader campaign:\n\n```sql\nSELECT \n    actor:alternateId AS actor_email,\n    COUNT(DISTINCT authenticationContext:externalSessionId) AS legacy_session_count,\n    ARRAY_AGG(DISTINCT authenticationContext:externalSessionId) AS session_ids,\n    MIN(p_event_time) AS first_seen,\n    MAX(p_event_time) AS last_seen\nFROM panther_logs.public.okta_systemlog\nWHERE p_occurs_since('30 d')\n  AND eventType = 'user.session.start'\n  AND outcome:result = 'SUCCESS'\n  AND authenticationContext:externalSessionId LIKE '102%'\n  AND client:ipAddress = '<SOURCE_IP>'\nGROUP BY actor_email\nORDER BY first_seen DESC\nLIMIT 50\n```\n\n---\n\n## Step 7: Summarize Findings\n\nPresent a structured summary:\n\n### Key Indicators\n\n| Indicator | Value |\n|---|---|\n| Affected User(s) | |\n| Source IP | |\n| IP Geolocation / Reputation | |\n| Authentication Client | |\n| Session ID(s) | |\n| Session Established At | |\n| MFA Challenge Present | ❌ No |\n| Policy Evaluated As | ALLOW (1FA) |\n| Post-Auth Activity | |\n| Credential Provider | |\n\n### Authentication Chain Comparison\n\n```mermaid\ngraph LR\n    subgraph \"Normal Auth (idx session)\"\n        A1[Password Auth] --> B1[policy.evaluate_sign_on CHALLENGE]\n        B1 --> C1[user.authentication.auth_via_mfa]\n        C1 --> D1[user.session.start SUCCESS]\n    end\n    subgraph \"Legacy API Auth (102 session)\"\n        A2[Password Only via /api/v1/authn] --> B2[policy.evaluate_sign_on ALLOW]\n        B2 --> D2[user.session.start SUCCESS]\n        style D2 fill:#ff9999\n    end\n```\n\n### Risk Assessment\n\nEvaluate:\n- Is this a sanctioned automation script or attacker tooling?\n- Was MFA intentionally bypassed or is this a legacy policy gap?\n- Did the actor access sensitive resources during the session?\n- Was a persistent access mechanism (API token, new factor) created?\n- Was the legacy global session policy recently modified to allow 1FA?\n\n### MITRE ATT&CK Mapping\n\n| Technique | Description |\n|---|---|\n| **T1078.004** | Valid Accounts: Cloud Accounts |\n| **T1556** | Modify Authentication Process |\n| **T1621** | Multi-Factor Authentication Request Generation (bypass) |\n| **T1550.001** | Use Alternate Authentication Material: Application Access Token |\n\n---\n\n## Detection Rule Logic\n\n```python\ndef rule(event):\n    \"\"\"\n    Detects Okta session creation via legacy API (/api/v1/authn) without MFA challenge.\n    Legacy sessions use '102' prefix session IDs vs Identity Engine 'idx' prefix.\n    These sessions bypass the modern CHALLENGE → MFA → ALLOW authentication flow.\n    \"\"\"\n    if event.get('eventType') != 'user.session.start':\n        return False\n    if event.deep_get('outcome', 'result') != 'SUCCESS':\n        return False\n    session_id = event.deep_get('authenticationContext', 'externalSessionId') or ''\n    return session_id.startswith('102')\n\ndef title(event):\n    user = event.deep_get('actor', 'alternateId') or 'unknown user'\n    ip = event.deep_get('client', 'ipAddress') or 'unknown IP'\n    ua = event.deep_get('client', 'userAgent', 'rawUserAgent') or 'unknown client'\n    return f\"Okta Legacy API Auth Without MFA: {user} from {ip} [{ua}]\"\n\ndef severity(event):\n    ua = (event.deep_get('client', 'userAgent', 'rawUserAgent') or '').lower()\n    # Elevate if non-browser automation tool\n    automation_keywords = ['python', 'curl', 'requests', 'powershell', 'urllib', 'okta-sdk']\n    if any(kw in ua for kw in automation_keywords):\n        return 'HIGH'\n    return 'MEDIUM'\n\ndef alert_context(event):\n    return {\n        'actor': event.deep_get('actor', 'alternateId'),\n        'actor_id': event.deep_get('actor', 'id'),\n        'source_ip': event.deep_get('client', 'ipAddress'),\n        'user_agent': event.deep_get('client', 'userAgent', 'rawUserAgent'),\n        'session_id': event.deep_get('authenticationContext', 'externalSessionId'),\n        'client_device': event.deep_get('client', 'device'),\n    }\n```\n\n**Key alert context to surface:** actor email, source IP, user agent, session ID, and client device type.\n\n---\n\n## Notes\n\n- **Not all `102` sessions are malicious** — some are legitimate server-side integrations using the legacy API. Tune by allowlisting known service account IDs or IP ranges.\n- The **legacy global session policy** (Okta Classic policy type `OktaSignOn`) governs these sessions. If the policy rule `policyRuleFactorMode = '1FA'`, MFA is not required.\n- **Remediation:** Migrate to Identity Engine, enforce MFA on legacy global session policies, or block legacy `/api/v1/authn` API access entirely.\n"
-ToolMessage: Investigating Okta legacy API authentication without MFA challenge...
+AnalysisType: "skill"
+SkillName: "okta_legacy_api_auth_no_mfa_skill"
+DisplayName: "Okta Legacy API Auth Without MFA Challenge"
+Description: "Use this skill when investigating Okta user.session.start events where authentication occurred via the legacy API (/api/v1/authn) without an MFA challenge. The fingerprint is: session ID starting with '102' (not 'idx'), policy.evaluate_sign_on outcome = ALLOW (not CHALLENGE), no preceding user.authentication.auth_via_mfa event, and often a non-browser user agent (e.g., python-requests). This covers detection, triage, and post-authentication impact analysis."
+Prompt: |
+  # Okta Legacy API Authentication Without MFA Challenge
+
+  You are investigating an Okta session that was authenticated through the **legacy `/api/v1/authn` API** without completing an MFA challenge. Follow this step-by-step workflow.
+
+  ---
+
+  ## Background: The Detection Signal
+
+  Okta uses two distinct authentication pipelines:
+  - **Identity Engine (modern):** Session IDs start with `idx`. Users go through a CHALLENGE flow — `policy.evaluate_sign_on` returns `CHALLENGE`, followed by `user.authentication.auth_via_mfa`, then `user.session.start`.
+  - **Legacy API (`/api/v1/authn`):** Session IDs start with `102`. Authentication may bypass MFA if a legacy global session policy allows 1FA. The `policy.evaluate_sign_on` event returns `ALLOW` immediately, with **no** `user.authentication.auth_via_mfa` event in the chain.
+
+  **The key fingerprint:**
+  | Field | Legacy API (suspicious) | Identity Engine (normal) |
+  |---|---|---|
+  | `authenticationContext:externalSessionId` | Starts with `102` | Starts with `idx` |
+  | `policy.evaluate_sign_on outcome` | `ALLOW` (no challenge) | `CHALLENGE` → `ALLOW` |
+  | `user.authentication.auth_via_mfa` | **Absent** | Present before session.start |
+  | `client:userAgent:rawUserAgent` | Often `python-requests`, `curl`, or automation | Browser User-Agent |
+  | `client:device` | Often `Unknown` | `Computer` or `Mobile` |
+  | `target` in `user.session.start` | Often `null` | Contains AppInstance |
+
+  ---
+
+  ## Step 1: Discover the Schema
+
+  Before querying, retrieve the Okta.SystemLog schema:
+  {{tool:panther_ai_log_types_get_schema}}
+
+  Key fields for this investigation:
+  - `authenticationContext:externalSessionId` — session ID; `102` prefix = legacy API
+  - `eventType` — filter on `user.session.start`, `user.authentication.auth_via_mfa`, `policy.evaluate_sign_on`
+  - `outcome:result` — `ALLOW` without preceding `CHALLENGE` = MFA bypass
+  - `client:userAgent:rawUserAgent` — identify automation tools
+  - `client:device` — `Unknown` = non-browser client
+  - `actor:alternateId`, `actor:id` — victim user identity
+  - `client:ipAddress` — source of authentication
+
+  ---
+
+  ## Step 2: Find Legacy API Sessions Without MFA
+
+  Query for `user.session.start` events where the session ID uses the legacy `102` prefix:
+
+  ```sql
+  SELECT
+      p_event_time,
+      actor:alternateId AS actor_email,
+      actor:displayName AS actor_name,
+      actor:type AS actor_type,
+      client:ipAddress AS client_ip,
+      client:userAgent:rawUserAgent AS user_agent,
+      client:device AS client_device,
+      authenticationContext:externalSessionId AS session_id,
+      authenticationContext:authenticationProvider AS auth_provider,
+      outcome:result AS outcome_result,
+      outcome:reason AS outcome_reason,
+      target
+  FROM panther_logs.public.okta_systemlog
+  WHERE p_occurs_since('30 d')
+    AND eventType = 'user.session.start'
+    AND outcome:result = 'SUCCESS'
+    AND authenticationContext:externalSessionId LIKE '102%'
+  ORDER BY p_event_time DESC
+  LIMIT 50
+  ```
+
+  Record:
+  - **Victim user(s)** — who authenticated via legacy API
+  - **Source IP** — where the authentication came from
+  - **User agent** — what client tool was used (e.g., `python-requests`)
+  - **Session ID** — full `102...` value for follow-on queries
+  - **Timestamp** — when the session was established
+
+  ---
+
+  ## Step 3: Confirm No MFA in the Authentication Chain
+
+  For each suspicious session, verify there is **no** `user.authentication.auth_via_mfa` event associated with it:
+
+  ```sql
+  SELECT
+      p_event_time,
+      eventType,
+      displayMessage,
+      actor:alternateId AS actor_email,
+      client:ipAddress AS client_ip,
+      client:userAgent:rawUserAgent AS user_agent,
+      authenticationContext:externalSessionId AS session_id,
+      authenticationContext:credentialProvider AS cred_provider,
+      authenticationContext:credentialType AS cred_type,
+      outcome:result AS outcome_result,
+      outcome:reason AS outcome_reason,
+      target
+  FROM panther_logs.public.okta_systemlog
+  WHERE p_occurs_around('<SESSION_START_TIMESTAMP>', '10 m')
+    AND authenticationContext:externalSessionId = '<SESSION_ID>'
+  ORDER BY p_event_time ASC
+  LIMIT 50
+  ```
+
+  **Expected pattern for a confirmed bypass:**
+  1. `user.authentication.verify` → `SUCCESS` (identity confirmed via password only)
+  2. `policy.evaluate_sign_on` → `ALLOW` with reason `"Sign-on policy evaluation resulted in ALLOW"` (NOT `CHALLENGE`)
+  3. `user.session.start` → `SUCCESS` (target: null, no app context)
+  4. **No** `user.authentication.auth_via_mfa` event anywhere in the chain
+
+  **Contrast with a normal session:**
+  1. `policy.evaluate_sign_on` → `CHALLENGE`
+  2. `user.authentication.auth_via_mfa` → `SUCCESS` (MFA passed)
+  3. `user.session.start` → `SUCCESS`
+
+  ---
+
+  ## Step 4: Profile the Source IP
+
+  For each IP associated with a legacy API authentication:
+  {{tool:panther_ai_general_indicator_check_skill}}
+
+  Also review **all Okta activity from this IP** in a ±2 hour window:
+
+  ```sql
+  SELECT
+      p_event_time,
+      eventType,
+      displayMessage,
+      actor:alternateId AS actor_email,
+      actor:type AS actor_type,
+      client:ipAddress AS client_ip,
+      client:userAgent:rawUserAgent AS user_agent,
+      authenticationContext:externalSessionId AS session_id,
+      outcome:result AS outcome_result,
+      outcome:reason AS outcome_reason,
+      target
+  FROM panther_logs.public.okta_systemlog
+  WHERE p_occurs_around('<SESSION_START_TIMESTAMP>', '2 h')
+    AND client:ipAddress = '<SOURCE_IP>'
+  ORDER BY p_event_time ASC
+  LIMIT 100
+  ```
+
+  ---
+
+  ## Step 5: Examine Post-Authentication Activity
+
+  Determine what the attacker did after establishing the session. Query all activity in the session:
+
+  ```sql
+  SELECT
+      p_event_time,
+      eventType,
+      legacyEventType,
+      displayMessage,
+      actor:alternateId AS actor_email,
+      client:ipAddress AS client_ip,
+      client:userAgent:rawUserAgent AS user_agent,
+      authenticationContext:externalSessionId AS session_id,
+      outcome:result AS outcome_result,
+      outcome:reason AS outcome_reason,
+      target
+  FROM panther_logs.public.okta_systemlog
+  WHERE p_occurs_around('<SESSION_START_TIMESTAMP>', '4 h')
+    AND authenticationContext:externalSessionId = '<SESSION_ID>'
+  ORDER BY p_event_time ASC
+  LIMIT 100
+  ```
+
+  **High-value post-authentication events to look for:**
+
+  | Event Type | Significance |
+  |---|---|
+  | `user.account.update_profile` | Profile manipulation |
+  | `user.mfa.factor.deactivate` | MFA removal via API |
+  | `user.mfa.factor.activate` | Attacker-controlled factor enrolled |
+  | `app.oauth2.token.grant` | Token obtained for downstream access |
+  | `system.api_token.create` | Persistent API access established |
+  | `user.authentication.sso` | SSO access to downstream apps |
+  | `application.user_membership.add` | User added to applications |
+  | `user.lifecycle.suspend` / `deactivate` | Account takeover actions |
+  | `device.user.add` | New device registered |
+
+  ---
+
+  ## Step 6: Check for Scope — Other Users on Same IP
+
+  Determine if this is a targeted attack or broader campaign:
+
+  ```sql
+  SELECT
+      actor:alternateId AS actor_email,
+      COUNT(DISTINCT authenticationContext:externalSessionId) AS legacy_session_count,
+      ARRAY_AGG(DISTINCT authenticationContext:externalSessionId) AS session_ids,
+      MIN(p_event_time) AS first_seen,
+      MAX(p_event_time) AS last_seen
+  FROM panther_logs.public.okta_systemlog
+  WHERE p_occurs_since('30 d')
+    AND eventType = 'user.session.start'
+    AND outcome:result = 'SUCCESS'
+    AND authenticationContext:externalSessionId LIKE '102%'
+    AND client:ipAddress = '<SOURCE_IP>'
+  GROUP BY actor_email
+  ORDER BY first_seen DESC
+  LIMIT 50
+  ```
+
+  ---
+
+  ## Step 7: Summarize Findings
+
+  Present a structured summary:
+
+  ### Key Indicators
+
+  | Indicator | Value |
+  |---|---|
+  | Affected User(s) | |
+  | Source IP | |
+  | IP Geolocation / Reputation | |
+  | Authentication Client | |
+  | Session ID(s) | |
+  | Session Established At | |
+  | MFA Challenge Present | ❌ No |
+  | Policy Evaluated As | ALLOW (1FA) |
+  | Post-Auth Activity | |
+  | Credential Provider | |
+
+  ### Authentication Chain Comparison
+
+  ```mermaid
+  graph LR
+      subgraph "Normal Auth (idx session)"
+          A1[Password Auth] --> B1[policy.evaluate_sign_on CHALLENGE]
+          B1 --> C1[user.authentication.auth_via_mfa]
+          C1 --> D1[user.session.start SUCCESS]
+      end
+      subgraph "Legacy API Auth (102 session)"
+          A2[Password Only via /api/v1/authn] --> B2[policy.evaluate_sign_on ALLOW]
+          B2 --> D2[user.session.start SUCCESS]
+          style D2 fill:#ff9999
+      end
+  ```
+
+  ### Risk Assessment
+
+  Evaluate:
+  - Is this a sanctioned automation script or attacker tooling?
+  - Was MFA intentionally bypassed or is this a legacy policy gap?
+  - Did the actor access sensitive resources during the session?
+  - Was a persistent access mechanism (API token, new factor) created?
+  - Was the legacy global session policy recently modified to allow 1FA?
+
+  ### MITRE ATT&CK Mapping
+
+  | Technique | Description |
+  |---|---|
+  | **T1078.004** | Valid Accounts: Cloud Accounts |
+  | **T1556** | Modify Authentication Process |
+  | **T1621** | Multi-Factor Authentication Request Generation (bypass) |
+  | **T1550.001** | Use Alternate Authentication Material: Application Access Token |
+
+  ---
+
+  ## Detection Rule Logic
+
+  ```python
+  def rule(event):
+      """
+      Detects Okta session creation via legacy API (/api/v1/authn) without MFA challenge.
+      Legacy sessions use '102' prefix session IDs vs Identity Engine 'idx' prefix.
+      These sessions bypass the modern CHALLENGE → MFA → ALLOW authentication flow.
+      """
+      if event.get('eventType') != 'user.session.start':
+          return False
+      if event.deep_get('outcome', 'result') != 'SUCCESS':
+          return False
+      session_id = event.deep_get('authenticationContext', 'externalSessionId') or ''
+      return session_id.startswith('102')
+
+  def title(event):
+      user = event.deep_get('actor', 'alternateId') or 'unknown user'
+      ip = event.deep_get('client', 'ipAddress') or 'unknown IP'
+      ua = event.deep_get('client', 'userAgent', 'rawUserAgent') or 'unknown client'
+      return f"Okta Legacy API Auth Without MFA: {user} from {ip} [{ua}]"
+
+  def severity(event):
+      ua = (event.deep_get('client', 'userAgent', 'rawUserAgent') or '').lower()
+      # Elevate if non-browser automation tool
+      automation_keywords = ['python', 'curl', 'requests', 'powershell', 'urllib', 'okta-sdk']
+      if any(kw in ua for kw in automation_keywords):
+          return 'HIGH'
+      return 'MEDIUM'
+
+  def alert_context(event):
+      return {
+          'actor': event.deep_get('actor', 'alternateId'),
+          'actor_id': event.deep_get('actor', 'id'),
+          'source_ip': event.deep_get('client', 'ipAddress'),
+          'user_agent': event.deep_get('client', 'userAgent', 'rawUserAgent'),
+          'session_id': event.deep_get('authenticationContext', 'externalSessionId'),
+          'client_device': event.deep_get('client', 'device'),
+      }
+  ```
+
+  **Key alert context to surface:** actor email, source IP, user agent, session ID, and client device type.
+
+  ---
+
+  ## Notes
+
+  - **Not all `102` sessions are malicious** — some are legitimate server-side integrations using the legacy API. Tune by allowlisting known service account IDs or IP ranges.
+  - The **legacy global session policy** (Okta Classic policy type `OktaSignOn`) governs these sessions. If the policy rule `policyRuleFactorMode = '1FA'`, MFA is not required.
+  - **Remediation:** Migrate to Identity Engine, enforce MFA on legacy global session policies, or block legacy `/api/v1/authn` API access entirely.
+ToolMessage: "Investigating Okta legacy API authentication without MFA challenge..."
 Enabled: true
 Tags:
-    - okta
-    - mfa-bypass
-    - legacy-api
-    - credential-access
-    - initial-access
-    - investigation
+  - okta
+  - mfa-bypass
+  - legacy-api
+  - credential-access
+  - initial-access
+  - investigation
