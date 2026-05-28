@@ -1,0 +1,27 @@
+AnalysisType: saved_query
+QueryName: "Okta Source IP Activity"
+Description: >
+  All Okta system log events originating from a given source IP in a time window.
+  Use to correlate activity across users from the same IP — assess campaign breadth,
+  identify shared automation infrastructure, or find other accounts touched by the
+  same operator. Substitute <IP> with the source IPv4/IPv6 string (e.g. '198.51.100.42')
+  and <WINDOW> with a Panther interval (e.g. '4 h', '7 d').
+Query: |-
+  SELECT
+      p_event_time,
+      eventType,
+      displayMessage,
+      actor:id AS actor_id,
+      actor:alternateId AS actor_alternate_id,
+      actor:type AS actor_type,
+      client:ipAddress AS client_ip,
+      client:userAgent:rawUserAgent AS user_agent,
+      authenticationContext:externalSessionId AS session_id,
+      outcome:result AS outcome_result,
+      outcome:reason AS outcome_reason,
+      target
+  FROM panther_logs.public.okta_systemlog
+  WHERE p_occurs_since('<WINDOW>')
+    AND client:ipAddress = '<IP>'
+  ORDER BY p_event_time ASC
+  LIMIT 200

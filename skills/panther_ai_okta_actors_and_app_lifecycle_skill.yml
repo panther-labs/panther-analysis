@@ -1,0 +1,61 @@
+AnalysisType: "skill"
+SkillName: "okta_actors_and_app_lifecycle"
+DisplayName: "Okta Actor Types and Service App Lifecycle"
+Description: "Reusable Okta knowledge primitive covering actor.type semantics (User, PublicClientAppEntity, SystemPrincipal, Anonymous) and how to attribute Okta actions to a human vs a service application vs Okta itself, plus the set of events that make up a service application's history (application.lifecycle.create, app.oauth2.client.lifecycle.create, app.oauth2.credentials.lifecycle.create, app.oauth2.admin.consent.grant, application.user_membership.add, app.oauth2.token.grant.access_token). Load when attribution between a user and a service application matters, when reading any Okta actor field, or when investigating a service app's setup history."
+Prompt: |
+  # Okta Actor Types and Service App Lifecycle
+
+  Reusable knowledge about who performs an action in Okta (`actor.type`) and the events that make up a service application's history. Apply whenever attribution matters or when investigating a service app.
+
+  ## actor.type values
+
+  Every Okta event has an `actor.type` field identifying what kind of entity performed the action:
+
+  | actor.type | What it represents | Typical actor.alternateId |
+  |---|---|---|
+  | `User` | A human user signed in interactively | Email address (`user@org.com`) |
+  | `PublicClientAppEntity` | An OAuth2 service application (machine token) | App label, e.g. `acme-service-app` |
+  | `SystemPrincipal` | Okta's own automation (system-driven events) | `system@okta.com` or service principal label |
+  | `Anonymous` | Unauthenticated request | empty / `unknown` |
+
+  Rule of thumb: `User` = user-initiated. `PublicClientAppEntity` = OAuth2 token (almost always `client_credentials`). `SystemPrincipal` = Okta itself.
+
+  Mismatches between expected and actual `actor.type` are signal. A `user.mfa.factor.deactivate` event with `actor.type = PublicClientAppEntity` means an OAuth app deleted a user's MFA — the fingerprint of an OAuth-token-driven MFA-deletion chain.
+
+  ## Service app lifecycle events
+
+  The full history of an OAuth2 service app is captured by these event types:
+
+  | Event | What happened |
+  |---|---|
+  | `application.lifecycle.create` | App was registered. `actor` is the admin who created it. |
+  | `app.oauth2.client.lifecycle.create` | OAuth client object was provisioned (typically alongside app creation) |
+  | `app.oauth2.credentials.lifecycle.create` | Credential (`client_secret`, `private_key_jwt` keypair) was added |
+  | `app.oauth2.admin.consent.grant` | Admin granted scopes to the app. Granted scopes appear in `debugContext.debugData`. |
+  | `application.user_membership.add` | A user was assigned to the app (user-bound OAuth flows) |
+  | `app.oauth2.token.grant.access_token` | App obtained a token (post-setup; the app is now operational) |
+
+  Together these reconstruct how an app came to exist and what it can do. Recent credential additions on an established app, or admin consent grants close in time to suspicious token activity, are particularly meaningful signals.
+
+  ## Actors, IPs, and sessions
+
+  Every Okta event carries both `actor` (who) and `client.ipAddress` (where from). For service apps, `actor.id` stays constant across calls but `client.ipAddress` varies with the request source. Comparing the IP behind an app's credential creation against the IP behind its subsequent token grants can reveal whether the same operator did both — often the cleanest evidence that an app was set up specifically to perform a given action.
+
+  ## Available saved queries
+
+  When you need to pull Okta data during an investigation, these saved queries are available:
+
+  - `Okta Actor Activity` — all `okta_systemlog` events for a given `actor.id` in a window. Substitute `<ACTOR_ID>` and `<WINDOW>`. Primary tool for walking a service app's history (filter the result for `application.lifecycle.create`, `app.oauth2.credentials.lifecycle.create`, `app.oauth2.admin.consent.grant`, `app.oauth2.token.grant.access_token`) or auditing a suspect admin's app-provisioning footprint.
+  - `Okta Fired Alerts By Rule` — fired signals from `panther_signals.public.correlation_signals` for a specific detection RuleID. Substitute `<RULE_ID>` and `<WINDOW>`. Use as the entry point when an actor investigation starts from a fired alert.
+  - `Okta Source IP Activity` — all `okta_systemlog` events from a given source IP in a window. Substitute `<IP>` and `<WINDOW>`. Use to compare the IP behind an app's setup events against the IP behind its later token activity, or to correlate actors that share infrastructure.
+ToolMessage: "Loading Okta actor and service-app lifecycle knowledge..."
+DependsOn: []
+EagerLoading: false
+RequiredTools: []
+Enabled: true
+Tags:
+  - okta
+  - knowledge-primitive
+  - actor
+  - service-app
+  - app-lifecycle

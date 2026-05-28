@@ -22,9 +22,9 @@ Description: >
   See the okta_service_app_mfa_deletion_skill for the full investigation workflow.
 Reference: https://developer.okta.com/docs/reference/api/event-types/#user.mfa.factor.deactivate
 Runbook: |
-  1. Identify the service app from alert_context actor.displayName and actor.id, and the victim user from target[0].alternateId
-  2. Query Okta system logs in the 4 hours before the alert for app.oauth2.token.grant.access_token (grantType=client_credentials) and app.oauth2.admin.consent.grant events that gave this service app okta.factors.manage scope
-  3. Query Okta system logs in the 2 hours after the alert for user.mfa.factor.activate or device.user.add events on the same victim — attackers often enroll their own factor immediately after deletion
+  1. Pull the service app (actor.displayName, actor.id), source IP (client.ipAddress), victim user (target[0].alternateId), and removed factor type (outcome.reason) from alert_context
+  2. Query Okta system logs in the 4 hours before the alert for app.oauth2.token.grant.access_token (grantType=client_credentials) and app.oauth2.admin.consent.grant events involving this actor.id — determine whether the okta.factors.manage scope grant was sanctioned and by which admin
+  3. Query Okta system logs from p_event_time up to NOW (capped at 2 hours) filtered on target[0].alternateId for user.mfa.factor.activate, device.user.add, or new-IP user.session.start events — attackers typically enroll an attacker-controlled factor within minutes of deletion; if the available window is under 30 minutes and zero rows are returned, flag the finding as pending and schedule a follow-up check rather than concluding no abuse occurred
 DedupPeriodMinutes: 60
 SummaryAttributes:
   - eventType

@@ -27,9 +27,9 @@ Description: >
   See the okta_service_app_dangerous_scope_token_grant_skill for the full investigation workflow.
 Reference: https://developer.okta.com/docs/guides/implement-oauth-for-okta-serviceapp/main/
 Runbook: |
-  1. Identify the service app (alert_context actor.displayName and actor.id) and granted scopes (debug_context.debugData.grantedScopes)
-  2. Query Okta system logs in the 4 hours before the alert for app.oauth2.admin.consent.grant or application.lifecycle.create events from the same source IP — find which admin granted the dangerous scope to the app
-  3. Query Okta system logs in the 2 hours after the alert filtered on actor.id (the service app) — look for user.mfa.factor.deactivate, user.account.update_profile, or system.api_token.create that indicate downstream abuse
+  1. Pull the service app (actor.displayName, actor.id), granted scopes (debug_context.debugData.grantedScopes), client auth method (debug_context.debugData.clientAuthType), and source IP from alert_context
+  2. Query Okta system logs in the 4 hours before the alert for app.oauth2.admin.consent.grant, application.lifecycle.create, and FAILURE app.oauth2.token.grant events involving the same actor.id or source IP — identify which admin granted the dangerous scope and whether the attacker iterated through failed attempts before success
+  3. Query Okta system logs from p_event_time up to NOW (capped at 2 hours) filtered on actor.id for user.mfa.factor.deactivate, user.account.update_profile, system.api_token.create, or application.user_membership.add events — attackers exercise the token within minutes of acquisition; if the available window is under 30 minutes and zero rows are returned, flag as pending and schedule a follow-up rather than concluding no abuse
 DedupPeriodMinutes: 60
 SummaryAttributes:
   - eventType
