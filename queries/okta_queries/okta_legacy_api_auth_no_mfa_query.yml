@@ -1,6 +1,9 @@
 AnalysisType: scheduled_query
 QueryName: "Query.Okta.LegacyAPIAuthNoMFA"
-Enabled: true
+# Companion query for the Okta.Legacy.API.Auth.No.MFA scheduled rule. The rule's
+# ScheduledQueries reference is the single owner of the cron — leave this disabled
+# so Panther doesn't schedule the same Snowflake job twice per interval.
+Enabled: false
 Description: |
   Detects Okta sessions created via the legacy /api/v1/authn API (externalSessionId '102' prefix)
   with no corresponding user.authentication.auth_via_mfa event in the same auth chain.

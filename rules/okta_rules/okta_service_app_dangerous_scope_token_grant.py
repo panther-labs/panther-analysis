@@ -16,9 +16,14 @@ def _tokenize(granted_scopes):
 
 
 def _target_includes_user(event):
+    # PantherEvent wraps nested objects in dict-like proxies that aren't `dict` subclasses,
+    # so probe via .get() instead of isinstance(...).
     for entry in event.get("target") or []:
-        if isinstance(entry, dict) and entry.get("type") == "User":
-            return True
+        try:
+            if entry.get("type") == "User":
+                return True
+        except AttributeError:
+            continue
     return False
 
 
