@@ -130,6 +130,12 @@ Tests:
     Log:
       {
         "eventType": "app.oauth2.token.grant.access_token",
+        "actor":
+          {
+            "displayName": "Acme Service App",
+            "id": "0oaservice12345",
+            "type": "PublicClientAppEntity",
+          },
         "outcome": { "result": "SUCCESS" },
         "debugcontext":
           {
@@ -137,6 +143,60 @@ Tests:
               {
                 "grantType": "client_credentials",
                 "grantedScopes": "openid, profile, okta.users.manage.self",
+              },
+          },
+        "p_log_type": "Okta.SystemLog",
+      }
+  - Name: client_credentials grant but actor is User, not service app (should not fire)
+    ExpectedResult: false
+    Log:
+      {
+        "eventType": "app.oauth2.token.grant.access_token",
+        "actor":
+          {
+            "alternateId": "homer@springfield.gov",
+            "displayName": "Homer Simpson",
+            "id": "00uvictim123",
+            "type": "User",
+          },
+        "outcome": { "result": "SUCCESS" },
+        "debugcontext":
+          {
+            "debugData":
+              {
+                "grantType": "client_credentials",
+                "grantedScopes": "okta.users.manage",
+              },
+          },
+        "p_log_type": "Okta.SystemLog",
+      }
+  - Name: Service app actor but target contains a User (should not fire)
+    ExpectedResult: false
+    Log:
+      {
+        "eventType": "app.oauth2.token.grant.access_token",
+        "actor":
+          {
+            "displayName": "Acme Service App",
+            "id": "0oaservice12345",
+            "type": "PublicClientAppEntity",
+          },
+        "outcome": { "result": "SUCCESS" },
+        "target":
+          [
+            {
+              "alternateId": "homer@springfield.gov",
+              "displayName": "Homer Simpson",
+              "id": "00uvictim123",
+              "type": "User",
+            },
+          ],
+        "debugcontext":
+          {
+            "debugData":
+              {
+                "grantType": "client_credentials",
+                "grantedScopes": "okta.users.manage",
               },
           },
         "p_log_type": "Okta.SystemLog",

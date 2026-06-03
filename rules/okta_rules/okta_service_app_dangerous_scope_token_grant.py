@@ -8,16 +8,31 @@ DANGEROUS_SCOPES = [
     "okta.policies.manage",
 ]
 HIGH_RISK_SCOPES = {"okta.users.manage", "okta.factors.manage"}
+SERVICE_APP_ACTOR_TYPE = "PublicClientAppEntity"
 
 
 def _tokenize(granted_scopes):
     return {s.strip() for s in granted_scopes.split(",")}
 
 
+def _target_includes_user(event):
+    for entry in event.get("target") or []:
+        if isinstance(entry, dict) and entry.get("type") == "User":
+            return True
+    return False
+
+
 def rule(event):
     if event.get("eventType") != "app.oauth2.token.grant.access_token":
         return False
     if event.deep_get("outcome", "result") != "SUCCESS":
+        return False
+    # The rule's intended signal is a service app acquiring a token via client_credentials —
+    # a flow with no user subject. Gate on actor.type and reject grants that name a User target
+    # so user-driven token flows that happen to share fields don't trigger this detection.
+    if event.deep_get("actor", "type", default="") != SERVICE_APP_ACTOR_TYPE:
+        return False
+    if _target_includes_user(event):
         return False
     grant_type = event.deep_get("debugContext", "debugData", "grantType") or ""
     if grant_type != "client_credentials":
