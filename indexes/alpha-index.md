@@ -2256,7 +2256,7 @@
 - [Okta Investigate User Activity](../queries/okta_queries/okta_activity_audit.yml)
   - Audit user activity across your environment. Customize to filter on specific users, time ranges, etc
 - [Okta Legacy API Authentication Without MFA Challenge](../rules/okta_rules/okta_legacy_api_auth_no_mfa.yml)
-  - An Okta session was established through the legacy /api/v1/authn API without an MFA challenge. Legacy sessions use the '102' prefix on externalSessionId, vs the modern Identity Engine 'idx' prefix. These sessions bypass the modern CHALLENGE -> auth_via_mfa -> session.start flow and may indicate a legacy global session policy gap or attacker tooling using single-factor authentication.
+  - An Okta session was established through the legacy /api/v1/authn API (externalSessionId '102' prefix) without a corresponding user.authentication.auth_via_mfa event in the same auth chain. The scheduled query joins legacy session.start events against MFA events by externalSessionId, so only true single-factor legacy sessions reach this rule. This typically indicates a legacy global session policy gap or attacker tooling using single-factor authentication against /api/v1/authn.
 - [Okta Login From CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_Query.yml)
   - Okta Logins from an IP Address not found in CrowdStrike's AIP List
 - [Okta Login From CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/okta_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_FDREvent.yml)
