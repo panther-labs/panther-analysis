@@ -19,7 +19,6 @@ Description: >
   An Okta service application (actor.type = PublicClientAppEntity) deactivated a user's MFA factor.
   Service apps removing end-user MFA is rarely benign — it usually indicates a compromised app credential
   or attacker-granted okta.factors.manage scope used to weaken account security before takeover.
-  See the okta_service_app_mfa_deletion_skill for the full investigation workflow.
 Reference: https://developer.okta.com/docs/reference/api/event-types/#user.mfa.factor.deactivate
 Runbook: |
   1. Pull the service app (actor.displayName, actor.id), source IP (client.ipAddress), victim user (target[0].alternateId), and removed factor type (outcome.reason) from alert_context

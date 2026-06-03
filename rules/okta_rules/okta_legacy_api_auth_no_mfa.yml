@@ -21,7 +21,6 @@ Description: >
   Legacy sessions use the '102' prefix on externalSessionId, vs the modern Identity Engine 'idx' prefix.
   These sessions bypass the modern CHALLENGE -> auth_via_mfa -> session.start flow and may indicate
   a legacy global session policy gap or attacker tooling using single-factor authentication.
-  See the okta_legacy_api_auth_no_mfa_skill for the full investigation workflow.
 Reference: https://developer.okta.com/docs/reference/api/authn/
 Runbook: |
   1. Pull the actor (actor.alternateId), source IP (client.ipAddress), and user agent (client.userAgent.rawUserAgent) from alert_context — automation tooling (python-requests, curl, okta-sdk) on a 102 session is highly anomalous
