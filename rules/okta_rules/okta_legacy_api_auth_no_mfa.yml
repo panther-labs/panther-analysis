@@ -1,11 +1,11 @@
-AnalysisType: rule
+AnalysisType: scheduled_rule
 Filename: okta_legacy_api_auth_no_mfa.py
 RuleID: "Okta.Legacy.API.Auth.No.MFA"
 DisplayName: "Okta Legacy API Authentication Without MFA Challenge"
 Enabled: true
 Status: Experimental
-LogTypes:
-  - Okta.SystemLog
+ScheduledQueries:
+  - Query.Okta.LegacyAPIAuthNoMFA
 Tags:
   - Okta
   - Identity & Access Management
@@ -17,101 +17,64 @@ Reports:
     - TA0005:T1556
 Severity: Medium
 Description: >
-  An Okta session was established through the legacy /api/v1/authn API without an MFA challenge.
-  Legacy sessions use the '102' prefix on externalSessionId, vs the modern Identity Engine 'idx' prefix.
-  These sessions bypass the modern CHALLENGE -> auth_via_mfa -> session.start flow and may indicate
-  a legacy global session policy gap or attacker tooling using single-factor authentication.
+  An Okta session was established through the legacy /api/v1/authn API
+  (externalSessionId '102' prefix) without a corresponding user.authentication.auth_via_mfa
+  event in the same auth chain. The scheduled query joins legacy session.start events
+  against MFA events by externalSessionId, so only true single-factor legacy sessions
+  reach this rule. This typically indicates a legacy global session policy gap or
+  attacker tooling using single-factor authentication against /api/v1/authn.
 Reference: https://developer.okta.com/docs/reference/api/authn/
 Runbook: |
-  1. Pull the actor (actor.alternateId), source IP (client.ipAddress), and user agent (client.userAgent.rawUserAgent) from alert_context — automation tooling (python-requests, curl, okta-sdk) on a 102 session is highly anomalous
-  2. Query Okta system logs in the 10 minutes around p_event_time filtered on authenticationContext.externalSessionId — confirm policy.evaluate_sign_on returned ALLOW and that no user.authentication.auth_via_mfa event exists in the chain (this is the bypass proof)
-  3. Query Okta system logs from p_event_time up to NOW (capped at 4 hours) filtered on the same session_id for system.api_token.create, user.mfa.factor.activate, or application.user_membership.add events — persistence and lateral movement during the MFA-gap window happens fast; if the available window is under 30 minutes and zero rows are returned, flag as pending and schedule a follow-up rather than concluding no abuse
+  1. Pull user_email, source_ip, user_agent, and external_session_id from alert_context — automation tooling (python-requests, curl, okta-sdk) on a 102 session with no MFA chain event is highly anomalous
+  2. Query Okta system logs in the 60 minutes around session_start_time filtered on the alert's external_session_id — confirm policy.evaluate_sign_on returned ALLOW and double-check no user.authentication.auth_via_mfa event exists for this externalSessionId (the query has already verified this; the manual check guards against late-arriving events)
+  3. Query Okta system logs from session_start_time up to NOW (capped at 4 hours) filtered on the same external_session_id for system.api_token.create, user.mfa.factor.activate, or application.user_membership.add events — persistence and lateral movement during the MFA-gap window happens fast; if the available window is under 30 minutes and zero rows are returned, flag as pending and schedule a follow-up rather than concluding no abuse
 DedupPeriodMinutes: 60
 SummaryAttributes:
-  - eventType
-  - p_any_ip_addresses
-  - p_any_usernames
+  - user_email
+  - source_ip
+  - external_session_id
 Tests:
-  - Name: Legacy 102 session from python-requests (HIGH severity)
+  - Name: Legacy 102 session from python-requests with no MFA event (HIGH severity)
     ExpectedResult: true
     Log:
       {
-        "published": "2026-05-20 10:15:00.000",
-        "eventType": "user.session.start",
-        "version": "0",
-        "severity": "INFO",
-        "actor":
-          {
-            "alternateId": "homer@springfield.gov",
-            "displayName": "Homer Simpson",
-            "id": "00uvictim123",
-            "type": "User",
-          },
-        "client":
-          {
-            "device": "Unknown",
-            "ipAddress": "1.2.3.4",
-            "userAgent":
-              {
-                "browser": "UNKNOWN",
-                "os": "Unknown",
-                "rawUserAgent": "python-requests/2.31.0",
-              },
-            "zone": "null",
-          },
-        "outcome":
-          { "result": "SUCCESS", "reason": "Sign-on policy evaluation resulted in ALLOW" },
-        "authenticationcontext":
-          { "externalSessionId": "102abcdef0123456789" },
-        "p_log_type": "Okta.SystemLog",
+        "session_start_time": "2026-05-20 10:15:00.000",
+        "user_email": "homer@springfield.gov",
+        "actor_id": "00uvictim123",
+        "source_ip": "1.2.3.4",
+        "user_agent": "python-requests/2.31.0",
+        "external_session_id": "102abcdef0123456789",
+        "transaction_id": "tx_abc123",
+        "request_uri": "/api/v1/authn"
       }
-  - Name: Legacy 102 session from browser (MEDIUM severity)
+  - Name: Legacy 102 session from browser with no MFA event (DEFAULT severity)
     ExpectedResult: true
     Log:
       {
-        "published": "2026-05-20 10:15:00.000",
-        "eventType": "user.session.start",
-        "version": "0",
-        "severity": "INFO",
-        "actor":
-          {
-            "alternateId": "homer@springfield.gov",
-            "displayName": "Homer Simpson",
-            "id": "00uvictim123",
-            "type": "User",
-          },
-        "client":
-          {
-            "device": "Computer",
-            "ipAddress": "1.2.3.4",
-            "userAgent":
-              {
-                "browser": "CHROME",
-                "os": "Mac OS X",
-                "rawUserAgent": "Mozilla/5.0 (Macintosh) Chrome/124.0",
-              },
-            "zone": "null",
-          },
-        "outcome": { "result": "SUCCESS" },
-        "authenticationcontext":
-          { "externalSessionId": "102browser987654321" },
-        "p_log_type": "Okta.SystemLog",
+        "session_start_time": "2026-05-20 10:15:00.000",
+        "user_email": "homer@springfield.gov",
+        "actor_id": "00uvictim123",
+        "source_ip": "1.2.3.4",
+        "user_agent": "Mozilla/5.0 (Macintosh) Chrome/124.0",
+        "external_session_id": "102browser987654321",
+        "transaction_id": "tx_browser456",
+        "request_uri": "/api/v1/authn"
       }
-  - Name: Modern idx session (should not fire)
+  - Name: Malformed row missing user_email (should not fire)
     ExpectedResult: false
     Log:
       {
-        "eventType": "user.session.start",
-        "outcome": { "result": "SUCCESS" },
-        "authenticationcontext": { "externalSessionId": "idxmodernsession123" },
-        "p_log_type": "Okta.SystemLog",
+        "session_start_time": "2026-05-20 10:15:00.000",
+        "actor_id": "00uvictim123",
+        "source_ip": "1.2.3.4",
+        "external_session_id": "102missingemail000"
       }
-  - Name: Legacy 102 session but failed outcome (should not fire)
+  - Name: Malformed row missing external_session_id (should not fire)
     ExpectedResult: false
     Log:
       {
-        "eventType": "user.session.start",
-        "outcome": { "result": "FAILURE" },
-        "authenticationcontext": { "externalSessionId": "102failedxyz000" },
-        "p_log_type": "Okta.SystemLog",
+        "session_start_time": "2026-05-20 10:15:00.000",
+        "user_email": "homer@springfield.gov",
+        "actor_id": "00uvictim123",
+        "source_ip": "1.2.3.4"
       }
