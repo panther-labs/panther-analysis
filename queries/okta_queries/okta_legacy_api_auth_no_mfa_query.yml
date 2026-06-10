@@ -1,0 +1,66 @@
+AnalysisType: scheduled_query
+QueryName: "Query.Okta.LegacyAPIAuthNoMFA"
+# Companion query for the Okta.Legacy.API.Auth.No.MFA scheduled rule. The rule's
+# ScheduledQueries reference is the single owner of the cron — leave this disabled
+# so Panther doesn't schedule the same Snowflake job twice per interval.
+Enabled: false
+Description: |
+  Detects Okta sessions created via the legacy /api/v1/authn API (externalSessionId '102' prefix)
+  with no corresponding user.authentication.auth_via_mfa event in the same auth chain.
+
+  The '102' prefix on its own only marks the legacy authn API path — tenants can still complete
+  MFA before session.start. This query LEFT JOINs legacy session.start events against MFA events
+  by externalSessionId so only true single-factor legacy sessions are surfaced.
+Query: |
+  -- Legacy /api/v1/authn sessions (externalSessionId starts with '102') in the last 30 minutes.
+  WITH legacy_sessions AS (
+      SELECT
+          p_event_time AS session_start_time,
+          actor:alternateId::string AS user_email,
+          actor:id::string AS actor_id,
+          client:ipAddress::string AS source_ip,
+          client:userAgent:rawUserAgent::string AS user_agent,
+          authenticationContext:externalSessionId::string AS external_session_id,
+          transaction:id::string AS transaction_id,
+          debugContext:debugData:requestUri::string AS request_uri
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '30 minutes'
+          AND eventType = 'user.session.start'
+          AND outcome:result = 'SUCCESS'
+          AND authenticationContext:externalSessionId::string LIKE '102%'
+  ),
+
+  -- Successful MFA challenges in a wider 60-minute window so we catch MFA events that
+  -- occurred shortly before the session.start they belong to.
+  mfa_events AS (
+      SELECT DISTINCT
+          authenticationContext:externalSessionId::string AS external_session_id
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '60 minutes'
+          AND eventType = 'user.authentication.auth_via_mfa'
+          AND outcome:result = 'SUCCESS'
+          AND authenticationContext:externalSessionId::string IS NOT NULL
+  )
+
+  SELECT
+      s.session_start_time,
+      s.user_email,
+      s.actor_id,
+      s.source_ip,
+      s.user_agent,
+      s.external_session_id,
+      s.transaction_id,
+      s.request_uri
+  FROM legacy_sessions s
+  LEFT JOIN mfa_events m
+      ON s.external_session_id = m.external_session_id
+  WHERE m.external_session_id IS NULL
+      AND s.user_email IS NOT NULL
+      AND s.external_session_id IS NOT NULL
+Schedule:
+  RateMinutes: 15
+  TimeoutMinutes: 5
+Tags:
+  - Okta
+  - Identity & Access Management
+  - Credential Access
