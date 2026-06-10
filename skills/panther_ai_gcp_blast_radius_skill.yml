@@ -88,6 +88,13 @@ Prompt: |
   LIMIT 1000
   ```
 
+  The `p_any_emails` predicate is the user / service-account case — swap it for the anchor's
+  field from the Step 1 table when scoping a different principal type:
+  `protoPayload:authenticationInfo:serviceAccountKeyName::VARCHAR = '{key}'` (SA key),
+  `resource:labels:project_id::VARCHAR = '{project}'` (project),
+  `resource:labels:instance_id::VARCHAR = '{instance}'` (GCE instance), or
+  `ARRAY_CONTAINS('{ip}'::VARIANT, p_any_ip_addresses)` (caller IP).
+
   **W1** tight (T0 ± 3d) → **W2** campaign window (first-to-last confirmed-malicious) → **W3**
   full lookback (up to 90d, dormant precursors only; expect noise). Denied calls
   (`granted = false`) are signal — keep them.

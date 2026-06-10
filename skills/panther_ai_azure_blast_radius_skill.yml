@@ -86,9 +86,15 @@ Prompt: |
   LIMIT 1000
   ```
 
-  Run the analogous query over `panther_logs.public.azure_audit` filtering on
-  `properties:userPrincipalName` / `targetResources` for the Entra plane. **W1** tight (T0 ± 3d) →
-  **W2** campaign → **W3** full lookback. Failed operations are signal — keep them.
+  Run the analogous query over `panther_logs.public.azure_audit` for the Entra plane, with the
+  filter matched to the anchor type from Step 1: `properties:userPrincipalName::VARCHAR` for a
+  user, `properties:servicePrincipalId::VARCHAR` (or the appId in `targetResources`) for a
+  service principal / managed identity, `properties:ipAddress::VARCHAR` /
+  `p_any_ip_addresses` for a source IP — and check `targetResources` in all cases, since the
+  principal may be the *target* of credential-add or role-grant operations, not just the actor.
+  On the ARM side, `caller` holds the UPN for users but the objectId for SPs / managed
+  identities — match accordingly. **W1** tight (T0 ± 3d) → **W2** campaign → **W3** full
+  lookback. Failed operations are signal — keep them.
 
   ---
 

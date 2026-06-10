@@ -88,6 +88,10 @@ Prompt: |
   LIMIT 1000
   ```
 
+  The `p_any_usernames` predicate covers user / service-account / node anchors. For a source-IP
+  anchor, swap it for `ARRAY_CONTAINS('{ip}'::VARIANT, p_any_ip_addresses)` (the `sourceIPs`
+  field) per the Step 1 table.
+
   **W1** tight (T0 ± 3d) → **W2** campaign window → **W3** full lookback. `403 Forbidden`
   responses are signal (RBAC denial / enumeration) — keep them.
 

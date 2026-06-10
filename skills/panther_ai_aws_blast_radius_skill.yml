@@ -188,6 +188,11 @@ Prompt: |
   LIMIT 200
   ```
 
+  As in Step 4, the `WHERE` filter must match the anchor type from Step 1 — swap the
+  `p_any_aws_arns` predicate for the principal's actual filter (`p_any_actor_ids`,
+  `p_any_aws_account_ids`, `p_any_aws_instance_ids`, `p_any_ip_addresses`, or the direct
+  `userIdentity:accessKeyId::VARCHAR` match for access keys).
+
   Cap entity pivots at 2 hops — entities pivoted to once may be worth re-scoping; entities
   two hops out usually aren't.
 
