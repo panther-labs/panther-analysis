@@ -1,0 +1,189 @@
+AnalysisType: "skill"
+SkillName: "kubernetes_blast_radius"
+DisplayName: "Kubernetes Blast Radius"
+Description: "Scoping workflow for a compromised Kubernetes principal — a user, service account (`system:serviceaccount:ns:name`), or node — across EKS / GKE / AKS. Leads with the alerts and deployed detections Panther already has, then walks the RBAC / token expansion and pod-exec lateral chain and classifies actions by impact (reusing deployed detection logic, with ad-hoc audit-log SQL only for gaps) to produce an IR-style blast-radius timeline. Provider-agnostic: works against the normalized UDM the unified K8s ruleset uses. Use whenever a K8s incident anchor is confirmed and the question is \"what else did they touch\"."
+Prompt: |
+  # Kubernetes Blast Radius — Principal Scoping Workflow
+
+  Given a confirmed-compromised Kubernetes principal, enumerate every API action it took, every
+  resource it touched, every identity it created or bound, every pod it exec'd into, and every
+  other principal that appeared alongside it. Produce an IR-style timeline and a
+  containment-advisory report.
+
+  **Not for**: confirming whether an indicator is malicious, host/node OS forensics (audit logs
+  only), drafting new detections, or executing containment. Read-only and advisory.
+
+  **Provider-agnostic.** Reason in the normalized UDM fields the unified ruleset uses — `verb`,
+  `resource`, `subresource`, `username`, `namespace`, `responseStatus`, `sourceIPs` — which EKS
+  (`Amazon.EKS.Audit`), GKE (`GCP.AuditLog`), and AKS (`Azure.MonitorActivity`) map into. SQL
+  targets the cluster's specific audit table; the field *meanings* are constant.
+
+  **Reuse before you query.** Lead with what Panther already knows — alerts that fired on the
+  principal, and deployed K8s detections / scheduled queries that already encode these techniques.
+  Hand-write audit SQL only for the gaps. The MITRE IDs in `kubernetes_security_knowledge`
+  are the join key for that coverage.
+
+  ---
+
+  ## Step 1 — Normalize the principal and pick an anchor time
+
+  Identify the principal and its type (drives how broad the blast radius can be — see
+  `kubernetes_security_knowledge` "Reading Kubernetes audit identifiers"):
+
+  | Principal type | UDM `username` form | Fast filter |
+  |---|---|---|
+  | Human / federated user | `alice@org.com` (or OIDC subject) | `p_any_usernames` / `p_any_emails` |
+  | Service account | `system:serviceaccount:<ns>:<name>` | `p_any_usernames` |
+  | Node / kubelet | `system:node:<node>` | `p_any_usernames` |
+  | Anonymous | `system:anonymous` | `p_any_usernames` |
+  | Source IP | `203.0.113.10` | `p_any_ip_addresses` (`sourceIPs`) |
+
+  **Anchor time (T0)**: ask the analyst; if unknown, anchor on the earliest alert. Record the
+  **cluster** — blast radius is per-cluster (and per-account/project the cluster runs in).
+
+  ---
+
+  ## Step 2 — Anchor on what Panther already knows
+
+  Before any SQL, pull existing signal:
+  - **Alerts already fired on this principal** — `panther_ai_alerts_list` filtered by username /
+    sourceIP / cluster. The unified K8s rules (privileged pod, exec, secret dump, RBAC binding,
+    anonymous access) surface here with rule, severity, and a better T0.
+  - **Deployed detections + reusable query logic** — `panther_ai_detections_list` (filter by the
+    K8s log types or the MITRE tactics in `kubernetes_security_knowledge`) and
+    `panther_ai_datalake_list_saved_queries`. Prefer `panther_ai_datalake_execute_saved_query`
+    over inventing SQL.
+
+  ---
+
+  ## Step 3 — Discover available K8s audit sources
+
+  Call `panther_ai_log_sources_list` / `panther_ai_log_types_list` to confirm which cluster audit
+  feeds are ingested and healthy (`Amazon.EKS.Audit`, `GCP.AuditLog` for GKE,
+  `Azure.MonitorActivity` for AKS). A cluster with no audit feed is a blind spot — the most
+  important gap to call out, since this whole workflow depends on the audit log.
+
+  ---
+
+  ## Step 4 — Build the activity timeline (tiered windows)
+
+  If a deployed saved/scheduled query (from Step 2) already returns principal-scoped audit
+  activity, execute it with `panther_ai_datalake_execute_saved_query` first. Otherwise fall back
+  to `panther_ai_datalake_execute_sql` against the cluster's audit table — the gap-filler. Example
+  for an EKS cluster (adapt the table for GKE/AKS; UDM field meanings are the same):
+
+  ```sql
+  SELECT p_event_time,
+         verb,
+         objectRef:resource::VARCHAR     AS resource,
+         objectRef:subresource::VARCHAR  AS subresource,
+         objectRef:namespace::VARCHAR    AS namespace,
+         user:username::VARCHAR          AS username,
+         ARRAY_TO_STRING(sourceIPs, ',') AS source_ips,
+         responseStatus:code::NUMBER     AS status_code
+  FROM panther_logs.public.amazon_eks_audit
+  WHERE ARRAY_CONTAINS('{username}'::VARIANT, p_any_usernames)
+    AND p_event_time BETWEEN DATEADD('day', -3, '{T0}') AND DATEADD('day', 3, '{T0}')
+  ORDER BY p_event_time ASC
+  LIMIT 1000
+  ```
+
+  **W1** tight (T0 ± 3d) → **W2** campaign window → **W3** full lookback. `403 Forbidden`
+  responses are signal (RBAC denial / enumeration) — keep them.
+
+  ---
+
+  ## Step 5 — Walk the RBAC / token / exec chain
+
+  K8s identity-chaining isn't role assumption — it's **RBAC expansion, token minting, and pod
+  exec**. Reconstruct what the principal *became* and *reached*:
+  - **Identity expansion:** `create`/`patch` on `clusterrolebindings` / `rolebindings` (new
+    privileges), `create serviceaccounts/token` (minted tokens), `impersonate` (acted as another
+    subject). For each new binding/SA/impersonated identity, re-scope Step 4 to that identity.
+  - **Lateral via exec:** `create pods/exec`, `pods/attach`, `pods/portforward` — each target pod
+    is a new foothold; pull the pod's service account and re-scope to it.
+  - **Workload deploy:** `create pods` / `deployments` / `daemonsets` / `cronjobs` — record what
+    was deployed and the SA it runs as.
+
+  **Cap chain depth at 3 hops.** Cross-namespace and `kube-system` reach are high-signal.
+
+  ---
+
+  ## Step 6 — Co-occurring entities (lateral candidates)
+
+  For events in Steps 4–5, pull the other `p_any_*` fields (`p_any_usernames`,
+  `p_any_ip_addresses`) and the namespaces/pods touched to find co-occurring principals and
+  targets. Cap entity pivots at 2 hops.
+
+  ---
+
+  ## Step 7 — Classify actions by impact and map to deployed detections
+
+  Bucket the windowed actions using `kubernetes_security_knowledge` (discovery, credential
+  access, RBAC privesc, execution, container escape, persistence, defense evasion, lateral
+  movement, impact); do not redefine the lists. For each high-signal action record: verb,
+  resource/subresource, username (+ type), namespace, sourceIPs, and the responseStatus code.
+
+  Then close the loop against deployed coverage (reuse what Step 2 found):
+  - Resolve each classified action / chain to a deployed detection via the
+    `kubernetes_security_knowledge` "Mapping techniques to deployed detections" guidance
+    (single action → rule, multi-step chain → correlation rule, volumetric/403-burst → scheduled
+    query). If an alert already fired (Step 2), mark it **covered & alerted**.
+  - A high-impact action with **no** deployed detection is a coverage-gap finding — record it and
+    route to `coverage_gap_analysis`.
+
+  ---
+
+  ## Step 8 — Output: Blast Radius Report
+
+  ```markdown
+  # Kubernetes Blast Radius — <principal> in <cluster>
+
+  ## Principal Profile
+  - Principal type (user / serviceaccount / node / anonymous), username, cluster, source IP(s)
+  - Anchor time (T0), windows examined, audit sources queried (with blind spots called out)
+
+  ## Activity Timeline (W1) — | Time | Verb | Resource/Sub | Namespace | Result |
+  ## Identity / Exec Chain — | Hop | From | Action (bind/token/impersonate/exec) | New identity / pod |
+  ## Resources Touched — | Resource | Namespace | First/Last | Count | Impact |
+  ## High-Impact Actions — by category (RBAC privesc / container escape / credential access / …)
+  ## Co-occurring Entities — | Entity | Type | Count | Follow-up |
+  ## Existing Detection Coverage — alerts fired; high-impact actions with no detection (gaps)
+  ## Containment Recommendations (advisory) — revoke/rotate the SA token, delete attacker
+    bindings/SAs, cordon affected nodes, delete attacker pods/workloads, review admission webhooks
+  ## Caveats — correlation ≠ causation; 403s show intent not impact; audit-feed blind spots;
+    chain capped at 3 hops; pod-internal (host) activity not visible in audit logs
+  ```
+
+  ---
+
+  ## Constraints
+  - Read-only. Never delete a binding, revoke a token, cordon a node, or modify a rule from this
+    skill — recommendations only.
+  - Prefer reusing deployed detections and saved queries (`panther_ai_datalake_execute_saved_query`)
+    over ad-hoc SQL; `panther_ai_datalake_execute_sql` is the gap-filler.
+  - Every query needs a `LIMIT` and a `p_event_time` bound. Keep `Forbidden` responses.
+  - Cap chain depth at 3 hops, entity pivots at 2 hops.
+  - The audit log shows API-server activity only — in-pod process/file/network actions are not
+    here; note that boundary. If no audit feed exists for the cluster, say so — it's the gap that
+    invalidates the rest.
+ToolMessage: "Scoping Kubernetes blast radius for the compromised principal…"
+DependsOn:
+  - kubernetes_security_knowledge
+EagerLoading: false
+RequiredTools:
+  - panther_ai_alerts_list
+  - panther_ai_detections_list
+  - panther_ai_log_sources_list
+  - panther_ai_log_types_list
+  - panther_ai_datalake_list_saved_queries
+  - panther_ai_datalake_execute_saved_query
+  - panther_ai_datalake_execute_sql
+  - panther_ai_datalake_get_query_results
+Enabled: true
+Tags:
+  - kubernetes
+  - k8s
+  - audit
+  - incident-response
+  - blast-radius

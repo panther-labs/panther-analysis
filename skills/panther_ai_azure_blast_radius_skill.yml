@@ -1,0 +1,244 @@
+AnalysisType: "skill"
+SkillName: "azure_blast_radius"
+DisplayName: "Azure Blast Radius"
+Description: "Scoping workflow for a compromised Azure principal — Entra user, service principal, managed identity, or subscription — across BOTH planes (Entra ID identity and ARM resources). Leads with the alerts and deployed detections Panther already has, then walks the cross-plane chain (credential-add → auth-as-SP → RBAC, elevateAccess, managed-identity hops) and classifies actions by impact (reusing deployed detection logic, with ad-hoc activity-log SQL only for gaps) to produce an IR-style blast-radius timeline. Use whenever an Azure incident anchor is confirmed and the question is \"what else did they touch\"."
+Prompt: |
+  # Azure Blast Radius — Principal Scoping Workflow
+
+  Given a confirmed-compromised Azure principal, enumerate every operation it performed, every
+  resource it touched, every identity it added credentials to or impersonated, every subscription
+  it reached, and every other principal alongside it. Produce an IR-style timeline and a
+  containment-advisory report.
+
+  **Azure has two planes — track both:**
+  - **Entra ID (identity)** — `Azure.Audit`: directory/sign-in ops (`operationName`,
+    `properties.userPrincipalName`, `properties.targetResources`, `properties.ipAddress`).
+  - **ARM (resources)** — `Azure.MonitorActivity`: `operationName` =
+    `Microsoft.<Provider>/<resource>/<verb>`, `caller`, `resourceId`.
+  An attack routinely crosses planes (compromise an Entra app → use its ARM RBAC), so scope both.
+
+  **Not for**: confirming whether an indicator is malicious, scoping non-Azure principals,
+  Microsoft 365 workload audit (separate source), drafting detections, or executing containment.
+  Read-only and advisory.
+
+  **Reuse before you query.** Lead with what Panther already knows — alerts that fired on the
+  principal, and deployed Azure detections / scheduled queries that already encode these
+  techniques. Hand-write activity-log SQL only for the gaps. The MITRE / ATRM IDs in
+  `azure_security_knowledge` are the join key for that coverage.
+
+  ---
+
+  ## Step 1 — Normalize the principal and pick an anchor time
+
+  | Principal type | Example | Plane | Field |
+  |---|---|---|---|
+  | Entra user (UPN) | `alice@org.com` | both | `caller` / `properties:userPrincipalName::VARCHAR` |
+  | Service principal | appId / objectId (GUID) | both | `caller` / `properties:servicePrincipalId::VARCHAR` |
+  | Managed identity | resource-bound identity | ARM | `caller` |
+  | Subscription | GUID | ARM | `resourceId` (scope) |
+  | Source IP | `203.0.113.10` | both | `properties:ipAddress::VARCHAR` / `p_any_ip_addresses` |
+
+  **Anchor time (T0)**: ask the analyst; if unknown, anchor on the earliest alert. Record the
+  **identity type** via `azure_security_knowledge` "Reading Azure identifiers" — a service
+  principal or managed identity widens the blast radius differently than a human user.
+
+  ---
+
+  ## Step 2 — Anchor on what Panther already knows
+
+  Before any SQL, pull existing signal:
+  - **Alerts already fired on this principal** — `panther_ai_alerts_list` filtered by UPN /
+    appId / caller / IP. Both `azure_signin_rules` (Entra) and `azure_activity_rules` (ARM)
+    surface here with rule, severity, and often a better T0.
+  - **Deployed detections + reusable query logic** — `panther_ai_detections_list` (filter by the
+    Azure log types or the MITRE tactics in `azure_security_knowledge`) and
+    `panther_ai_datalake_list_saved_queries`. Prefer `panther_ai_datalake_execute_saved_query`
+    over inventing SQL.
+
+  ---
+
+  ## Step 3 — Discover available Azure log sources
+
+  Call `panther_ai_log_sources_list` / `panther_ai_log_types_list` to confirm both feeds are
+  ingested and healthy: `Azure.Audit` (Entra sign-in + directory audit) and
+  `Azure.MonitorActivity` (ARM activity log). Missing **either** plane is a major visibility gap —
+  an identity-plane compromise is invisible without `Azure.Audit`, and vice-versa. Call it out.
+
+  ---
+
+  ## Step 4 — Build the activity timeline (tiered windows) — both planes
+
+  If a deployed saved/scheduled query (from Step 2) already returns principal-scoped activity,
+  execute it with `panther_ai_datalake_execute_saved_query` first. Otherwise fall back to
+  `panther_ai_datalake_execute_sql` — run **both** plane queries. ARM example:
+
+  ```sql
+  SELECT p_event_time,
+         operationName:value::VARCHAR  AS operation,
+         caller::VARCHAR               AS caller,
+         resourceId::VARCHAR           AS resource,
+         properties:statusCode::VARCHAR AS status,
+         p_any_ip_addresses
+  FROM panther_logs.public.azure_monitoractivity
+  WHERE (caller = '{principal}' OR ARRAY_CONTAINS('{principal}'::VARIANT, p_any_ip_addresses))
+    AND p_event_time BETWEEN DATEADD('day', -3, '{T0}') AND DATEADD('day', 3, '{T0}')
+  ORDER BY p_event_time ASC
+  LIMIT 1000
+  ```
+
+  Run the analogous query over `panther_logs.public.azure_audit` filtering on
+  `properties:userPrincipalName` / `targetResources` for the Entra plane. **W1** tight (T0 ± 3d) →
+  **W2** campaign → **W3** full lookback. Failed operations are signal — keep them.
+
+  ---
+
+  ## Step 5 — Walk the cross-plane chain
+
+  Azure escalation routinely hops planes and identities. Reconstruct:
+  - **App / SP credential addition → auth as SP:** `Update application – Certificates and secrets
+    management` / `Add service principal credentials` (Entra) → the app/SP then acts (Entra + ARM).
+    Re-scope to that SP's appId.
+  - **Role grants:** `Microsoft.Authorization/roleAssignments/write` (ARM RBAC) and `Add member to
+    role` (Entra directory role) — follow the granted principal.
+  - **Elevate access:** `Microsoft.Authorization/elevateAccess/action` — a Global Admin gains RBAC
+    over *every* subscription; after this, expand scope to all subscriptions.
+  - **Managed-identity hops:** a resource's MI used to reach Key Vault / Storage / other resources
+    — follow the MI's role assignments.
+
+  **Cap chain depth at 3 hops.** Cross-subscription and cross-tenant (guest/B2B) reach is
+  high-signal.
+
+  ---
+
+  ## Step 6 — Co-occurring entities (lateral candidates)
+
+  For events in Steps 4–5, pull the other identifiers (`caller`, `targetResources`,
+  `p_any_ip_addresses`) to find co-occurring principals, apps, and resources. Cap entity pivots at
+  2 hops.
+
+  ---
+
+  ## Step 7 — Classify actions by impact and map to deployed detections
+
+  Bucket the windowed operations using `azure_security_knowledge` (recon, initial /
+  credential access, privesc, execution/lateral, persistence, defense evasion, data access /
+  exfil, impact) — and tag which **plane** each came from. Do not redefine the lists. For each
+  high-signal operation record: plane, operationName, caller (+ type), resource/targetResources,
+  source IP, risk state, success/failure.
+
+  Then close the loop against deployed coverage (reuse what Step 2 found):
+  - Resolve each classified operation / chain to a deployed detection via the
+    `azure_security_knowledge` "Mapping techniques to deployed detections" guidance
+    (single op → rule, multi-step chain → correlation rule, volumetric/risk → scheduled query). If
+    an alert already fired (Step 2), mark it **covered & alerted**.
+  - A high-impact action with **no** deployed detection is a coverage-gap finding — record it and
+    route to `coverage_gap_analysis`.
+
+  ---
+
+  ## Step 8 — Output: Blast Radius Report
+
+  ```markdown
+  # Azure Blast Radius — <principal>
+
+  ## Principal Profile
+  - Identity type: <user / service principal / managed identity>
+  - UPN / appId / objectId: <…>
+  - Tenant: <tenant ID> | Subscription(s): <list>
+  - Source IPs observed: <list>
+  - Risk state (`riskState` / `riskLevelAggregated`): <…>
+  - Anchor time (T0): <ISO timestamp>
+  - Windows examined: W1 <range>, W2 <range>, W3 <range if used>
+  - Planes covered: <Entra / ARM> — call out any plane with no log feed as a visibility gap
+
+  ## Activity Timeline (W1)
+  | Time | Plane | Operation | Caller | Resource / Target | Source IP | Result |
+  |---|---|---|---|---|---|---|
+
+  ## Cross-Plane Chain
+  | Hop | Source Principal | Action (cred-add / role-grant / elevate / MI-hop) | Target Identity or Scope | Plane | Cross-subscription? |
+  |---|---|---|---|---|---|
+
+  ## Resources Touched
+  | Resource / Target | Type | First Action | Last Action | Action Count | Impact |
+  |---|---|---|---|---|---|
+
+  ## High-Impact Actions Observed (tag each Entra vs ARM)
+  ### Credential Access
+  - <operation @ time, plane, target, success?>
+
+  ### Privilege Escalation
+  - <...>
+
+  ### Execution / Lateral Movement
+  - <...>
+
+  ### Persistence
+  - <...>
+
+  ### Defense Evasion
+  - <...>
+
+  ### Data Access / Exfil
+  - <...>
+
+  ### Impact / Destruction
+  - <...>
+
+  ## Co-occurring Entities
+  | Entity | Type | Co-occurrence Count | Recommended Follow-up |
+  |---|---|---|---|
+
+  ## Existing Detection Coverage
+  - Alerts fired on this principal in window: <list>
+  - High-impact actions with no matching detection: <list — detection-gap findings>
+
+  ## Containment Recommendations (advisory only)
+  - Revoke app / service-principal credentials added or used: <which>
+  - Remove role assignments granted (ARM RBAC and Entra directory roles): <which>
+  - Reverse `elevateAccess` if observed; review root-scope assignments
+  - Disable the compromised user / SP; revoke refresh tokens and active sessions
+  - Rotate Key Vault secrets the principal could read: <which vaults>
+  - Review resources, policies, webhooks, and guest invites created by the principal: <list>
+
+  ## Caveats
+  - Co-occurring entities are correlation, not causation — confirm before declaring lateral movement.
+  - Failed operations reveal intent, not impact.
+  - Planes with no log feed during the window: <list> — these are visibility gaps.
+  - If W3 (full lookback) was not run, dormant precursor activity may exist outside the window.
+  - Cross-plane chain capped at 3 hops; deeper chains may exist.
+  - Microsoft 365 workload activity (Exchange / SharePoint / Teams audit) is a separate source
+    and is not covered here.
+  ```
+
+  ---
+
+  ## Constraints
+  - Read-only. Never disable a principal, revoke a credential, remove a role, or modify a rule
+    from this skill — recommendations only.
+  - Prefer reusing deployed detections and saved queries (`panther_ai_datalake_execute_saved_query`)
+    over ad-hoc SQL; `panther_ai_datalake_execute_sql` is the gap-filler.
+  - Always scope **both planes** — an Entra-only or ARM-only scope misses half the attack.
+  - Every query needs a `LIMIT` and a `p_event_time` bound. Keep failed operations.
+  - Cap chain depth at 3 hops, entity pivots at 2 hops; surface visibility gaps. If the principal
+    doesn't match any field after Step 1, ask the analyst rather than guessing.
+ToolMessage: "Scoping Azure blast radius for the compromised principal…"
+DependsOn:
+  - azure_security_knowledge
+EagerLoading: false
+RequiredTools:
+  - panther_ai_alerts_list
+  - panther_ai_detections_list
+  - panther_ai_log_sources_list
+  - panther_ai_log_types_list
+  - panther_ai_datalake_list_saved_queries
+  - panther_ai_datalake_execute_saved_query
+  - panther_ai_datalake_execute_sql
+  - panther_ai_datalake_get_query_results
+Enabled: true
+Tags:
+  - azure
+  - entra-id
+  - incident-response
+  - blast-radius
+  - scoping
