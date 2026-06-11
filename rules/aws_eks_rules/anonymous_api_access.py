@@ -1,3 +1,5 @@
+from ipaddress import ip_address
+
 from panther_aws_helpers import eks_panther_obj_ref
 
 
@@ -5,8 +7,12 @@ def rule(event):
     src_ip = event.get("sourceIPs", ["0.0.0.0"])  # nosec
     if src_ip == ["127.0.0.1"]:
         return False
-    if event.get("userAgent", "") == "ELB-HealthChecker/2.0" and src_ip[0].startswith("10.0."):
-        return False
+    if event.get("userAgent", "") == "ELB-HealthChecker/2.0":
+        try:
+            if ip_address(src_ip[0]).is_private:
+                return False
+        except ValueError:
+            pass
 
     # Check if the username is set to "system:anonymous", which indicates anonymous access
     if event.deep_get("user", "username") == "system:anonymous":
