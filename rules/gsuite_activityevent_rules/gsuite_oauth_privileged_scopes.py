@@ -1,6 +1,13 @@
 from panther_gsuite_helpers import gsuite_parameter_lookup
 
-PRIVILEGED_SCOPES = ["admin.directory.user", "ediscovery", "drive", "cloud_search.query"]
+PRIVILEGED_SCOPES = [
+    "admin.directory.user",
+    "admin.directory.group",
+    "admin.directory.domain",
+    "ediscovery",
+    "vault",
+    "cloud_search.query",
+]
 
 
 def rule(event):

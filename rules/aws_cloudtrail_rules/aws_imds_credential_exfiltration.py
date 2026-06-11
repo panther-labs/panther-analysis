@@ -8,7 +8,11 @@ from panther_aws_helpers import aws_rule_context
 INSTANCE_SESSION_PATTERN = re.compile(r":assumed-role/.+/i-[0-9a-f]+$")
 
 # Legitimate internal services and actions that use instance identity
-INTERNAL_SOURCES = {"ssm.amazonaws.com"}
+INTERNAL_SOURCES = {
+    "ssm.amazonaws.com",
+    "ec2messages.amazonaws.com",  # SSM agent heartbeat/polling channel
+    "ssmmessages.amazonaws.com",  # SSM Session Manager channel
+}
 INTERNAL_EVENTS = {"RegisterManagedInstance"}
 INTERNAL_IPS = {"AWS Internal"}
 
@@ -32,17 +36,20 @@ def rule(event):
     arn = event.deep_get("userIdentity", "arn", default="")
     if not INSTANCE_SESSION_PATTERN.search(arn):
         return False
-    # Exclude legitimate internal AWS traffic
+    # Exclude calls made by an AWS service on behalf of the instance (e.g. EKS, ECS, CodeDeploy)
+    if event.deep_get("userIdentity", "invokedBy", default="").endswith(".amazonaws.com"):
+        return False
+    # Exclude legitimate internal services
     if event.get("eventSource") in INTERNAL_SOURCES:
         return False
     if event.get("eventName") in INTERNAL_EVENTS:
         return False
     # Only alert when credentials are used from a public IP.
-    # Filters out "AWS Internal", service hostnames, and private VPC IPs.
+    # Filters out "AWS Internal", service hostnames (e.g. "eks.amazonaws.com"), and private VPC IPs.
     source_ip = event.get("sourceIPAddress", "")
-    return (
-        source_ip not in INTERNAL_IPS and _is_valid_ip(source_ip) and not _is_private_ip(source_ip)
-    )
+    if source_ip in INTERNAL_IPS or source_ip.endswith(".amazonaws.com"):
+        return False
+    return _is_valid_ip(source_ip) and not _is_private_ip(source_ip)
 
 
 def title(event):
