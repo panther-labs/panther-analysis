@@ -1,5 +1,5 @@
 AnalysisType: correlation_rule
-RuleID: "GCP.Privilege.Escalation.Via.TagBinding"
+RuleID: "GCP.Privilege.Escalation.Via.TagBinding.Group"
 DisplayName: "GCP Privilege Escalation via TagBinding"
 Enabled: true
 Severity: Info
@@ -17,30 +17,25 @@ Reports:
     MITRE ATT&CK:
         - TA0004:T1548  # Abuse Elevation Control Mechanism
 Detection:
-    - Sequence:
+    - Group:
         - ID: Enumeration
           RuleID: GCP.IAM.Tag.Enumeration
         - ID: TagBinding
           RuleID: GCP.Tag.Binding.Creation
         - ID: PrivilegedOperation
           RuleID: GCP.Privileged.Operation
-      Transitions:
-        - ID: Enumeration FOLLOWED BY TagBinding
-          From: Enumeration
-          To: TagBinding
-          WithinTimeFrameMinutes: 15
-          Match:
-            - On: p_alert_context.principal
-        - ID: TagBinding FOLLOWED BY PrivilegedOperation
-          From: TagBinding
-          To: PrivilegedOperation
-          WithinTimeFrameMinutes: 15
-          Match:
-            - On: p_alert_context.principal
+      MatchCriteria:
+        field_name:
+          - GroupID: Enumeration
+            Match: p_alert_context.principal
+          - GroupID: TagBinding
+            Match: p_alert_context.principal
+          - GroupID: PrivilegedOperation
+            Match: p_alert_context.principal
       Schedule:
-        RateMinutes: 1440
+        RateMinutes: 20
         TimeoutMinutes: 10
-      LookbackWindowMinutes: 2160
+      LookbackWindowMinutes: 30
 Tags:
     - attack.privilege_escalation
     - attack.t1548
