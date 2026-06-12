@@ -632,7 +632,7 @@
     {
         "AnalysisType": "Correlation Rule",
         "Description": "A user was invited as admin and shortly after deleted tenant member accounts. This may indicate account takeover attempts.",
-        "DisplayName": "Auth0 New Admin Invited FOLLOWED BY Tenant Member Account Deletion",
+        "DisplayName": "Auth0 New Admin Invited WITH Tenant Member Account Deletion",
         "LogTypes": [
             "Auth0.Events"
         ],
@@ -747,6 +747,15 @@
             "AWS.ACM.Certificate"
         ],
         "YAMLPath": "policies/aws_acm_policies/aws_acm_certificate_has_secure_algorithms.yml"
+    },
+    {
+        "AnalysisType": "Correlation Rule",
+        "Description": "Identifies when an Administrative IAM user is creates. This could indicate a potential security breach.",
+        "DisplayName": "AWS Administrative IAM User Created",
+        "LogTypes": [
+            "AWS.CloudTrail"
+        ],
+        "YAMLPath": "correlation_rules/aws_create_admin_iam_user.yml"
     },
     {
         "AnalysisType": "Policy",
@@ -1140,7 +1149,7 @@
     {
         "AnalysisType": "Correlation Rule",
         "Description": "A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta and both log sources configured.",
-        "DisplayName": "AWS Console Sign-In NOT PRECEDED BY Okta Redirect",
+        "DisplayName": "AWS Console Sign-In WITHOUT Okta Redirect",
         "LogTypes": [
             "AWS.CloudTrail",
             "Okta.SystemLog"
@@ -2330,7 +2339,7 @@
     {
         "AnalysisType": "Correlation Rule",
         "Description": "Detects a ransomware attack pattern where an attacker with compromised AWS credentials exfiltrates data from an S3 bucket to an external AWS account, followed by bulk deletion of objects from the source bucket within a short timeframe. This technique was notably used by the threat actor Bling Libra to extort victims by threatening data destruction or leaks.",
-        "DisplayName": "AWS S3 Object Exfiltration FOLLOWED BY Object Deletion",
+        "DisplayName": "AWS S3 Object Exfiltration WITH Object Deletion",
         "LogTypes": [
             "AWS.CloudTrail"
         ],
@@ -2790,15 +2799,6 @@
             "AWS.WAF.WebACL"
         ],
         "YAMLPath": "policies/aws_waf_policies/aws_waf_webacl_has_associated_resources.yml"
-    },
-    {
-        "AnalysisType": "Correlation Rule",
-        "Description": "Identifies when an Administrative IAM user is creates. This could indicate a potential security breach.",
-        "DisplayName": "AWS.Administrative.IAM.User.Created",
-        "LogTypes": [
-            "AWS.CloudTrail"
-        ],
-        "YAMLPath": "correlation_rules/aws_create_admin_iam_user.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -3433,7 +3433,7 @@
     {
         "AnalysisType": "Correlation Rule",
         "Description": "Detects potential CPK-based ransomware attacks on Azure Storage by correlating blob uploads with subsequent Customer-Provided Key (CPK) encryption errors on the same blob path. This pattern indicates an attacker has encrypted blobs using CPK and legitimate users are now unable to access their data without the attacker's encryption key. This technique allows attackers to hold data hostage while maintaining access themselves, as only they possess the customer-provided encryption key needed to decrypt the blobs.",
-        "DisplayName": "Azure Storage Blob Upload FOLLOWED BY CPK Encryption Error",
+        "DisplayName": "Azure Storage Blob Upload WITH CPK Encryption Error",
         "LogTypes": [
             "Azure.MonitorActivity"
         ],
@@ -4992,7 +4992,7 @@
     {
         "AnalysisType": "Correlation Rule",
         "Description": "Detects run.services.create method for privilege escalation in GCP. The exploit creates a new Cloud Run Service that, when invoked, returns the Service Account's access token by accessing the metadata API of the server it is running on.",
-        "DisplayName": "GCP Cloud Run Service Created FOLLOWED BY Set IAM Policy",
+        "DisplayName": "GCP Cloud Run Service Created WITH Set IAM Policy",
         "LogTypes": [
             "GCP.AuditLog"
         ],
@@ -7283,15 +7283,6 @@
         "YAMLPath": "rules/notion_rules/notion_workspace_audit_log_exported.yml"
     },
     {
-        "AnalysisType": "Correlation Rule",
-        "Description": "A Notion User logged in then changed their account details.",
-        "DisplayName": "Notion Login FOLLOWED BY AccountChange",
-        "LogTypes": [
-            "Notion.AuditLogs"
-        ],
-        "YAMLPath": "correlation_rules/notion_login_followed_by_account_change.yml"
-    },
-    {
         "AnalysisType": "Rule",
         "Description": "A user attempted to access Notion from a blocked IP address. Note: before deployinh, make sure to add Rule Filters checking if event.ip_address is in a certain CIDR range(s).",
         "DisplayName": "Notion Login From Blocked IP",
@@ -7308,6 +7299,15 @@
             "Notion.AuditLogs"
         ],
         "YAMLPath": "rules/notion_rules/notion_login_from_new_location.yml"
+    },
+    {
+        "AnalysisType": "Correlation Rule",
+        "Description": "A Notion User logged in then changed their account details.",
+        "DisplayName": "Notion Login WITH AccountChange",
+        "LogTypes": [
+            "Notion.AuditLogs"
+        ],
+        "YAMLPath": "correlation_rules/notion_login_followed_by_account_change.yml"
     },
     {
         "AnalysisType": "Scheduled Rule",
@@ -7871,7 +7871,7 @@
     {
         "AnalysisType": "Correlation Rule",
         "Description": "A OneLogin user successfully logged in after a failed high-risk login attempt.",
-        "DisplayName": "OneLogin High Risk Failed Login FOLLOWED BY Successful Login",
+        "DisplayName": "OneLogin High Risk Failed Login WITH Successful Login",
         "LogTypes": [
             "OneLogin.Events"
         ],
@@ -7969,7 +7969,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects credential stuffing attacks against OpenAI accounts by tracking the number of distinct source IP addresses submitting failed login attempts against the same email address within a short timeframe. Unlike brute force from a single IP, credential stuffing distributes attempts across many IPs to evade rate limiting. This rule complements OpenAI.BruteForce.Login.Success, which confirms account compromise once a successful login follows the failures.",
+        "Description": "Detects credential stuffing attacks against OpenAI accounts by tracking the number of distinct source IP addresses submitting failed login attempts against the same email address within a short timeframe. Unlike brute force from a single IP, credential stuffing distributes attempts across many IPs to evade rate limiting. This rule complements OpenAI.BruteForce.Login.Success.Group, which confirms account compromise once a successful login follows the failures.",
         "DisplayName": "OpenAI Credential Stuffing",
         "LogTypes": [
             "OpenAI.Audit"
@@ -8891,7 +8891,7 @@
     },
     {
         "AnalysisType": "Rule",
-        "Description": "Detects password spraying attacks against Snowflake by tracking the number of distinct user accounts targeted by failed login attempts from the same source IP address within a short timeframe. Unlike brute force against a single account, password spraying distributes attempts across many accounts to evade lockout policies. This rule complements Snowflake.Stream.BruteForceByIp (same IP, any accounts) and Snowflake.PotentialBruteForceSuccess (brute force followed by confirmed login).",
+        "Description": "Detects password spraying attacks against Snowflake by tracking the number of distinct user accounts targeted by failed login attempts from the same source IP address within a short timeframe. Unlike brute force against a single account, password spraying distributes attempts across many accounts to evade lockout policies. This rule complements Snowflake.Stream.BruteForceByIp (same IP, any accounts) and Snowflake.PotentialBruteForceSuccess.Group (brute force followed by confirmed login).",
         "DisplayName": "Snowflake Password Spray",
         "LogTypes": [
             "Snowflake.LoginHistory"
@@ -9100,7 +9100,7 @@
     {
         "AnalysisType": "Correlation Rule",
         "Description": "Identifies when StopInstance and ModifyInstanceAttributes CloudTrail events occur in a short period of time. Since EC2 startup scripts cannot be modified without first stopping the instance, StopInstances should be a signal.",
-        "DisplayName": "StopInstance FOLLOWED BY ModifyInstanceAttributes",
+        "DisplayName": "StopInstance WITH ModifyInstanceAttributes",
         "LogTypes": [
             "AWS.CloudTrail"
         ],
@@ -9614,7 +9614,7 @@
     {
         "AnalysisType": "Correlation Rule",
         "Description": "Wiz detected a security issue with an EC2 instance followed by an SSH connection to the instance. This sequence could indicate a potential security breach.",
-        "DisplayName": "Wiz Issue Followed By SSH to EC2 Instance",
+        "DisplayName": "Wiz Issue WITH SSH to EC2 Instance",
         "LogTypes": [
             "AWS.VPCFlow",
             "Wiz.Issues"

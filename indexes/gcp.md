@@ -14,7 +14,7 @@
   - Detects when GCP Cloud Armor detects HTTP requests matching specific Remote Code Execution (RCE) vulnerability signatures (google-mrs-v202512-id000001-rce and google-mrs-v202512-id000002-rce) which match React2Shell exploit attempts. These rules indicate active exploitation attempts against known RCE vulnerabilities.
 - [GCP Cloud Run Service Created](../rules/gcp_audit_rules/gcp_cloud_run_service_created.yml)
   - Detects creation of new Cloud Run Service, which, if configured maliciously, may be part of the attack aimed to invoke the service and retrieve the access token.
-- [GCP Cloud Run Service Created FOLLOWED BY Set IAM Policy](../correlation_rules/gcp_cloud_run_service_create_followed_by_set_iam_policy.yml)
+- [GCP Cloud Run Service Created WITH Set IAM Policy](../correlation_rules/gcp_cloud_run_service_create_followed_by_set_iam_policy.yml)
   - Detects run.services.create method for privilege escalation in GCP. The exploit creates a new Cloud Run Service that, when invoked, returns the Service Account's access token by accessing the metadata API of the server it is running on.
 - [GCP Cloud Run Set IAM Policy](../rules/gcp_audit_rules/gcp_cloud_run_set_iam_policy.yml)
   - Detects new roles granted to users to Cloud Run Services. This could potentially allow the user to perform actions within the project and its resources, which could pose a security risk.

@@ -96,6 +96,8 @@
   - An Amazon Machine Image (AMI) was modified to allow it to be launched by anyone. Any sensitive configuration or application data stored in the AMI's block devices is at risk.
 - [Anomalous AccessDenied Requests](../queries/aws_queries/anomalous_access_denied_query.yml)
   - ARNs with a high Access Denied error rate could indicate an error or compromised credentials attempting to perform reconnaissance.
+- [AWS Administrative IAM User Created](../correlation_rules/aws_create_admin_iam_user.yml)
+  - Identifies when an Administrative IAM user is creates. This could indicate a potential security breach.
 - [AWS Authentication from CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device_Query.yml)
   - Detects AWS Authentication events with IP Addresses not found in CrowdStrike's AIP List
 - [AWS Authentication from CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/aws_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device_FDREvent.yml)
@@ -146,7 +148,7 @@
 - [AWS Console GetSigninToken Potential Abuse](../rules/aws_cloudtrail_rules/aws_console_getsignintoken.yml)
   - Detects GetSigninToken calls from non-SSO user agents. An adversary can use tools like aws_consoler to convert compromised CLI credentials into a federated console session, bypassing MFA requirements and obscuring the original access key. The GetSigninToken API creates temporary console access from STS temporary credentials.
 - [AWS Console Login](../rules/aws_cloudtrail_rules/aws_console_login.yml)
-- [AWS Console Sign-In NOT PRECEDED BY Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
+- [AWS Console Sign-In WITHOUT Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
   - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta and both log sources configured.
 - [AWS Decrypt SSM Parameters](../rules/aws_cloudtrail_rules/aws_ssm_decrypt_ssm_params.yml)
   - Identify principals retrieving a high number of SSM Parameters of type 'SecretString'. This rule filters out known administrative roles that legitimately need bulk parameter access.
@@ -241,7 +243,7 @@
   - Returns S3 GetObject events where a user has downloaded more than the configured threshold  of data within the specified time window. Supports filtering by bucket patterns and user types.
 - [AWS S3 Object Copied to External Account Bucket](../rules/aws_cloudtrail_rules/aws_s3_copy_object_to_external_account_bucket.yml)
   - Detects when an S3 object is copied from one bucket to another bucket in a different AWS account. This could indicate data exfiltration or a ransomware attack where data is copied to an attacker-controlled account.
-- [AWS S3 Object Exfiltration FOLLOWED BY Object Deletion](../correlation_rules/aws_s3_exfiltration_and_deletion.yml)
+- [AWS S3 Object Exfiltration WITH Object Deletion](../correlation_rules/aws_s3_exfiltration_and_deletion.yml)
   - Detects a ransomware attack pattern where an attacker with compromised AWS credentials exfiltrates data from an S3 bucket to an external AWS account, followed by bulk deletion of objects from the source bucket within a short timeframe. This technique was notably used by the threat actor Bling Libra to extort victims by threatening data destruction or leaks.
 - [AWS S3 Ransomware Note Upload Detection](../rules/aws_cloudtrail_rules/aws_s3_ransomware_note_upload.yml)
   - This rule detects when files with names commonly associated with ransomware notes are uploaded to S3 buckets. Ransomware attackers often drop ransom notes with distinctive filenames like HOW_TO_DECRYPT_FILES.txt, RANSOM_NOTE.txt, FILES_ENCRYPTED.html, or similar patterns to inform victims about the encryption and provide payment instructions.
@@ -286,8 +288,6 @@
   - Detects when logs for a VPC have been removed.
 - [AWS WAF Disassociation](../rules/aws_cloudtrail_rules/aws_waf_disassociation.yml)
   - Detects when AWS WAF is disassociated from protected resources such as Application Load Balancers, API Gateway, CloudFront, or AppSync. Removing WAF protection exposes applications to SQL injection, XSS, DDoS attacks, and OWASP Top 10 vulnerabilities. Attackers often disable WAF before launching attacks, or this may indicate misconfiguration or unauthorized changes.
-- [AWS.Administrative.IAM.User.Created](../correlation_rules/aws_create_admin_iam_user.yml)
-  - Identifies when an Administrative IAM user is creates. This could indicate a potential security breach.
 - [AWS.CloudTrail.UserAccessKeyAuth](../rules/aws_cloudtrail_rules/aws_cloudtrail_useraccesskeyauth.yml)
 - [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
   - An actor user was denied login access more times than the configured threshold.
@@ -403,7 +403,7 @@
   - Detects sensitive or unusual API calls that might indicate lateral movement, reconnaissance, or other malicious activities through VPC Endpoints. Only available for CloudTrail, EC2, KMS, S3, and Secrets Manager services.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
-- [StopInstance FOLLOWED BY ModifyInstanceAttributes](../correlation_rules/aws_cloudtrail_stopinstance_followed_by_modifyinstanceattributes.yml)
+- [StopInstance WITH ModifyInstanceAttributes](../correlation_rules/aws_cloudtrail_stopinstance_followed_by_modifyinstanceattributes.yml)
   - Identifies when StopInstance and ModifyInstanceAttributes CloudTrail events occur in a short period of time. Since EC2 startup scripts cannot be modified without first stopping the instance, StopInstances should be a signal.
 - [Unused AWS Region](../rules/aws_cloudtrail_rules/aws_unused_region.yml)
   - CloudTrail logged non-read activity from a verboten AWS region.
@@ -839,7 +839,7 @@
   - Alerts if outbound DNS traffic is detected to a non-approved DNS server. DNS is often used as a means to exfiltrate data or perform command and control for compromised hosts. All DNS traffic should be routed through internal DNS servers or trusted 3rd parties.
 - [VPC Flow Port Scanning](../queries/aws_queries/anomalous_vpc_port_activity_query.yml)
   - Instances of a srcAddr communicating with multiple ports on a dstAddr could indicate port scanning activity.
-- [Wiz Issue Followed By SSH to EC2 Instance](../correlation_rules/wiz_issue_followed_by_ssh.yml)
+- [Wiz Issue WITH SSH to EC2 Instance](../correlation_rules/wiz_issue_followed_by_ssh.yml)
   - Wiz detected a security issue with an EC2 instance followed by an SSH connection to the instance. This sequence could indicate a potential security breach.
 
 
@@ -1014,7 +1014,7 @@
   - An Auth0 User enabled the mfa risk assessment setting for your organization's tenant.
 - [Auth0 New Admin Invited](../rules/auth0_rules/auth0_new_admin_invited.yml)
   - A new admin invitation was issued.
-- [Auth0 New Admin Invited FOLLOWED BY Tenant Member Account Deletion](../correlation_rules/auth0_account_takeover.yml)
+- [Auth0 New Admin Invited WITH Tenant Member Account Deletion](../correlation_rules/auth0_account_takeover.yml)
   - A user was invited as admin and shortly after deleted tenant member accounts. This may indicate account takeover attempts.
 - [Auth0 Post Login Action Flow Updated](../rules/auth0_rules/auth0_post_login_action_flow.yml)
   - An Auth0 User updated a post login action flow for your organization's tenant.
@@ -1175,7 +1175,7 @@
   - Detects when blobs are deleted from Azure Storage accounts via the DeleteBlob operation. Multiple deletion events in a short time frame may indicate ransomware activity, data destruction, or malicious insider activity. This rule fires on individual deletions and can be aggregated in Panther to detect bulk deletion patterns by configuring deduplication on storage account or caller IP address.
 - [Azure Storage Blob Soft Delete Disabled](../rules/azure_activity_rules/azure_storage_blob_soft_delete_disabled.yml)
   - Detects when Azure storage account blob soft delete is disabled. Disabling soft delete removes protection against accidental deletion and may indicate preparation for data destruction.
-- [Azure Storage Blob Upload FOLLOWED BY CPK Encryption Error](../correlation_rules/azure_storage_cpk_ransomware.yml)
+- [Azure Storage Blob Upload WITH CPK Encryption Error](../correlation_rules/azure_storage_cpk_ransomware.yml)
   - Detects potential CPK-based ransomware attacks on Azure Storage by correlating blob uploads with subsequent Customer-Provided Key (CPK) encryption errors on the same blob path. This pattern indicates an attacker has encrypted blobs using CPK and legitimate users are now unable to access their data without the attacker's encryption key. This technique allows attackers to hold data hostage while maintaining access themselves, as only they possess the customer-provided encryption key needed to decrypt the blobs.
 - [Azure Storage Blob Uploaded](../rules/azure_activity_rules/azure_storage_blob_uploaded.yml)
   - Tracks successful blob uploads to Azure Storage accounts.
@@ -1634,7 +1634,7 @@
   - Detects when GCP Cloud Armor detects HTTP requests matching specific Remote Code Execution (RCE) vulnerability signatures (google-mrs-v202512-id000001-rce and google-mrs-v202512-id000002-rce) which match React2Shell exploit attempts. These rules indicate active exploitation attempts against known RCE vulnerabilities.
 - [GCP Cloud Run Service Created](../rules/gcp_audit_rules/gcp_cloud_run_service_created.yml)
   - Detects creation of new Cloud Run Service, which, if configured maliciously, may be part of the attack aimed to invoke the service and retrieve the access token.
-- [GCP Cloud Run Service Created FOLLOWED BY Set IAM Policy](../correlation_rules/gcp_cloud_run_service_create_followed_by_set_iam_policy.yml)
+- [GCP Cloud Run Service Created WITH Set IAM Policy](../correlation_rules/gcp_cloud_run_service_create_followed_by_set_iam_policy.yml)
   - Detects run.services.create method for privilege escalation in GCP. The exploit creates a new Cloud Run Service that, when invoked, returns the Service Account's access token by accessing the metadata API of the server it is running on.
 - [GCP Cloud Run Set IAM Policy](../rules/gcp_audit_rules/gcp_cloud_run_set_iam_policy.yml)
   - Detects new roles granted to users to Cloud Run Services. This could potentially allow the user to perform actions within the project and its resources, which could pose a security risk.
@@ -2142,12 +2142,12 @@
   - A user has subsequent logins from two geographic locations that are very far apart
 - [Notion Audit Log Exported](../rules/notion_rules/notion_workspace_audit_log_exported.yml)
   - A Notion User exported audit logs for your organization’s workspace.
-- [Notion Login FOLLOWED BY AccountChange](../correlation_rules/notion_login_followed_by_account_change.yml)
-  - A Notion User logged in then changed their account details.
 - [Notion Login From Blocked IP](../rules/notion_rules/notion_login_from_blocked_ip.yml)
   - A user attempted to access Notion from a blocked IP address. Note: before deployinh, make sure to add Rule Filters checking if event.ip_address is in a certain CIDR range(s).
 - [Notion Login from New Location](../rules/notion_rules/notion_login_from_new_location.yml)
   - A Notion User logged in from a new location.
+- [Notion Login WITH AccountChange](../correlation_rules/notion_login_followed_by_account_change.yml)
+  - A Notion User logged in then changed their account details.
 - [Notion Many Pages Deleted](../queries/notion_queries/notion_many_pages_deleted_sched.yml)
   - A Notion User deleted multiple pages, which were not created or restored from the trash within the same hour.
 - [Notion Many Pages Deleted Query](../queries/notion_queries/notion_many_pages_deleted_query.yml)
@@ -2205,7 +2205,7 @@
 
 ## Okta
 
-- [AWS Console Sign-In NOT PRECEDED BY Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
+- [AWS Console Sign-In WITHOUT Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
   - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta and both log sources configured.
 - [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
   - An actor user was denied login access more times than the configured threshold.
@@ -2333,7 +2333,7 @@
   - A user removed an authentication factor or otp device.
 - [OneLogin Failed High Risk Login](../rules/onelogin_rules/onelogin_high_risk_failed_login.yml)
   - A OneLogin attempt with a high risk factor (>50) resulted in a failed authentication.
-- [OneLogin High Risk Failed Login FOLLOWED BY Successful Login](../correlation_rules/onelogin_successful_login_after_high_risk_failed_login.yml)
+- [OneLogin High Risk Failed Login WITH Successful Login](../correlation_rules/onelogin_successful_login_after_high_risk_failed_login.yml)
   - A OneLogin user successfully logged in after a failed high-risk login attempt.
 - [OneLogin Multiple Accounts Deleted](../rules/onelogin_rules/onelogin_threshold_accounts_deleted.yml)
   - Possible Denial of Service detected. Threshold for user account deletions exceeded.
@@ -2390,7 +2390,7 @@
 - [OpenAI Brute Force Login Success](../correlation_rules/openai_brute_force_login_success.yml)
   - Detects successful credential stuffing or brute force attacks against OpenAI accounts.This rule identifies when a user account experiences 5 or more failed login attemptsfollowed by a successful login within 30 minutes. This pattern indicates:- Successful credential stuffing attack- Successful brute force attack- Compromised user credentials- Automated attack tools successfully gaining accessThe correlation is performed by matching on the user email address to track attemptsagainst the same account across multiple failed attempts and the eventual success.
 - [OpenAI Credential Stuffing](../rules/openai_rules/openai_credential_stuffing.yml)
-  - Detects credential stuffing attacks against OpenAI accounts by tracking the number of distinct source IP addresses submitting failed login attempts against the same email address within a short timeframe. Unlike brute force from a single IP, credential stuffing distributes attempts across many IPs to evade rate limiting. This rule complements OpenAI.BruteForce.Login.Success, which confirms account compromise once a successful login follows the failures.
+  - Detects credential stuffing attacks against OpenAI accounts by tracking the number of distinct source IP addresses submitting failed login attempts against the same email address within a short timeframe. Unlike brute force from a single IP, credential stuffing distributes attempts across many IPs to evade rate limiting. This rule complements OpenAI.BruteForce.Login.Success.Group, which confirms account compromise once a successful login follows the failures.
 - [OpenAI Failed Login (Base Rule)](../rules/openai_rules/openai_login_failed.yml)
   - Base rule for detecting OpenAI failed login attempts. This rule is used primarilyas a building block for correlation rules and does not generate alerts on its own.
 - [OpenAI IP Allowlist Configuration Changes](../rules/openai_rules/openai_ip_allowlist_changes.yml)
@@ -2615,7 +2615,7 @@
 - [Snowflake Multiple Failed Logins Followed By Success](../queries/snowflake_queries/snowflake_multiple_failed_logins_followed_by_success.yml)
   - Detecting brute force activity and reporting when a user has incorrectly logged in multiple times and then had a successful login.
 - [Snowflake Password Spray](../rules/snowflake_rules/snowflake_stream_password_spray.yml)
-  - Detects password spraying attacks against Snowflake by tracking the number of distinct user accounts targeted by failed login attempts from the same source IP address within a short timeframe. Unlike brute force against a single account, password spraying distributes attempts across many accounts to evade lockout policies. This rule complements Snowflake.Stream.BruteForceByIp (same IP, any accounts) and Snowflake.PotentialBruteForceSuccess (brute force followed by confirmed login).
+  - Detects password spraying attacks against Snowflake by tracking the number of distinct user accounts targeted by failed login attempts from the same source IP address within a short timeframe. Unlike brute force against a single account, password spraying distributes attempts across many accounts to evade lockout policies. This rule complements Snowflake.Stream.BruteForceByIp (same IP, any accounts) and Snowflake.PotentialBruteForceSuccess.Group (brute force followed by confirmed login).
 - [Snowflake Successful Login](../rules/snowflake_rules/snowflake_stream_login_success.yml)
   - Track successful login signals for correlation.
 - [Snowflake Table Copied Into Stage](../queries/snowflake_queries/snowflake_table_copied_into_stage_signal.yml)
@@ -2816,7 +2816,7 @@
   - This rule detects updates and deletions of Wiz integrations.
 - [Wiz Issue Alert Passthrough Rule](../rules/wiz_rules/wiz_issue_alert_passthrough.yml)
   - This rule enriches and contextualizes security alerts generated by Wiz.
-- [Wiz Issue Followed By SSH to EC2 Instance](../correlation_rules/wiz_issue_followed_by_ssh.yml)
+- [Wiz Issue WITH SSH to EC2 Instance](../correlation_rules/wiz_issue_followed_by_ssh.yml)
   - Wiz detected a security issue with an EC2 instance followed by an SSH connection to the instance. This sequence could indicate a potential security breach.
 - [Wiz Revoke User Sessions](../rules/wiz_rules/wiz_revoke_user_sessions.yml)
   - This rule detects user sessions revoked.
