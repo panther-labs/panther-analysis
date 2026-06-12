@@ -10,6 +10,7 @@ def rule(event):
         and event.deep_get("userIdentity", "invokedBy") is None
         and event.get("eventType") != "AwsServiceEvent"
         and event.get("eventName") not in EVENT_ALLOW_LIST
+        and not event.get("readOnly")
     )
 
 
@@ -17,9 +18,7 @@ def dedup(event):
     return (
         event.get("sourceIPAddress", "<UNKNOWN_IP>")
         + ":"
-        + event.get("recipientAccountId")
-        + ":"
-        + str(event.get("readOnly"))
+        + event.get("recipientAccountId", "<UNKNOWN_ACCOUNT>")
     )
 
 
@@ -40,9 +39,3 @@ def alert_context(event):
         "eventTime": event.get("eventTime"),
         "mfaUsed": event.deep_get("additionalEventData", "MFAUsed"),
     }
-
-
-def severity(event):
-    if event.get("readOnly"):
-        return "LOW"
-    return "HIGH"
