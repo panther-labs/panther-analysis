@@ -15,11 +15,7 @@ def rule(event):
 
 
 def dedup(event):
-    return (
-        event.get("sourceIPAddress", "<UNKNOWN_IP>")
-        + ":"
-        + event.get("recipientAccountId", "<UNKNOWN_ACCOUNT>")
-    )
+    return event.get("sourceIPAddress", "<UNKNOWN_IP>")
 
 
 def title(event):
