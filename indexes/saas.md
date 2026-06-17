@@ -172,7 +172,7 @@
 
 ## Okta
 
-- [AWS Console Sign-In NOT PRECEDED BY Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
+- [AWS Console Sign-In WITHOUT Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
   - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta and both log sources configured.
 - [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
   - An actor user was denied login access more times than the configured threshold.
@@ -290,7 +290,7 @@
   - A user removed an authentication factor or otp device.
 - [OneLogin Failed High Risk Login](../rules/onelogin_rules/onelogin_high_risk_failed_login.yml)
   - A OneLogin attempt with a high risk factor (>50) resulted in a failed authentication.
-- [OneLogin High Risk Failed Login FOLLOWED BY Successful Login](../correlation_rules/onelogin_successful_login_after_high_risk_failed_login.yml)
+- [OneLogin High Risk Failed Login WITH Successful Login](../correlation_rules/onelogin_successful_login_after_high_risk_failed_login.yml)
   - A OneLogin user successfully logged in after a failed high-risk login attempt.
 - [OneLogin Multiple Accounts Deleted](../rules/onelogin_rules/onelogin_threshold_accounts_deleted.yml)
   - Possible Denial of Service detected. Threshold for user account deletions exceeded.

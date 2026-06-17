@@ -1,5 +1,5 @@
 AnalysisType: correlation_rule
-RuleID: "Okta.Login.Without.Push"
+RuleID: "Okta.Login.Without.Push.Group"
 DisplayName: "Okta Login Without Push"
 Enabled: false
 Tags:
@@ -22,38 +22,36 @@ Runbook: |
   3. Check Okta audit logs for all application access, permission changes, and administrative actions during the Okta session to identify suspicious activity that may indicate compromised credentials or session hijacking
 Reference: https://www.okta.com/resources/datasheet/okta-adaptive-multi-factor-authentication-product-datasheet/
 Detection:
-  - Sequence:
-      - ID: Okta
-        RuleID: Okta.Login.Success
+  - Group:
       - ID: Push
         RuleID: Push.Security.Authorized.IdP.Login
         Absence: true
-    Transitions:
-      - ID: Okta to Push
-        From: Okta
-        To: Push
-        WithinTimeFrameMinutes: 60
-        Match:
-          - From: actor.alternateId
-            To: new.email
+      - ID: Okta
+        RuleID: Okta.Login.Success
+    MatchCriteria:
+      field_name:
+        - GroupID: Push
+          Match: new.email
+        - GroupID: Okta
+          Match: actor.alternateId
     Schedule:
-      RateMinutes: 1440
+      RateMinutes: 40
       TimeoutMinutes: 10
-    LookbackWindowMinutes: 2160
+    LookbackWindowMinutes: 60
 Tests:
-  - Name: Okta Login, Followed By Push Authorized Login
+  - Name: Okta Login WITH Push Authorized Login In Window
     ExpectedResult: false
     RuleOutputs:
       - ID: Okta
         Matches:
           actor.alternateId:
             frodo.baggins@hobbiton.com:
-              - 0
+              - 3
       - ID: Push
         Matches:
           new.email:
             frodo.baggins@hobbiton.com:
-              - 3
+              - 0
   - Name: Okta Login, Not Followed By Push Authorized Login
     ExpectedResult: true
     RuleOutputs:

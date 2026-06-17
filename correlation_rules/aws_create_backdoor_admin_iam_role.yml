@@ -1,5 +1,5 @@
 AnalysisType: correlation_rule
-RuleID: "AWS.Backdoor.Administrative.IAM.Role.Created"
+RuleID: "AWS.Backdoor.Administrative.IAM.Role.Created.Group"
 DisplayName: "AWS Backdoor Administrative IAM Role Created"
 Enabled: true
 Severity: High
@@ -9,21 +9,20 @@ Reports:
   MITRE ATT&CK:
     - TA0007:T1078
 Detection:
-    - Sequence:
+    - Group:
         - ID: CreateRole
           RuleID: AWS.IAM.CreateRole
         - ID: AttachAdminRolePolicy
           RuleID: AWS.IAM.AttachAdminRolePolicy
-      Transitions:
-        - ID: CreateRole FOLLOWED BY AttachAdminRolePolicy
-          From: CreateRole
-          To: AttachAdminRolePolicy
-          WithinTimeFrameMinutes: 60
-          Match:
-            - On: p_alert_context.request_rolename
-      LookbackWindowMinutes: 2160
+      MatchCriteria:
+        field_name:
+          - GroupID: CreateRole
+            Match: p_alert_context.request_rolename
+          - GroupID: AttachAdminRolePolicy
+            Match: p_alert_context.request_rolename
+      LookbackWindowMinutes: 90
       Schedule:
-        RateMinutes: 1440
+        RateMinutes: 30
         TimeoutMinutes: 5
 Tests:
     - Name: Role Created, Followed By Policy Attachment

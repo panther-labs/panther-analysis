@@ -1,6 +1,6 @@
 AnalysisType: correlation_rule
-RuleID: "Azure.Storage.BlobUpload.FOLLOWED-BY.CPKEncryptionError"
-DisplayName: "Azure Storage Blob Upload FOLLOWED BY CPK Encryption Error"
+RuleID: "Azure.Storage.BlobUpload.WITH.CPKEncryptionError"
+DisplayName: "Azure Storage Blob Upload WITH CPK Encryption Error"
 Enabled: true
 Severity: High
 Description: >
@@ -20,22 +20,21 @@ Reports:
     - TA0040:T1486 # Impact: Data Encrypted for Impact
     - TA0040:T1490 # Impact: Inhibit System Recovery
 Detection:
-    - Sequence:
+    - Group:
         - ID: Blob Upload
           RuleID: Azure.MonitorActivity.Storage.Blob.Uploaded
         - ID: CPK Access Denied
           RuleID: Azure.MonitorActivity.Storage.Blob.CPKEncryptionDetected
-      Transitions:
-        - ID: Upload to CPK Error on Same Blob
-          From: Blob Upload
-          To: CPK Access Denied
-          WithinTimeFrameMinutes: 60
-          Match:
-            - On: p_alert_context.blob_path
+      MatchCriteria:
+        field_name:
+          - GroupID: Blob Upload
+            Match: p_alert_context.blob_path
+          - GroupID: CPK Access Denied
+            Match: p_alert_context.blob_path
       Schedule:
-        RateMinutes: 60
+        RateMinutes: 40
         TimeoutMinutes: 5
-      LookbackWindowMinutes: 120
+      LookbackWindowMinutes: 60
 Tests:
   - Name: CPK Ransomware Pattern
     ExpectedResult: true

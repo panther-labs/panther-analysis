@@ -112,7 +112,7 @@ PackDefinition:
     - AWS.EC2.Instance.EBSOptimization
     - AWS.EC2.Startup.Script.Change
     - AWS.EC2.StopInstances
-    - AWS.EC2.StopInstance.FOLLOWED.BY.ModifyInstanceAttributes
+    - AWS.EC2.StopInstance.WITH.ModifyInstanceAttributes
     - AWS.ELBV2.LoadBalancer.HasSSLPolicy
     - AWS.ELBv2.SSLPolicy
     - AWS.GuardDuty.CriticalSeverityFinding
@@ -217,13 +217,13 @@ PackDefinition:
     - AWS.VPC.DefaultSecurityGroup.Restrictions
     - VPC.DNS.Tunneling
     # Correlation Rules
-    - AWS.S3.ObjectExfiltration.FOLLOWED-BY.ObjectDeletion
-    - AWS.Administrative.IAM.User.Created
-    - AWS.Backdoor.Administrative.IAM.Role.Created
-    - AWS.Privilege.Escalation.Via.User.Compromise
+    - AWS.S3.ObjectExfiltration.WITH.ObjectDeletion
+    - AWS.Administrative.IAM.User.Created.Group
+    - AWS.Backdoor.Administrative.IAM.Role.Created.Group
+    - AWS.Privilege.Escalation.Via.User.Compromise.Group
     - AWS.CloudTrail.SES.SESEnumeration
-    - AWS.SSO.Access.Token.Retrieved.by.Unauthenticated.IP
-    - AWS.User.Takeover.Via.Password.Reset
+    - AWS.SSO.Access.Token.Retrieved.by.Unauthenticated.IP.Group
+    - AWS.User.Takeover.Via.Password.Reset.Group
     # Signal Rules
     - Role.Assumed.by.AWS.Service
     - Role.Assumed.by.User
