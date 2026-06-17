@@ -322,7 +322,7 @@
 - [Root Account Access Key Created](../rules/aws_cloudtrail_rules/aws_root_access_key_created.yml)
   - Detects creation of programmatic access keys for the AWS root account, which violates critical security best practices. Root account credentials provide unrestricted access to all AWS resources and cannot be scoped with granular permissions. If compromised, these keys grant attackers complete control over the AWS environment including billing and account closure capabilities.
 - [Root Account Activity](../rules/aws_cloudtrail_rules/aws_root_activity.yml)
-  - Root account activity was detected.
+  - Root account activity that modifies AWS resources or configuration was detected. Read-only root events (enumeration, console reads) are excluded — only impactful root actions trigger this rule.
 - [Root Console Login](../rules/aws_cloudtrail_rules/aws_console_root_login.yml)
   - The root account has been logged into.
 - [Root Password Changed](../rules/aws_cloudtrail_rules/aws_root_password_changed.yml)

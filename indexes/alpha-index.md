@@ -374,7 +374,7 @@
 - [Root Account Access Key Created](../rules/aws_cloudtrail_rules/aws_root_access_key_created.yml)
   - Detects creation of programmatic access keys for the AWS root account, which violates critical security best practices. Root account credentials provide unrestricted access to all AWS resources and cannot be scoped with granular permissions. If compromised, these keys grant attackers complete control over the AWS environment including billing and account closure capabilities.
 - [Root Account Activity](../rules/aws_cloudtrail_rules/aws_root_activity.yml)
-  - Root account activity was detected.
+  - Root account activity that modifies AWS resources or configuration was detected. Read-only root events (enumeration, console reads) are excluded — only impactful root actions trigger this rule.
 - [Root Console Login](../rules/aws_cloudtrail_rules/aws_console_root_login.yml)
   - The root account has been logged into.
 - [Root Password Changed](../rules/aws_cloudtrail_rules/aws_root_password_changed.yml)
@@ -2217,8 +2217,6 @@
   - A user has subsequent logins from two geographic locations that are very far apart
 - [MFA Disabled](../rules/standard_rules/mfa_disabled.yml)
   - Detects when Multi-Factor Authentication (MFA) is disabled
-- [Okta Actor Activity](../queries/okta_queries/okta_actor_activity.yml)
-  - All Okta system log events for a given actor.id in a time window — works for both human users (actor.type=User) and service applications (actor.type=PublicClientAppEntity). Use to walk an actor's footprint, pull lifecycle / consent / token-grant events tied to a service app, or audit a suspect user account. Layer additional filters on the result (e.g. eventType, outcome:result) as the investigation requires. Substitute <ACTOR_ID> with the Okta-internal actor.id (not alternateId) and <WINDOW> with a Panther interval (e.g. '4 h', '7 d').
 - [Okta AD Agent Authentication Anomaly - Z-Score Detection](../rules/okta_rules/okta_ad_agent_auth_zscore_anomaly.yml)
   - Detects potential Okta AD Agent token theft and credential abuse using statistical z-score analysis.This detection uses a lookup table containing 90-day behavioral baselines for each user's AD Agentauthentication patterns, then calculates z-scores to identify suspicious activity in the last 7 days.**PREREQUISITES:**1. Baseline builder query must run first: `Query.Okta.ADAgentBaselineBuilder`2. Lookup table must be configured: `okta_ad_pantherflow_baseline_90d`3. Allow 24 hours for initial baseline to populate**Detection Logic:**- Calculates mean and standard deviation for hourly authentication volume, IP diversity,  country diversity, and device diversity- Alerts when recent activity shows BOTH:  1. Volume spike (z-score > 3 standard deviations)  2. Geographic/IP diversity spike (z-score > 2 standard deviations)**Why This Matters:**Token theft attacks have a distinct signature: stolen credentials are used from multiplelocations/IPs simultaneously or in rapid succession. This creates both a volume spike anda diversity spike that this detection identifies.**Complementary Detection:**This rule complements `Okta.ADAgent.TokenAbuse.Behavioral` which detects admin actions(token creation, agent configuration) from new sources. This rule detects the actual USEof stolen tokens through authentication patterns.
 - [Okta AD Agent Token Abuse - Behavioral](../rules/okta_rules/okta_ad_agent_token_abuse_behavioral.yml)
@@ -2255,8 +2253,6 @@
   - Search for activity related to a specific SessionID in Okta panther_logs.okta_systemlog
 - [Okta Investigate User Activity](../queries/okta_queries/okta_activity_audit.yml)
   - Audit user activity across your environment. Customize to filter on specific users, time ranges, etc
-- [Okta Legacy API Authentication Without MFA Challenge](../rules/okta_rules/okta_legacy_api_auth_no_mfa.yml)
-  - An Okta session was established through the legacy /api/v1/authn API (externalSessionId '102' prefix) without a corresponding user.authentication.auth_via_mfa event in the same auth chain. The scheduled query joins legacy session.start events against MFA events by externalSessionId, so only true single-factor legacy sessions reach this rule. This typically indicates a legacy global session policy gap or attacker tooling using single-factor authentication against /api/v1/authn.
 - [Okta Login From CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_Query.yml)
   - Okta Logins from an IP Address not found in CrowdStrike's AIP List
 - [Okta Login From CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/okta_queries/Okta_Login_From_CrowdStrike_Unmanaged_Device_FDREvent.yml)
@@ -2275,14 +2271,8 @@
   - This rule looks for the same session being used from two devices, indicating a compromised session token.
 - [Okta Rate Limits](../rules/okta_rules/okta_rate_limits.yml)
   - Potential DoS/Bruteforce attack or hitting limits (system degradation)
-- [Okta Service App Acquired Dangerous Management Scope Token](../rules/okta_rules/okta_service_app_dangerous_scope_token_grant.yml)
-  - An Okta service application obtained an OAuth2 access token via the client_credentials grant type with one or more dangerous management scopes (okta.users.manage, okta.factors.manage, okta.apps.manage, okta.groups.manage, okta.policies.manage). Pre-exploitation signal — fires at capability acquisition before the scopes are used. client_credentials grants have no user subject, so management scopes granted to a service app are effectively org-wide administrative access.
-- [Okta Service App Deactivated User MFA Factor](../rules/okta_rules/okta_service_app_mfa_factor_deactivate.yml)
-  - An Okta service application (actor.type = PublicClientAppEntity) deactivated a user's MFA factor. Service apps removing end-user MFA is rarely benign — it usually indicates a compromised app credential or attacker-granted okta.factors.manage scope used to weaken account security before takeover.
 - [Okta Sign-In from VPN Anonymizer](../rules/okta_rules/okta_anonymizing_vpn_login.yml)
   - A user is attempting to sign-in to Okta from a known VPN anonymizer.  The threat actor would access the compromised account using anonymizing proxy services.
-- [Okta Source IP Activity](../queries/okta_queries/okta_source_ip_activity.yml)
-  - All Okta system log events originating from a given source IP in a time window. Use to correlate activity across users from the same IP — assess campaign breadth, identify shared automation infrastructure, or find other accounts touched by the same operator. Substitute <IP> with the source IPv4/IPv6 string (e.g. '198.51.100.42') and <WINDOW> with a Panther interval (e.g. '4 h', '7 d').
 - [Okta Support Access](../queries/okta_queries/okta_support_access.yml)
   - Show instances that Okta support was granted to your account
 - [Okta Support Access Granted](../rules/okta_rules/okta_account_support_access.yml)
