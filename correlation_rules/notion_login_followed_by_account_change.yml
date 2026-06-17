@@ -1,6 +1,6 @@
 AnalysisType: correlation_rule
-RuleID: "Notion.Login.FOLLOWED.BY.AccountChange"
-DisplayName: "Notion Login FOLLOWED BY AccountChange"
+RuleID: "Notion.Login.WITH.AccountChange"
+DisplayName: "Notion Login WITH AccountChange"
 Enabled: true
 Severity: Medium
 Description: A Notion User logged in then changed their account details.
@@ -10,21 +10,20 @@ Reports:
   MITRE ATT&CK:
     - TA0004:T1098  # Account Manipulation
 Detection:
-    - Sequence:
+    - Group:
         - ID: Login
           RuleID: Notion.Login
         - ID: AccountChange
           RuleID: Notion.AccountChange
-      Transitions:
-        - ID: Login FOLLOWED BY AccountChange
-          From: Login
-          To: AccountChange
-          WithinTimeFrameMinutes: 15
-          Match:
-            - On: p_alert_context.actor_id
-      LookbackWindowMinutes: 2160
+      MatchCriteria:
+        field_name:
+          - GroupID: Login
+            Match: p_alert_context.actor_id
+          - GroupID: AccountChange
+            Match: p_alert_context.actor_id
+      LookbackWindowMinutes: 15
       Schedule:
-        RateMinutes: 1440
+        RateMinutes: 10
         TimeoutMinutes: 5
 Tests:
     - Name: Login, Followed By AccountChange within short time

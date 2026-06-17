@@ -161,6 +161,102 @@ Tests:
         "userAgent": "python-requests/2.31.0",
         "verb": "get"
       }
+  - Name: ELB Health Check from 10.0.0.0/8
+    ExpectedResult: false
+    Log:
+      {
+        "annotations": {
+          "authorization.k8s.io/decision": "allow",
+          "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding system:public-info-viewer"
+        },
+        "apiVersion": "audit.k8s.io/v1",
+        "kind": "Event",
+        "level": "Metadata",
+        "requestURI": "/healthz",
+        "responseStatus": {
+          "code": 200
+        },
+        "sourceIPs": [
+          "10.128.5.42"
+        ],
+        "stage": "ResponseComplete",
+        "user": {
+          "username": "system:anonymous"
+        },
+        "userAgent": "ELB-HealthChecker/2.0"
+      }
+  - Name: ELB Health Check from 172.16.0.0/12
+    ExpectedResult: false
+    Log:
+      {
+        "annotations": {
+          "authorization.k8s.io/decision": "allow",
+          "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding system:public-info-viewer"
+        },
+        "apiVersion": "audit.k8s.io/v1",
+        "kind": "Event",
+        "level": "Metadata",
+        "requestURI": "/healthz",
+        "responseStatus": {
+          "code": 200
+        },
+        "sourceIPs": [
+          "172.20.1.15"
+        ],
+        "stage": "ResponseComplete",
+        "user": {
+          "username": "system:anonymous"
+        },
+        "userAgent": "ELB-HealthChecker/2.0"
+      }
+  - Name: ELB Health Check from 192.168.0.0/16
+    ExpectedResult: false
+    Log:
+      {
+        "annotations": {
+          "authorization.k8s.io/decision": "allow",
+          "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding system:public-info-viewer"
+        },
+        "apiVersion": "audit.k8s.io/v1",
+        "kind": "Event",
+        "level": "Metadata",
+        "requestURI": "/healthz",
+        "responseStatus": {
+          "code": 200
+        },
+        "sourceIPs": [
+          "192.168.10.20"
+        ],
+        "stage": "ResponseComplete",
+        "user": {
+          "username": "system:anonymous"
+        },
+        "userAgent": "ELB-HealthChecker/2.0"
+      }
+  - Name: ELB Health Check from Public IP
+    ExpectedResult: true
+    Log:
+      {
+        "annotations": {
+          "authorization.k8s.io/decision": "allow",
+          "authorization.k8s.io/reason": "RBAC: allowed by ClusterRoleBinding system:public-info-viewer"
+        },
+        "apiVersion": "audit.k8s.io/v1",
+        "kind": "Event",
+        "level": "Metadata",
+        "requestURI": "/healthz",
+        "responseStatus": {
+          "code": 200
+        },
+        "sourceIPs": [
+          "54.10.20.30"
+        ],
+        "stage": "ResponseComplete",
+        "user": {
+          "username": "system:anonymous"
+        },
+        "userAgent": "ELB-HealthChecker/2.0"
+      }
   - Name: Anonymous API Access Web Scanner Denied
     ExpectedResult: true
     Log:

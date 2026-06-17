@@ -1,5 +1,5 @@
 AnalysisType: correlation_rule
-RuleID: "Snowflake.Data.Exfiltration"
+RuleID: "Snowflake.Data.Exfiltration.Group"
 DisplayName: "Snowflake Data Exfiltration"
 Enabled: true
 Tags:
@@ -21,24 +21,21 @@ Reports:
     - TA0010:T1530 # Exfiltration: Data from Cloud Storage
     - TA0009:T1213 # Collection: Data from Information Repositories
 Detection:
-  - Sequence:
+  - Group:
       - ID: SnowflakeTempStageCreated
         RuleID: Snowflake.TempStageCreated
       - ID: SnowflakeCopyIntoStage
         RuleID: Snowflake.CopyIntoStage
       - ID: SnowflakeFileDownloaded
         RuleID: Snowflake.FileDownloaded
-    Transitions:
-      - ID: Match SnowflakeTempStageCreated and SnowflakeCopyIntoStage on stage
-        From: SnowflakeTempStageCreated
-        To: SnowflakeCopyIntoStage
-        Match:
-          - On: stage
-      - ID: Match SnowflakeCopyIntoStage and SnowflakeFileDownloaded on path
-        From: SnowflakeCopyIntoStage
-        To: SnowflakeFileDownloaded
-        Match:
-          - On: stage
+    MatchCriteria:
+      field_name:
+        - GroupID: SnowflakeTempStageCreated
+          Match: stage
+        - GroupID: SnowflakeCopyIntoStage
+          Match: stage
+        - GroupID: SnowflakeFileDownloaded
+          Match: stage
     Schedule:
       RateMinutes: 1440
       TimeoutMinutes: 15

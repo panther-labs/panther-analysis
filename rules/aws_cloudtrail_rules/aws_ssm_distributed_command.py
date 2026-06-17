@@ -57,7 +57,11 @@ def alert_context(event: PantherEvent) -> dict:
 def get_cache_key(event) -> str:
     """Use the field values in the event to generate a cache key unique to this actor and
     account ID."""
-    offset = dt.datetime.fromisoformat(event["p_event_time"]).timestamp() // 3600 * 3600
+    offset = (
+        dt.datetime.fromisoformat(event.get("p_event_time", "1970-01-01T00:00:00")).timestamp()
+        // 3600
+        * 3600
+    )
     actor = event.udm("actor_user")
     account = event.get("recipientAccountId")
     rule_id = "AWS.SSM.DistributedCommand"

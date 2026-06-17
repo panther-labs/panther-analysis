@@ -20,7 +20,7 @@ def title(event):
 
 def alert_context(event):
     context = slack_alert_context(event)
-    context["scopes"] = event.deep_get("entity", "scopes")
+    context["scopes"] = event.deep_get("entity", "app", "scopes")
 
     return context
 
@@ -32,7 +32,7 @@ def severity(event):
         return "High"
 
     # Fallback method in case the admin scope is not directly mentioned in entity for whatever
-    if "admin" in event.deep_get("details", "new_scope", default=[]):
+    if "admin" in event.deep_get("details", "new_scopes", default=[]):
         return "High"
 
     if "admin" in event.deep_get("details", "bot_scopes", default=[]):

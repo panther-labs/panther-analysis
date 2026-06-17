@@ -1,6 +1,6 @@
 AnalysisType: correlation_rule
-RuleID: "AWS.S3.ObjectExfiltration.FOLLOWED-BY.ObjectDeletion"
-DisplayName: "AWS S3 Object Exfiltration FOLLOWED BY Object Deletion"
+RuleID: "AWS.S3.ObjectExfiltration.WITH.ObjectDeletion"
+DisplayName: "AWS S3 Object Exfiltration WITH Object Deletion"
 Enabled: true
 Severity: High
 Description: >
@@ -22,24 +22,23 @@ Reports:
     - TA0010:T1537
     - TA0040:T1486
 Detection:
-    - Sequence:
+    - Group:
         - ID: Bulk Exfiltration
           RuleID: AWS.S3.CopyObjectToExternalAccountBucket
           MinMatchCount: 10
         - ID: Bulk Deletion
           RuleID: AWS.S3.DeleteObject
           MinMatchCount: 10
-      Transitions:
-        - ID: Bulk Exfiltration to Bulk Deletion on Same Source Bucket
-          From: Bulk Exfiltration
-          To: Bulk Deletion
-          WithinTimeFrameMinutes: 15
-          Match:
-            - On: p_alert_context.bucketName
+      MatchCriteria:
+        field_name:
+          - GroupID: Bulk Exfiltration
+            Match: p_alert_context.bucketName
+          - GroupID: Bulk Deletion
+            Match: p_alert_context.bucketName
       Schedule:
-        RateMinutes: 1440
+        RateMinutes: 15
         TimeoutMinutes: 10
-      LookbackWindowMinutes: 2160
+      LookbackWindowMinutes: 30
 Tests:
   - Name: Ransomware Attack Sequence
     ExpectedResult: true

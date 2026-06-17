@@ -56,7 +56,7 @@ def severity(event):
         return "High"
 
     # Fallback method in case the admin scope is not directly mentioned in entity for whatever
-    if "admin" in event.deep_get("details", "new_scope", default=[]):
+    if "admin" in event.deep_get("details", "new_scopes", default=[]):
         return "High"
 
     if "admin" in event.deep_get("details", "bot_scopes", default=[]):

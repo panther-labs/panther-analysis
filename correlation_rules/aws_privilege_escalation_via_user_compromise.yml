@@ -1,5 +1,5 @@
 AnalysisType: correlation_rule
-RuleID: "AWS.Privilege.Escalation.Via.User.Compromise"
+RuleID: "AWS.Privilege.Escalation.Via.User.Compromise.Group"
 DisplayName: "AWS Privilege Escalation Via User Compromise"
 Enabled: true
 Severity: Medium
@@ -7,22 +7,21 @@ Reports:
   MITRE ATT&CK:
     - TA0004:T1098.001 # Additional Cloud Credentials
 Detection:
-    - Sequence:
+    - Group:
         - ID: User Backdoored
           RuleID: AWS.IAM.Backdoor.User.Keys
         - ID: User Accessed
           RuleID: AWS.CloudTrail.UserAccessKeyAuth
-      Transitions:
-        - ID: User Backdoored TO User Accessed ON IP Addr
-          From: User Backdoored
-          To: User Accessed
-          WithinTimeFrameMinutes: 60
-          Match:
-            - On: p_alert_context.ip_accessKeyId
+      MatchCriteria:
+        field_name:
+          - GroupID: User Backdoored
+            Match: p_alert_context.ip_accessKeyId
+          - GroupID: User Accessed
+            Match: p_alert_context.ip_accessKeyId
       Schedule:
-        RateMinutes: 1440
+        RateMinutes: 40
         TimeoutMinutes: 10
-      LookbackWindowMinutes: 2160
+      LookbackWindowMinutes: 60
 Tests:
     - Name: Access Key Created and Used from Same IP
       ExpectedResult: true

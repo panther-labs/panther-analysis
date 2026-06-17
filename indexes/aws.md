@@ -44,6 +44,8 @@
   - An Amazon Machine Image (AMI) was modified to allow it to be launched by anyone. Any sensitive configuration or application data stored in the AMI's block devices is at risk.
 - [Anomalous AccessDenied Requests](../queries/aws_queries/anomalous_access_denied_query.yml)
   - ARNs with a high Access Denied error rate could indicate an error or compromised credentials attempting to perform reconnaissance.
+- [AWS Administrative IAM User Created](../correlation_rules/aws_create_admin_iam_user.yml)
+  - Identifies when an Administrative IAM user is creates. This could indicate a potential security breach.
 - [AWS Authentication from CrowdStrike Unmanaged Device](../queries/crowdstrike_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device_Query.yml)
   - Detects AWS Authentication events with IP Addresses not found in CrowdStrike's AIP List
 - [AWS Authentication from CrowdStrike Unmanaged Device (crowdstrike_fdrevent table)](../queries/aws_queries/AWS_Authentication_from_CrowdStrike_Unmanaged_Device_FDREvent.yml)
@@ -94,7 +96,7 @@
 - [AWS Console GetSigninToken Potential Abuse](../rules/aws_cloudtrail_rules/aws_console_getsignintoken.yml)
   - Detects GetSigninToken calls from non-SSO user agents. An adversary can use tools like aws_consoler to convert compromised CLI credentials into a federated console session, bypassing MFA requirements and obscuring the original access key. The GetSigninToken API creates temporary console access from STS temporary credentials.
 - [AWS Console Login](../rules/aws_cloudtrail_rules/aws_console_login.yml)
-- [AWS Console Sign-In NOT PRECEDED BY Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
+- [AWS Console Sign-In WITHOUT Okta Redirect](../correlation_rules/aws_console_sign-in_without_okta.yml)
   - A user has logged into the AWS console without authenticating via Okta.  This rule requires AWS SSO via Okta and both log sources configured.
 - [AWS Decrypt SSM Parameters](../rules/aws_cloudtrail_rules/aws_ssm_decrypt_ssm_params.yml)
   - Identify principals retrieving a high number of SSM Parameters of type 'SecretString'. This rule filters out known administrative roles that legitimately need bulk parameter access.
@@ -189,7 +191,7 @@
   - Returns S3 GetObject events where a user has downloaded more than the configured threshold  of data within the specified time window. Supports filtering by bucket patterns and user types.
 - [AWS S3 Object Copied to External Account Bucket](../rules/aws_cloudtrail_rules/aws_s3_copy_object_to_external_account_bucket.yml)
   - Detects when an S3 object is copied from one bucket to another bucket in a different AWS account. This could indicate data exfiltration or a ransomware attack where data is copied to an attacker-controlled account.
-- [AWS S3 Object Exfiltration FOLLOWED BY Object Deletion](../correlation_rules/aws_s3_exfiltration_and_deletion.yml)
+- [AWS S3 Object Exfiltration WITH Object Deletion](../correlation_rules/aws_s3_exfiltration_and_deletion.yml)
   - Detects a ransomware attack pattern where an attacker with compromised AWS credentials exfiltrates data from an S3 bucket to an external AWS account, followed by bulk deletion of objects from the source bucket within a short timeframe. This technique was notably used by the threat actor Bling Libra to extort victims by threatening data destruction or leaks.
 - [AWS S3 Ransomware Note Upload Detection](../rules/aws_cloudtrail_rules/aws_s3_ransomware_note_upload.yml)
   - This rule detects when files with names commonly associated with ransomware notes are uploaded to S3 buckets. Ransomware attackers often drop ransom notes with distinctive filenames like HOW_TO_DECRYPT_FILES.txt, RANSOM_NOTE.txt, FILES_ENCRYPTED.html, or similar patterns to inform victims about the encryption and provide payment instructions.
@@ -234,8 +236,6 @@
   - Detects when logs for a VPC have been removed.
 - [AWS WAF Disassociation](../rules/aws_cloudtrail_rules/aws_waf_disassociation.yml)
   - Detects when AWS WAF is disassociated from protected resources such as Application Load Balancers, API Gateway, CloudFront, or AppSync. Removing WAF protection exposes applications to SQL injection, XSS, DDoS attacks, and OWASP Top 10 vulnerabilities. Attackers often disable WAF before launching attacks, or this may indicate misconfiguration or unauthorized changes.
-- [AWS.Administrative.IAM.User.Created](../correlation_rules/aws_create_admin_iam_user.yml)
-  - Identifies when an Administrative IAM user is creates. This could indicate a potential security breach.
 - [AWS.CloudTrail.UserAccessKeyAuth](../rules/aws_cloudtrail_rules/aws_cloudtrail_useraccesskeyauth.yml)
 - [Brute Force By IP](../rules/standard_rules/brute_force_by_ip.yml)
   - An actor user was denied login access more times than the configured threshold.
@@ -322,7 +322,7 @@
 - [Root Account Access Key Created](../rules/aws_cloudtrail_rules/aws_root_access_key_created.yml)
   - Detects creation of programmatic access keys for the AWS root account, which violates critical security best practices. Root account credentials provide unrestricted access to all AWS resources and cannot be scoped with granular permissions. If compromised, these keys grant attackers complete control over the AWS environment including billing and account closure capabilities.
 - [Root Account Activity](../rules/aws_cloudtrail_rules/aws_root_activity.yml)
-  - Root account activity was detected.
+  - Root account activity that modifies AWS resources or configuration was detected. Read-only root events (enumeration, console reads) are excluded — only impactful root actions trigger this rule.
 - [Root Console Login](../rules/aws_cloudtrail_rules/aws_console_root_login.yml)
   - The root account has been logged into.
 - [Root Password Changed](../rules/aws_cloudtrail_rules/aws_root_password_changed.yml)
@@ -351,7 +351,7 @@
   - Detects sensitive or unusual API calls that might indicate lateral movement, reconnaissance, or other malicious activities through VPC Endpoints. Only available for CloudTrail, EC2, KMS, S3, and Secrets Manager services.
 - [Sign In from Rogue State](../rules/standard_rules/sign_in_from_rogue_state.yml)
   - Detects when an entity signs in from a nation associated with cyber attacks
-- [StopInstance FOLLOWED BY ModifyInstanceAttributes](../correlation_rules/aws_cloudtrail_stopinstance_followed_by_modifyinstanceattributes.yml)
+- [StopInstance WITH ModifyInstanceAttributes](../correlation_rules/aws_cloudtrail_stopinstance_followed_by_modifyinstanceattributes.yml)
   - Identifies when StopInstance and ModifyInstanceAttributes CloudTrail events occur in a short period of time. Since EC2 startup scripts cannot be modified without first stopping the instance, StopInstances should be a signal.
 - [Unused AWS Region](../rules/aws_cloudtrail_rules/aws_unused_region.yml)
   - CloudTrail logged non-read activity from a verboten AWS region.
@@ -787,7 +787,7 @@
   - Alerts if outbound DNS traffic is detected to a non-approved DNS server. DNS is often used as a means to exfiltrate data or perform command and control for compromised hosts. All DNS traffic should be routed through internal DNS servers or trusted 3rd parties.
 - [VPC Flow Port Scanning](../queries/aws_queries/anomalous_vpc_port_activity_query.yml)
   - Instances of a srcAddr communicating with multiple ports on a dstAddr could indicate port scanning activity.
-- [Wiz Issue Followed By SSH to EC2 Instance](../correlation_rules/wiz_issue_followed_by_ssh.yml)
+- [Wiz Issue WITH SSH to EC2 Instance](../correlation_rules/wiz_issue_followed_by_ssh.yml)
   - Wiz detected a security issue with an EC2 instance followed by an SSH connection to the instance. This sequence could indicate a potential security breach.
 
 
