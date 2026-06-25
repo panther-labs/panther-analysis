@@ -38,9 +38,9 @@ Detection:
         - GroupID: ArtifactDownload
           Match: workflow_job.run_id
     EventEvaluationOrder: Chronological
-    LookbackWindowMinutes: 90
+    LookbackWindowMinutes: 1800
     Schedule:
-      RateMinutes: 60
+      RateMinutes: 1440
       TimeoutMinutes: 10
 Tests:
   - Name: cross-fork workflow with artifact download

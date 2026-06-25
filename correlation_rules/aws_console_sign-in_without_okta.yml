@@ -23,9 +23,9 @@ Detection:
           - GroupID: AWS Console Sign-In
             Match: userIdentity.userName
       Schedule:
-        RateMinutes: 10
+        RateMinutes: 1440
         TimeoutMinutes: 5
-      LookbackWindowMinutes: 15
+      LookbackWindowMinutes: 1800
 Tests:
   - Name: AWS Console Sign-In PRECEDED BY Okta Redirect
     ExpectedResult: false

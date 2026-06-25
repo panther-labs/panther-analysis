@@ -33,9 +33,9 @@ Detection:
           - GroupID: PrivilegedOperation
             Match: p_alert_context.principal
       Schedule:
-        RateMinutes: 20
+        RateMinutes: 1440
         TimeoutMinutes: 10
-      LookbackWindowMinutes: 30
+      LookbackWindowMinutes: 1800
 Tags:
     - attack.privilege_escalation
     - attack.t1548

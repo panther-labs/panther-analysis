@@ -38,9 +38,9 @@ Detection:
           Match: p_alert_context.bucketName
         - GroupID: MFA Delete Disabled
           Match: p_alert_context.bucketName
-    LookbackWindowMinutes: 90
+    LookbackWindowMinutes: 1800
     Schedule:
-      RateMinutes: 60
+      RateMinutes: 1440
       TimeoutMinutes: 10
 Tests:
   - Name: Suspicious Security Control Disabling

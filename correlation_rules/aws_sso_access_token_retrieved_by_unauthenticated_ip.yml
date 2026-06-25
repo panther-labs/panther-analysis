@@ -22,9 +22,9 @@ Detection:
           - GroupID: SSO Access Token Retrieved
             Match: sourceIPAddress
       Schedule:
-        RateMinutes: 80
+        RateMinutes: 1440
         TimeoutMinutes: 5
-      LookbackWindowMinutes: 120
+      LookbackWindowMinutes: 1800
 Tests:
   - Name: AWS SSO Access Token Retrieved by Authenticated IP
     ExpectedResult: false

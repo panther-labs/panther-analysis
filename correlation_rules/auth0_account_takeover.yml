@@ -24,9 +24,9 @@ Detection:
           - GroupID: DeleteUser
             Match: p_alert_context.actor.email
       Schedule:
-        RateMinutes: 10
+        RateMinutes: 1440
         TimeoutMinutes: 5
-      LookbackWindowMinutes: 15
+      LookbackWindowMinutes: 1800
 Tests:
     - Name: New Admin Invited FOLLOWED BY Tenant Member Account Deletion
       ExpectedResult: true

@@ -22,9 +22,9 @@ Detection:
             Match: p_alert_context.request_username
           - GroupID: AttachAdminUserPolicy
             Match: p_alert_context.request_username
-      LookbackWindowMinutes: 60
+      LookbackWindowMinutes: 1800
       Schedule:
-        RateMinutes: 40
+        RateMinutes: 1440
         TimeoutMinutes: 5
 Tests:
     - Name: User Created, Followed By Admin Policy Attachment

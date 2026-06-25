@@ -19,9 +19,9 @@ Detection:
           - GroupID: User Accessed
             Match: p_alert_context.ip_accessKeyId
       Schedule:
-        RateMinutes: 40
+        RateMinutes: 1440
         TimeoutMinutes: 10
-      LookbackWindowMinutes: 60
+      LookbackWindowMinutes: 1800
 Tests:
     - Name: Access Key Created and Used from Same IP
       ExpectedResult: true
