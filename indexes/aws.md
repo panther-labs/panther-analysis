@@ -142,7 +142,6 @@
   - Identifies when a permission is added to a Lambda function, which could indicate a potential security risk.
 - [AWS Potentially Stolen Service Role](../queries/aws_queries/aws_potentially_compromised_service_role_query.yml)
   - A role was assumed by an AWS service, followed by a user within 24 hours.  This could indicate a stolen or compromised AWS service role.
-- [AWS Privilege Escalation Via User Compromise](../correlation_rules/aws_privilege_escalation_via_user_compromise.yml)
 - [AWS Public RDS Restore](../rules/aws_cloudtrail_rules/aws_rds_publicrestore.yml)
   - Detects the recovery of a new public database instance from a snapshot. It may be part of data exfiltration.
 - [AWS RDS Activity Stream Stopped](../rules/aws_cloudtrail_rules/aws_rds_activity_stream_stopped.yml)
@@ -231,7 +230,6 @@
   - Detects AWS API key creation for a user by another user. Backdoored users can be used to obtain persistence in the AWS environment.
 - [AWS User Login Profile Created or Modified](../rules/aws_cloudtrail_rules/aws_cloudtrail_loginprofilecreatedormodified.yml)
   - An attacker with iam:UpdateLoginProfile permission on other users can change the password used to login to the AWS console. May be legitimate account administration.
-- [AWS User Takeover Via Password Reset](../correlation_rules/aws_user_takeover_via_password_reset.yml)
 - [AWS VPC Flow Logs Removed](../rules/aws_cloudtrail_rules/aws_vpc_flow_logs_deleted.yml)
   - Detects when logs for a VPC have been removed.
 - [AWS WAF Disassociation](../rules/aws_cloudtrail_rules/aws_waf_disassociation.yml)
