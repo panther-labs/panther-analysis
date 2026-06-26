@@ -1,7 +1,7 @@
 AnalysisType: correlation_rule
 RuleID: "AWS.SSO.Access.Token.Retrieved.by.Unauthenticated.IP.Group"
 DisplayName: "AWS SSO Access Token Retrieved by Unauthenticated IP"
-Enabled: true
+Enabled: false
 Severity: Medium
 Description: |-
     When using AWS in an enterprise environment, best practices dictate to use a single sign-on service for identity and access management. AWS SSO is a popular solution, integrating with third-party providers such as Okta and allowing to centrally manage roles and permissions in multiple AWS accounts.
@@ -22,9 +22,9 @@ Detection:
           - GroupID: SSO Access Token Retrieved
             Match: sourceIPAddress
       Schedule:
-        RateMinutes: 80
+        RateMinutes: 1440
         TimeoutMinutes: 5
-      LookbackWindowMinutes: 120
+      LookbackWindowMinutes: 1800
 Tests:
   - Name: AWS SSO Access Token Retrieved by Authenticated IP
     ExpectedResult: false

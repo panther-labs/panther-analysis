@@ -1,7 +1,7 @@
 AnalysisType: correlation_rule
 RuleID: "Notion.Login.WITH.AccountChange"
 DisplayName: "Notion Login WITH AccountChange"
-Enabled: true
+Enabled: false
 Severity: Medium
 Description: A Notion User logged in then changed their account details.
 Reference: https://www.notion.so/help/account-settings
@@ -21,9 +21,9 @@ Detection:
             Match: p_alert_context.actor_id
           - GroupID: AccountChange
             Match: p_alert_context.actor_id
-      LookbackWindowMinutes: 15
+      LookbackWindowMinutes: 1800
       Schedule:
-        RateMinutes: 10
+        RateMinutes: 1440
         TimeoutMinutes: 5
 Tests:
     - Name: Login, Followed By AccountChange within short time

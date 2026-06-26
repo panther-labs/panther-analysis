@@ -1,7 +1,7 @@
 AnalysisType: correlation_rule
 RuleID: "OpenAI.BruteForce.Login.Success.Group"
 DisplayName: "OpenAI Brute Force Login Success"
-Enabled: true
+Enabled: false
 Severity: High
 Description: |
   Detects successful credential stuffing or brute force attacks against OpenAI accounts.
@@ -38,9 +38,9 @@ Detection:
         - GroupID: Successful Login
           Match: p_any_emails
     Schedule:
-      RateMinutes: 20
+      RateMinutes: 1440
       TimeoutMinutes: 5
-    LookbackWindowMinutes: 30
+    LookbackWindowMinutes: 1800
 Tests:
   - Name: "5 Failed Logins FOLLOWED BY Successful Login"
     ExpectedResult: true
