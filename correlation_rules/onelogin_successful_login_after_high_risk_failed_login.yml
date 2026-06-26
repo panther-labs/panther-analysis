@@ -1,7 +1,7 @@
 AnalysisType: correlation_rule
 RuleID: "OneLogin.HighRiskFailedLogin.WITH.SuccessfulLogin"
 DisplayName: "OneLogin High Risk Failed Login WITH Successful Login"
-Enabled: true
+Enabled: false
 Severity: Medium
 Description: A OneLogin user successfully logged in after a failed high-risk login attempt.
 Reference: https://resources.onelogin.com/OneLogin_RiskBasedAuthentication-WP-v5.pdf
@@ -21,9 +21,9 @@ Detection:
             Match: user_name
           - GroupID: SuccessfulLogin
             Match: user_name
-      LookbackWindowMinutes: 15
+      LookbackWindowMinutes: 1800
       Schedule:
-        RateMinutes: 10
+        RateMinutes: 1440
         TimeoutMinutes: 5
 Tests:
     - Name: High Risk Failed Login FOLLOWED BY Successful Login within short time
@@ -51,7 +51,7 @@ Tests:
           Matches:
             user_name:
               'Some_user':
-                - "2024-06-01T11:01:01Z"
+                - "2024-06-03T10:01:01Z"
     - Name: High Risk Failed Login FOLLOWED BY Successful Login of other user
       ExpectedResult: false
       RuleOutputs:

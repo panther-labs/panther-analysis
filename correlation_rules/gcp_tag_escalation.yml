@@ -1,7 +1,7 @@
 AnalysisType: correlation_rule
 RuleID: "GCP.Privilege.Escalation.Via.TagBinding.Group"
 DisplayName: "GCP Privilege Escalation via TagBinding"
-Enabled: true
+Enabled: false
 Severity: Info
 Description: >
   Detects a sequence of events that could indicate a privilege escalation attempt
@@ -33,9 +33,9 @@ Detection:
           - GroupID: PrivilegedOperation
             Match: p_alert_context.principal
       Schedule:
-        RateMinutes: 20
+        RateMinutes: 1440
         TimeoutMinutes: 10
-      LookbackWindowMinutes: 30
+      LookbackWindowMinutes: 1800
 Tags:
     - attack.privilege_escalation
     - attack.t1548

@@ -1,7 +1,7 @@
 AnalysisType: correlation_rule
 RuleID: "Azure.Storage.BlobUpload.WITH.CPKEncryptionError"
 DisplayName: "Azure Storage Blob Upload WITH CPK Encryption Error"
-Enabled: true
+Enabled: false
 Severity: High
 Description: >
   Detects potential CPK-based ransomware attacks on Azure Storage by correlating blob
@@ -32,9 +32,9 @@ Detection:
           - GroupID: CPK Access Denied
             Match: p_alert_context.blob_path
       Schedule:
-        RateMinutes: 40
+        RateMinutes: 1440
         TimeoutMinutes: 5
-      LookbackWindowMinutes: 60
+      LookbackWindowMinutes: 1800
 Tests:
   - Name: CPK Ransomware Pattern
     ExpectedResult: true

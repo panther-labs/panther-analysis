@@ -1,7 +1,7 @@
 AnalysisType: correlation_rule
 RuleID: "GitHub.ArtifactDownload.FROM.CrossFork.Workflow"
 DisplayName: "GitHub Artifact Download from Cross-Fork Workflow"
-Enabled: true
+Enabled: false
 Severity: Medium
 Tags:
   - CI/CD
@@ -38,9 +38,9 @@ Detection:
         - GroupID: ArtifactDownload
           Match: workflow_job.run_id
     EventEvaluationOrder: Chronological
-    LookbackWindowMinutes: 90
+    LookbackWindowMinutes: 1800
     Schedule:
-      RateMinutes: 60
+      RateMinutes: 1440
       TimeoutMinutes: 10
 Tests:
   - Name: cross-fork workflow with artifact download
