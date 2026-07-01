@@ -2,6 +2,7 @@ import ipaddress
 import re
 
 from panther_aws_helpers import aws_rule_context
+from panther_ipinfo_helpers import get_ipinfo_asn
 
 # IMDS credentials appear as assumed-role sessions where the session name
 # is an EC2 instance ID (i-xxxxxxxxxxxxxxxxx)
@@ -32,6 +33,14 @@ def _is_private_ip(ip_str):
         return False
 
 
+def _is_amazon_domain(event):
+    """Check if the source IP's ipinfo ASN enrichment resolves to an amazon.com domain."""
+    ipinfo_asn = get_ipinfo_asn(event)
+    if not ipinfo_asn:
+        return False
+    return ipinfo_asn.domain("sourceIPAddress") == "amazon.com"
+
+
 def rule(event):
     arn = event.deep_get("userIdentity", "arn", default="")
     if not INSTANCE_SESSION_PATTERN.search(arn):
@@ -50,6 +59,14 @@ def rule(event):
     if source_ip in INTERNAL_IPS or source_ip.endswith(".amazonaws.com"):
         return False
     return _is_valid_ip(source_ip) and not _is_private_ip(source_ip)
+
+
+def severity(event):
+    # Source IPs that resolve to an amazon.com ASN domain are lower risk
+    # (e.g. AWS-managed infrastructure making calls on the instance's behalf)
+    if _is_amazon_domain(event):
+        return "INFO"
+    return "DEFAULT"
 
 
 def title(event):
