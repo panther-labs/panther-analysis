@@ -119,6 +119,9 @@ def analyze_yaml(detection_yaml):
     if 'SnowflakeQuery' in detection_yaml:
         rv['SnowflakeQuery'] = detection_yaml['SnowflakeQuery']
 
+    if 'DatabricksQuery' in detection_yaml:
+        rv['DatabricksQuery'] = detection_yaml['DatabricksQuery']
+
     if 'Description' in detection_yaml:
         # strip newlines from end
         rv["Description"] = detection_yaml["Description"].strip()
@@ -167,12 +170,16 @@ def extract_log_types_from_yaml(yaml, query_lookup, logtype_lookup):
                     sql = query_yaml['Query']
                 elif 'SnowflakeQuery' in query_yaml:
                     sql = query_yaml['SnowflakeQuery']
+                elif 'DatabricksQuery' in query_yaml:
+                    sql = query_yaml['DatabricksQuery']
                 return extract_logtypes_from_sql(sql, logtype_lookup)
 
     if 'Query' in yaml:
         return extract_logtypes_from_sql(yaml['Query'], logtype_lookup)
     if 'SnowflakeQuery' in yaml:
         return extract_logtypes_from_sql(yaml['SnowflakeQuery'], logtype_lookup)
+    if 'DatabricksQuery' in yaml:
+        return extract_logtypes_from_sql(yaml['DatabricksQuery'], logtype_lookup)
     if yaml['AnalysisType'] == 'correlation_rule' and 'Detection' in yaml:
         log_types = []
         for detection in yaml['Detection']:
