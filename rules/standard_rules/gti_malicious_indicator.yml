@@ -167,3 +167,42 @@ Tests:
               suspicious: 0
               harmless: 0
               undetected: 0
+  - Name: "Known Benign Indicator - No Malicious Detections"
+    ExpectedResult: false
+    Log:
+      p_any_ip_addresses:
+        - "198.51.100.42"
+      p_log_type: "AWS.VPCFlow"
+      p_enrichment:
+        vt_iocstream:
+          "198.51.100.42":
+            id: "198.51.100.42"
+            type: "ip_address"
+            reputation: 40
+            country: "US"
+            as_owner: "Example Cloud Provider"
+            last_analysis_stats:
+              malicious: 0
+              suspicious: 0
+              harmless: 80
+              undetected: 4
+  - Name: "Multiple LUT Matches For Same Value - List-Shaped Enrichment"
+    ExpectedResult: true
+    Log:
+      p_any_sha256_hashes:
+        - "1111111111111111111111111111111111111111111111111111111111111111"
+      p_log_type: "Crowdstrike.FDREvent"
+      p_enrichment:
+        vt_iocstream:
+          "1111111111111111111111111111111111111111111111111111111111111111":
+            - id: "1111111111111111111111111111111111111111111111111111111111111111"
+              type: "file"
+              gti_url: "https://www.virustotal.com/gui/file/1111111111111111111111111111111111111111111111111111111111111111"
+              last_analysis_stats:
+                malicious: 42
+                suspicious: 1
+                harmless: 0
+                undetected: 15
+              threat_severity:
+                threat_severity_level: "SEVERITY_HIGH"
+                level_description: "Severity HIGH because it was considered trojan."

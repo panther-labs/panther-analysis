@@ -16,6 +16,13 @@ INDICATOR_FIELDS = (
 MATCHED_INDICATORS = {}  # {indicator: indicator_type}
 
 
+def _first(value):
+    """Collapse a possibly list-shaped lookup value (multiple LUT hits) to a single value."""
+    if isinstance(value, list):
+        return next((entry for entry in value if entry), None)
+    return value
+
+
 def rule(event):
     global MATCHED_INDICATORS  # pylint: disable=global-statement
     MATCHED_INDICATORS = {}
@@ -28,8 +35,10 @@ def rule(event):
         for value in event.get(field, []) or []:
             if value in MATCHED_INDICATORS:
                 continue
-            indicator_type = gti.indicator_type(value)
+            indicator_type = _first(gti.indicator_type(value))
             if not indicator_type:
+                continue
+            if not gti.is_malicious(value):
                 continue
             MATCHED_INDICATORS[value] = indicator_type
 

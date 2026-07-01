@@ -495,6 +495,28 @@ class TestGreyNoiseV3ScannerIntelligence(
         self.assertEqual(scanner.cve_list("nonexistent"), [])
         self.assertEqual(scanner.tag_names("nonexistent"), [])
 
+    def test_find_lut_name_handles_list_shaped_match(self):
+        event = PantherEvent(
+            {
+                "p_enrichment": {
+                    "my_custom_greynoise_noise": {
+                        "MultiMatch": [
+                            {
+                                "ip": "142.93.204.250",
+                                "internet_scanner_intelligence": {
+                                    "classification": "malicious",
+                                    "found": True,
+                                },
+                            }
+                        ]
+                    }
+                }
+            }
+        )
+        scanner = p_greynoise_h.GetGreyNoiseV3Object(event)
+        self.assertIsNotNone(scanner)
+        self.assertEqual(scanner.classification("MultiMatch"), ["malicious"])
+
 
 class TestGreyNoiseV3BusinessService(unittest.TestCase):
     def setUp(self):
@@ -735,6 +757,26 @@ class TestOTXPulseIntelligence(unittest.TestCase):
     def test_no_match_field(self):
         otx = p_otx_h.get_otx_object(self.event)
         self.assertIsNone(otx.indicator("NonExistentField"))
+
+    def test_find_lut_name_handles_list_shaped_match(self):
+        event = PantherEvent(
+            {
+                "p_enrichment": {
+                    "pulses_otx": {
+                        "MultiMatch": [
+                            {
+                                "id": "6141bd9b4e9aaa4bdd26b2a8",
+                                "indicator": "198.51.100.23",
+                                "indicator_type": "IPv4",
+                            }
+                        ]
+                    }
+                }
+            }
+        )
+        otx = p_otx_h.get_otx_object(event)
+        self.assertIsNotNone(otx)
+        self.assertEqual(otx.indicator_type("MultiMatch"), ["IPv4"])
 
     def test_severity_adversary_and_malware(self):
         sev = p_otx_h.otx_severity_from_pulse("APT28", ["X-Agent"])
@@ -1012,6 +1054,59 @@ class TestGTIIntelligence(unittest.TestCase):
         self.assertEqual(ctx["ThreatNames"], ["remcos", "rescoms"])
         self.assertIsNotNone(ctx["FirstSubmissionDate"])
         self.assertIsNotNone(ctx["LastAnalysisDate"])
+
+    def test_is_malicious_true_from_detections(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertTrue(gti.is_malicious("FileHash"))
+
+    def test_is_malicious_false_when_benign(self):
+        event = PantherEvent(
+            {
+                "p_enrichment": {
+                    "vt_iocstream": {
+                        "BenignIP": {
+                            "id": "198.51.100.42",
+                            "type": "ip_address",
+                            "gti_url": "https://www.virustotal.com/gui/ip-address/198.51.100.42",
+                            "last_analysis_stats": {
+                                "malicious": 0,
+                                "suspicious": 0,
+                                "harmless": 80,
+                                "undetected": 4,
+                            },
+                        }
+                    }
+                }
+            }
+        )
+        gti = p_gti_h.get_gti_object(event)
+        self.assertFalse(gti.is_malicious("BenignIP"))
+
+    def test_find_gti_lut_name_handles_list_shaped_match(self):
+        event = PantherEvent(
+            {
+                "p_enrichment": {
+                    "vt_iocstream": {
+                        "MultiMatch": [
+                            {
+                                "id": FAKE_SHA256,
+                                "type": "file",
+                                "gti_url": FAKE_GTI_URL,
+                                "last_analysis_stats": {
+                                    "malicious": 42,
+                                    "suspicious": 1,
+                                    "harmless": 0,
+                                    "undetected": 15,
+                                },
+                            }
+                        ]
+                    }
+                }
+            }
+        )
+        gti = p_gti_h.get_gti_object(event)
+        self.assertIsNotNone(gti)
+        self.assertEqual(gti.malicious_count("MultiMatch"), [42])
 
 
 class TestIpInfoHelpersLocation(unittest.TestCase):

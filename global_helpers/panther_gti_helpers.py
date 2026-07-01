@@ -65,14 +65,22 @@ def _find_gti_lut_name(event) -> str:
     presence of VT-distinctive fields ('gti_url' or 'last_analysis_stats') in the
     matched values rather than a fixed name/suffix.
     """
+
+    def _is_gti_match(match_data) -> bool:
+        return hasattr(match_data, "get") and (
+            match_data.get("gti_url") or match_data.get("last_analysis_stats")
+        )
+
     enrichment = event.deep_get("p_enrichment", default={})
     for lut_name, lut_values in enrichment.items():
         if not hasattr(lut_values, "values"):
             continue
         for match_data in lut_values.values():
-            if not hasattr(match_data, "get"):
+            if isinstance(match_data, Sequence) and not isinstance(match_data, str):
+                if any(_is_gti_match(entry) for entry in match_data):
+                    return lut_name
                 continue
-            if match_data.get("gti_url") or match_data.get("last_analysis_stats"):
+            if _is_gti_match(match_data):
                 return lut_name
     return None
 
@@ -146,6 +154,26 @@ class GTIIntelligence(LookupTableMatches):
 
     def undetected_count(self, match_field: str) -> Union[list[int], int]:
         return self._analysis_stat(match_field, "undetected")
+
+    def is_malicious(self, match_field: str) -> bool:
+        """Whether GTI/VirusTotal considers this indicator malicious.
+
+        True if any vendor flagged it malicious or GTI assigned a threat severity level.
+        A known indicator with no malicious detections and no severity (e.g. a benign,
+        well-catalogued IP/domain) is not considered malicious.
+        """
+        malicious_count = self.malicious_count(match_field)
+        counts = malicious_count if isinstance(malicious_count, list) else [malicious_count]
+        if any((count or 0) > 0 for count in counts):
+            return True
+
+        threat_severity_level = self.threat_severity_level(match_field)
+        levels = (
+            threat_severity_level
+            if isinstance(threat_severity_level, list)
+            else [threat_severity_level]
+        )
+        return any((level or "").upper() in _LEVEL_TO_SEVERITY for level in levels)
 
     # Threat classification fields
     def threat_severity_level(self, match_field: str) -> Union[list[str], str]:
