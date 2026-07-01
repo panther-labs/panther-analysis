@@ -1,0 +1,249 @@
+AnalysisType: "skill"
+SkillName: "gcp_blast_radius"
+DisplayName: "GCP Blast Radius"
+Description: "Scoping workflow for a compromised GCP principal — user, service account, SA key, project, or GCE instance. Leads with the alerts and deployed detections Panther already has, then walks the service-account impersonation chain across projects and classifies actions by impact (reusing deployed detection logic, with ad-hoc Cloud Audit Log SQL only for the gaps) to produce an IR-style blast-radius timeline. Use whenever a GCP incident anchor is confirmed and the question is \"what else did they touch\"."
+Prompt: |
+  # GCP Blast Radius — Principal Scoping Workflow
+
+  Given a confirmed-compromised GCP principal, enumerate every API method that principal called,
+  every resource they touched, every service account they impersonated, every project they
+  reached, and every other entity that appeared alongside them. Produce an IR-style timeline and
+  a containment-advisory report.
+
+  **Not for**: confirming whether an indicator is malicious, scoping non-GCP principals, Google
+  Workspace activity (separate log source — admin/login/token/drive audit), drafting new
+  detections, or executing containment. Read-only and advisory.
+
+  **Reuse before you query.** Don't scope this principal in a vacuum with ad-hoc SQL. Lead with
+  what Panther already knows — alerts that fired on the principal, and deployed GCP detections /
+  scheduled queries that already encode these techniques. Hand-write Cloud Audit Log SQL only to
+  fill the gaps. The MITRE tactic / technique IDs in `gcp_security_knowledge` are the join
+  key for finding that coverage.
+
+  ---
+
+  ## Step 1 — Normalize the principal and pick an anchor time
+
+  Map what was given to the canonical `GCP.AuditLog` field. Use the fast `p_any_*` filter for the
+  initial sweep, then the audit field for detail.
+
+  | Principal type | Example | Fast filter | Audit field path |
+  |---|---|---|---|
+  | User | `alice@org.com` | `p_any_emails` | `protoPayload:authenticationInfo:principalEmail::VARCHAR` |
+  | Service account | `sa@proj.iam.gserviceaccount.com` | `p_any_emails` | `protoPayload:authenticationInfo:principalEmail::VARCHAR` |
+  | SA key | key name / id | n/a | `protoPayload:authenticationInfo:serviceAccountKeyName::VARCHAR` |
+  | Project | `proj-id` | n/a | `resource:labels:project_id::VARCHAR` |
+  | GCE instance | instance id | n/a | `resource:labels:instance_id::VARCHAR` |
+  | Caller IP | `203.0.113.10` | `p_any_ip_addresses` | `protoPayload:requestMetadata:callerIp::VARCHAR` |
+
+  **Anchor time (T0)**: ask the analyst; if unknown, anchor on the earliest alert involving the
+  principal. Note the principal's **identity type** (human vs service account vs default SA) using
+  `gcp_security_knowledge` "Reading GCP identifiers" — default SAs (`appspot`, `developer`)
+  are over-privileged and widen the blast radius.
+
+  ---
+
+  ## Step 2 — Anchor on what Panther already knows
+
+  Before any SQL, pull existing signal — free, fast, and scope-shaping:
+  - **Alerts already fired on this principal** — `panther_ai_alerts_list` filtered by the
+    principal's identifiers (email, project, caller IP). Each alert is a confirmed-suspicious
+    method call with rule, severity, triage state — and often a better T0.
+  - **Deployed detections + reusable query logic** — `panther_ai_detections_list` (filter by GCP
+    log type or the MITRE tactics in `gcp_security_knowledge`) and
+    `panther_ai_datalake_list_saved_queries`. Prefer executing a matching saved query with
+    `panther_ai_datalake_execute_saved_query` over inventing SQL.
+
+  ---
+
+  ## Step 3 — Discover available GCP log sources
+
+  Call `panther_ai_log_sources_list` / `panther_ai_log_types_list` to confirm which GCP log types
+  are ingested and healthy (`GCP.AuditLog` Admin Activity / Data Access / System Event, plus VPC
+  Flow, HTTP LB). A healthy source with events in the window but no query coverage is a visibility
+  gap — call it out.
+
+  ---
+
+  ## Step 4 — Build the activity timeline (tiered windows)
+
+  If a deployed saved/scheduled query (from Step 2) already returns principal-scoped audit
+  activity, execute it with `panther_ai_datalake_execute_saved_query` first. Only when none fits,
+  fall back to `panther_ai_datalake_execute_sql` with this template — the gap-filler, not the
+  default.
+
+  ```sql
+  SELECT p_event_time,
+         protoPayload:methodName::VARCHAR                        AS method,
+         protoPayload:serviceName::VARCHAR                       AS service,
+         protoPayload:authenticationInfo:principalEmail::VARCHAR AS principal,
+         protoPayload:resourceName::VARCHAR                      AS resource,
+         protoPayload:requestMetadata:callerIp::VARCHAR          AS caller_ip,
+         resource:labels:project_id::VARCHAR                     AS project,
+         protoPayload:authorizationInfo[0]:granted::BOOLEAN      AS granted
+  FROM panther_logs.public.gcp_auditlog
+  WHERE ARRAY_CONTAINS('{principal_email}'::VARIANT, p_any_emails)
+    AND p_event_time BETWEEN DATEADD('day', -3, '{T0}') AND DATEADD('day', 3, '{T0}')
+  ORDER BY p_event_time ASC
+  LIMIT 1000
+  ```
+
+  The `p_any_emails` predicate is the user / service-account case — swap it for the anchor's
+  field from the Step 1 table when scoping a different principal type:
+  `protoPayload:authenticationInfo:serviceAccountKeyName::VARCHAR = '{key}'` (SA key),
+  `resource:labels:project_id::VARCHAR = '{project}'` (project),
+  `resource:labels:instance_id::VARCHAR = '{instance}'` (GCE instance), or
+  `ARRAY_CONTAINS('{ip}'::VARIANT, p_any_ip_addresses)` (caller IP).
+
+  **W1** tight (T0 ± 3d) → **W2** campaign window (first-to-last confirmed-malicious) → **W3**
+  full lookback (up to 90d, dormant precursors only; expect noise). Denied calls
+  (`granted = false`) are signal — keep them.
+
+  ---
+
+  ## Step 5 — Walk the service-account impersonation chain
+
+  GCP's identity-chaining analog is **SA impersonation**: a principal mints a token for a more
+  privileged service account, then acts as it — possibly across projects. Reconstruct the chain.
+
+  For every `GenerateAccessToken`, `GenerateIdToken`, `SignJwt`, or `SignBlob` (and
+  `iam.serviceAccounts.implicitDelegation`) by the principal, extract the target SA from
+  `protoPayload:resourceName` / `request`. Then re-run Step 4 with that SA as the principal. **Cap
+  chain depth at 3 hops.** Cross-project hops (different `project_id`) are high-signal — record
+  them prominently. `actAs` paired with a compute-create (`compute.instances.create`,
+  `cloudfunctions.functions.create`, `run.services.create`, `cloudbuild.builds.create`) is the
+  other escalation path — follow the SA the new resource runs as.
+
+  ---
+
+  ## Step 6 — Co-occurring entities (lateral candidates)
+
+  For events in Steps 4–5, pull the other `p_any_*` fields (`p_any_emails`, `p_any_ip_addresses`,
+  `p_any_domain_names`) to find SAs, users, and resources touched in the same calls. Cap entity
+  pivots at 2 hops.
+
+  ---
+
+  ## Step 7 — Classify actions by impact and map to deployed detections
+
+  Bucket the windowed methods using `gcp_security_knowledge` (discovery, credential access,
+  privilege escalation, persistence, defense evasion, lateral movement, data access / exfil,
+  impact); do not redefine the lists here. For each high-impact method record: method, when,
+  resource, `caller_ip`, and whether it was authorized.
+
+  Then close the loop against deployed coverage (reuse what Step 2 found):
+  - Resolve each classified method / chain to a deployed detection via the
+    `gcp_security_knowledge` "Mapping techniques to deployed detections" guidance
+    (single-method → rule, multi-step chain → correlation rule, volumetric → scheduled query). If
+    an alert already fired (Step 2), mark the action **covered & alerted**.
+  - A high-impact action with **no** deployed detection is a coverage-gap finding — record it and
+    route to `coverage_gap_analysis`.
+
+  ---
+
+  ## Step 8 — Output: Blast Radius Report
+
+  ```markdown
+  # GCP Blast Radius — <principal>
+
+  ## Principal Profile
+  - Identity type: <human / user-created SA / default SA>
+  - principalEmail: <…>
+  - SA key(s) used: <serviceAccountKeyName values, if applicable>
+  - Caller IPs observed: <list>
+  - User agents observed: <list — flag gcloud / SDK / unusual UAs>
+  - Anchor time (T0): <ISO timestamp>
+  - Windows examined: W1 <range>, W2 <range>, W3 <range if used>
+  - Log sources queried: <list, with unhealthy sources or visibility gaps called out>
+
+  ## Activity Timeline (W1)
+  | Time | Method | Service | Resource | Project | Caller IP | Result |
+  |---|---|---|---|---|---|---|
+
+  ## Impersonation Chain
+  | Hop | Source Principal | Target SA | Method | Project | Cross-project? |
+  |---|---|---|---|---|---|
+
+  ## Resources Touched
+  | Resource | Type | First Action | Last Action | Action Count | Impact |
+  |---|---|---|---|---|---|
+
+  ## High-Impact Actions Observed
+  ### Credential Access
+  - <method @ time, target, authorized?>
+
+  ### Privilege Escalation
+  - <...>
+
+  ### Persistence
+  - <...>
+
+  ### Defense Evasion
+  - <...>
+
+  ### Lateral Movement
+  - <...>
+
+  ### Data Access / Exfil
+  - <...>
+
+  ### Impact / Destruction
+  - <...>
+
+  ## Co-occurring Entities
+  | Entity | Type | Co-occurrence Count | Recommended Follow-up |
+  |---|---|---|---|
+
+  ## Existing Detection Coverage
+  - Alerts fired on this principal in window: <list>
+  - High-impact actions with no matching detection: <list — detection-gap findings>
+
+  ## Containment Recommendations (advisory only)
+  - Disable / delete SA key(s): <which>
+  - Revoke short-lived tokens — note already-minted tokens live until expiry, so also remove
+    the IAM bindings (`serviceAccountTokenCreator`, `serviceAccountUser`) that allow re-minting
+  - Remove IAM bindings added by or for the principal: <which>
+  - Review resources created by the principal (instances, functions, scheduler jobs): <list>
+  - Review role definitions changed (`UpdateRole`) and federation providers added: <list>
+
+  ## Caveats
+  - Co-occurring entities are correlation, not causation — confirm before declaring lateral movement.
+  - Denied calls (`granted = false`) reveal intent, not impact.
+  - Unhealthy / missing GCP log sources during the window: <list> — these are visibility gaps.
+  - If W3 (full lookback) was not run, dormant precursor activity may exist outside the window.
+  - Impersonation chain capped at 3 hops; deeper chains may exist.
+  - Google Workspace activity (admin / login / token / drive audit) is a separate log source
+    and is not covered here.
+  ```
+
+  ---
+
+  ## Constraints
+  - Read-only. Never disable a principal, revoke a key, or modify a binding from this skill —
+    recommendations only.
+  - Prefer reusing deployed detections and saved queries (`panther_ai_datalake_execute_saved_query`)
+    over ad-hoc SQL; `panther_ai_datalake_execute_sql` is the gap-filler.
+  - Every query needs a `LIMIT` and a `p_event_time` bound. Keep denied (`granted = false`) calls.
+  - Cap impersonation chain at 3 hops, entity pivots at 2 hops.
+  - Surface visibility gaps; if the principal doesn't match any field after Step 1, ask the
+    analyst rather than guessing.
+ToolMessage: "Scoping GCP blast radius for the compromised principal…"
+DependsOn:
+  - gcp_security_knowledge
+EagerLoading: false
+RequiredTools:
+  - panther_ai_alerts_list
+  - panther_ai_detections_list
+  - panther_ai_log_sources_list
+  - panther_ai_log_types_list
+  - panther_ai_datalake_list_saved_queries
+  - panther_ai_datalake_execute_saved_query
+  - panther_ai_datalake_execute_sql
+  - panther_ai_datalake_get_query_results
+Enabled: true
+Tags:
+  - gcp
+  - audit
+  - incident-response
+  - blast-radius
+  - scoping
