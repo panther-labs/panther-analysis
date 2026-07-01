@@ -12,6 +12,8 @@
 
 - [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
   - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [GTI/VirusTotal Threat Intelligence Indicator Match](../rules/standard_rules/gti_malicious_indicator.yml)
+  - Detects when an IP address, domain, or file hash in any log event matches a known malicious indicator from Google Threat Intelligence (GTI) / VirusTotal enrichment. Severity is elevated based on GTI's threat severity verdict and the number of vendors flagging the indicator as malicious.
 - [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
   - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 
@@ -271,6 +273,8 @@
   - A Root console login failed.
 - [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
   - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [GTI/VirusTotal Threat Intelligence Indicator Match](../rules/standard_rules/gti_malicious_indicator.yml)
+  - Detects when an IP address, domain, or file hash in any log event matches a known malicious indicator from Google Threat Intelligence (GTI) / VirusTotal enrichment. Severity is elevated based on GTI's threat severity verdict and the number of vendors flagging the indicator as malicious.
 - [IAM Administrator Role Policy Attached](../rules/aws_cloudtrail_rules/aws_iam_attach_admin_role_policy.yml)
   - An IAM role policy was attached with Administrator Access, which could indicate a potential security risk.
 - [IAM Assume Role Blocklist Ignored](../rules/aws_cloudtrail_rules/aws_iam_assume_role_blocklist_ignored.yml)
@@ -467,6 +471,8 @@
   - This detection identifies if an activity is recorded in the Kubernetes audit log where the user:username attribute begins with "system:" or "eks:" and the requests originating IP Address is a Public IP Address
 - [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
   - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [GTI/VirusTotal Threat Intelligence Indicator Match](../rules/standard_rules/gti_malicious_indicator.yml)
+  - Detects when an IP address, domain, or file hash in any log event matches a known malicious indicator from Google Threat Intelligence (GTI) / VirusTotal enrichment. Severity is elevated based on GTI's threat severity verdict and the number of vendors flagging the indicator as malicious.
 - [IOC Activity in K8 Control Plane](../queries/kubernetes_queries/kubernetes_ioc_activity_query.yml)
   - This detection monitors for any kubernetes API Request originating from an Indicator of Compromise.
 - [Kubernetes Admission Controller Webhook Created](../rules/kubernetes_rules/k8s_admission_controller_created.yml)
@@ -775,6 +781,8 @@
   - Checks for the log status `SKIPDATA`, which indicates that data was lost either to an internal server error or due to capacity constraints.
 - [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
   - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [GTI/VirusTotal Threat Intelligence Indicator Match](../rules/standard_rules/gti_malicious_indicator.yml)
+  - Detects when an IP address, domain, or file hash in any log event matches a known malicious indicator from Google Threat Intelligence (GTI) / VirusTotal enrichment. Severity is elevated based on GTI's threat severity verdict and the number of vendors flagging the indicator as malicious.
 - [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)
   - Detects when an IP address in any log event matches a known threat indicator from AlienVault OTX pulse intelligence. Severity is elevated when the pulse includes a named adversary or known malware families.
 - [VPC Flow Logs Inbound Port Allowlist](../rules/aws_vpc_flow_rules/aws_vpc_inbound_traffic_port_allowlist.yml)
