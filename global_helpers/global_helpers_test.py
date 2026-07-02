@@ -517,6 +517,61 @@ class TestGreyNoiseV3ScannerIntelligence(
         self.assertIsNotNone(scanner)
         self.assertEqual(scanner.classification("MultiMatch"), ["malicious"])
 
+    def test_list_shaped_found_is_not_falsely_true(self):
+        event = PantherEvent(
+            {
+                "p_enrichment": {
+                    "my_custom_greynoise_noise": {
+                        "MultiMatch": [
+                            {
+                                "ip": "142.93.204.250",
+                                "internet_scanner_intelligence": {
+                                    "classification": "unknown",
+                                    "found": False,
+                                    "bot": False,
+                                    "spoofable": False,
+                                    "tor": False,
+                                    "vpn": False,
+                                },
+                            }
+                        ]
+                    }
+                }
+            }
+        )
+        scanner = p_greynoise_h.GetGreyNoiseV3Object(event)
+        self.assertFalse(scanner.found("MultiMatch"))
+        self.assertFalse(scanner.is_bot("MultiMatch"))
+        self.assertFalse(scanner.is_spoofable("MultiMatch"))
+        self.assertFalse(scanner.is_tor("MultiMatch"))
+        self.assertFalse(scanner.is_vpn("MultiMatch"))
+
+    def test_list_shaped_found_true_when_any_entry_true(self):
+        event = PantherEvent(
+            {
+                "p_enrichment": {
+                    "my_custom_greynoise_noise": {
+                        "MultiMatch": [
+                            {
+                                "ip": "142.93.204.250",
+                                "internet_scanner_intelligence": {
+                                    "found": False,
+                                },
+                            },
+                            {
+                                "ip": "203.0.113.9",
+                                "internet_scanner_intelligence": {
+                                    "found": True,
+                                },
+                            },
+                        ]
+                    }
+                }
+            }
+        )
+        scanner = p_greynoise_h.GetGreyNoiseV3Object(event)
+        self.assertTrue(scanner.found("MultiMatch"))
+
 
 class TestGreyNoiseV3BusinessService(unittest.TestCase):
     def setUp(self):
@@ -604,6 +659,25 @@ class TestGreyNoiseV3BusinessService(unittest.TestCase):
         """Known business service should return INFO severity"""
         sev = p_greynoise_h.GreyNoiseV3Severity(self.event, "ClientIP")
         self.assertEqual(sev, "INFO")
+
+    def test_list_shaped_found_is_not_falsely_true(self):
+        event = PantherEvent(
+            {
+                "p_enrichment": {
+                    "my_custom_greynoise_noise": {
+                        "MultiMatch": [
+                            {
+                                "ip": "142.93.204.250",
+                                "internet_scanner_intelligence": {"found": False},
+                                "business_service_intelligence": {"found": False},
+                            }
+                        ]
+                    }
+                }
+            }
+        )
+        bsi = p_greynoise_h.GetGreyNoiseV3BusinessServiceObject(event)
+        self.assertFalse(bsi.found("MultiMatch"))
 
 
 class TestOTXPulseIntelligence(unittest.TestCase):
