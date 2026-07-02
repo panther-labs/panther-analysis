@@ -36,13 +36,13 @@ DatabricksQuery: |
       added_file_value AS added_file
   FROM panther_logs.public.github_webhook
       LATERAL VIEW OUTER EXPLODE(
-        from_json(CAST(commits AS STRING), 'ARRAY<STRUCT<added: ARRAY<STRING>>>')
+        from_json(TO_JSON(commits), 'ARRAY<STRUCT<added: ARRAY<STRING>>>')
       ) commits_exploded AS commit_value
       LATERAL VIEW OUTER EXPLODE(commit_value.added) added_exploded AS added_file_value
   WHERE p_event_time >= TIMESTAMP '2025-11-24 03:00:00'
     AND (
       added_file_value IN ('setup_bun.js', 'bun_environment.js')
-      OR ARRAY_CONTAINS(from_json(CAST(head_commit AS STRING), 'STRUCT<added: ARRAY<STRING>>').added, 'setup_bun.js')
-      OR ARRAY_CONTAINS(from_json(CAST(head_commit AS STRING), 'STRUCT<added: ARRAY<STRING>>').added, 'bun_environment.js')
+      OR ARRAY_CONTAINS(from_json(TO_JSON(head_commit), 'STRUCT<added: ARRAY<STRING>>').added, 'setup_bun.js')
+      OR ARRAY_CONTAINS(from_json(TO_JSON(head_commit), 'STRUCT<added: ARRAY<STRING>>').added, 'bun_environment.js')
     )
   ORDER BY p_event_time DESC
