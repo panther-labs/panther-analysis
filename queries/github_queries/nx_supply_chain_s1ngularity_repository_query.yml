@@ -19,8 +19,28 @@ Tags:
   - Supply Chain Compromise
   - NX Package Compromise
   - Data Exfiltration
-Query: |
-  SELECT 
+SnowflakeQuery: |
+  SELECT
+    p_event_time,
+    actor,
+    action,
+    repo,
+    org,
+    actor_ip,
+    user_agent,
+    visibility,
+    public_repo,
+    operation_type,
+    created_at
+  FROM panther_logs.public.github_audit
+  WHERE p_event_time >= '2025-08-25 12:00:00'
+    AND action IN ('repo.create', 'repo.access', 'repo.download_zip', 'team.add_repository')
+    AND public_repo
+    AND LOWER(COALESCE(repo, '')) LIKE '%s1ngularity-repository%'
+  ORDER BY p_event_time DESC
+
+DatabricksQuery: |
+  SELECT
     p_event_time,
     actor,
     action,
