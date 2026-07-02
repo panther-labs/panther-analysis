@@ -84,7 +84,7 @@ DatabricksQuery: |
             'BZip2FileWritten'
           )
           and p_occurs_since('1 day')
-          and CAST(unknown_payload.Size as integer) > 10000000
+          and CAST(unknown_payload.Size as BIGINT) > 10000000
       ) zips
       left join panther_logs.public.crowdstrike_processrollup2 pr2
       on zips.ContextProcessId = pr2.targetprocessid
