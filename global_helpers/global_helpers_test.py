@@ -30,6 +30,7 @@ import panther_cloudflare_helpers as p_cf_h  # pylint: disable=C0413
 import panther_crowdstrike_fdr_helpers as p_cf_fdr_h  # pylint: disable=C0413
 import panther_gcp_helpers as p_gcp_h  # pylint: disable=C0413
 import panther_greynoise_helpers as p_greynoise_h  # pylint: disable=C0413
+import panther_gti_helpers as p_gti_h  # pylint: disable=C0413
 import panther_ipinfo_helpers as p_i_h  # pylint: disable=C0413
 import panther_lookuptable_helpers as p_l_h  # pylint: disable=C0413
 import panther_notion_helpers as p_notion_h  # pylint: disable=C0413
@@ -494,6 +495,83 @@ class TestGreyNoiseV3ScannerIntelligence(
         self.assertEqual(scanner.cve_list("nonexistent"), [])
         self.assertEqual(scanner.tag_names("nonexistent"), [])
 
+    def test_find_lut_name_handles_list_shaped_match(self):
+        event = PantherEvent(
+            {
+                "p_enrichment": {
+                    "my_custom_greynoise_noise": {
+                        "MultiMatch": [
+                            {
+                                "ip": "142.93.204.250",
+                                "internet_scanner_intelligence": {
+                                    "classification": "malicious",
+                                    "found": True,
+                                },
+                            }
+                        ]
+                    }
+                }
+            }
+        )
+        scanner = p_greynoise_h.GetGreyNoiseV3Object(event)
+        self.assertIsNotNone(scanner)
+        self.assertEqual(scanner.classification("MultiMatch"), ["malicious"])
+
+    def test_list_shaped_found_is_not_falsely_true(self):
+        event = PantherEvent(
+            {
+                "p_enrichment": {
+                    "my_custom_greynoise_noise": {
+                        "MultiMatch": [
+                            {
+                                "ip": "142.93.204.250",
+                                "internet_scanner_intelligence": {
+                                    "classification": "unknown",
+                                    "found": False,
+                                    "bot": False,
+                                    "spoofable": False,
+                                    "tor": False,
+                                    "vpn": False,
+                                },
+                            }
+                        ]
+                    }
+                }
+            }
+        )
+        scanner = p_greynoise_h.GetGreyNoiseV3Object(event)
+        self.assertFalse(scanner.found("MultiMatch"))
+        self.assertFalse(scanner.is_bot("MultiMatch"))
+        self.assertFalse(scanner.is_spoofable("MultiMatch"))
+        self.assertFalse(scanner.is_tor("MultiMatch"))
+        self.assertFalse(scanner.is_vpn("MultiMatch"))
+
+    def test_list_shaped_found_true_when_any_entry_true(self):
+        event = PantherEvent(
+            {
+                "p_enrichment": {
+                    "my_custom_greynoise_noise": {
+                        "MultiMatch": [
+                            {
+                                "ip": "142.93.204.250",
+                                "internet_scanner_intelligence": {
+                                    "found": False,
+                                },
+                            },
+                            {
+                                "ip": "203.0.113.9",
+                                "internet_scanner_intelligence": {
+                                    "found": True,
+                                },
+                            },
+                        ]
+                    }
+                }
+            }
+        )
+        scanner = p_greynoise_h.GetGreyNoiseV3Object(event)
+        self.assertTrue(scanner.found("MultiMatch"))
+
 
 class TestGreyNoiseV3BusinessService(unittest.TestCase):
     def setUp(self):
@@ -581,6 +659,25 @@ class TestGreyNoiseV3BusinessService(unittest.TestCase):
         """Known business service should return INFO severity"""
         sev = p_greynoise_h.GreyNoiseV3Severity(self.event, "ClientIP")
         self.assertEqual(sev, "INFO")
+
+    def test_list_shaped_found_is_not_falsely_true(self):
+        event = PantherEvent(
+            {
+                "p_enrichment": {
+                    "my_custom_greynoise_noise": {
+                        "MultiMatch": [
+                            {
+                                "ip": "142.93.204.250",
+                                "internet_scanner_intelligence": {"found": False},
+                                "business_service_intelligence": {"found": False},
+                            }
+                        ]
+                    }
+                }
+            }
+        )
+        bsi = p_greynoise_h.GetGreyNoiseV3BusinessServiceObject(event)
+        self.assertFalse(bsi.found("MultiMatch"))
 
 
 class TestOTXPulseIntelligence(unittest.TestCase):
@@ -735,6 +832,26 @@ class TestOTXPulseIntelligence(unittest.TestCase):
         otx = p_otx_h.get_otx_object(self.event)
         self.assertIsNone(otx.indicator("NonExistentField"))
 
+    def test_find_lut_name_handles_list_shaped_match(self):
+        event = PantherEvent(
+            {
+                "p_enrichment": {
+                    "pulses_otx": {
+                        "MultiMatch": [
+                            {
+                                "id": "6141bd9b4e9aaa4bdd26b2a8",
+                                "indicator": "198.51.100.23",
+                                "indicator_type": "IPv4",
+                            }
+                        ]
+                    }
+                }
+            }
+        )
+        otx = p_otx_h.get_otx_object(event)
+        self.assertIsNotNone(otx)
+        self.assertEqual(otx.indicator_type("MultiMatch"), ["IPv4"])
+
     def test_severity_adversary_and_malware(self):
         sev = p_otx_h.otx_severity_from_pulse("APT28", ["X-Agent"])
         self.assertEqual(sev, "CRITICAL")
@@ -767,6 +884,303 @@ class TestOTXPulseIntelligence(unittest.TestCase):
         self.assertEqual(ctx["Description"], "Known C2 infrastructure used by APT28.")
         self.assertIsNotNone(ctx["PulseCreated"])
         self.assertIsNotNone(ctx["IndicatorCreated"])
+
+
+FAKE_SHA256 = "0" * 64
+FAKE_MD5 = "0" * 32
+FAKE_SHA1 = "0" * 40
+FAKE_GTI_URL = f"https://www.virustotal.com/gui/file/{FAKE_SHA256}"
+
+
+class TestGTIIntelligence(unittest.TestCase):
+    def setUp(self):
+        self.event = PantherEvent(
+            {
+                "p_enrichment": {
+                    "vt_iocstream": {
+                        "FileHash": {
+                            "id": FAKE_SHA256,
+                            "type": "file",
+                            "type_description": "Win32 EXE",
+                            "meaningful_name": "example-malware.exe",
+                            "names": ["example-malware.exe", "svchost32.exe"],
+                            "md5": FAKE_MD5,
+                            "sha1": FAKE_SHA1,
+                            "sha256": FAKE_SHA256,
+                            "reputation": -12,
+                            "gti_confidence_score": None,
+                            "gti_url": FAKE_GTI_URL,
+                            "last_analysis_stats": {
+                                "malicious": 57,
+                                "suspicious": 0,
+                                "harmless": 0,
+                                "undetected": 13,
+                            },
+                            "threat_severity": {
+                                "threat_severity_level": "SEVERITY_HIGH",
+                                "level_description": (
+                                    "Severity HIGH because it was considered trojan."
+                                ),
+                            },
+                            "popular_threat_classification": {
+                                "suggested_threat_label": "trojan.remcos/rescoms",
+                                "popular_threat_category": [
+                                    {"count": 32, "value": "trojan"},
+                                    {"count": 1, "value": "dropper"},
+                                ],
+                                "popular_threat_name": [
+                                    {"count": 18, "value": "remcos"},
+                                    {"count": 10, "value": "rescoms"},
+                                ],
+                            },
+                            "tags": ["peexe", "payload", "malware"],
+                            "capabilities_tags": ["persistence"],
+                            "creation_date": "2026-05-08T09:00:21",
+                            "first_submission_date": "2026-06-25T18:44:28",
+                            "last_analysis_date": "2026-06-25T20:11:57",
+                        }
+                    }
+                }
+            }
+        )
+
+    def test_gti_object_exists(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertIsNotNone(gti)
+
+    def test_gti_object_none(self):
+        event = PantherEvent({"p_enrichment": {}})
+        gti = p_gti_h.get_gti_object(event)
+        self.assertIsNone(gti)
+
+    def test_indicator_id(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.indicator_id("FileHash"), FAKE_SHA256)
+
+    def test_indicator_type(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.indicator_type("FileHash"), "file")
+
+    def test_type_description(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.type_description("FileHash"), "Win32 EXE")
+
+    def test_meaningful_name(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.meaningful_name("FileHash"), "example-malware.exe")
+
+    def test_names(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.names("FileHash"), ["example-malware.exe", "svchost32.exe"])
+
+    def test_md5(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.md5("FileHash"), FAKE_MD5)
+
+    def test_sha256(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.sha256("FileHash"), FAKE_SHA256)
+
+    def test_reputation(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.reputation("FileHash"), -12)
+
+    def test_last_analysis_stats(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.last_analysis_stats("FileHash")["malicious"], 57)
+
+    def test_malicious_count(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.malicious_count("FileHash"), 57)
+
+    def test_suspicious_count(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.suspicious_count("FileHash"), 0)
+
+    def test_harmless_count(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.harmless_count("FileHash"), 0)
+
+    def test_undetected_count(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.undetected_count("FileHash"), 13)
+
+    def test_threat_severity_level(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.threat_severity_level("FileHash"), "SEVERITY_HIGH")
+
+    def test_threat_severity_description(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(
+            gti.threat_severity_description("FileHash"),
+            "Severity HIGH because it was considered trojan.",
+        )
+
+    def test_suggested_threat_label(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.suggested_threat_label("FileHash"), "trojan.remcos/rescoms")
+
+    def test_threat_categories(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.threat_categories("FileHash"), ["trojan", "dropper"])
+
+    def test_threat_names(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.threat_names("FileHash"), ["remcos", "rescoms"])
+
+    def test_tags(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.tags("FileHash"), ["peexe", "payload", "malware"])
+
+    def test_tags_string(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.tags_string("FileHash"), "peexe, payload, malware")
+
+    def test_capabilities_tags(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.capabilities_tags("FileHash"), ["persistence"])
+
+    def test_gti_link_from_gti_url(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertEqual(gti.gti_link("FileHash"), FAKE_GTI_URL)
+
+    def test_gti_link_built_when_missing(self):
+        event = PantherEvent(
+            {
+                "p_enrichment": {
+                    "vt_iocstream": {
+                        "ClientIP": {
+                            "id": "203.0.113.5",
+                            "type": "ip_address",
+                            "last_analysis_stats": {"malicious": 5},
+                        }
+                    }
+                }
+            }
+        )
+        gti = p_gti_h.get_gti_object(event)
+        self.assertEqual(
+            gti.gti_link("ClientIP"),
+            "https://www.virustotal.com/gui/ip-address/203.0.113.5",
+        )
+
+    def test_creation_date(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        result = gti.creation_date("FileHash")
+        self.assertIsNotNone(result)
+        self.assertEqual(result.year, 2026)
+        self.assertEqual(result.month, 5)
+
+    def test_first_submission_date(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        result = gti.first_submission_date("FileHash")
+        self.assertIsNotNone(result)
+        self.assertEqual(result.year, 2026)
+        self.assertEqual(result.month, 6)
+
+    def test_context(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        context = gti.context("FileHash")
+        self.assertEqual(context["Indicator"], FAKE_SHA256)
+        self.assertEqual(context["IndicatorType"], "file")
+        self.assertEqual(context["MaliciousCount"], 57)
+        self.assertEqual(context["ThreatSeverity"], "SEVERITY_HIGH")
+        self.assertEqual(context["SuggestedThreatLabel"], "trojan.remcos/rescoms")
+        self.assertIn("virustotal.com", context["GTI_URL"])
+
+    def test_no_match_field(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertIsNone(gti.indicator_id("NonExistentField"))
+
+    def test_severity_high_level(self):
+        sev = p_gti_h.gti_severity_from_verdict("SEVERITY_HIGH", 57)
+        self.assertEqual(sev, "CRITICAL")
+
+    def test_severity_medium_level(self):
+        sev = p_gti_h.gti_severity_from_verdict("SEVERITY_MEDIUM", 3)
+        self.assertEqual(sev, "HIGH")
+
+    def test_severity_low_level(self):
+        sev = p_gti_h.gti_severity_from_verdict("SEVERITY_LOW", 1)
+        self.assertEqual(sev, "MEDIUM")
+
+    def test_severity_no_level_high_detections(self):
+        sev = p_gti_h.gti_severity_from_verdict("", 15)
+        self.assertEqual(sev, "HIGH")
+
+    def test_severity_no_level_no_detections(self):
+        sev = p_gti_h.gti_severity_from_verdict("", 0)
+        self.assertEqual(sev, "MEDIUM")
+
+    def test_gti_severity_from_event(self):
+        sev = p_gti_h.gti_severity(self.event, "FileHash")
+        self.assertEqual(sev, "CRITICAL")
+
+    def test_gti_severity_no_enrichment(self):
+        event = PantherEvent({"p_enrichment": {}})
+        sev = p_gti_h.gti_severity(event, "FileHash")
+        self.assertEqual(sev, "MEDIUM")
+
+    def test_gti_alert_context(self):
+        ctx = p_gti_h.gti_alert_context(self.event, "FileHash")
+        self.assertEqual(ctx["Indicator"], FAKE_SHA256)
+        self.assertEqual(ctx["ThreatCategories"], ["trojan", "dropper"])
+        self.assertEqual(ctx["ThreatNames"], ["remcos", "rescoms"])
+        self.assertIsNotNone(ctx["FirstSubmissionDate"])
+        self.assertIsNotNone(ctx["LastAnalysisDate"])
+
+    def test_is_malicious_true_from_detections(self):
+        gti = p_gti_h.get_gti_object(self.event)
+        self.assertTrue(gti.is_malicious("FileHash"))
+
+    def test_is_malicious_false_when_benign(self):
+        event = PantherEvent(
+            {
+                "p_enrichment": {
+                    "vt_iocstream": {
+                        "BenignIP": {
+                            "id": "198.51.100.42",
+                            "type": "ip_address",
+                            "gti_url": "https://www.virustotal.com/gui/ip-address/198.51.100.42",
+                            "last_analysis_stats": {
+                                "malicious": 0,
+                                "suspicious": 0,
+                                "harmless": 80,
+                                "undetected": 4,
+                            },
+                        }
+                    }
+                }
+            }
+        )
+        gti = p_gti_h.get_gti_object(event)
+        self.assertFalse(gti.is_malicious("BenignIP"))
+
+    def test_find_gti_lut_name_handles_list_shaped_match(self):
+        event = PantherEvent(
+            {
+                "p_enrichment": {
+                    "vt_iocstream": {
+                        "MultiMatch": [
+                            {
+                                "id": FAKE_SHA256,
+                                "type": "file",
+                                "gti_url": FAKE_GTI_URL,
+                                "last_analysis_stats": {
+                                    "malicious": 42,
+                                    "suspicious": 1,
+                                    "harmless": 0,
+                                    "undetected": 15,
+                                },
+                            }
+                        ]
+                    }
+                }
+            }
+        )
+        gti = p_gti_h.get_gti_object(event)
+        self.assertIsNotNone(gti)
+        self.assertEqual(gti.malicious_count("MultiMatch"), [42])
 
 
 class TestIpInfoHelpersLocation(unittest.TestCase):

@@ -106,6 +106,8 @@
   - A Workspace Admin Has Disabled The Enforcement Of Strong Passwords
 - [GSuite Workspace Trusted Domain Allowlist Modified](../rules/gsuite_activityevent_rules/gsuite_workspace_trusted_domains_allowlist.yml)
   - A Workspace Admin Has Modified The Trusted Domains List
+- [GTI/VirusTotal Threat Intelligence Indicator Match](../rules/standard_rules/gti_malicious_indicator.yml)
+  - Detects when an IP address, domain, or file hash in any log event matches a known malicious indicator from Google Threat Intelligence (GTI) / VirusTotal enrichment. Severity is elevated based on GTI's threat severity verdict and the number of vendors flagging the indicator as malicious.
 - [Malware Detected in Email](../rules/gsuite_activityevent_rules/gsuite_malware_in_email.yml)
   - Detects when malware is found in an email received by a user. Identifies different malware families including known malicious programs, viruses, worms, harmful content, and unwanted content. Severity is dynamically assigned based on the malware type, with known malicious programs and viruses triggering high-severity alerts.
 - [OTX Threat Intelligence Indicator Match](../rules/standard_rules/otx_malicious_indicator.yml)

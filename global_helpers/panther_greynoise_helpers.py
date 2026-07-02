@@ -29,14 +29,33 @@ def _find_greynoise_v3_lut_name(event) -> str:
     The LUT name is user-customizable in Panther but always ends with '_noise'.
     V3 data is identified by the presence of 'internet_scanner_intelligence' in the values.
     """
+
+    def _is_greynoise_match(match_data) -> bool:
+        return hasattr(match_data, "get") and match_data.get("internet_scanner_intelligence")
+
     enrichment = event.deep_get("p_enrichment", default={})
     for lut_name in enrichment.keys():
         if not lut_name.endswith("_noise"):
             continue
         for match_data in enrichment.get(lut_name, {}).values():
-            if hasattr(match_data, "get") and match_data.get("internet_scanner_intelligence"):
+            if isinstance(match_data, Sequence) and not isinstance(match_data, str):
+                if any(_is_greynoise_match(entry) for entry in match_data):
+                    return lut_name
+                continue
+            if _is_greynoise_match(match_data):
                 return lut_name
     return None
+
+
+def _any_true(value) -> bool:
+    """Coerce a possibly list-shaped lookup value (multiple LUT hits) to a single bool.
+
+    A plain `bool()` on a non-empty list is always True regardless of its contents,
+    so list-shaped values must be reduced with `any()` instead.
+    """
+    if isinstance(value, Sequence) and not isinstance(value, str):
+        return any(bool(entry) for entry in value)
+    return bool(value)
 
 
 class _GreyNoiseV3Base(LookupTableMatches):
@@ -71,7 +90,7 @@ class GreyNoiseV3ScannerIntelligence(_GreyNoiseV3Base):
         return self._scanner_lookup(match_field, "actor")
 
     def is_bot(self, match_field: str) -> bool:
-        return bool(self._scanner_lookup(match_field, "bot"))
+        return _any_true(self._scanner_lookup(match_field, "bot"))
 
     def classification(self, match_field: str) -> Union[list[str], str]:
         return self._scanner_lookup(match_field, "classification")
@@ -101,7 +120,7 @@ class GreyNoiseV3ScannerIntelligence(_GreyNoiseV3Base):
             return None
 
     def found(self, match_field: str) -> bool:
-        return bool(self._scanner_lookup(match_field, "found"))
+        return _any_true(self._scanner_lookup(match_field, "found"))
 
     def last_seen(self, match_field: str) -> datetime.date:
         time = self._scanner_lookup(match_field, "last_seen_timestamp")
@@ -139,7 +158,7 @@ class GreyNoiseV3ScannerIntelligence(_GreyNoiseV3Base):
         return self._scanner_lookup(match_field, "metadata", "longitude")
 
     def is_mobile(self, match_field: str) -> bool:
-        return bool(self._scanner_lookup(match_field, "metadata", "mobile"))
+        return _any_true(self._scanner_lookup(match_field, "metadata", "mobile"))
 
     def organization(self, match_field: str) -> Union[list[str], str]:
         return self._scanner_lookup(match_field, "metadata", "organization")
@@ -179,7 +198,7 @@ class GreyNoiseV3ScannerIntelligence(_GreyNoiseV3Base):
 
     # Top-level scanner fields
     def is_spoofable(self, match_field: str) -> bool:
-        return bool(self._scanner_lookup(match_field, "spoofable"))
+        return _any_true(self._scanner_lookup(match_field, "spoofable"))
 
     def tags(self, match_field: str) -> list:
         tags = self._scanner_lookup(match_field, "tags")
@@ -202,10 +221,10 @@ class GreyNoiseV3ScannerIntelligence(_GreyNoiseV3Base):
         return names
 
     def is_tor(self, match_field: str) -> bool:
-        return bool(self._scanner_lookup(match_field, "tor"))
+        return _any_true(self._scanner_lookup(match_field, "tor"))
 
     def is_vpn(self, match_field: str) -> bool:
-        return bool(self._scanner_lookup(match_field, "vpn"))
+        return _any_true(self._scanner_lookup(match_field, "vpn"))
 
     def vpn_service(self, match_field: str) -> Union[list[str], str]:
         return self._scanner_lookup(match_field, "vpn_service")
@@ -232,7 +251,7 @@ class GreyNoiseV3BusinessService(_GreyNoiseV3Base):
         return self._lookup(match_field, "business_service_intelligence", *keys)
 
     def found(self, match_field: str) -> bool:
-        return bool(self._bsi_lookup(match_field, "found"))
+        return _any_true(self._bsi_lookup(match_field, "found"))
 
     def category(self, match_field: str) -> Union[list[str], str]:
         return self._bsi_lookup(match_field, "category")

@@ -1,0 +1,208 @@
+AnalysisType: rule
+Filename: gti_malicious_indicator.py
+RuleID: "Standard.GTI.MaliciousIndicator"
+DisplayName: "GTI/VirusTotal Threat Intelligence Indicator Match"
+Enabled: false
+Status: Experimental
+Severity: High
+Description: >-
+  Detects when an IP address, domain, or file hash in any log event matches a known
+  malicious indicator from Google Threat Intelligence (GTI) / VirusTotal enrichment.
+  Severity is elevated based on GTI's threat severity verdict and the number of
+  vendors flagging the indicator as malicious.
+Runbook: |
+  1. Review the alert context and open the GTI/VirusTotal URL to assess the indicator's
+     verdict, detection ratio, and suggested threat label.
+  2. Query the data lake for all events involving this indicator to determine what assets
+     or services were contacted and whether any connections were successful.
+  3. If the indicator is confirmed malicious and interaction was observed, block the
+     indicator, isolate affected hosts, and reset any credentials that may have been exposed.
+Reference: https://www.virustotal.com
+DedupPeriodMinutes: 60
+Reports:
+  MITRE ATT&CK:
+    - TA0043:T1595.001
+Tags:
+  - Reconnaissance:Active Scanning
+  - GTI
+  - VirusTotal
+  - Threat Intelligence
+SummaryAttributes:
+  - p_any_ip_addresses
+  - p_source_label
+LogTypes:
+  - Amazon.EKS.Audit
+  - Asana.Audit
+  - Atlassian.Audit
+  - AWS.ALB
+  - AWS.CloudTrail
+  - AWS.VPCFlow
+  - Azure.Audit
+  - Azure.MonitorActivity
+  - Box.Event
+  - Cloudflare.Firewall
+  - Cloudflare.HttpRequest
+  - Crowdstrike.FDREvent
+  - GCP.AuditLog
+  - GSuite.ActivityEvent
+  - Notion.AuditLogs
+  - Okta.SystemLog
+  - OneLogin.Events
+  - OnePassword.SignInAttempt
+  - Zendesk.Audit
+  - Zoom.Activity
+Tests:
+  - Name: "Known Malicious File Hash Detected - High Severity"
+    ExpectedResult: true
+    Log:
+      p_any_sha256_hashes:
+        - "0000000000000000000000000000000000000000000000000000000000000000"
+      p_log_type: "Crowdstrike.FDREvent"
+      p_enrichment:
+        vt_iocstream:
+          "0000000000000000000000000000000000000000000000000000000000000000":
+            id: "0000000000000000000000000000000000000000000000000000000000000000"
+            type: "file"
+            type_description: "Win32 EXE"
+            meaningful_name: "example-malware.exe"
+            names:
+              - "example-malware.exe"
+              - "svchost32.exe"
+            md5: "00000000000000000000000000000000"
+            sha256: "0000000000000000000000000000000000000000000000000000000000000000"
+            reputation: -12
+            gti_url: "https://www.virustotal.com/gui/file/0000000000000000000000000000000000000000000000000000000000000000"
+            last_analysis_stats:
+              malicious: 57
+              suspicious: 0
+              harmless: 0
+              undetected: 13
+            threat_severity:
+              threat_severity_level: "SEVERITY_HIGH"
+              level_description: "Severity HIGH because it was considered trojan."
+            popular_threat_classification:
+              suggested_threat_label: "trojan.remcos/rescoms"
+              popular_threat_category:
+                - count: 32
+                  value: "trojan"
+              popular_threat_name:
+                - count: 18
+                  value: "remcos"
+            tags:
+              - "peexe"
+              - "payload"
+              - "malware"
+  - Name: "Known Malicious IP Detected - Medium Detections"
+    ExpectedResult: true
+    Log:
+      p_any_ip_addresses:
+        - "203.0.113.5"
+      p_log_type: "AWS.CloudTrail"
+      p_enrichment:
+        vt_iocstream:
+          "203.0.113.5":
+            id: "203.0.113.5"
+            type: "ip_address"
+            reputation: -5
+            country: "NL"
+            as_owner: "Example Hosting"
+            asn: 64500
+            last_analysis_stats:
+              malicious: 5
+              suspicious: 1
+              harmless: 60
+              undetected: 4
+            tags:
+              - "scanner"
+  - Name: "Multiple Malicious Domains Detected"
+    ExpectedResult: true
+    Log:
+      p_any_domain_names:
+        - "evil-c2.example.com"
+        - "phishing-page.example.com"
+      p_log_type: "Cloudflare.HttpRequest"
+      p_enrichment:
+        vt_iocstream:
+          "evil-c2.example.com":
+            id: "evil-c2.example.com"
+            type: "domain"
+            reputation: -20
+            categories:
+              - "malware"
+            last_analysis_stats:
+              malicious: 30
+              suspicious: 0
+              harmless: 40
+              undetected: 5
+          "phishing-page.example.com":
+            id: "phishing-page.example.com"
+            type: "domain"
+            reputation: -8
+            categories:
+              - "phishing"
+            last_analysis_stats:
+              malicious: 8
+              suspicious: 2
+              harmless: 55
+              undetected: 5
+  - Name: "Benign IP - No Enrichment"
+    ExpectedResult: false
+    Log:
+      p_any_ip_addresses:
+        - "10.0.0.1"
+      p_log_type: "AWS.VPCFlow"
+  - Name: "IP Not in GTI/VirusTotal Feed"
+    ExpectedResult: false
+    Log:
+      p_any_ip_addresses:
+        - "192.168.1.1"
+      p_log_type: "Cloudflare.HttpRequest"
+      p_enrichment:
+        vt_iocstream:
+          "192.168.1.1":
+            id: ""
+            type: ""
+            last_analysis_stats:
+              malicious: 0
+              suspicious: 0
+              harmless: 0
+              undetected: 0
+  - Name: "Known Benign Indicator - No Malicious Detections"
+    ExpectedResult: false
+    Log:
+      p_any_ip_addresses:
+        - "198.51.100.42"
+      p_log_type: "AWS.VPCFlow"
+      p_enrichment:
+        vt_iocstream:
+          "198.51.100.42":
+            id: "198.51.100.42"
+            type: "ip_address"
+            reputation: 40
+            country: "US"
+            as_owner: "Example Cloud Provider"
+            last_analysis_stats:
+              malicious: 0
+              suspicious: 0
+              harmless: 80
+              undetected: 4
+  - Name: "Multiple LUT Matches For Same Value - List-Shaped Enrichment"
+    ExpectedResult: true
+    Log:
+      p_any_sha256_hashes:
+        - "1111111111111111111111111111111111111111111111111111111111111111"
+      p_log_type: "Crowdstrike.FDREvent"
+      p_enrichment:
+        vt_iocstream:
+          "1111111111111111111111111111111111111111111111111111111111111111":
+            - id: "1111111111111111111111111111111111111111111111111111111111111111"
+              type: "file"
+              gti_url: "https://www.virustotal.com/gui/file/1111111111111111111111111111111111111111111111111111111111111111"
+              last_analysis_stats:
+                malicious: 42
+                suspicious: 1
+                harmless: 0
+                undetected: 15
+              threat_severity:
+                threat_severity_level: "SEVERITY_HIGH"
+                level_description: "Severity HIGH because it was considered trojan."
