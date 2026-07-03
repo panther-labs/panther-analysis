@@ -24,7 +24,11 @@ def rule(event):
         "1Password SDK",
     ]
 
-    return event.deep_get("client", "app_name") not in client_allowlist
+    app_name = event.deep_get("client", "app_name")
+    if not app_name:
+        return False
+
+    return app_name not in client_allowlist
 
 
 def title(event):
