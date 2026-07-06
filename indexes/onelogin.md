@@ -8,6 +8,8 @@
   - An actor user was denied login access more times than the configured threshold.
 - [GreyNoise V3 Malicious IP Activity](../rules/standard_rules/greynoise_malicious_ip.yml)
   - Detects when an IP address in any log event is classified as malicious or unknown by GreyNoise V3 internet scanner intelligence. Known business services and benign IPs are excluded.
+- [GTI/VirusTotal Threat Intelligence Indicator Match](../rules/standard_rules/gti_malicious_indicator.yml)
+  - Detects when an IP address, domain, or file hash in any log event matches a known malicious indicator from Google Threat Intelligence (GTI) / VirusTotal enrichment. Severity is elevated based on GTI's threat severity verdict and the number of vendors flagging the indicator as malicious.
 - [New User Account Created](../rules/indicator_creation_rules/new_user_account_logging.yml)
   - A new account was created
 - [OneLogin Active Login Activity](../rules/onelogin_rules/onelogin_active_login_activity.yml)

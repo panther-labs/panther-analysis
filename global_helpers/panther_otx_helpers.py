@@ -38,12 +38,20 @@ def _find_otx_lut_name(event) -> str:
     The LUT name is user-customizable in Panther but always ends with '_otx'.
     OTX data is identified by the presence of 'indicator_type' in the values.
     """
+
+    def _is_otx_match(match_data) -> bool:
+        return hasattr(match_data, "get") and match_data.get("indicator_type")
+
     enrichment = event.deep_get("p_enrichment", default={})
     for lut_name in enrichment.keys():
         if not lut_name.endswith("_otx"):
             continue
         for match_data in enrichment.get(lut_name, {}).values():
-            if hasattr(match_data, "get") and match_data.get("indicator_type"):
+            if isinstance(match_data, Sequence) and not isinstance(match_data, str):
+                if any(_is_otx_match(entry) for entry in match_data):
+                    return lut_name
+                continue
+            if _is_otx_match(match_data):
                 return lut_name
     return None
 

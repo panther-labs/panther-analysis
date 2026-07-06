@@ -66,6 +66,28 @@ Detects when an IP address in any log event is classified as malicious or unknow
   - Zoom
 
 
+[GTI/VirusTotal Threat Intelligence Indicator Match](../rules/standard_rules/gti_malicious_indicator.yml)  
+Detects when an IP address, domain, or file hash in any log event matches a known malicious indicator from Google Threat Intelligence (GTI) / VirusTotal enrichment. Severity is elevated based on GTI's threat severity verdict and the number of vendors flagging the indicator as malicious.
+  - AWS ALB
+  - AWS CloudTrail
+  - AWS EKS
+  - AWS VPCFlow
+  - Asana
+  - Atlassian
+  - Azure
+  - Box
+  - Cloudflare
+  - Crowdstrike
+  - GCP
+  - Google Workspace
+  - Notion
+  - Okta
+  - OneLogin
+  - OnePassword
+  - Zendesk
+  - Zoom
+
+
 [Impossible Travel for Login Action](../rules/standard_rules/impossible_travel_login.yml)  
 A user has subsequent logins from two geographic locations that are very far apart
   - AWS CloudTrail
