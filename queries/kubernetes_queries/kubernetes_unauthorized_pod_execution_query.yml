@@ -24,9 +24,9 @@ DatabricksQuery: |
   SELECT *,
          split(split(impersonatedUser.username,'remote-')[1],'-')[0] as src_user,
          SPLIT(requestURI,'exec?')[1] as command_executed,
-         IF(sourceIPs[0] IS NOT null, sourceIPs[0], 'N/A') as X_FORWARDED_FOR_IP,
-         IF(sourceIPs[1] IS NOT null, sourceIPs[1], 'N/A') as X_Real_IP,
-         IF(sourceIPs[2] IS NOT null, sourceIPs[2], 'N/A') as Remote_Address_IP
+         COALESCE(try_element_at(sourceIPs, 1), 'N/A') as X_FORWARDED_FOR_IP,
+         COALESCE(try_element_at(sourceIPs, 2), 'N/A') as X_Real_IP,
+         COALESCE(try_element_at(sourceIPs, 3), 'N/A') as Remote_Address_IP
   FROM panther_logs.public.amazon_eks_audit
   WHERE
   objectRef.resource = 'pods'
