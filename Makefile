@@ -132,3 +132,7 @@ generate-versions: ## Generate versions file
 .PHONY: test-generate-versions
 test-generate-versions: ## Test generate versions file
 	pipenv run python3 -m pytest .scripts/test_generate_versions_file.py
+
+.PHONY: test-generate-indexes
+test-generate-indexes: ## Test generate indexes file
+	pipenv run python3 -m pytest .scripts/test_generate_indexes.py
