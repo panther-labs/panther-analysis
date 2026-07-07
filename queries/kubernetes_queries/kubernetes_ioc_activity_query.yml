@@ -5,7 +5,7 @@ Tags:
   - Optional
 Description: >
   This detection monitors for any kubernetes API Request originating from an Indicator of Compromise.
-Query: |
+SnowflakeQuery: |
   SELECT *,
          VALUE as SRC_IP,
          THIS as IP_ADDRESS,
@@ -19,6 +19,22 @@ Query: |
    -- as an example, could be replaced with any IOC data store in a lookup table
   INNER JOIN panther_lookups.public.tor_exit_nodes
   ON value = ip
+  LIMIT 10
+
+DatabricksQuery: |
+  SELECT *,
+         ip_value AS SRC_IP,
+         source_ips AS IP_ADDRESS,
+         CASE WHEN ip_index = 0 THEN 'X_Forwarded_For'
+           WHEN ip_index = 1 THEN 'X_Real_Ip'
+           WHEN ip_index = 2 THEN 'Remote_Address'
+         ELSE 'Unknown'
+         END AS IP_TYPE
+  FROM panther_logs.public.amazon_eks_audit
+    LATERAL VIEW POSEXPLODE(from_json(TO_JSON(source_ips), 'ARRAY<STRING>')) exploded AS ip_index, ip_value
+  INNER JOIN panther_lookups.public.tor_exit_nodes
+    ON ip_value = ip
+  WHERE p_occurs_since('30 minutes')
   LIMIT 10
 Schedule:
   RateMinutes: 30
