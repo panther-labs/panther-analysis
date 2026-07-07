@@ -1,7 +1,7 @@
 AnalysisType: scheduled_query
 Description: Detects creation of large zip files, which can indicate attempts of exfiltration
 Enabled: false
-Query: |
+SnowflakeQuery: |
   select
     ppr.commandline as parent_commandline,
     zip_proc.*
@@ -56,6 +56,59 @@ Query: |
         '/Application%',
         '%install%'
         )
+      )
+    )
+
+DatabricksQuery: |
+  select
+    ppr.commandline as parent_commandline,
+    zip_proc.*
+  from
+    (
+    select
+      zips.*,
+      pr2.targetprocessid as process_targetpid,
+      pr2.parentprocessid as process_parentpid,
+      pr2.commandline as process_commandline
+    from
+      (
+        select
+          *
+        from
+          panther_logs.public.crowdstrike_unknown
+        where
+          event_simpleName IN (
+            'GzipFileWritten',
+            'SevenZipFileWritten',
+            'ZipFileWritten',
+            'BZip2FileWritten'
+          )
+          and p_occurs_since('1 day')
+          and CAST(unknown_payload.Size as BIGINT) > 10000000
+      ) zips
+      left join panther_logs.public.crowdstrike_processrollup2 pr2
+      on zips.ContextProcessId = pr2.targetprocessid
+
+      where
+      pr2.commandline LIKE '%zip%'
+
+      and not (
+        pr2.commandline LIKE '%curl%'
+        OR pr2.commandline LIKE '/Application%'
+        OR pr2.commandline LIKE '%install%'
+      )
+
+    ) zip_proc
+    LEFT JOIN panther_logs.public.crowdstrike_processrollup2 ppr
+    on zip_proc.process_parentpid = ppr.targetprocessid
+  where
+    (
+      (parent_commandline is null) or
+      not (
+        parent_commandline LIKE '%homebrew%'
+        OR parent_commandline LIKE '%Homebrew%'
+        OR parent_commandline LIKE '/Application%'
+        OR parent_commandline LIKE '%install%'
       )
     )
 QueryName: "CrowdStrike Large Zip Creation"
