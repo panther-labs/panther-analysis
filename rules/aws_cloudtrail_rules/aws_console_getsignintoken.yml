@@ -70,6 +70,23 @@ Tests:
           "arn": "arn:aws:sts::123456789012:assumed-role/AWSReservedSSO_Admin/user@example.com"
         }
       }
+  - Name: Legitimate SSO Portal GetSigninToken (Go client)
+    ExpectedResult: false
+    Log:
+      {
+        "awsRegion": "us-east-1",
+        "eventName": "GetSigninToken",
+        "eventSource": "signin.amazonaws.com",
+        "eventTime": "2024-01-15T10:30:00Z",
+        "eventType": "AwsApiCall",
+        "recipientAccountId": "123456789012",
+        "sourceIPAddress": "10.0.0.1",
+        "userAgent": "Go-http-client/2.0",
+        "userIdentity": {
+          "type": "AssumedRole",
+          "arn": "arn:aws:sts::123456789012:assumed-role/AWSReservedSSO_Admin/user@example.com"
+        }
+      }
   - Name: Unrelated Signin Event
     ExpectedResult: false
     Log:
