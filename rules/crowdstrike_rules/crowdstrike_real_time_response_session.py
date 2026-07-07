@@ -22,6 +22,10 @@ def severity(event):
     return "DEFAULT"
 
 
+def dedup(event):
+    return get_crowdstrike_field(event, "UserName", default="<unknown-UserName>")
+
+
 def alert_context(event):
     return {
         "Start Time": get_crowdstrike_field(

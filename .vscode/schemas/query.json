@@ -23,6 +23,12 @@
     "Query": {
       "type": "string"
     },
+    "DatabricksQuery": {
+      "type": "string"
+    },
+    "SnowflakeQuery": {
+      "type": "string"
+    },
     "Description": {
       "type": "string"
     },
@@ -90,8 +96,18 @@
       "then": {
         "required": [
           "AnalysisType",
-          "QueryName",
-          "Query"
+          "QueryName"
+        ],
+        "anyOf": [
+          {
+            "required": ["Query"]
+          },
+          {
+            "required": ["SnowflakeQuery"]
+          },
+          {
+            "required": ["DatabricksQuery"]
+          }
         ]
       }
     },
@@ -108,8 +124,18 @@
           "AnalysisType",
           "QueryName",
           "Enabled",
-          "Query",
           "Schedule"
+        ],
+        "anyOf": [
+          {
+            "required": ["Query"]
+          },
+          {
+            "required": ["SnowflakeQuery"]
+          },
+          {
+            "required": ["DatabricksQuery"]
+          }
         ]
       }
     }

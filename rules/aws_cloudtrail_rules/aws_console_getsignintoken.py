@@ -1,7 +1,7 @@
 from panther_aws_helpers import aws_rule_context
 
 # User agents associated with legitimate AWS SSO portal sign-in token requests
-SSO_USER_AGENTS = ["Jersey/${project.version}"]
+SSO_USER_AGENTS = ["Jersey/${project.version}", "Go-http-client/2.0"]
 
 
 def rule(event):
