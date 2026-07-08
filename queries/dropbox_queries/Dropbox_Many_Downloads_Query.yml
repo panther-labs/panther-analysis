@@ -1,7 +1,7 @@
 AnalysisType: scheduled_query
 Description: Dropbox Many Downloads
 Enabled: false
-Query: |-
+SnowflakeQuery: |-
   SELECT
     actor:user:email AS user,
     ARRAY_AGG( DISTINCT assets[0]:path:contextual) AS downloaded_files,
@@ -11,6 +11,19 @@ Query: |-
   WHERE p_occurs_since('1 day')
     AND event_type:_tag = 'file_download'
   GROUP BY actor:user:email, t_s
+  HAVING download_count > 10
+  ORDER BY download_count DESC
+
+DatabricksQuery: |-
+  SELECT
+    actor.user.email AS user,
+    COLLECT_SET(assets[0].path.contextual) AS downloaded_files,
+    SIZE(COLLECT_SET(assets[0].path.contextual)) AS download_count,
+    DATE_TRUNC('hour', p_event_time) AS t_s
+  FROM panther_logs.public.dropbox_teamevent
+  WHERE p_occurs_since('1 day')
+    AND event_type._tag = 'file_download'
+  GROUP BY actor.user.email, DATE_TRUNC('hour', p_event_time)
   HAVING download_count > 10
   ORDER BY download_count DESC
 QueryName: "Dropbox Many Downloads"
