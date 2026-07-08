@@ -2,8 +2,8 @@ AnalysisType: scheduled_query
 QueryName: "Query.Snowflake.TempStageCreated"
 Enabled: true
 Description: https://cloud.google.com/blog/topics/threat-intelligence/unc5537-snowflake-data-theft-extortion/
-Query: |
-    SELECT 
+SnowflakeQuery: |
+    SELECT
     user_name,
     role_name,
     start_time AS p_event_time,
@@ -13,9 +13,26 @@ Query: |
     query_text
 
     FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
-    WHERE query_type = 'CREATE' 
-        AND stage IS NOT NULL 
-        AND p_occurs_since('1 day') 
+    WHERE query_type = 'CREATE'
+        AND stage IS NOT NULL
+        AND p_occurs_since('1 day')
+        AND execution_status = 'SUCCESS'
+    LIMIT 100
+
+DatabricksQuery: |
+    SELECT
+    user_name,
+    role_name,
+    start_time AS p_event_time,
+    query_type,
+    execution_status,
+    regexp_extract(query_text, '(?i)CREATE\\s+(OR\\s+REPLACE\\s+)?(TEMPORARY\\s+|TEMP\\s+)STAGE\\s+(IF\\s+NOT\\s+EXISTS\\s+)?([a-zA-Z0-9_\\.]+)', 4) as stage,
+    query_text
+
+    FROM panther_logs.public.snowflake_queryhistory
+    WHERE query_type = 'CREATE'
+        AND regexp_extract(query_text, '(?i)CREATE\\s+(OR\\s+REPLACE\\s+)?(TEMPORARY\\s+|TEMP\\s+)STAGE\\s+(IF\\s+NOT\\s+EXISTS\\s+)?([a-zA-Z0-9_\\.]+)', 4) IS NOT NULL
+        AND p_occurs_since('1 day')
         AND execution_status = 'SUCCESS'
     LIMIT 100
 Schedule:
