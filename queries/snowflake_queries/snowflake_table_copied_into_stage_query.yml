@@ -33,7 +33,7 @@ DatabricksQuery: |
 
     FROM panther_logs.public.snowflake_queryhistory
     WHERE query_type = 'UNLOAD'
-        AND regexp_extract(query_text, '(?i)COPY\\s+INTO\\s+(\\$\\$|\\\')?@([a-zA-Z0-9_\\.]+)', 2) IS NOT NULL
+        AND regexp_extract(query_text, '(?i)COPY\\s+INTO\\s+(\\$\\$|\\\')?@([a-zA-Z0-9_\\.]+)', 2) != ''
         AND p_occurs_since('1 day')
         AND execution_status = 'SUCCESS'
     LIMIT 100

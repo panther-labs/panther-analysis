@@ -31,7 +31,7 @@ DatabricksQuery: |
 
     FROM panther_logs.public.snowflake_queryhistory
     WHERE query_type = 'CREATE'
-        AND regexp_extract(query_text, '(?i)CREATE\\s+(OR\\s+REPLACE\\s+)?(TEMPORARY\\s+|TEMP\\s+)STAGE\\s+(IF\\s+NOT\\s+EXISTS\\s+)?([a-zA-Z0-9_\\.]+)', 4) IS NOT NULL
+        AND regexp_extract(query_text, '(?i)CREATE\\s+(OR\\s+REPLACE\\s+)?(TEMPORARY\\s+|TEMP\\s+)STAGE\\s+(IF\\s+NOT\\s+EXISTS\\s+)?([a-zA-Z0-9_\\.]+)', 4) != ''
         AND p_occurs_since('1 day')
         AND execution_status = 'SUCCESS'
     LIMIT 100
