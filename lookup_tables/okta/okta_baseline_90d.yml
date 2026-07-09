@@ -21,7 +21,7 @@ Description: |
   - Credential extractions: mean/stddev + temporal ratios for application.user_membership.change_username
     (for Okta.SWA.BulkAccess.Behavioral and Okta.SWA.OffHoursAccess.Behavioral)
 Reference: https://www.varonis.com/blog/okta-attack-vectors
-Query: |
+SnowflakeQuery: |
   -- OKTA SHARED BEHAVIORAL BASELINE
   -- PART 1: General 90-day baseline (all event types)
   -- PARTS 2-5: Event-specific 90-day baselines for detection z-scores
@@ -672,6 +672,561 @@ Query: |
   LEFT JOIN extraction_inactive_stats eis ON s.user_email = eis.user_email
 
   ORDER BY s.total_events DESC
+
+DatabricksQuery: |
+  -- OKTA SHARED BEHAVIORAL BASELINE (Databricks)
+
+  WITH base AS (
+      SELECT
+          actor.alternateId AS user_email,
+          published,
+          outcome.result AS outcome,
+          client.geographicalContext.country AS country,
+          client.geographicalContext.city AS city,
+          client.geographicalContext.state AS state,
+          client.userAgent.browser AS browser,
+          client.userAgent.os AS os,
+          client.device AS device,
+          securityContext.asNumber AS asn,
+          client.ipAddress AS ip_address,
+          securityContext.isp AS isp,
+          securityContext.domain AS domain,
+          securityContext.asOrg AS asn_org,
+          authenticationContext.authenticationProvider AS auth_provider,
+          authenticationContext.credentialType AS credential_type,
+          securityContext.isProxy AS is_proxy,
+          target,
+          client.userAgent.rawUserAgent AS raw_user_agent,
+          debugContext.debugData.tunnels AS tunnels,
+          debugContext.debugData.logOnlySecurityData AS security_data_json,
+          debugContext.debugData.deviceFingerprint AS device_fingerprint,
+          debugContext.debugData.threatSuspected AS threat_suspected,
+          debugContext.debugData.responseTime AS response_time_ms,
+          CASE
+              WHEN target[0].type IN ('AuthenticatorEnrollment', 'AuthenticatorMethod')
+                  THEN target[0].displayName
+              WHEN target[1].type IN ('AuthenticatorEnrollment', 'AuthenticatorMethod')
+                  THEN target[1].displayName
+              WHEN target[2].type IN ('AuthenticatorEnrollment', 'AuthenticatorMethod')
+                  THEN target[2].displayName
+              ELSE NULL
+          END AS mfa_factor,
+          target[0].displayName AS app,
+          HOUR(published) AS utc_hour
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND actor.alternateId LIKE '%@%'
+          AND actor.alternateId != 'system@okta.com'
+  ),
+
+  tunnel_features AS (
+      SELECT
+          user_email,
+          t_value['type'] AS tunnel_type,
+          t_value['operator'] AS tunnel_operator
+      FROM base
+      LATERAL VIEW OUTER EXPLODE(from_json(tunnels, 'ARRAY<MAP<STRING,STRING>>')) exploded AS t_value
+      WHERE tunnels IS NOT NULL AND tunnels != '[]'
+  ),
+
+  scalar_features AS (
+      SELECT
+          user_email,
+          COUNT(*) AS total_events,
+          SUM(CASE WHEN outcome = 'SUCCESS' THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0) AS success_rate,
+          COUNT(DISTINCT country) AS country_diversity,
+          COUNT(DISTINCT city) AS city_diversity,
+          COUNT(DISTINCT state) AS state_diversity,
+          COUNT(DISTINCT browser) AS browser_diversity,
+          COUNT(DISTINCT os) AS os_diversity,
+          COUNT(DISTINCT device) AS device_diversity,
+          COUNT(DISTINCT asn) AS asn_diversity,
+          COUNT(DISTINCT ip_address) AS ip_diversity,
+          COUNT(DISTINCT isp) AS isp_diversity,
+          COUNT(DISTINCT domain) AS domain_diversity,
+          COUNT(DISTINCT utc_hour) AS hour_diversity,
+          COUNT(DISTINCT CAST(published AS DATE)) AS active_days_count,
+          COUNT(DISTINCT auth_provider) AS authenticator_diversity,
+          COUNT(DISTINCT credential_type) AS credential_type_diversity,
+          COUNT(DISTINCT app) AS app_diversity,
+          COUNT(DISTINCT raw_user_agent) AS unique_user_agents,
+          SUM(CASE WHEN DAYOFWEEK(published) IN (1, 7) THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0) AS weekend_ratio,
+          SUM(CASE WHEN DAYOFWEEK(published) BETWEEN 2 AND 6 THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0) AS weekday_ratio,
+          SUM(CASE WHEN is_proxy = TRUE THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0) AS proxy_usage_ratio,
+          SUM(CASE WHEN is_proxy = TRUE THEN 1 ELSE 0 END) AS proxy_events_count,
+          MAX(CASE WHEN is_proxy = TRUE THEN TRUE ELSE FALSE END) AS uses_proxy,
+          SUM(CASE WHEN tunnels IS NOT NULL AND tunnels != '[]' THEN 1 ELSE 0 END) AS tunnel_events_count,
+          SUM(CASE WHEN tunnels IS NOT NULL AND tunnels != '[]' THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0) AS tunnel_usage_ratio,
+          mode(country) AS primary_country,
+          mode(city) AS primary_city,
+          mode(browser) AS primary_browser,
+          mode(os) AS primary_os,
+          mode(asn) AS primary_asn,
+          mode(asn_org) AS primary_asn_org,
+          mode(isp) AS primary_isp,
+          mode(domain) AS primary_domain,
+          mode(auth_provider) AS dominant_authenticator,
+          mode(app) AS primary_app,
+          COUNT(DISTINCT get_json_object(security_data_json, '$.risk.level')) AS risk_level_diversity,
+          mode(get_json_object(security_data_json, '$.risk.level')) AS primary_risk_level,
+          SUM(CASE WHEN get_json_object(security_data_json, '$.risk.level') IN ('MEDIUM', 'HIGH') THEN 1 ELSE 0 END) AS elevated_risk_events,
+          SUM(CASE WHEN get_json_object(security_data_json, '$.behaviors["New Geo-Location"]') = 'POSITIVE' THEN 1 ELSE 0 END) AS new_geo_location_count,
+          SUM(CASE WHEN get_json_object(security_data_json, '$.behaviors["New Device"]') = 'POSITIVE' THEN 1 ELSE 0 END) AS new_device_count,
+          SUM(CASE WHEN get_json_object(security_data_json, '$.behaviors["New IP"]') = 'POSITIVE' THEN 1 ELSE 0 END) AS new_ip_count,
+          SUM(CASE WHEN get_json_object(security_data_json, '$.behaviors["Velocity"]') = 'POSITIVE' THEN 1 ELSE 0 END) AS velocity_anomaly_count,
+          SUM(CASE WHEN threat_suspected = 'true' THEN 1 ELSE 0 END) AS threat_suspected_events,
+          COUNT(DISTINCT device_fingerprint) AS device_fingerprint_diversity,
+          CAST(ROUND(AVG(response_time_ms)) AS INT) AS avg_response_time_ms,
+          MAX(response_time_ms) AS max_response_time_ms
+      FROM base
+      GROUP BY user_email
+  ),
+
+  vpn_features AS (
+      SELECT
+          user_email,
+          MAX(CASE WHEN tunnel_type = 'VPN' THEN TRUE ELSE FALSE END) AS vpn_uses_vpn,
+          SUM(CASE WHEN tunnel_type = 'VPN' THEN 1 ELSE 0 END) AS vpn_events_count,
+          ARRAY_SORT(COLLECT_SET(CASE WHEN tunnel_type = 'VPN' AND tunnel_operator IS NOT NULL THEN tunnel_operator END)) AS vpn_providers,
+          mode(CASE WHEN tunnel_type = 'VPN' THEN tunnel_operator END) AS vpn_primary_provider,
+          COUNT(DISTINCT CASE WHEN tunnel_type = 'VPN' THEN tunnel_operator END) AS vpn_tunnel_operator_diversity,
+          COUNT(DISTINCT tunnel_type) AS vpn_tunnel_type_diversity,
+          ARRAY_SORT(COLLECT_SET(tunnel_type)) AS vpn_tunnel_types
+      FROM tunnel_features
+      GROUP BY user_email
+  ),
+
+  country_dist AS (
+      SELECT user_email, MAP_AGG(country, cnt) AS country_distribution
+      FROM (
+          SELECT user_email, country, cnt, ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) AS rn
+          FROM (SELECT user_email, country, COUNT(*) AS cnt FROM base WHERE country IS NOT NULL GROUP BY user_email, country)
+      ) WHERE rn <= 50
+      GROUP BY user_email
+  ),
+  city_dist AS (
+      SELECT user_email, MAP_AGG(city, cnt) AS city_distribution
+      FROM (
+          SELECT user_email, city, cnt, ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) AS rn
+          FROM (SELECT user_email, city, COUNT(*) AS cnt FROM base WHERE city IS NOT NULL GROUP BY user_email, city)
+      ) WHERE rn <= 50
+      GROUP BY user_email
+  ),
+  browser_dist AS (
+      SELECT user_email, MAP_AGG(browser, cnt) AS browser_distribution
+      FROM (
+          SELECT user_email, browser, cnt, ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) AS rn
+          FROM (SELECT user_email, browser, COUNT(*) AS cnt FROM base WHERE browser IS NOT NULL GROUP BY user_email, browser)
+      ) WHERE rn <= 50
+      GROUP BY user_email
+  ),
+  os_dist AS (
+      SELECT user_email, MAP_AGG(os, cnt) AS os_distribution
+      FROM (
+          SELECT user_email, os, cnt, ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) AS rn
+          FROM (SELECT user_email, os, COUNT(*) AS cnt FROM base WHERE os IS NOT NULL GROUP BY user_email, os)
+      ) WHERE rn <= 50
+      GROUP BY user_email
+  ),
+  asn_dist AS (
+      SELECT user_email, MAP_AGG(asn, cnt) AS asn_distribution
+      FROM (
+          SELECT user_email, asn, cnt, ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) AS rn
+          FROM (SELECT user_email, asn, COUNT(*) AS cnt FROM base WHERE asn IS NOT NULL GROUP BY user_email, asn)
+      ) WHERE rn <= 50
+      GROUP BY user_email
+  ),
+  isp_dist AS (
+      SELECT user_email, MAP_AGG(isp, cnt) AS isp_distribution
+      FROM (
+          SELECT user_email, isp, cnt, ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) AS rn
+          FROM (SELECT user_email, isp, COUNT(*) AS cnt FROM base WHERE isp IS NOT NULL GROUP BY user_email, isp)
+      ) WHERE rn <= 50
+      GROUP BY user_email
+  ),
+  domain_dist AS (
+      SELECT user_email, MAP_AGG(domain, cnt) AS domain_distribution
+      FROM (
+          SELECT user_email, domain, cnt, ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) AS rn
+          FROM (SELECT user_email, domain, COUNT(*) AS cnt FROM base WHERE domain IS NOT NULL GROUP BY user_email, domain)
+      ) WHERE rn <= 50
+      GROUP BY user_email
+  ),
+  device_dist AS (
+      SELECT user_email, MAP_AGG(device, cnt) AS device_distribution
+      FROM (
+          SELECT user_email, device, cnt, ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) AS rn
+          FROM (SELECT user_email, device, COUNT(*) AS cnt FROM base WHERE device IS NOT NULL GROUP BY user_email, device)
+      ) WHERE rn <= 50
+      GROUP BY user_email
+  ),
+  ip_dist AS (
+      SELECT user_email, MAP_AGG(ip_address, cnt) AS ip_distribution
+      FROM (
+          SELECT user_email, ip_address, cnt, ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) AS rn
+          FROM (SELECT user_email, ip_address, COUNT(*) AS cnt FROM base WHERE ip_address IS NOT NULL GROUP BY user_email, ip_address)
+      ) WHERE rn <= 50
+      GROUP BY user_email
+  ),
+  mfa_dist AS (
+      SELECT user_email, MAP_AGG(mfa_factor, cnt) AS mfa_factor_distribution
+      FROM (
+          SELECT user_email, mfa_factor, cnt, ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) AS rn
+          FROM (
+              SELECT user_email, mfa_factor, COUNT(*) AS cnt
+              FROM base
+              WHERE mfa_factor IS NOT NULL AND mfa_factor NOT LIKE '%@%'
+              GROUP BY user_email, mfa_factor
+          )
+      ) WHERE rn <= 50
+      GROUP BY user_email
+  ),
+  app_dist AS (
+      SELECT user_email, MAP_AGG(app, cnt) AS app_distribution
+      FROM (
+          SELECT user_email, app, cnt, ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) AS rn
+          FROM (SELECT user_email, app, COUNT(*) AS cnt FROM base WHERE app IS NOT NULL GROUP BY user_email, app)
+      ) WHERE rn <= 50
+      GROUP BY user_email
+  ),
+  hour_dist AS (
+      SELECT user_email, MAP_AGG(CAST(utc_hour AS STRING), cnt) AS utc_hour_distribution
+      FROM (SELECT user_email, utc_hour, COUNT(*) AS cnt FROM base WHERE utc_hour IS NOT NULL GROUP BY user_email, utc_hour)
+      GROUP BY user_email
+  ),
+  vpn_provider_dist AS (
+      SELECT user_email, MAP_AGG(tunnel_operator, cnt) AS vpn_provider_distribution
+      FROM (
+          SELECT user_email, tunnel_operator, cnt, ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) AS rn
+          FROM (
+              SELECT user_email, tunnel_operator, COUNT(*) AS cnt
+              FROM tunnel_features
+              WHERE tunnel_type = 'VPN' AND tunnel_operator IS NOT NULL
+              GROUP BY user_email, tunnel_operator
+          )
+      ) WHERE rn <= 50
+      GROUP BY user_email
+  ),
+  vpn_tunnel_type_dist AS (
+      SELECT user_email, MAP_AGG(tunnel_type, cnt) AS vpn_tunnel_type_distribution
+      FROM (
+          SELECT user_email, tunnel_type, cnt, ROW_NUMBER() OVER (PARTITION BY user_email ORDER BY cnt DESC) AS rn
+          FROM (
+              SELECT user_email, tunnel_type, COUNT(*) AS cnt
+              FROM tunnel_features
+              WHERE tunnel_type IS NOT NULL
+              GROUP BY user_email, tunnel_type
+          )
+      ) WHERE rn <= 50
+      GROUP BY user_email
+  ),
+
+  policy_hourly AS (
+      SELECT
+          actor.alternateId AS user_email,
+          DATE_TRUNC('hour', published) AS event_hour,
+          COUNT(*) AS hourly_policy_changes,
+          SUM(CASE
+              WHEN debugContext.debugData.changedAttributes LIKE '%requireFactor%false%' THEN 1
+              WHEN debugContext.debugData.changedAttributes LIKE '%maxSessionLifetimeMinutes%0%' THEN 1
+              WHEN debugContext.debugData.changedAttributes RLIKE '.*minLength.*[1-6][^0-9].*' THEN 1
+              ELSE 0
+          END) AS hourly_security_weakenings
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND eventType IN ('policy.rule.update', 'policy.lifecycle.update')
+          AND actor.alternateId LIKE '%@%'
+      GROUP BY user_email, event_hour
+  ),
+
+  policy_stats AS (
+      SELECT
+          user_email,
+          SUM(hourly_policy_changes) AS baseline_total_policy_changes,
+          COUNT(DISTINCT CAST(event_hour AS DATE)) AS baseline_active_days_policy,
+          AVG(hourly_policy_changes) AS mean_policy_changes_per_hour,
+          STDDEV(hourly_policy_changes) AS stddev_policy_changes_per_hour,
+          SUM(hourly_security_weakenings) AS baseline_total_weakenings,
+          AVG(hourly_security_weakenings) AS mean_weakenings_per_hour,
+          STDDEV(hourly_security_weakenings) AS stddev_weakenings_per_hour
+      FROM policy_hourly
+      GROUP BY user_email
+  ),
+
+  enrollment_hourly AS (
+      SELECT
+          actor.alternateId AS user_email,
+          DATE_TRUNC('hour', published) AS event_hour,
+          COUNT(*) AS hourly_enrollments,
+          SUM(CASE
+              WHEN actor.alternateId != target[0].alternateId THEN 1
+              ELSE 0
+          END) AS hourly_admin_enrollments,
+          COUNT(DISTINCT target[0].alternateId) AS hourly_unique_targets
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND eventType = 'user.mfa.factor.activate'
+          AND actor.alternateId LIKE '%@%'
+      GROUP BY user_email, event_hour
+  ),
+
+  enrollment_stats AS (
+      SELECT
+          user_email,
+          SUM(hourly_enrollments) AS baseline_total_enrollments,
+          COUNT(DISTINCT CAST(event_hour AS DATE)) AS baseline_active_days_enrollment,
+          AVG(hourly_enrollments) AS mean_enrollments_per_hour,
+          STDDEV(hourly_enrollments) AS stddev_enrollments_per_hour,
+          SUM(hourly_admin_enrollments) AS baseline_total_admin_enrollments,
+          AVG(hourly_admin_enrollments) AS mean_admin_enrollments_per_hour,
+          STDDEV(hourly_admin_enrollments) AS stddev_admin_enrollments_per_hour,
+          AVG(hourly_unique_targets) AS mean_targets_per_hour,
+          STDDEV(hourly_unique_targets) AS stddev_targets_per_hour
+      FROM enrollment_hourly
+      GROUP BY user_email
+  ),
+
+  swa_access_hourly AS (
+      SELECT
+          actor.alternateId AS user_email,
+          DATE_TRUNC('hour', published) AS event_hour,
+          COUNT(*) AS hourly_swa_events,
+          COUNT(DISTINCT target[0].displayName) AS hourly_app_diversity,
+          COUNT(DISTINCT client.geographicalContext.country) AS hourly_country_diversity,
+          COUNT(DISTINCT client.ipAddress) AS hourly_ip_diversity
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND eventType = 'user.authentication.sso'
+          AND actor.alternateId LIKE '%@%'
+          AND (
+              debugContext.debugData.swa_mode = 'true'
+              OR debugContext.debugData.signOnMode LIKE '%AUTO%LOGIN%'
+              OR debugContext.debugData.signOnMode LIKE '%BROWSER%PLUGIN%'
+          )
+      GROUP BY user_email, event_hour
+  ),
+
+  swa_events AS (
+      SELECT
+          actor.alternateId AS user_email,
+          client.ipAddress AS ip_address,
+          client.userAgent.rawUserAgent AS ua
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND eventType = 'user.authentication.sso'
+          AND actor.alternateId LIKE '%@%'
+          AND (
+              debugContext.debugData.swa_mode = 'true'
+              OR debugContext.debugData.signOnMode LIKE '%AUTO%LOGIN%'
+              OR debugContext.debugData.signOnMode LIKE '%BROWSER%PLUGIN%'
+          )
+  ),
+  swa_known_ips_ranked AS (
+      SELECT user_email,
+             SLICE(
+                 TRANSFORM(
+                     ARRAY_SORT(COLLECT_LIST(STRUCT(cnt, ip_address)), (x, y) -> CASE WHEN x.cnt > y.cnt THEN -1 WHEN x.cnt < y.cnt THEN 1 ELSE 0 END),
+                     x -> x.ip_address
+                 ),
+                 1, 50
+             ) AS swa_known_ips
+      FROM (SELECT user_email, ip_address, COUNT(*) AS cnt FROM swa_events WHERE ip_address IS NOT NULL GROUP BY user_email, ip_address)
+      GROUP BY user_email
+  ),
+  swa_known_uas_ranked AS (
+      SELECT user_email,
+             SLICE(
+                 TRANSFORM(
+                     ARRAY_SORT(COLLECT_LIST(STRUCT(cnt, ua)), (x, y) -> CASE WHEN x.cnt > y.cnt THEN -1 WHEN x.cnt < y.cnt THEN 1 ELSE 0 END),
+                     x -> x.ua
+                 ),
+                 1, 50
+             ) AS swa_known_user_agents
+      FROM (SELECT user_email, ua, COUNT(*) AS cnt FROM swa_events WHERE ua IS NOT NULL GROUP BY user_email, ua)
+      GROUP BY user_email
+  ),
+  swa_known_sources AS (
+      SELECT
+          COALESCE(i.user_email, u.user_email) AS user_email,
+          i.swa_known_ips,
+          u.swa_known_user_agents
+      FROM swa_known_ips_ranked i
+      FULL OUTER JOIN swa_known_uas_ranked u ON i.user_email = u.user_email
+  ),
+
+  swa_access_stats AS (
+      SELECT
+          user_email,
+          SUM(hourly_swa_events) AS baseline_total_swa_events,
+          COUNT(DISTINCT CAST(event_hour AS DATE)) AS baseline_active_days_swa,
+          AVG(hourly_swa_events) AS mean_swa_events_per_hour,
+          STDDEV(hourly_swa_events) AS stddev_swa_events_per_hour,
+          AVG(hourly_app_diversity) AS mean_app_diversity_per_hour,
+          STDDEV(hourly_app_diversity) AS stddev_app_diversity_per_hour,
+          AVG(hourly_country_diversity) AS mean_country_diversity_per_hour,
+          STDDEV(hourly_country_diversity) AS stddev_country_diversity_per_hour,
+          AVG(hourly_ip_diversity) AS mean_ip_diversity_per_hour,
+          STDDEV(hourly_ip_diversity) AS stddev_ip_diversity_per_hour
+      FROM swa_access_hourly
+      GROUP BY user_email
+  ),
+
+  extraction_hourly AS (
+      SELECT
+          actor.alternateId AS user_email,
+          DATE_TRUNC('hour', published) AS event_hour,
+          COUNT(*) AS hourly_credential_extractions,
+          COUNT(DISTINCT target[0].alternateId) AS hourly_victim_diversity,
+          COUNT(DISTINCT client.geographicalContext.country) AS hourly_country_diversity
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
+          AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND eventType = 'application.user_membership.change_username'
+          AND actor.alternateId LIKE '%@%'
+      GROUP BY user_email, event_hour
+  ),
+
+  extraction_hour_activity AS (
+      SELECT
+          user_email,
+          (DAYOFWEEK(event_hour) - 1) * 24 + HOUR(event_hour) AS utc_hour_slot,
+          COUNT(DISTINCT CAST(event_hour AS DATE)) AS active_days_in_slot
+      FROM extraction_hourly
+      GROUP BY user_email, (DAYOFWEEK(event_hour) - 1) * 24 + HOUR(event_hour)
+  ),
+
+  user_active_hour_slots AS (
+      SELECT
+          user_email,
+          ARRAY_SORT(COLLECT_LIST(utc_hour_slot)) AS active_utc_hour_slots,
+          COUNT(*) AS active_slot_count
+      FROM extraction_hour_activity
+      WHERE active_days_in_slot >= 3
+      GROUP BY user_email
+  ),
+
+  extraction_hourly_slot_classified AS (
+      SELECT
+          eh.user_email,
+          eh.event_hour,
+          CASE
+              WHEN uahs.active_utc_hour_slots IS NOT NULL
+                  AND NOT ARRAY_CONTAINS(
+                      uahs.active_utc_hour_slots,
+                      (DAYOFWEEK(eh.event_hour) - 1) * 24 + HOUR(eh.event_hour))
+              THEN 1.0
+              ELSE 0.0
+          END AS is_inactive_slot_hour
+      FROM extraction_hourly eh
+      JOIN user_active_hour_slots uahs ON eh.user_email = uahs.user_email
+  ),
+
+  extraction_inactive_stats AS (
+      SELECT
+          user_email,
+          AVG(is_inactive_slot_hour) AS mean_inactive_slot_ratio_per_hour,
+          STDDEV(is_inactive_slot_hour) AS stddev_inactive_slot_ratio_per_hour
+      FROM extraction_hourly_slot_classified
+      GROUP BY user_email
+  ),
+
+  extraction_stats AS (
+      SELECT
+          user_email,
+          SUM(hourly_credential_extractions) AS baseline_total_extractions,
+          COUNT(DISTINCT CAST(event_hour AS DATE)) AS baseline_active_days_extraction,
+          AVG(hourly_credential_extractions) AS mean_extractions_per_hour,
+          STDDEV(hourly_credential_extractions) AS stddev_extractions_per_hour,
+          AVG(hourly_victim_diversity) AS mean_victim_diversity_per_hour,
+          STDDEV(hourly_victim_diversity) AS stddev_victim_diversity_per_hour,
+          AVG(hourly_country_diversity) AS mean_extraction_country_diversity_per_hour,
+          STDDEV(hourly_country_diversity) AS stddev_extraction_country_diversity_per_hour,
+          SUM(hourly_credential_extractions) AS baseline_total_credential_access,
+          COUNT(DISTINCT CAST(event_hour AS DATE)) AS baseline_active_days,
+          COUNT(*) AS baseline_hours_with_activity,
+          AVG(hourly_credential_extractions) AS mean_credential_access_per_hour,
+          STDDEV(hourly_credential_extractions) AS stddev_credential_access_per_hour
+      FROM extraction_hourly
+      GROUP BY user_email
+  )
+
+  SELECT
+      s.user_email,
+      s.total_events, s.success_rate, s.country_diversity, s.city_diversity, s.state_diversity,
+      s.browser_diversity, s.os_diversity, s.device_diversity, s.asn_diversity, s.ip_diversity,
+      s.isp_diversity, s.domain_diversity, s.hour_diversity, s.active_days_count,
+      s.authenticator_diversity, s.credential_type_diversity, s.app_diversity, s.unique_user_agents,
+      s.weekend_ratio, s.weekday_ratio, s.proxy_usage_ratio, s.proxy_events_count, s.uses_proxy,
+      s.tunnel_events_count, s.tunnel_usage_ratio, s.primary_country, s.primary_city,
+      s.primary_browser, s.primary_os, s.primary_asn, s.primary_asn_org, s.primary_isp,
+      s.primary_domain, s.dominant_authenticator, s.primary_app, s.risk_level_diversity,
+      s.primary_risk_level, s.elevated_risk_events, s.new_geo_location_count, s.new_device_count,
+      s.new_ip_count, s.velocity_anomaly_count, s.threat_suspected_events,
+      s.device_fingerprint_diversity, s.avg_response_time_ms, s.max_response_time_ms,
+      COALESCE(v.vpn_uses_vpn, FALSE) AS vpn_uses_vpn,
+      COALESCE(v.vpn_events_count, 0) AS vpn_events_count,
+      v.vpn_providers, v.vpn_primary_provider,
+      COALESCE(v.vpn_tunnel_operator_diversity, 0) AS vpn_tunnel_operator_diversity,
+      COALESCE(v.vpn_tunnel_type_diversity, 0) AS vpn_tunnel_type_diversity,
+      v.vpn_tunnel_types,
+      cd.country_distribution, cid.city_distribution, bd.browser_distribution,
+      od.os_distribution, ad.asn_distribution, isd.isp_distribution, dd.domain_distribution,
+      devd.device_distribution, id.ip_distribution, mfad.mfa_factor_distribution,
+      apd.app_distribution, hd.utc_hour_distribution, vpnd.vpn_provider_distribution,
+      vttd.vpn_tunnel_type_distribution,
+      ps.baseline_total_policy_changes, ps.baseline_active_days_policy,
+      ps.mean_policy_changes_per_hour, ps.stddev_policy_changes_per_hour,
+      ps.baseline_total_weakenings, ps.mean_weakenings_per_hour, ps.stddev_weakenings_per_hour,
+      es.baseline_total_enrollments, es.baseline_active_days_enrollment,
+      es.mean_enrollments_per_hour, es.stddev_enrollments_per_hour,
+      es.baseline_total_admin_enrollments, es.mean_admin_enrollments_per_hour,
+      es.stddev_admin_enrollments_per_hour, es.mean_targets_per_hour, es.stddev_targets_per_hour,
+      sa.baseline_total_swa_events, sa.baseline_active_days_swa, sa.mean_swa_events_per_hour,
+      sa.stddev_swa_events_per_hour, sa.mean_app_diversity_per_hour, sa.stddev_app_diversity_per_hour,
+      sa.mean_country_diversity_per_hour, sa.stddev_country_diversity_per_hour,
+      sa.mean_ip_diversity_per_hour, sa.stddev_ip_diversity_per_hour,
+      ks.swa_known_ips, ks.swa_known_user_agents,
+      ex.baseline_total_extractions, ex.baseline_active_days_extraction,
+      ex.mean_extractions_per_hour, ex.stddev_extractions_per_hour,
+      ex.mean_victim_diversity_per_hour, ex.stddev_victim_diversity_per_hour,
+      ex.mean_extraction_country_diversity_per_hour, ex.stddev_extraction_country_diversity_per_hour,
+      ex.baseline_total_credential_access, ex.baseline_active_days, ex.baseline_hours_with_activity,
+      ex.mean_credential_access_per_hour, ex.stddev_credential_access_per_hour,
+      uahs.active_utc_hour_slots, uahs.active_slot_count,
+      eis.mean_inactive_slot_ratio_per_hour, eis.stddev_inactive_slot_ratio_per_hour,
+      CURRENT_TIMESTAMP AS baseline_updated_at
+
+  FROM scalar_features s
+  LEFT JOIN vpn_features v ON s.user_email = v.user_email
+  LEFT JOIN country_dist cd ON s.user_email = cd.user_email
+  LEFT JOIN city_dist cid ON s.user_email = cid.user_email
+  LEFT JOIN browser_dist bd ON s.user_email = bd.user_email
+  LEFT JOIN os_dist od ON s.user_email = od.user_email
+  LEFT JOIN asn_dist ad ON s.user_email = ad.user_email
+  LEFT JOIN isp_dist isd ON s.user_email = isd.user_email
+  LEFT JOIN domain_dist dd ON s.user_email = dd.user_email
+  LEFT JOIN device_dist devd ON s.user_email = devd.user_email
+  LEFT JOIN ip_dist id ON s.user_email = id.user_email
+  LEFT JOIN mfa_dist mfad ON s.user_email = mfad.user_email
+  LEFT JOIN app_dist apd ON s.user_email = apd.user_email
+  LEFT JOIN hour_dist hd ON s.user_email = hd.user_email
+  LEFT JOIN vpn_provider_dist vpnd ON s.user_email = vpnd.user_email
+  LEFT JOIN vpn_tunnel_type_dist vttd ON s.user_email = vttd.user_email
+  LEFT JOIN policy_stats ps ON s.user_email = ps.user_email
+  LEFT JOIN enrollment_stats es ON s.user_email = es.user_email
+  LEFT JOIN swa_access_stats sa ON s.user_email = sa.user_email
+  LEFT JOIN swa_known_sources ks ON s.user_email = ks.user_email
+  LEFT JOIN extraction_stats ex ON s.user_email = ex.user_email
+  LEFT JOIN user_active_hour_slots uahs ON s.user_email = uahs.user_email
+  LEFT JOIN extraction_inactive_stats eis ON s.user_email = eis.user_email
+
+  ORDER BY s.total_events DESC
+
 LogTypeMap:
   PrimaryKey: user_email
   AssociatedLogTypes:
