@@ -7,7 +7,7 @@ Description: |
   combined with geographic/IP diversity anomalies - indicators of token theft and credential abuse.
 
   PREREQUISITE: Requires the baseline builder query to populate the lookup table first.
-Query: |
+SnowflakeQuery: |
   -- OKTA AD AGENT AUTHENTICATION ANOMALY DETECTION (Z-SCORE)
   -- Uses lookup table baseline for efficient anomaly detection
   -- Detects: Volume spike + Geographic diversity spike = Token being used from multiple locations
@@ -280,6 +280,237 @@ Query: |
   WHERE is_anomalous = TRUE OR is_cold_start_anomaly = TRUE
   ORDER BY anomaly_severity_score DESC
   LIMIT 100
+
+DatabricksQuery: |
+  -- OKTA AD AGENT AUTHENTICATION ANOMALY DETECTION (Z-SCORE)
+
+  WITH recent_activity AS (
+      SELECT
+          actor.alternateId AS user_email,
+          published,
+          outcome.result AS outcome,
+          client.geographicalContext.country AS country,
+          client.geographicalContext.city AS city,
+          client.ipAddress AS ip_address,
+          securityContext.asNumber AS asn,
+          debugContext.debugData.deviceFingerprint AS device_fingerprint,
+          DATE_TRUNC('hour', published) AS event_hour
+      FROM panther_logs.public.okta_systemlog
+      WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
+          AND actor.alternateId LIKE '%@%'
+          AND eventType = 'user.authentication.auth_via_AD_agent'
+          AND outcome.result = 'SUCCESS'
+  ),
+
+  recent_hourly AS (
+      SELECT
+          user_email,
+          event_hour,
+          COUNT(*) AS hourly_total_events,
+          COUNT(DISTINCT ip_address) AS hourly_ip_diversity,
+          COUNT(DISTINCT country) AS hourly_country_diversity,
+          COUNT(DISTINCT city) AS hourly_city_diversity,
+          COUNT(DISTINCT device_fingerprint) AS hourly_device_diversity,
+          COLLECT_SET(ip_address) AS sample_ips,
+          COLLECT_SET(country) AS sample_countries
+      FROM recent_activity
+      GROUP BY user_email, event_hour
+  ),
+
+  recent_stats_agg AS (
+      SELECT
+          user_email,
+          SUM(hourly_total_events) AS recent_total_events,
+          COUNT(DISTINCT CAST(event_hour AS DATE)) AS recent_active_days,
+          MAX(hourly_total_events) AS recent_max_events_per_hour,
+          MAX(hourly_ip_diversity) AS recent_max_ip_diversity_per_hour,
+          MAX(hourly_country_diversity) AS recent_max_country_diversity_per_hour,
+          MAX(hourly_city_diversity) AS recent_max_city_diversity_per_hour,
+          MAX(hourly_device_diversity) AS recent_max_device_diversity_per_hour,
+          AVG(hourly_total_events) AS recent_avg_events_per_hour,
+          AVG(hourly_ip_diversity) AS recent_avg_ip_diversity_per_hour,
+          AVG(hourly_country_diversity) AS recent_avg_country_diversity_per_hour,
+          AVG(hourly_city_diversity) AS recent_avg_city_diversity_per_hour,
+          AVG(hourly_device_diversity) AS recent_avg_device_diversity_per_hour,
+          MIN(event_hour) AS first_anomaly_hour,
+          MAX(event_hour) AS last_anomaly_hour
+      FROM recent_hourly
+      GROUP BY user_email
+  ),
+
+  recent_ips AS (
+      SELECT
+          user_email,
+          COLLECT_SET(ip_value) AS all_recent_ips
+      FROM recent_hourly
+      LATERAL VIEW OUTER EXPLODE(from_json(TO_JSON(sample_ips), 'ARRAY<STRING>')) exploded AS ip_value
+      GROUP BY user_email
+  ),
+
+  recent_countries AS (
+      SELECT
+          user_email,
+          COLLECT_SET(country_value) AS all_recent_countries
+      FROM recent_hourly
+      LATERAL VIEW OUTER EXPLODE(from_json(TO_JSON(sample_countries), 'ARRAY<STRING>')) exploded AS country_value
+      GROUP BY user_email
+  ),
+
+  recent_stats AS (
+      SELECT
+          a.*,
+          i.all_recent_ips,
+          c.all_recent_countries
+      FROM recent_stats_agg a
+      LEFT JOIN recent_ips i ON a.user_email = i.user_email
+      LEFT JOIN recent_countries c ON a.user_email = c.user_email
+  ),
+
+  anomaly_detection AS (
+      SELECT
+          r.user_email,
+          b.baseline_total_events,
+          b.baseline_active_days,
+          b.baseline_mean_events_per_hour,
+          b.baseline_stddev_events_per_hour,
+          b.baseline_mean_ip_diversity_per_hour,
+          b.baseline_stddev_ip_diversity_per_hour,
+          b.baseline_mean_country_diversity_per_hour,
+          b.baseline_stddev_country_diversity_per_hour,
+          b.baseline_mean_city_diversity_per_hour,
+          b.baseline_stddev_city_diversity_per_hour,
+          b.baseline_mean_device_diversity_per_hour,
+          b.baseline_stddev_device_diversity_per_hour,
+          b.primary_country,
+          b.primary_city,
+          b.primary_ip,
+          b.baseline_updated_at,
+          r.recent_total_events,
+          r.recent_active_days,
+          r.recent_max_events_per_hour,
+          r.recent_max_ip_diversity_per_hour,
+          r.recent_max_country_diversity_per_hour,
+          r.recent_max_city_diversity_per_hour,
+          r.recent_max_device_diversity_per_hour,
+          r.recent_avg_events_per_hour,
+          r.recent_avg_ip_diversity_per_hour,
+          r.recent_avg_country_diversity_per_hour,
+          r.recent_avg_city_diversity_per_hour,
+          r.recent_avg_device_diversity_per_hour,
+          r.all_recent_ips,
+          r.all_recent_countries,
+          r.first_anomaly_hour,
+          r.last_anomaly_hour,
+          ROUND(
+              (r.recent_avg_events_per_hour - b.baseline_mean_events_per_hour) /
+              NULLIF(b.baseline_stddev_events_per_hour, 0),
+              2
+          ) AS z_score_volume,
+          ROUND(
+              (r.recent_avg_ip_diversity_per_hour - b.baseline_mean_ip_diversity_per_hour) /
+              NULLIF(b.baseline_stddev_ip_diversity_per_hour, 0),
+              2
+          ) AS z_score_ip_diversity,
+          ROUND(
+              (r.recent_avg_country_diversity_per_hour - b.baseline_mean_country_diversity_per_hour) /
+              NULLIF(b.baseline_stddev_country_diversity_per_hour, 0),
+              2
+          ) AS z_score_country_diversity,
+          ROUND(
+              (r.recent_avg_city_diversity_per_hour - b.baseline_mean_city_diversity_per_hour) /
+              NULLIF(b.baseline_stddev_city_diversity_per_hour, 0),
+              2
+          ) AS z_score_city_diversity,
+          ROUND(
+              (r.recent_avg_device_diversity_per_hour - b.baseline_mean_device_diversity_per_hour) /
+              NULLIF(b.baseline_stddev_device_diversity_per_hour, 0),
+              2
+          ) AS z_score_device_diversity,
+          ROUND(
+              GREATEST(COALESCE((r.recent_avg_events_per_hour - b.baseline_mean_events_per_hour) / NULLIF(b.baseline_stddev_events_per_hour, 0), 0), 0) +
+              GREATEST(COALESCE((r.recent_avg_ip_diversity_per_hour - b.baseline_mean_ip_diversity_per_hour) / NULLIF(b.baseline_stddev_ip_diversity_per_hour, 0), 0), 0) +
+              GREATEST(COALESCE((r.recent_avg_country_diversity_per_hour - b.baseline_mean_country_diversity_per_hour) / NULLIF(b.baseline_stddev_country_diversity_per_hour, 0), 0), 0) +
+              GREATEST(COALESCE((r.recent_avg_city_diversity_per_hour - b.baseline_mean_city_diversity_per_hour) / NULLIF(b.baseline_stddev_city_diversity_per_hour, 0), 0), 0) +
+              GREATEST(COALESCE((r.recent_avg_device_diversity_per_hour - b.baseline_mean_device_diversity_per_hour) / NULLIF(b.baseline_stddev_device_diversity_per_hour, 0), 0), 0),
+              2
+          ) AS anomaly_severity_score,
+          CASE
+              WHEN b.user_email IS NULL THEN FALSE
+              WHEN (
+                  (r.recent_avg_events_per_hour - b.baseline_mean_events_per_hour) /
+                      NULLIF(b.baseline_stddev_events_per_hour, 0) > 3
+                  AND (
+                      (r.recent_avg_ip_diversity_per_hour - b.baseline_mean_ip_diversity_per_hour) /
+                          NULLIF(b.baseline_stddev_ip_diversity_per_hour, 0) > 2
+                      OR (r.recent_avg_country_diversity_per_hour - b.baseline_mean_country_diversity_per_hour) /
+                          NULLIF(b.baseline_stddev_country_diversity_per_hour, 0) > 2
+                  )
+              ) THEN TRUE
+              ELSE FALSE
+          END AS is_anomalous,
+          CASE
+              WHEN b.user_email IS NULL
+                  AND r.recent_max_ip_diversity_per_hour >= 3
+              THEN TRUE
+              ELSE FALSE
+          END AS is_cold_start_anomaly,
+          CURRENT_TIMESTAMP AS detection_timestamp
+
+      FROM recent_stats r
+      LEFT JOIN panther_lookups.public.okta_ad_pantherflow_baseline_90d b
+          ON r.user_email = b.user_email
+      WHERE r.recent_total_events >= 5
+  )
+
+  SELECT
+      user_email,
+      baseline_total_events,
+      baseline_active_days,
+      baseline_mean_events_per_hour,
+      baseline_stddev_events_per_hour,
+      baseline_mean_ip_diversity_per_hour,
+      baseline_stddev_ip_diversity_per_hour,
+      baseline_mean_country_diversity_per_hour,
+      baseline_stddev_country_diversity_per_hour,
+      baseline_mean_city_diversity_per_hour,
+      baseline_stddev_city_diversity_per_hour,
+      baseline_mean_device_diversity_per_hour,
+      baseline_stddev_device_diversity_per_hour,
+      primary_country,
+      primary_city,
+      primary_ip,
+      baseline_updated_at,
+      recent_total_events,
+      recent_active_days,
+      recent_max_events_per_hour,
+      recent_max_ip_diversity_per_hour,
+      recent_max_country_diversity_per_hour,
+      recent_max_city_diversity_per_hour,
+      recent_max_device_diversity_per_hour,
+      recent_avg_events_per_hour,
+      recent_avg_ip_diversity_per_hour,
+      recent_avg_country_diversity_per_hour,
+      recent_avg_city_diversity_per_hour,
+      recent_avg_device_diversity_per_hour,
+      all_recent_ips,
+      all_recent_countries,
+      first_anomaly_hour,
+      last_anomaly_hour,
+      z_score_volume,
+      z_score_ip_diversity,
+      z_score_country_diversity,
+      z_score_city_diversity,
+      z_score_device_diversity,
+      anomaly_severity_score,
+      detection_timestamp,
+      is_anomalous,
+      is_cold_start_anomaly
+
+  FROM anomaly_detection
+  WHERE is_anomalous = TRUE OR is_cold_start_anomaly = TRUE
+  ORDER BY anomaly_severity_score DESC
+  LIMIT 100
+
 Schedule:
   RateMinutes: 360  # Run every 6 hours
   TimeoutMinutes: 10
