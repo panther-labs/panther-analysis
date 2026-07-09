@@ -1,7 +1,7 @@
 AnalysisType: scheduled_query
 Description: A role was assumed by an AWS service, followed by a user within 24 hours.  This could indicate a stolen or compromised AWS service role.
 Enabled: false
-Query: |
+SnowflakeQuery: |
   SELECT
     requestParameters:roleArn AS role,
     ARRAY_AGG(distinct userIdentity:principalId) AS users,
@@ -16,6 +16,23 @@ Query: |
   HAVING
     ARRAY_SIZE(types) > 1
     AND ARRAY_CONTAINS('AWSService'::VARIANT, types)
+  LIMIT 100
+
+DatabricksQuery: |
+  SELECT
+    requestParameters.roleArn AS role,
+    COLLECT_SET(userIdentity.principalId) AS users,
+    COLLECT_SET(userIdentity.type) AS types
+  FROM
+    panther_logs.public.aws_cloudtrail
+  WHERE
+    P_OCCURS_SINCE('1 day')
+    AND eventName = 'AssumeRole'
+    AND errorCode IS NULL
+  GROUP BY role
+  HAVING
+    SIZE(types) > 1
+    AND ARRAY_CONTAINS(types, 'AWSService')
   LIMIT 100
 QueryName: "AWS Potentially Stolen Service Role"
 Schedule:

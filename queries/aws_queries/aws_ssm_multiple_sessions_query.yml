@@ -7,11 +7,21 @@ Tags:
     - AWS CloudTrail
     - AWS SSM
     - AWS EC2
-Query: |-
+SnowflakeQuery: |-
   select * from panther_logs.public.aws_cloudtrail
   where eventName = 'StartSession'
   and p_occurs_since(1h, , p_parse_time)
   qualify count(distinct requestParameters:target) over (partition by userIdentity:arn) > 2
+
+DatabricksQuery: |-
+  SELECT * FROM (
+    SELECT
+      *,
+      count(distinct requestParameters.target) over (partition by userIdentity.arn) AS session_count
+    FROM panther_logs.public.aws_cloudtrail
+    WHERE eventName = 'StartSession'
+      AND p_occurs_since(1h, , p_parse_time)
+  ) WHERE session_count > 2
 Schedule:
   RateMinutes: 60
   TimeoutMinutes: 2
