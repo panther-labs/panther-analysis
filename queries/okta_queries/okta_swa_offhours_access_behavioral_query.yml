@@ -259,7 +259,7 @@ DatabricksQuery: |
           client.geographicalContext.country AS country,
           client.geographicalContext.city AS city,
           DATE_TRUNC('hour', published) AS event_hour,
-          DAYOFWEEK(published) * 24 + HOUR(published) AS utc_hour_slot
+          (DAYOFWEEK(published) - 1) * 24 + HOUR(published) AS utc_hour_slot
       FROM panther_logs.public.okta_systemlog
       WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'application.user_membership.change_username'
