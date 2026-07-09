@@ -11,6 +11,16 @@ CLASSIFICATIONS_TO_ALERT = {"malicious", "unknown"}
 MATCHED_IPS = {}  # {ip: classification}
 
 
+def _alerting_classification(classification):
+    """Collapse a possibly list-shaped classification (multiple LUT hits) to the
+    single alertable classification, preferring 'malicious' over 'unknown'."""
+    values = classification if isinstance(classification, list) else [classification]
+    matches = [value for value in values if value in CLASSIFICATIONS_TO_ALERT]
+    if not matches:
+        return None
+    return "malicious" if "malicious" in matches else matches[0]
+
+
 def rule(event):
     global MATCHED_IPS  # pylint: disable=global-statement
     MATCHED_IPS = {}
@@ -25,11 +35,8 @@ def rule(event):
         if bsi and bsi.found(ip_addr):
             continue
 
-        classification = scanner.classification(ip_addr)
-        if not classification or classification == "benign":
-            continue
-
-        if classification in CLASSIFICATIONS_TO_ALERT:
+        classification = _alerting_classification(scanner.classification(ip_addr))
+        if classification:
             MATCHED_IPS[ip_addr] = classification
 
     return bool(MATCHED_IPS)

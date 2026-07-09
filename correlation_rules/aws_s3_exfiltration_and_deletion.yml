@@ -1,7 +1,7 @@
 AnalysisType: correlation_rule
 RuleID: "AWS.S3.ObjectExfiltration.WITH.ObjectDeletion"
 DisplayName: "AWS S3 Object Exfiltration WITH Object Deletion"
-Enabled: true
+Enabled: false
 Severity: High
 Description: >
   Detects a ransomware attack pattern where an attacker with compromised AWS credentials exfiltrates data from an S3 bucket
@@ -36,9 +36,9 @@ Detection:
           - GroupID: Bulk Deletion
             Match: p_alert_context.bucketName
       Schedule:
-        RateMinutes: 15
+        RateMinutes: 1440
         TimeoutMinutes: 10
-      LookbackWindowMinutes: 30
+      LookbackWindowMinutes: 1800
 Tests:
   - Name: Ransomware Attack Sequence
     ExpectedResult: true

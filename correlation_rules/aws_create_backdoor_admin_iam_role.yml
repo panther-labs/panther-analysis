@@ -1,7 +1,7 @@
 AnalysisType: correlation_rule
 RuleID: "AWS.Backdoor.Administrative.IAM.Role.Created.Group"
 DisplayName: "AWS Backdoor Administrative IAM Role Created"
-Enabled: true
+Enabled: false
 Severity: High
 Description: Identifies when CreateRole and AttachAdminRolePolicy CloudTrail events occur in a short period of time. This sequence could indicate a potential security breach.
 Reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html
@@ -20,9 +20,9 @@ Detection:
             Match: p_alert_context.request_rolename
           - GroupID: AttachAdminRolePolicy
             Match: p_alert_context.request_rolename
-      LookbackWindowMinutes: 90
+      LookbackWindowMinutes: 1800
       Schedule:
-        RateMinutes: 30
+        RateMinutes: 1440
         TimeoutMinutes: 5
 Tests:
     - Name: Role Created, Followed By Policy Attachment

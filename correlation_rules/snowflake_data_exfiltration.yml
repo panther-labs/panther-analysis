@@ -1,7 +1,7 @@
 AnalysisType: correlation_rule
 RuleID: "Snowflake.Data.Exfiltration.Group"
 DisplayName: "Snowflake Data Exfiltration"
-Enabled: true
+Enabled: false
 Tags:
   - Snowflake
   - Data Exfiltration
@@ -39,7 +39,7 @@ Detection:
     Schedule:
       RateMinutes: 1440
       TimeoutMinutes: 15
-    LookbackWindowMinutes: 2160
+    LookbackWindowMinutes: 1800
 Tests:
     - Name: Data Exfiltration
       ExpectedResult: true

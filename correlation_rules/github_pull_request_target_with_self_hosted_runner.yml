@@ -1,7 +1,7 @@
 AnalysisType: correlation_rule
 RuleID: "GitHub.PullRequestTarget.WITH.SelfHostedRunner"
 DisplayName: "GitHub pull_request_target Workflow on Self-Hosted Runner"
-Enabled: true
+Enabled: false
 Severity: High
 Tags:
   - CI/CD
@@ -70,9 +70,9 @@ Detection:
         - GroupID: SelfHostedRunner
           Match: workflow_job.run_id
     EventEvaluationOrder: Chronological
-    LookbackWindowMinutes: 90
+    LookbackWindowMinutes: 1800
     Schedule:
-      RateMinutes: 60
+      RateMinutes: 1440
       TimeoutMinutes: 10
 Tests:
   - Name: pull_request_target with self-hosted runner

@@ -142,6 +142,17 @@ versions:
     sha256: aae45064b9901181c7e66a8ed18377518d5ece1beea45438776744c3c8d92484
     type: correlation_rule
     version: 1
+  AWS.Administrative.IAM.User.Created.Group:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/aws_create_admin_iam_user.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/aws_create_admin_iam_user.yml
+    sha256: 90b75ce8df68461d7877356c7d68fab3828ab18e33aaf3f87863d4957825c4ed
+    type: correlation_rule
+    version: 2
   AWS.ApplicationLoadBalancer.WebACL:
     history:
       1:
@@ -168,6 +179,17 @@ versions:
     sha256: d45b75d3f9c84a07befa72f5328b7cbafafd0808df41ec676ee85cfc6349d8d8
     type: correlation_rule
     version: 1
+  AWS.Backdoor.Administrative.IAM.Role.Created.Group:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/aws_create_backdoor_admin_iam_role.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/aws_create_backdoor_admin_iam_role.yml
+    sha256: dc08b8ad8db60b1ab914ebc2c438d76b86a7243fef35fdd39476c5d5dd680002
+    type: correlation_rule
+    version: 2
   AWS.Bedrock.DeleteModelInvocationLoggingConfiguration:
     history:
       1:
@@ -424,9 +446,13 @@ versions:
         commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
         py_file_path: rules/aws_cloudtrail_rules/aws_imds_credential_exfiltration.py
         yaml_file_path: rules/aws_cloudtrail_rules/aws_imds_credential_exfiltration.yml
-    sha256: d7d76ff7be700721c472fec75663e0b15f1e2e76629790e92736172756371494
+      2:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        py_file_path: rules/aws_cloudtrail_rules/aws_imds_credential_exfiltration.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_imds_credential_exfiltration.yml
+    sha256: 4de293751525f87381d05e0754097360457c25628e5757d824ae7d580a937449
     type: rule
-    version: 1
+    version: 2
   AWS.CloudTrail.LeastPrivilege:
     history:
       1:
@@ -893,6 +919,17 @@ versions:
     sha256: a90fc9b5bb503625ff03cc9a7452416b7c5f283055da2663c635cd1f63d4f39d
     type: correlation_rule
     version: 1
+  AWS.Console.Sign-In.WITHOUT.Okta:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/aws_console_sign-in_without_okta.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/aws_console_sign-in_without_okta.yml
+    sha256: ce3cf0187fcc63b043c516a231558006b0ccf27de34ada4d1e29b2d2f09ca74a
+    type: correlation_rule
+    version: 2
   AWS.DNS.Crypto.Domain:
     history:
       1:
@@ -1189,6 +1226,17 @@ versions:
     sha256: b6c1f6a038c91c24d6954518167f31e9975ffc8639aa4f2162eee639116a850f
     type: correlation_rule
     version: 1
+  AWS.EC2.StopInstance.WITH.ModifyInstanceAttributes:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/aws_cloudtrail_stopinstance_followed_by_modifyinstanceattributes.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/aws_cloudtrail_stopinstance_followed_by_modifyinstanceattributes.yml
+    sha256: 879fd56a3feb5784fb6900d6c853e8fe8244d836f32543a9a5de2bf2201f6c8a
+    type: correlation_rule
+    version: 2
   AWS.EC2.StopInstances:
     history:
       1:
@@ -1797,6 +1845,17 @@ versions:
     sha256: 1ddbd635b3068483758f8c63f5f39f4962929cf2e1553f58b8812be64b299c70
     type: correlation_rule
     version: 1
+  AWS.Privilege.Escalation.Via.User.Compromise.Group:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/aws_privilege_escalation_via_user_compromise.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/aws_privilege_escalation_via_user_compromise.yml
+    sha256: 370a4e7d3f7690837a5b096ba4e433d707396af2ba8d6785d277ee4dec58bce3
+    type: correlation_rule
+    version: 2
   AWS.RDS.ActivityStreamStopped:
     history:
       1:
@@ -2144,9 +2203,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/aws_cloudtrail_rules/aws_root_activity.py
         yaml_file_path: rules/aws_cloudtrail_rules/aws_root_activity.yml
-    sha256: 51ca794c3ab0af934f717bbfad1eb4e0b0bde7168706460501882e0c8399d841
+      2:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        py_file_path: rules/aws_cloudtrail_rules/aws_root_activity.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_root_activity.yml
+    sha256: f4f3f38721637c722a4272eb6d532e5f70842e8606b54470149d27bf54d391e1
     type: rule
-    version: 1
+    version: 2
   AWS.RootAccount.AccessKeys:
     history:
       1:
@@ -2474,9 +2537,12 @@ versions:
       3:
         commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
         yaml_file_path: correlation_rules/aws_s3_disable_security_controls.yml
-    sha256: f985f2e393327382b4d1da3b1ef54b2cebb274ff5b694a9d03a11a658a26f3af
+      4:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/aws_s3_disable_security_controls.yml
+    sha256: 69cd0e95b58521f5320bddbe5118160cb6a9f3718ebf0d8a0742c90b39c85683
     type: correlation_rule
-    version: 3
+    version: 4
   AWS.S3.DisableBucketLogging:
     history:
       1:
@@ -2521,6 +2587,17 @@ versions:
         commit_hash: a87c8343e8ec884434488bf7994807c76d3efc90
         yaml_file_path: correlation_rules/aws_s3_exfiltration_and_deletion.yml
     sha256: d19b5fddbdb94c97741ca2386f7f9b67c7838307032e535731b1466701c9d20f
+    type: correlation_rule
+    version: 2
+  AWS.S3.ObjectExfiltration.WITH.ObjectDeletion:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/aws_s3_exfiltration_and_deletion.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/aws_s3_exfiltration_and_deletion.yml
+    sha256: b0d70e309cbf16311edcbe351aec851e55c9c436031e317d53049b23013a8652
     type: correlation_rule
     version: 2
   AWS.S3.RansomwareNoteUpload:
@@ -2617,9 +2694,13 @@ versions:
         commit_hash: bd33713b6cba6301bdf8590e2b2869d4b1ee31cd
         py_file_path: rules/aws_cloudtrail_rules/aws_ssm_decrypt_ssm_params.py
         yaml_file_path: rules/aws_cloudtrail_rules/aws_ssm_decrypt_ssm_params.yml
-    sha256: de2fd60e56ed3c7d10fcf7f453ee0ea9a416da6c834fe72c1887bc5b18191170
+      4:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        py_file_path: rules/aws_cloudtrail_rules/aws_ssm_decrypt_ssm_params.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_ssm_decrypt_ssm_params.yml
+    sha256: 0b854ad91baeac7abe099472b6e07ff41c47d1dbbe8dd36e86a58c6ca5df080f
     type: rule
-    version: 3
+    version: 4
   AWS.SSM.DistributedCommand:
     history:
       1:
@@ -2630,9 +2711,13 @@ versions:
         commit_hash: c611d6ef0183833e3e82881750c70a25b0dc90be
         py_file_path: rules/aws_cloudtrail_rules/aws_ssm_distributed_command.py
         yaml_file_path: rules/aws_cloudtrail_rules/aws_ssm_distributed_command.yml
-    sha256: 5f3410c7a47e856a45138279dd5b87c2b30e594ab75b9ac123af30ecf0ffe946
+      3:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        py_file_path: rules/aws_cloudtrail_rules/aws_ssm_distributed_command.py
+        yaml_file_path: rules/aws_cloudtrail_rules/aws_ssm_distributed_command.yml
+    sha256: 7dcc6d1b522a1432d468e3c5becdad0e8682e2b7f8032a938c41e1e1d72d779b
     type: rule
-    version: 2
+    version: 3
   AWS.SSM.MultipleSessions:
     history:
       1:
@@ -2650,6 +2735,17 @@ versions:
     sha256: 810a77f5aaff51b04de838b2541df3eb18a5116c58f7de5c8bee49a323810bc1
     type: correlation_rule
     version: 1
+  AWS.SSO.Access.Token.Retrieved.by.Unauthenticated.IP.Group:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/aws_sso_access_token_retrieved_by_unauthenticated_ip.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/aws_sso_access_token_retrieved_by_unauthenticated_ip.yml
+    sha256: af56b9b2daddd2b8b6fd8656c2123ad355c661d48ec7e1b335ca65f936e282fe
+    type: correlation_rule
+    version: 2
   AWS.STS.GetCallerIdentity.TruffleHog:
     history:
       1:
@@ -2863,6 +2959,17 @@ versions:
     sha256: 5238793693ff690e4efc6b8c008786bf3883ca410774e067c9e909cb03be183f
     type: correlation_rule
     version: 1
+  AWS.User.Takeover.Via.Password.Reset.Group:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/aws_user_takeover_via_password_reset.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/aws_user_takeover_via_password_reset.yml
+    sha256: 542fb571e60727236b8d304dc7c44218c6aa974856cf0c04344444177856dc62
+    type: correlation_rule
+    version: 2
   AWS.VPC.DefaultNetworkACLRestrictsAllTraffic:
     history:
       1:
@@ -3100,9 +3207,13 @@ versions:
         commit_hash: 197068fa69dbaabef522994b5364d9799f4e63c7
         py_file_path: rules/aws_eks_rules/anonymous_api_access.py
         yaml_file_path: rules/aws_eks_rules/anonymous_api_access.yml
-    sha256: 3d5e773aecda3d0fb36dc13bfce8e0100b8d02d50659ef771cf4b809175ca8f3
+      4:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        py_file_path: rules/aws_eks_rules/anonymous_api_access.py
+        yaml_file_path: rules/aws_eks_rules/anonymous_api_access.yml
+    sha256: b82e956e251155ee424f7f1f488a2a0725bc05cb5fe8268a95cfd592f2cd33c7
     type: rule
-    version: 3
+    version: 4
   Amazon.EKS.Audit.Multiple403:
     history:
       1:
@@ -3499,6 +3610,17 @@ versions:
     sha256: dcc5378b97734bd3cf2c8c9216a7f072639c6f411c0cdf3a06d1cb8d61ed98f4
     type: correlation_rule
     version: 1
+  Auth0.AdminInvited.WITH.TenantMemberDeletion:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/auth0_account_takeover.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/auth0_account_takeover.yml
+    sha256: 77f017ef9a4406303cf465e93c7a56ae8cf711e67312079eb5e89dfb613b112a
+    type: correlation_rule
+    version: 2
   Auth0.AttackProtection.Disabled:
     history:
       1:
@@ -4704,6 +4826,17 @@ versions:
         commit_hash: a87c8343e8ec884434488bf7994807c76d3efc90
         yaml_file_path: correlation_rules/azure_storage_cpk_ransomware.yml
     sha256: 937989dd059919519f91d2b86420f136e143a23b48bcb0f2fba9f587821f82ee
+    type: correlation_rule
+    version: 2
+  Azure.Storage.BlobUpload.WITH.CPKEncryptionError:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/azure_storage_cpk_ransomware.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/azure_storage_cpk_ransomware.yml
+    sha256: ab6d7e7cca7015bcdbb873a483f8199650e534129608e5909c6037b9526f669e
     type: correlation_rule
     version: 2
   Box.Access.Granted:
@@ -5935,6 +6068,17 @@ versions:
     sha256: 4ac73e34b10a6af56fdbf18bbff3c710702ad1fc885ecd5d77555078979d509d
     type: correlation_rule
     version: 2
+  GAIA.Credential.Theft.Attack.Chain.Group:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/gaia_credential_theft_attack_chain.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/gaia_credential_theft_attack_chain.yml
+    sha256: 5a64fb49fc671c30e57cbaa3e8e162aef4704c9cc6856f2c9686996ea9b34e66
+    type: correlation_rule
+    version: 2
   GCP.Access.Attempts.Violating.IAP.Access.Controls:
     history:
       1:
@@ -5979,6 +6123,17 @@ versions:
     sha256: 89a90bb36d2b489b0a00ec3d1b991178a16da9ce6dc7560cae7e1b29f5ca8c42
     type: correlation_rule
     version: 1
+  GCP.Cloud.Run.Service.Created.WITH.Set.IAM.Policy:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/gcp_cloud_run_service_create_followed_by_set_iam_policy.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/gcp_cloud_run_service_create_followed_by_set_iam_policy.yml
+    sha256: 4e95300588c9f852574c190174068e7e68a57d3abbbee24d1cc52a226a4eea1d
+    type: correlation_rule
+    version: 2
   GCP.Cloud.Run.Set.IAM.Policy:
     history:
       1:
@@ -6494,6 +6649,17 @@ versions:
         commit_hash: 82e82ab09b4d031cc4317c4117da6ded97c4905a
         yaml_file_path: correlation_rules/gcp_tag_escalation.yml
     sha256: 152219937f5bbdebe604a9ea69996877e3bfd476e5a450b1e73d3f8e9de9be6c
+    type: correlation_rule
+    version: 2
+  GCP.Privilege.Escalation.Via.TagBinding.Group:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/gcp_tag_escalation.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/gcp_tag_escalation.yml
+    sha256: c4fbdcd93370f261d9b9be6d059dc40b8ef3ee6191e535ca15ab69e833adec65
     type: correlation_rule
     version: 2
   GCP.Privileged.Operation:
@@ -7120,17 +7286,23 @@ versions:
       2:
         commit_hash: bd33713b6cba6301bdf8590e2b2869d4b1ee31cd
         yaml_file_path: correlation_rules/github_advanced_security_change_not_followed_by_repo_archived.yml
-    sha256: b18ad36c2676253dffa7a8567980e930dd0ed736d6a03d1ad92e92305622a815
+      3:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/github_advanced_security_change_not_followed_by_repo_archived.yml
+    sha256: 511a002f64e99036315d89022859f7ec139ce395dd8c5b3515471efe339c5f21
     type: correlation_rule
-    version: 2
+    version: 3
   GitHub.ArtifactDownload.FROM.CrossFork.Workflow:
     history:
       1:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         yaml_file_path: correlation_rules/github_artifact_download_from_forked_repo.yml
-    sha256: 9178c3ac67f109c9956a4cfc4b3f52d8025ed2d6f45d1208e0cdc931ceeefa18
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/github_artifact_download_from_forked_repo.yml
+    sha256: f3a9a8cf9ab349c1244b8a3fd98c99930a11f7e91172e414bb546895969bedac
     type: correlation_rule
-    version: 1
+    version: 2
   GitHub.Branch.PolicyOverride:
     history:
       1:
@@ -7207,17 +7379,23 @@ versions:
       1:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         yaml_file_path: correlation_rules/github_pull_request_target_with_checkout_in_workflow.yml
-    sha256: dce59569064b9d78476301d554d528b4f8fb1f4a3b4e71f8ef033202617079fd
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/github_pull_request_target_with_checkout_in_workflow.yml
+    sha256: 761bc6bb2be90995943ff467f2c48de62c578dd10877e6080f72fd36049293c8
     type: correlation_rule
-    version: 1
+    version: 2
   GitHub.PullRequestTarget.WITH.SelfHostedRunner:
     history:
       1:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         yaml_file_path: correlation_rules/github_pull_request_target_with_self_hosted_runner.yml
-    sha256: 0ce18de25f2a46288b7ed2f05504d60fa99f3e14e8dfce5cee79951f5df676e9
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/github_pull_request_target_with_self_hosted_runner.yml
+    sha256: eee0e93ccab5225842e5a2f261776be163e2f8830aaa50cc0953af9e4b551b6a
     type: correlation_rule
-    version: 1
+    version: 2
   GitHub.Repo.HookModified:
     history:
       1:
@@ -7662,9 +7840,13 @@ versions:
         commit_hash: bd33713b6cba6301bdf8590e2b2869d4b1ee31cd
         py_file_path: rules/gsuite_activityevent_rules/gsuite_oauth_privileged_scopes.py
         yaml_file_path: rules/gsuite_activityevent_rules/gsuite_oauth_privileged_scopes.yml
-    sha256: a9d2b788576f213d3a6e7d1b4a1a65e19790e0e3ed3e1fc58af89dfd9aad242d
+      3:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        py_file_path: rules/gsuite_activityevent_rules/gsuite_oauth_privileged_scopes.py
+        yaml_file_path: rules/gsuite_activityevent_rules/gsuite_oauth_privileged_scopes.yml
+    sha256: d01c721d24ba6ca68b5a1229f5aa9779226120cc71851fb093b856c5bf6235ca
     type: rule
-    version: 2
+    version: 3
   Google.Workspace.OAuth.Token.New.IP:
     history:
       1:
@@ -8583,6 +8765,17 @@ versions:
     sha256: c6f39a07464a81c7ca353c50ed0ccb8aec7622620540fa96272e83a53f1100b7
     type: correlation_rule
     version: 1
+  Notion.Login.WITH.AccountChange:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/notion_login_followed_by_account_change.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/notion_login_followed_by_account_change.yml
+    sha256: ed036781b0ff5b9499deb24fd92535852bee2337c8f2aea1d25f20698204c6c0
+    type: correlation_rule
+    version: 2
   Notion.LoginFromBlockedIP:
     history:
       1:
@@ -8949,6 +9142,17 @@ versions:
     sha256: 7533edf6384c04d16f56cd034f14316e65a1661e8a68d2b6fac51c34131c42d3
     type: correlation_rule
     version: 2
+  Okta.Login.Without.Push.Group:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/okta_login_without_push.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/okta_login_without_push.yml
+    sha256: 5cf241c9232041fbe64b4da1b218fe0552c88cab0c6ac1bbfd6f47b76399893b
+    type: correlation_rule
+    version: 2
   Okta.Login.Without.Push.Marker:
     history:
       1:
@@ -9081,9 +9285,13 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/okta_rules/okta_support_reset.py
         yaml_file_path: rules/okta_rules/okta_support_reset.yml
-    sha256: 1453ee47d03f2fac9da08fe8ba414306effa0312e655c5d921f39be47fa33428
+      2:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        py_file_path: rules/okta_rules/okta_support_reset.py
+        yaml_file_path: rules/okta_rules/okta_support_reset.yml
+    sha256: 94ca5584fb079bcf4e8acb348a6928a76c25d32389144cbeb8df6c0646af5daf
     type: rule
-    version: 1
+    version: 2
   Okta.ThreatInsight.Security.Threat.Detected:
     history:
       1:
@@ -9177,6 +9385,17 @@ versions:
     sha256: ef7de0eb35621dcef57758370a782d279d19be63b9fb36dc13b549042fdace63
     type: correlation_rule
     version: 1
+  OneLogin.HighRiskFailedLogin.WITH.SuccessfulLogin:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/onelogin_successful_login_after_high_risk_failed_login.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/onelogin_successful_login_after_high_risk_failed_login.yml
+    sha256: 2b4dd274e576d19fdc1f22fc202ecb951d4d6c0a395291be010fb59af9c8a8a0
+    type: correlation_rule
+    version: 2
   OneLogin.Login:
     history:
       1:
@@ -9319,6 +9538,17 @@ versions:
     sha256: d09c0ffdeb51d6862a46f9704b05a103d4f17a87dac3b2afe76763ce7cb00c09
     type: correlation_rule
     version: 1
+  OpenAI.BruteForce.Login.Success.Group:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/openai_brute_force_login_success.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/openai_brute_force_login_success.yml
+    sha256: 31efaae6eb373a38b92936f87b2f65505ac576953dfebf071125c4220884dc2c
+    type: correlation_rule
+    version: 2
   OpenAI.CredentialStuffing:
     history:
       1:
@@ -9329,9 +9559,13 @@ versions:
         commit_hash: 1d28290e3e9f1d1495000076e9e9aee74a560447
         py_file_path: rules/openai_rules/openai_credential_stuffing.py
         yaml_file_path: rules/openai_rules/openai_credential_stuffing.yml
-    sha256: 15dd588b0372f57c911cbef6af1d928a7f47bcda279bb8c14cba97c80408aa68
+      3:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        py_file_path: rules/openai_rules/openai_credential_stuffing.py
+        yaml_file_path: rules/openai_rules/openai_credential_stuffing.yml
+    sha256: dfe00d24f2c096b4415a6b17966812969126b0d5f4adc82d7f1e6ee7268097a4
     type: rule
-    version: 2
+    version: 3
   OpenAI.IP.Allowlist.Changes:
     history:
       1:
@@ -9579,9 +9813,12 @@ versions:
       9:
         commit_hash: 1d28290e3e9f1d1495000076e9e9aee74a560447
         yaml_file_path: packs/aws.yml
-    sha256: 341b954f5017a7a65ccffbb94217b8253040e889e73cb5dbc60e77123e65c5d2
+      10:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: packs/aws.yml
+    sha256: dc2d7c9d9b265aafea12195c9a871e881ba908e779d4f57beb7adc7d006472ad
     type: pack
-    version: 9
+    version: 10
   PantherManaged.AWSDecoy:
     history:
       1:
@@ -9635,9 +9872,12 @@ versions:
       1:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         yaml_file_path: packs/auth0.yml
-    sha256: e6387dc99cb85785fabdd13db6319191bc17f4e5b6949741cd5225d2950a13e7
+      2:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: packs/auth0.yml
+    sha256: 0e017a20d239cbb3c843a0c781f82e18982932c05236a9f35f319cf2595016b1
     type: pack
-    version: 1
+    version: 2
   PantherManaged.Axonius:
     history:
       1:
@@ -9663,9 +9903,12 @@ versions:
       5:
         commit_hash: ba99f0f8b4db867acd2f8fccbc686da8d23b3969
         yaml_file_path: packs/azure_activity.yml
-    sha256: 4750c283b291c38bcb40ef4b3f147db18a11433e819264de0a03ef908de847c6
+      6:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: packs/azure_activity.yml
+    sha256: 3f0081b5fbb6248cfecfbf218c344301c0d68e68cc23a9da757464e0c43173ba
     type: pack
-    version: 5
+    version: 6
   PantherManaged.AzureAudit.Signin:
     history:
       1:
@@ -9732,9 +9975,12 @@ versions:
       3:
         commit_hash: a87c8343e8ec884434488bf7994807c76d3efc90
         yaml_file_path: packs/credential_security.yml
-    sha256: aced55a2cda1369cfc957d17b2cf4986209efcdfe1eb3dad900c67bdb78ed844
+      4:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: packs/credential_security.yml
+    sha256: 6e61e01e93e2f2481449f626184373a09b43e4375925c514ded4c833b2487e4e
     type: pack
-    version: 3
+    version: 4
   PantherManaged.Crowdstrike:
     history:
       1:
@@ -9809,9 +10055,12 @@ versions:
       7:
         commit_hash: ba99f0f8b4db867acd2f8fccbc686da8d23b3969
         yaml_file_path: packs/gcp_audit.yml
-    sha256: e1f3a3107145c17bfa49707c228ca09045dc9446f25dcca7eecf53d443b9b187
+      8:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: packs/gcp_audit.yml
+    sha256: 071a0ef766d7586a1b69b8d1e0fb50c1b96f1b1fc0327b078caa42233a46cd5c
     type: pack
-    version: 7
+    version: 8
   PantherManaged.GCP.K8:
     history:
       1:
@@ -9927,9 +10176,12 @@ versions:
       1:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         yaml_file_path: packs/notion.yml
-    sha256: f53956f973d823ee94cfb8bb959547383494b1e904781c204ad99122ef788666
+      2:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: packs/notion.yml
+    sha256: 65872a02c428f365eec09113940dbd79540dac19c8bad8cde42a90cdf5c5f8de
     type: pack
-    version: 1
+    version: 2
   PantherManaged.OSQuery:
     history:
       1:
@@ -9952,17 +10204,23 @@ versions:
       4:
         commit_hash: ba99f0f8b4db867acd2f8fccbc686da8d23b3969
         yaml_file_path: packs/okta.yml
-    sha256: 0fec5c2aa63e7887e96132788d6278609f6daaf71681f5446b827492533ffc5d
+      5:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: packs/okta.yml
+    sha256: a2a595497ca87b39e2526c40b6dae7d097491d9ad749dd8a8df74a188cd12cc1
     type: pack
-    version: 4
+    version: 5
   PantherManaged.OneLogin:
     history:
       1:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         yaml_file_path: packs/onelogin.yml
-    sha256: bb04f178212bf1e3fc95ce6d0b097a6f500e422878cee9507e5f942a4d5f0705
+      2:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: packs/onelogin.yml
+    sha256: 83d0dde1ec141b76cd3e1c14e5f541facaf6ab5130b3bcd8b1968e9c24ab078c
     type: pack
-    version: 1
+    version: 2
   PantherManaged.OnePassword:
     history:
       1:
@@ -9985,9 +10243,12 @@ versions:
       4:
         commit_hash: 1d28290e3e9f1d1495000076e9e9aee74a560447
         yaml_file_path: packs/openai.yml
-    sha256: 69873159de45bd2965dcba3b2313827bb98644ce920919a6adfaec92fcece521
+      5:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: packs/openai.yml
+    sha256: bd7453a54f68619259eafa0e9317ef0afef367c161a5080d044719de8d28e94d
     type: pack
-    version: 4
+    version: 5
   PantherManaged.Orca.Alert:
     history:
       1:
@@ -10056,17 +10317,23 @@ versions:
       2:
         commit_hash: 70b4c9e279cc356017133a66981cb45d7045358b
         yaml_file_path: packs/snowflake.yml
-    sha256: d8e1b33ccf693f9ac6b70be9efda748d0b4c9b8718d3c7e8270fb75f9cd8514e
+      3:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: packs/snowflake.yml
+    sha256: 93625e2afd50636e5e25bf553db4f229b30b63bf5d53c78444478aaf40b5e0c6
     type: pack
-    version: 2
+    version: 3
   PantherManaged.SnowflakeStreaming:
     history:
       1:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         yaml_file_path: packs/snowflake_streaming.yml
-    sha256: ed7bf77d59c45e7508fc2e1b377625a33922fde72a32d1abe64f632181ccbead
+      2:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: packs/snowflake_streaming.yml
+    sha256: a37a12cc4123c31e21354720e2f6c3558c65fc0f48883383181ced754a11f175
     type: pack
-    version: 1
+    version: 2
   PantherManaged.Snyk:
     history:
       1:
@@ -10224,6 +10491,17 @@ versions:
         commit_hash: bd33713b6cba6301bdf8590e2b2869d4b1ee31cd
         yaml_file_path: correlation_rules/potential_compromised_okta_credentials.yml
     sha256: d40afdeb22b5890d9d0c960835ca97df5401c60b30c014717c76b5472dfd8465
+    type: correlation_rule
+    version: 2
+  Potential.Compromised.Okta.Credentials.Group:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/potential_compromised_okta_credentials.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/potential_compromised_okta_credentials.yml
+    sha256: febfaad130617ac6782ab055b5b41968681f0a0f1ac38a3a7691d6444ce738a8
     type: correlation_rule
     version: 2
   Privileged Pod Created:
@@ -10772,6 +11050,17 @@ versions:
     sha256: 01f047d92531e07d136e2e971e277c75bd98b07a35510a2d9762ff9b0876299c
     type: correlation_rule
     version: 2
+  Secret.Exposed.and.not.Quarantined.Group:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/secret_exposed_and_not_quarantined.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/secret_exposed_and_not_quarantined.yml
+    sha256: d48ed8c221b0254c67cab76aa47aa8d995aa48d065990b9272c07eebd4e5e77f
+    type: correlation_rule
+    version: 2
   SentinelOne.Alert.Passthrough:
     history:
       1:
@@ -10817,18 +11106,26 @@ versions:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/slack_rules/slack_app_access_expanded.py
         yaml_file_path: rules/slack_rules/slack_app_access_expanded.yml
-    sha256: 72ca4234b4ccc6546e28c609e9e8eb27a6cc3523590c75d9e4001aaea6b523ff
+      2:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        py_file_path: rules/slack_rules/slack_app_access_expanded.py
+        yaml_file_path: rules/slack_rules/slack_app_access_expanded.yml
+    sha256: 0841d227d4f4cd3285421ed927e14815a68d1249498b34b0d2394347ca988f69
     type: rule
-    version: 1
+    version: 2
   Slack.AuditLogs.AppAdded:
     history:
       1:
         commit_hash: 26da01dbc7d54e8e78dcea4a8e1cc4dcdc2b6df0
         py_file_path: rules/slack_rules/slack_app_added.py
         yaml_file_path: rules/slack_rules/slack_app_added.yml
-    sha256: 48ae06ade224db8ac3dd913e935e5c1d069897f0e5349a18dc805785d06fa57c
+      2:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        py_file_path: rules/slack_rules/slack_app_added.py
+        yaml_file_path: rules/slack_rules/slack_app_added.yml
+    sha256: f7f8802d83a618a33926dd65d761c65828435c0b4f3715a872d1caf53060a069
     type: rule
-    version: 1
+    version: 2
   Slack.AuditLogs.AppRemoved:
     history:
       1:
@@ -11118,6 +11415,17 @@ versions:
     sha256: 94ddb865df496ff61c58c7c588a8485446cf3e89951a068b32dcba570c92f736
     type: correlation_rule
     version: 2
+  Snowflake.Data.Exfiltration.Group:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/snowflake_data_exfiltration.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/snowflake_data_exfiltration.yml
+    sha256: 4198e66b763f0badc5aee9a2a28f21d1358818ff936650495795829d824a35dd
+    type: correlation_rule
+    version: 2
   Snowflake.External.Shares:
     history:
       1:
@@ -11171,6 +11479,17 @@ versions:
     sha256: 71bf29af2134d9824e15a6090ba8dfd4f44eff6fe18b2edcd54f880e7409c91e
     type: correlation_rule
     version: 1
+  Snowflake.PotentialBruteForceSuccess.Group:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/snowflake_potential_brute_force_success.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/snowflake_potential_brute_force_success.yml
+    sha256: 1f1b79e79be63f2f5a68dd8fc90b513ca598966cb0f2c6926e55fcb0926ff61d
+    type: correlation_rule
+    version: 2
   Snowflake.Stream.AccountAdminGranted:
     history:
       1:
@@ -11207,6 +11526,17 @@ versions:
         commit_hash: bd33713b6cba6301bdf8590e2b2869d4b1ee31cd
         yaml_file_path: correlation_rules/snowflake_data_exfiltration_streaming.yml
     sha256: 7fd97acb42c22e55a8c261dd366f8f54ea830f7a56d210d3bed7f1bb3e8f21c8
+    type: correlation_rule
+    version: 2
+  Snowflake.Stream.DataExfiltration.Group:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/snowflake_data_exfiltration_streaming.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/snowflake_data_exfiltration_streaming.yml
+    sha256: 5c4ec756d213c1ef0195e0a2cb01cf1c62ac572c1f35540dfc9e3aa7e4933c27
     type: correlation_rule
     version: 2
   Snowflake.Stream.ExternalShares:
@@ -11251,9 +11581,13 @@ versions:
         commit_hash: c47830fe3f8ddb757c3583063f9bcaa8503a803d
         py_file_path: rules/snowflake_rules/snowflake_stream_password_spray.py
         yaml_file_path: rules/snowflake_rules/snowflake_stream_password_spray.yml
-    sha256: 9aa8117bc0e7d0b77a5b7f327ef740bf468ced1e8a56f62001217857a61f77a9
+      2:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        py_file_path: rules/snowflake_rules/snowflake_stream_password_spray.py
+        yaml_file_path: rules/snowflake_rules/snowflake_stream_password_spray.yml
+    sha256: 5308b555f2b153a2e0b83445079ed3e3d830109a4c639dc3409a628c58ed312a
     type: rule
-    version: 1
+    version: 2
   Snowflake.Stream.PublicRoleGrant:
     history:
       1:
@@ -12467,6 +12801,17 @@ versions:
         commit_hash: 70b4c9e279cc356017133a66981cb45d7045358b
         yaml_file_path: correlation_rules/wiz_issue_followed_by_ssh.yml
     sha256: 4405a963760d6880436e90d6e2e9ef4f356ff1813235f3e08d5741d4b215e34b
+    type: correlation_rule
+    version: 2
+  Wiz.Issue.WITH.SSH:
+    history:
+      1:
+        commit_hash: 0da68369c2ccdc736f001e94aeafb59ff5b0c230
+        yaml_file_path: correlation_rules/wiz_issue_followed_by_ssh.yml
+      2:
+        commit_hash: 6c04c4cabda92a6f08593446a5fa2ad58730cdba
+        yaml_file_path: correlation_rules/wiz_issue_followed_by_ssh.yml
+    sha256: 0045665da2081690d3597944027385088c5f107e8f14291b8edd652d65a35500
     type: correlation_rule
     version: 2
   Wiz.Revoke.User.Sessions:

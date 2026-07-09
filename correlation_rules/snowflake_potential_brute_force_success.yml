@@ -1,7 +1,7 @@
 AnalysisType: correlation_rule
 RuleID: "Snowflake.PotentialBruteForceSuccess.Group"
 DisplayName: "Snowflake Brute Force Login Success"
-Enabled: true
+Enabled: false
 Severity: High
 Description: Detecting brute force activity and reporting when a user has incorrectly logged in multiple times and then had a successful login.
 Detection:
@@ -18,9 +18,9 @@ Detection:
         - GroupID: Successful Login
           Match: CLIENT_IP
     Schedule:
-      RateMinutes: 20
+      RateMinutes: 1440
       TimeoutMinutes: 15
-    LookbackWindowMinutes: 30
+    LookbackWindowMinutes: 1800
 Tests:
     - Name: Successful Bulk Login
       ExpectedResult: true
