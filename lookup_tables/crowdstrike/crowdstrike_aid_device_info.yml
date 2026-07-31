@@ -25,7 +25,7 @@ DatabricksQuery: |
       MAX_BY(ComputerName, p_event_time) AS ComputerName,
       COLLECT_SET(aip) AS aips,
       MAX_BY(event, p_event_time) AS details
-  FROM panther_logs.public.crowdstrike_fdrevent
+  FROM panther_logs.crowdstrike_fdrevent
   WHERE p_occurs_since('10d')
       AND fdr_event_type = 'aid_master'
   GROUP BY aid
