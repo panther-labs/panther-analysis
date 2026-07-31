@@ -678,46 +678,46 @@ DatabricksQuery: |
 
   WITH base AS (
       SELECT
-          actor.alternateId AS user_email,
+          actor:alternateId::string AS user_email,
           published,
-          outcome.result AS outcome,
-          client.geographicalContext.country AS country,
-          client.geographicalContext.city AS city,
-          client.geographicalContext.state AS state,
-          client.userAgent.browser AS browser,
-          client.userAgent.os AS os,
-          client.device AS device,
-          securityContext.asNumber AS asn,
-          client.ipAddress AS ip_address,
-          securityContext.isp AS isp,
-          securityContext.domain AS domain,
-          securityContext.asOrg AS asn_org,
-          authenticationContext.authenticationProvider AS auth_provider,
-          authenticationContext.credentialType AS credential_type,
-          securityContext.isProxy AS is_proxy,
+          outcome:result::string AS outcome,
+          client:geographicalContext:country::string AS country,
+          client:geographicalContext:city::string AS city,
+          client:geographicalContext:state::string AS state,
+          client:userAgent:browser::string AS browser,
+          client:userAgent:os::string AS os,
+          client:device::string AS device,
+          securityContext:asNumber::string AS asn,
+          client:ipAddress::string AS ip_address,
+          securityContext:isp::string AS isp,
+          securityContext:domain::string AS domain,
+          securityContext:asOrg::string AS asn_org,
+          authenticationContext:authenticationProvider::string AS auth_provider,
+          authenticationContext:credentialType::string AS credential_type,
+          securityContext:isProxy::boolean AS is_proxy,
           target,
-          client.userAgent.rawUserAgent AS raw_user_agent,
-          debugContext.debugData.tunnels AS tunnels,
-          debugContext.debugData.logOnlySecurityData AS security_data_json,
-          debugContext.debugData.deviceFingerprint AS device_fingerprint,
-          debugContext.debugData.threatSuspected AS threat_suspected,
-          debugContext.debugData.responseTime AS response_time_ms,
+          client:userAgent:rawUserAgent::string AS raw_user_agent,
+          debugContext:debugData:tunnels::string AS tunnels,
+          debugContext:debugData:logOnlySecurityData::string AS security_data_json,
+          debugContext:debugData:deviceFingerprint::string AS device_fingerprint,
+          debugContext:debugData:threatSuspected::string AS threat_suspected,
+          debugContext:debugData:responseTime::int AS response_time_ms,
           CASE
-              WHEN target[0].type IN ('AuthenticatorEnrollment', 'AuthenticatorMethod')
-                  THEN target[0].displayName
-              WHEN target[1].type IN ('AuthenticatorEnrollment', 'AuthenticatorMethod')
-                  THEN target[1].displayName
-              WHEN target[2].type IN ('AuthenticatorEnrollment', 'AuthenticatorMethod')
-                  THEN target[2].displayName
+              WHEN target[0]:type::string IN ('AuthenticatorEnrollment', 'AuthenticatorMethod')
+                  THEN target[0]:displayName::string
+              WHEN target[1]:type::string IN ('AuthenticatorEnrollment', 'AuthenticatorMethod')
+                  THEN target[1]:displayName::string
+              WHEN target[2]:type::string IN ('AuthenticatorEnrollment', 'AuthenticatorMethod')
+                  THEN target[2]:displayName::string
               ELSE NULL
           END AS mfa_factor,
-          target[0].displayName AS app,
+          target[0]:displayName::string AS app,
           HOUR(published) AS utc_hour
-      FROM panther_logs.public.okta_systemlog
+      FROM panther_logs.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
           AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
-          AND actor.alternateId LIKE '%@%'
-          AND actor.alternateId != 'system@okta.com'
+          AND actor:alternateId::string LIKE '%@%'
+          AND actor:alternateId::string != 'system@okta.com'
   ),
 
   tunnel_features AS (
@@ -924,20 +924,20 @@ DatabricksQuery: |
 
   policy_hourly AS (
       SELECT
-          actor.alternateId AS user_email,
+          actor:alternateId::string AS user_email,
           DATE_TRUNC('hour', published) AS event_hour,
           COUNT(*) AS hourly_policy_changes,
           SUM(CASE
-              WHEN debugContext.debugData.changedAttributes LIKE '%requireFactor%false%' THEN 1
-              WHEN debugContext.debugData.changedAttributes LIKE '%maxSessionLifetimeMinutes%0%' THEN 1
-              WHEN debugContext.debugData.changedAttributes RLIKE '.*minLength.*[1-6][^0-9].*' THEN 1
+              WHEN debugContext:debugData:changedAttributes::string LIKE '%requireFactor%false%' THEN 1
+              WHEN debugContext:debugData:changedAttributes::string LIKE '%maxSessionLifetimeMinutes%0%' THEN 1
+              WHEN debugContext:debugData:changedAttributes::string RLIKE '.*minLength.*[1-6][^0-9].*' THEN 1
               ELSE 0
           END) AS hourly_security_weakenings
-      FROM panther_logs.public.okta_systemlog
+      FROM panther_logs.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
           AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType IN ('policy.rule.update', 'policy.lifecycle.update')
-          AND actor.alternateId LIKE '%@%'
+          AND actor:alternateId::string LIKE '%@%'
       GROUP BY user_email, event_hour
   ),
 
@@ -957,19 +957,19 @@ DatabricksQuery: |
 
   enrollment_hourly AS (
       SELECT
-          actor.alternateId AS user_email,
+          actor:alternateId::string AS user_email,
           DATE_TRUNC('hour', published) AS event_hour,
           COUNT(*) AS hourly_enrollments,
           SUM(CASE
-              WHEN actor.alternateId != target[0].alternateId THEN 1
+              WHEN actor:alternateId::string != target[0]:alternateId::string THEN 1
               ELSE 0
           END) AS hourly_admin_enrollments,
-          COUNT(DISTINCT target[0].alternateId) AS hourly_unique_targets
-      FROM panther_logs.public.okta_systemlog
+          COUNT(DISTINCT target[0]:alternateId::string) AS hourly_unique_targets
+      FROM panther_logs.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
           AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'user.mfa.factor.activate'
-          AND actor.alternateId LIKE '%@%'
+          AND actor:alternateId::string LIKE '%@%'
       GROUP BY user_email, event_hour
   ),
 
@@ -991,39 +991,39 @@ DatabricksQuery: |
 
   swa_access_hourly AS (
       SELECT
-          actor.alternateId AS user_email,
+          actor:alternateId::string AS user_email,
           DATE_TRUNC('hour', published) AS event_hour,
           COUNT(*) AS hourly_swa_events,
-          COUNT(DISTINCT target[0].displayName) AS hourly_app_diversity,
-          COUNT(DISTINCT client.geographicalContext.country) AS hourly_country_diversity,
-          COUNT(DISTINCT client.ipAddress) AS hourly_ip_diversity
-      FROM panther_logs.public.okta_systemlog
+          COUNT(DISTINCT target[0]:displayName::string) AS hourly_app_diversity,
+          COUNT(DISTINCT client:geographicalContext:country::string) AS hourly_country_diversity,
+          COUNT(DISTINCT client:ipAddress::string) AS hourly_ip_diversity
+      FROM panther_logs.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
           AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'user.authentication.sso'
-          AND actor.alternateId LIKE '%@%'
+          AND actor:alternateId::string LIKE '%@%'
           AND (
-              debugContext.debugData.swa_mode = 'true'
-              OR debugContext.debugData.signOnMode LIKE '%AUTO%LOGIN%'
-              OR debugContext.debugData.signOnMode LIKE '%BROWSER%PLUGIN%'
+              debugContext:debugData:swa_mode::string = 'true'
+              OR debugContext:debugData:signOnMode::string LIKE '%AUTO%LOGIN%'
+              OR debugContext:debugData:signOnMode::string LIKE '%BROWSER%PLUGIN%'
           )
       GROUP BY user_email, event_hour
   ),
 
   swa_events AS (
       SELECT
-          actor.alternateId AS user_email,
-          client.ipAddress AS ip_address,
-          client.userAgent.rawUserAgent AS ua
-      FROM panther_logs.public.okta_systemlog
+          actor:alternateId::string AS user_email,
+          client:ipAddress::string AS ip_address,
+          client:userAgent:rawUserAgent::string AS ua
+      FROM panther_logs.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
           AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'user.authentication.sso'
-          AND actor.alternateId LIKE '%@%'
+          AND actor:alternateId::string LIKE '%@%'
           AND (
-              debugContext.debugData.swa_mode = 'true'
-              OR debugContext.debugData.signOnMode LIKE '%AUTO%LOGIN%'
-              OR debugContext.debugData.signOnMode LIKE '%BROWSER%PLUGIN%'
+              debugContext:debugData:swa_mode::string = 'true'
+              OR debugContext:debugData:signOnMode::string LIKE '%AUTO%LOGIN%'
+              OR debugContext:debugData:signOnMode::string LIKE '%BROWSER%PLUGIN%'
           )
   ),
   swa_known_ips_ranked AS (
@@ -1078,16 +1078,16 @@ DatabricksQuery: |
 
   extraction_hourly AS (
       SELECT
-          actor.alternateId AS user_email,
+          actor:alternateId::string AS user_email,
           DATE_TRUNC('hour', published) AS event_hour,
           COUNT(*) AS hourly_credential_extractions,
-          COUNT(DISTINCT target[0].alternateId) AS hourly_victim_diversity,
-          COUNT(DISTINCT client.geographicalContext.country) AS hourly_country_diversity
-      FROM panther_logs.public.okta_systemlog
+          COUNT(DISTINCT target[0]:alternateId::string) AS hourly_victim_diversity,
+          COUNT(DISTINCT client:geographicalContext:country::string) AS hourly_country_diversity
+      FROM panther_logs.okta_systemlog
       WHERE p_event_time >= CURRENT_DATE - INTERVAL '97 days'
           AND p_event_time < CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'application.user_membership.change_username'
-          AND actor.alternateId LIKE '%@%'
+          AND actor:alternateId::string LIKE '%@%'
       GROUP BY user_email, event_hour
   ),
 
