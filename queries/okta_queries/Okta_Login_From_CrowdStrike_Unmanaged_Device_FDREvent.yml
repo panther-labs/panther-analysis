@@ -4,7 +4,7 @@
 AnalysisType: scheduled_query
 Description: Okta Logins from an IP Address not found in CrowdStrike's AIP List (crowdstrike_fdrevent table)
 Enabled: false
-Query: |
+SnowflakeQuery: |
   SELECT *
   FROM panther_logs.public.okta_systemlog
   WHERE p_occurs_since('1 days')
@@ -13,6 +13,21 @@ Query: |
     AND client:device = 'Computer'
     AND client:ipAddress LIKE '%.%.%.%'
     AND client:ipAddress NOT IN
+      (
+        SELECT DISTINCT aip
+        FROM panther_logs.public.crowdstrike_fdrevent
+        WHERE p_occurs_since('3 days') AND panther_logs.public.crowdstrike_fdrevent.fdr_event_type = 'aid_master'
+      )
+
+DatabricksQuery: |
+  SELECT *
+  FROM panther_logs.public.okta_systemlog
+  WHERE p_occurs_since('1 days')
+    AND eventtype = 'user.session.start'
+    AND outcome.result = 'SUCCESS'
+    AND client.device = 'Computer'
+    AND client.ipAddress LIKE '%.%.%.%'
+    AND client.ipAddress NOT IN
       (
         SELECT DISTINCT aip
         FROM panther_logs.public.crowdstrike_fdrevent

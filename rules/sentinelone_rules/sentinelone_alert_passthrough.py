@@ -7,8 +7,8 @@ SENTINELONE_SEVERITY = {
 
 
 def rule(event):
-    # 3608 corresponds to new alerts
-    return event.get("activitytype") == 3608
+    # "3608" corresponds to new alerts
+    return event.get("activitytype") == "3608"
 
 
 def title(event):

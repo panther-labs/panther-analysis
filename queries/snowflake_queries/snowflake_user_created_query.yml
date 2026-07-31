@@ -3,7 +3,7 @@ QueryName: "Query.Snowflake.UserCreated"
 Enabled: false
 Description: >
   Monitor for new users.
-Query: |
+SnowflakeQuery: |
   --return create user events
 
   --this was adapted from a Security Feature Checklist query
@@ -16,6 +16,26 @@ Query: |
     user_name,
     role_name
   FROM snowflake.account_usage.query_history
+    WHERE
+      p_occurs_since('1 day')
+      AND execution_status = 'SUCCESS'
+      AND query_type = 'CREATE_USER'
+      AND query_text ILIKE '%create%user%'
+  ORDER BY end_time desc
+
+DatabricksQuery: |
+  --return create user events
+
+  --this was adapted from a Security Feature Checklist query
+
+  SELECT
+    start_time as p_event_time,
+    end_time,
+    query_type,
+    query_text,
+    user_name,
+    role_name
+  FROM panther_logs.public.snowflake_queryhistory
     WHERE
       p_occurs_since('1 day')
       AND execution_status = 'SUCCESS'
