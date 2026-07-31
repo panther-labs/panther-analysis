@@ -59,7 +59,7 @@ DatabricksQuery: |
       COUNT_IF(indicator_type ILIKE 'email') AS email_count,
       COUNT_IF(indicator_type ILIKE 'CVE') AS cve_count,
       CONCAT('https://otx.alienvault.com/pulse/', id) AS otx_url
-  FROM panther_lookups.public.otx_pulses
+  FROM panther_lookups.otx_pulses
   WHERE p_occurs_since('30 days')
   GROUP BY id
   ORDER BY pulse_modified DESC

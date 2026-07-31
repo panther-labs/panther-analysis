@@ -302,19 +302,19 @@ DatabricksQuery: |
 
   WITH policy_recent_hourly AS (
       SELECT
-          actor.alternateId AS admin_email,
+          actor:alternateId::string AS admin_email,
           DATE_TRUNC('hour', published) AS event_hour,
           COUNT(*) AS hourly_policy_changes,
           SUM(CASE
-              WHEN debugContext.debugData.changedAttributes LIKE '%requireFactor%false%' THEN 1
-              WHEN debugContext.debugData.changedAttributes LIKE '%maxSessionLifetimeMinutes%0%' THEN 1
-              WHEN debugContext.debugData.changedAttributes RLIKE '.*minLength.*[1-6][^0-9].*' THEN 1
+              WHEN debugContext:debugData:changedAttributes::string LIKE '%requireFactor%false%' THEN 1
+              WHEN debugContext:debugData:changedAttributes::string LIKE '%maxSessionLifetimeMinutes%0%' THEN 1
+              WHEN debugContext:debugData:changedAttributes::string RLIKE '.*minLength.*[1-6][^0-9].*' THEN 1
               ELSE 0
           END) AS hourly_security_weakenings
-      FROM panther_logs.public.okta_systemlog
+      FROM panther_logs.okta_systemlog
       WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType IN ('policy.rule.update', 'policy.lifecycle.update')
-          AND actor.alternateId LIKE '%@%'
+          AND actor:alternateId::string LIKE '%@%'
       GROUP BY admin_email, event_hour
   ),
 
@@ -333,18 +333,18 @@ DatabricksQuery: |
 
   enrollment_recent_hourly AS (
       SELECT
-          actor.alternateId AS admin_email,
+          actor:alternateId::string AS admin_email,
           DATE_TRUNC('hour', published) AS event_hour,
           COUNT(*) AS hourly_enrollments,
           SUM(CASE
-              WHEN actor.alternateId != target[0].alternateId THEN 1
+              WHEN actor:alternateId::string != target[0]:alternateId::string THEN 1
               ELSE 0
           END) AS hourly_admin_enrollments,
-          COUNT(DISTINCT target[0].alternateId) AS hourly_unique_targets
-      FROM panther_logs.public.okta_systemlog
+          COUNT(DISTINCT target[0]:alternateId::string) AS hourly_unique_targets
+      FROM panther_logs.okta_systemlog
       WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'user.mfa.factor.activate'
-          AND actor.alternateId LIKE '%@%'
+          AND actor:alternateId::string LIKE '%@%'
       GROUP BY admin_email, event_hour
   ),
 
@@ -502,7 +502,7 @@ DatabricksQuery: |
 
       FROM policy_recent_stats pr
       FULL OUTER JOIN enrollment_recent_stats er ON pr.admin_email = er.admin_email
-      LEFT JOIN panther_lookups.public.okta_baseline_90d b
+      LEFT JOIN panther_lookups.okta_baseline_90d b
           ON COALESCE(pr.admin_email, er.admin_email) = b.user_email
   )
 

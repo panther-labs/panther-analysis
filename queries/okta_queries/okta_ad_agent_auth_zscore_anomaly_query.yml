@@ -286,20 +286,20 @@ DatabricksQuery: |
 
   WITH recent_activity AS (
       SELECT
-          actor.alternateId AS user_email,
+          actor:alternateId::string AS user_email,
           published,
-          outcome.result AS outcome,
-          client.geographicalContext.country AS country,
-          client.geographicalContext.city AS city,
-          client.ipAddress AS ip_address,
-          securityContext.asNumber AS asn,
-          debugContext.debugData.deviceFingerprint AS device_fingerprint,
+          outcome:result::string AS outcome,
+          client:geographicalContext:country::string AS country,
+          client:geographicalContext:city::string AS city,
+          client:ipAddress::string AS ip_address,
+          securityContext:asNumber::string AS asn,
+          debugContext:debugData:deviceFingerprint::string AS device_fingerprint,
           DATE_TRUNC('hour', published) AS event_hour
-      FROM panther_logs.public.okta_systemlog
+      FROM panther_logs.okta_systemlog
       WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
-          AND actor.alternateId LIKE '%@%'
+          AND actor:alternateId::string LIKE '%@%'
           AND eventType = 'user.authentication.auth_via_AD_agent'
-          AND outcome.result = 'SUCCESS'
+          AND outcome:result::string = 'SUCCESS'
   ),
 
   recent_hourly AS (
@@ -457,7 +457,7 @@ DatabricksQuery: |
           CURRENT_TIMESTAMP AS detection_timestamp
 
       FROM recent_stats r
-      LEFT JOIN panther_lookups.public.okta_ad_baseline_90d b
+      LEFT JOIN panther_lookups.okta_ad_baseline_90d b
           ON r.user_email = b.user_email
       WHERE r.recent_total_events >= 5
   )

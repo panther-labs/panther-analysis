@@ -24,19 +24,19 @@ SnowflakeQuery: |
 DatabricksQuery: |
   SELECT
     p_event_time as event_time,
-    actor.alternateId as actor_email,
-    actor.displayName as actor_name,
-    authenticationContext.externalSessionId as sessionId,
+    actor:alternateId as actor_email,
+    actor:displayName as actor_name,
+    authenticationContext:externalSessionId as sessionId,
     displayMessage,
     eventType,
-    client.ipAddress as src_ip,
-    client.geographicalContext.city as city,
-    client.geographicalContext.country as country,
-    client.userAgent.rawUserAgent as user_agent
-  FROM panther_logs.public.okta_systemlog
+    client:ipAddress as src_ip,
+    client:geographicalContext:city as city,
+    client:geographicalContext:country as country,
+    client:userAgent:rawUserAgent as user_agent
+  FROM panther_logs.okta_systemlog
   WHERE p_occurs_since('7 days')
   -- Uncomment the line below and replace 'sessionId' with the sessionId you are investigating
-  -- and authenticationContext.externalSessionId = '<SESSIONID_GOES_HERE>'
+  -- and authenticationContext:externalSessionId = '<SESSIONID_GOES_HERE>'
   ORDER BY event_time DESC
 Schedule:
   RateMinutes: 43200
