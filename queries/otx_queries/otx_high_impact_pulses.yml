@@ -76,7 +76,7 @@ DatabricksQuery: |
           COUNT(*) AS indicator_count,
           SIZE(COLLECT_SET(indicator_type)) AS distinct_indicator_types,
           ARRAY_SORT(COLLECT_SET(indicator_type)) AS indicator_types
-      FROM panther_lookups.public.otx_pulses
+      FROM panther_lookups.otx_pulses
       WHERE p_occurs_since('30 days')
       GROUP BY id
   )

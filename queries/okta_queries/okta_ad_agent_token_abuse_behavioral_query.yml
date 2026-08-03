@@ -96,14 +96,14 @@ DatabricksQuery: |
   WITH all_events AS (
     SELECT
       p_event_time,
-      actor.alternateId AS actorId,
-      actor.displayName AS actorName,
+      actor:alternateId::string AS actorId,
+      actor:displayName::string AS actorName,
       eventType AS eventType,
-      client.ipAddress AS sourceIP,
-      client.userAgent.rawUserAgent AS userAgent,
-      outcome.result AS result,
+      client:ipAddress::string AS sourceIP,
+      client:userAgent:rawUserAgent::string AS userAgent,
+      outcome:result::string AS result,
       target
-    FROM panther_logs.public.okta_systemlog
+    FROM panther_logs.okta_systemlog
     WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '30 days'
       AND (
         eventType = 'system.api_token.create'
@@ -112,8 +112,8 @@ DatabricksQuery: |
           'system.agent.ad.agent_instance_added'
         )
       )
-      AND outcome.result = 'SUCCESS'
-      AND actor.alternateId IS NOT NULL
+      AND outcome:result::string = 'SUCCESS'
+      AND actor:alternateId::string IS NOT NULL
   ),
 
   -- IPs seen per actor in the historical window (older than 1 day); NULLs excluded

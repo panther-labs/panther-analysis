@@ -253,17 +253,17 @@ DatabricksQuery: |
 
   WITH recent_credential_access AS (
       SELECT
-          actor.alternateId AS admin_email,
+          actor:alternateId::string AS admin_email,
           published,
-          target[0].alternateId AS victim_email,
-          client.geographicalContext.country AS country,
-          client.geographicalContext.city AS city,
+          target[0]:alternateId::string AS victim_email,
+          client:geographicalContext:country::string AS country,
+          client:geographicalContext:city::string AS city,
           DATE_TRUNC('hour', published) AS event_hour,
           (DAYOFWEEK(published) - 1) * 24 + HOUR(published) AS utc_hour_slot
-      FROM panther_logs.public.okta_systemlog
+      FROM panther_logs.okta_systemlog
       WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL '7 days'
           AND eventType = 'application.user_membership.change_username'
-          AND actor.alternateId LIKE '%@%'
+          AND actor:alternateId::string LIKE '%@%'
   ),
 
   recent_classified AS (
@@ -281,7 +281,7 @@ DatabricksQuery: |
               ELSE 1
           END AS is_inactive_slot
       FROM recent_credential_access r
-      LEFT JOIN panther_lookups.public.okta_baseline_90d b ON r.admin_email = b.user_email
+      LEFT JOIN panther_lookups.okta_baseline_90d b ON r.admin_email = b.user_email
   ),
 
   recent_hourly AS (
@@ -391,7 +391,7 @@ DatabricksQuery: |
 
       FROM recent_stats r
       LEFT JOIN recent_geo rg ON r.admin_email = rg.admin_email
-      LEFT JOIN panther_lookups.public.okta_baseline_90d b ON r.admin_email = b.user_email
+      LEFT JOIN panther_lookups.okta_baseline_90d b ON r.admin_email = b.user_email
   )
 
   SELECT

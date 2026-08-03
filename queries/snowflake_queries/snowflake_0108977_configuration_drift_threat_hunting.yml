@@ -57,7 +57,7 @@ DatabricksQuery: |
       role_name,
       start_time as p_event_time,
       end_time
-  FROM panther_logs.public.snowflake_queryhistory
+  FROM panther_logs.snowflake_queryhistory
     WHERE ((execution_status = 'SUCCESS'
       AND query_type NOT in ('SELECT')
       AND user_name NOT in ('PANTHER_ADMIN', 'PANTHERACCOUNTADMIN')

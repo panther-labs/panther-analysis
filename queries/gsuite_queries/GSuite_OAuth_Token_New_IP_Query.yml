@@ -49,26 +49,26 @@ SnowflakeQuery: |
 DatabricksQuery: |
   WITH baseline_ips AS (
     SELECT
-      actor.email AS user,
+      actor:email AS user,
       COLLECT_SET(ipAddress) AS normal_ips
-    FROM panther_logs.public.gsuite_activityevent
+    FROM panther_logs.gsuite_activityevent
     WHERE p_event_time >= CURRENT_TIMESTAMP - INTERVAL 30 DAYS
       AND p_event_time < CURRENT_TIMESTAMP - INTERVAL 1 DAY
-      AND id.applicationName = 'token'
+      AND id:applicationName = 'token'
       AND name = 'authorize'
       AND ipAddress NOT LIKE '%:%'
-    GROUP BY actor.email
+    GROUP BY actor:email
   ),
   recent_tokens AS (
     SELECT
-      actor.email AS user,
+      actor:email AS user,
       ipAddress,
-      parameters.app_name AS app_name,
-      parameters.client_id AS client_id,
+      parameters:app_name AS app_name,
+      parameters:client_id AS client_id,
       p_event_time
-    FROM panther_logs.public.gsuite_activityevent
+    FROM panther_logs.gsuite_activityevent
     WHERE p_occurs_since('1 day')
-      AND id.applicationName = 'token'
+      AND id:applicationName = 'token'
       AND name = 'authorize'
       AND ipAddress NOT LIKE '%:%'
   )

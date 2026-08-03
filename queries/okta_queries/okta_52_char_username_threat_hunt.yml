@@ -24,12 +24,12 @@ DatabricksQuery: |
     p_event_time as p_timeline,
     *
   FROM
-    panther_logs.public.okta_systemlog
+    panther_logs.okta_systemlog
   WHERE
     p_occurs_between('2024-07-22 00:00:00Z','2024-11-01 00:00:00Z')
-    AND actor.type = 'User'
+    AND actor:type = 'User'
     AND eventType = 'user.session.start'
-    AND outcome.result = 'SUCCESS'
-    AND LENGTH(actor.alternateId) >= 52
+    AND outcome:result = 'SUCCESS'
+    AND LENGTH(actor:alternateId) >= 52
   ORDER by p_event_time ASC NULLS LAST
   LIMIT 100

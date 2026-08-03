@@ -42,7 +42,7 @@ SnowflakeQuery: |
 
 DatabricksQuery: |
   SELECT
-    actor.email AS user,
+    actor:email AS user,
     COUNT(DISTINCT
       CASE
         WHEN ipAddress LIKE '%:%' THEN NULL
@@ -56,15 +56,15 @@ DatabricksQuery: |
         ELSE ipAddress
       END
     ) AS ip_addresses,
-    COLLECT_SET(parameters.login_type) AS login_types,
+    COLLECT_SET(parameters:login_type) AS login_types,
     MIN(p_event_time) AS first_login,
     MAX(p_event_time) AS last_login,
     TIMESTAMPDIFF(MINUTE, MIN(p_event_time), MAX(p_event_time)) AS time_span_minutes
-  FROM panther_logs.public.gsuite_activityevent
+  FROM panther_logs.gsuite_activityevent
   WHERE p_occurs_since('6 hours')
-    AND id.applicationName = 'login'
+    AND id:applicationName = 'login'
     AND name = 'login_success'
-  GROUP BY actor.email
+  GROUP BY actor:email
   HAVING COUNT(DISTINCT
     CASE
       WHEN ipAddress LIKE '%:%' THEN NULL
