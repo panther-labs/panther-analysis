@@ -52,7 +52,7 @@ DatabricksQuery: |
     public_repo,
     operation_type,
     created_at
-  FROM panther_logs.public.github_audit
+  FROM panther_logs.github_audit
   WHERE p_event_time >= '2025-08-25 12:00:00'
     AND action IN ('repo.create', 'repo.access', 'repo.download_zip', 'team.add_repository')
     AND public_repo

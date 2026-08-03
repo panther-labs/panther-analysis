@@ -15,10 +15,10 @@ SnowflakeQuery: |
          ELSE 'Unknown'
          END AS IP_TYPE
   FROM panther_logs.public.amazon_eks_audit, lateral flatten(source_ips)
-  WHERE p_occurs_since('30 minutes')
    -- as an example, could be replaced with any IOC data store in a lookup table
   INNER JOIN panther_lookups.public.tor_exit_nodes
   ON value = ip
+  WHERE p_occurs_since('30 minutes')
   LIMIT 10
 
 DatabricksQuery: |
@@ -30,9 +30,9 @@ DatabricksQuery: |
            WHEN ip_index = 2 THEN 'Remote_Address'
          ELSE 'Unknown'
          END AS IP_TYPE
-  FROM panther_logs.public.amazon_eks_audit
+  FROM panther_logs.amazon_eks_audit
     LATERAL VIEW POSEXPLODE(from_json(TO_JSON(source_ips), 'ARRAY<STRING>')) exploded AS ip_index, ip_value
-  INNER JOIN panther_lookups.public.tor_exit_nodes
+  INNER JOIN panther_lookups.tor_exit_nodes
     ON ip_value = ip
   WHERE p_occurs_since('30 minutes')
   LIMIT 10

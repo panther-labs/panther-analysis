@@ -8,13 +8,24 @@ Description: |
   hardware, and software specs of the device as most recently recorded by
   Crowdstrike (within the last 90 days).
 Reference: https://falcon.crowdstrike.com/documentation
-Query: |
+SnowflakeQuery: |
   SELECT
       aid,
       MAX_BY(ComputerName, p_event_time) AS ComputerName,
       ARRAY_UNIQUE_AGG(aip) AS aips,
       MAX_BY(event, p_event_time) AS details
   FROM panther_logs.public.crowdstrike_fdrevent
+  WHERE p_occurs_since('10d')
+      AND fdr_event_type = 'aid_master'
+  GROUP BY aid
+
+DatabricksQuery: |
+  SELECT
+      aid,
+      MAX_BY(ComputerName, p_event_time) AS ComputerName,
+      COLLECT_SET(aip) AS aips,
+      MAX_BY(event, p_event_time) AS details
+  FROM panther_logs.crowdstrike_fdrevent
   WHERE p_occurs_since('10d')
       AND fdr_event_type = 'aid_master'
   GROUP BY aid
