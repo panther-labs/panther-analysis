@@ -1,10 +1,19 @@
 AnalysisType: scheduled_query
 Enabled: false
-Query: |-
+SnowflakeQuery: |-
   SELECT
     count(*) as num_logs, p_log_type
   FROM
     panther_logs.public.aws_cloudtrail
+  WHERE
+    p_occurs_since('5m')
+  GROUP BY p_log_type
+
+DatabricksQuery: |-
+  SELECT
+    count(*) as num_logs, p_log_type
+  FROM
+    panther_logs.aws_cloudtrail
   WHERE
     p_occurs_since('5m')
   GROUP BY p_log_type

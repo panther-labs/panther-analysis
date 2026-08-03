@@ -4,7 +4,7 @@
 AnalysisType: scheduled_query
 Description: Looks for OnePassword Logins from IP Addresses that aren''t seen in CrowdStrike''s AIP List. (crowdstrike_fdrevent table)
 Enabled: false
-Query: |
+SnowflakeQuery: |
   SELECT *
   FROM panther_logs.public.onepassword_signinattempt
   WHERE category = 'success'
@@ -18,6 +18,22 @@ Query: |
           SELECT distinct aip
           FROM panther_logs.public.crowdstrike_fdrevent
           WHERE p_occurs_since('3 days') AND panther_logs.public.crowdstrike_fdrevent.fdr_event_type = 'aid_master'
+      )
+
+DatabricksQuery: |
+  SELECT *
+  FROM panther_logs.onepassword_signinattempt
+  WHERE category = 'success'
+    AND client:ip_address LIKE '%.%.%.%'
+    AND p_occurs_since('1 days')
+    AND client:platform_name NOT LIKE '%iPhone'
+    AND type = 'credentials_ok'
+    AND client:app_name != '1Password SCIM Bridge'
+    AND client:ip_address NOT IN
+      (
+          SELECT DISTINCT aip
+          FROM panther_logs.crowdstrike_fdrevent
+          WHERE p_occurs_since('3 days') AND panther_logs.crowdstrike_fdrevent.fdr_event_type = 'aid_master'
       )
 QueryName: "1Password Login From CrowdStrike Unmanaged Device Query (crowdstrike_fdrevent table)"
 Schedule:
