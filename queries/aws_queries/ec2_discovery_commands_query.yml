@@ -31,10 +31,10 @@ DatabricksQuery: |
   SELECT * FROM (
     SELECT
       *,
-      count(distinct eventName) over (partition by userIdentity.arn) AS nActions
-    FROM panther_logs.public.aws_cloudtrail
+      count(distinct eventName) over (partition by userIdentity:arn) AS nActions
+    FROM panther_logs.aws_cloudtrail
     WHERE p_occurs_since(90m)
-      AND ELEMENT_AT(SPLIT(userIdentity.arn, '/'), -1) LIKE 'i-%'
+      AND ELEMENT_AT(SPLIT(userIdentity:arn, '/'), -1) LIKE 'i-%'
       AND eventName IN (
           'GetCallerIdentity',
           'ListBuckets',

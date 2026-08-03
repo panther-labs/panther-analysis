@@ -17,9 +17,9 @@ DatabricksQuery: |
     SELECT
       data, COUNT(*) OVER () AS total_incidents
     FROM
-      panther_logs.public.auth0_events
+      panther_logs.auth0_events
     WHERE
-      data.type IN ('limit_mu', 'limit_sul', 'limit_wc')
+      data:type IN ('limit_mu', 'limit_sul', 'limit_wc')
       AND p_occurs_since('1 hour')
   ) WHERE total_incidents > 4
 

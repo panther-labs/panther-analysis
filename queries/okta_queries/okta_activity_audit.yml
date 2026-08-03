@@ -15,14 +15,14 @@ SnowflakeQuery: |
   ORDER BY  actor_name, activity_count DESC
 
 DatabricksQuery: |
-  SELECT actor.displayName AS actor_name, actor.alternateId AS actor_email, eventType, COUNT(*) AS activity_count
-  FROM panther_logs.public.okta_systemlog
+  SELECT actor:displayName AS actor_name, actor:alternateId AS actor_email, eventType, COUNT(*) AS activity_count
+  FROM panther_logs.okta_systemlog
   WHERE p_occurs_since('7 days')
-  AND actor.type = 'User'
+  AND actor:type = 'User'
   -- Uncomment lines below to filter by user email and/or eventType
   -- and actor_email = 'email'
   -- and eventType = 'eventType'
-  GROUP BY actor.displayName, actor.alternateId, eventType
+  GROUP BY actor:displayName, actor:alternateId, eventType
   ORDER BY  actor_name, activity_count DESC
 Schedule:
   RateMinutes: 43200

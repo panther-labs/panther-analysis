@@ -24,10 +24,10 @@ DatabricksQuery: |
          COALESCE(try_element_at(sourceIPs, 1), 'N/A') as X_FORWARDED_FOR_IP,
          COALESCE(try_element_at(sourceIPs, 2), 'N/A') as X_Real_IP,
          COALESCE(try_element_at(sourceIPs, 3), 'N/A') as Remote_Address_IP
-  FROM panther_logs.public.amazon_eks_audit
+  FROM panther_logs.amazon_eks_audit
   WHERE
   verb IN ('create', 'update', 'patch')
-  AND objectRef.resource = 'pods'
+  AND objectRef:resource = 'pods'
   AND (
     try_element_at(requestObject.spec.volumes, 1).hostPath.path ILIKE '/var/run/docker.sock'
     OR try_element_at(requestObject.spec.volumes, 1).hostPath.path ILIKE '/var/run/crio/crio.sock'

@@ -33,12 +33,12 @@ DatabricksQuery: |
     region,
     vpc_id,
     srcAddr, -- outside
-    srcIds.instance as instance, -- inside
+    srcIds:instance as instance, -- inside
 
     COUNT(1) as message_count,
     COLLECT_SET(query_name) as query_names
   FROM
-    panther_logs.public.aws_vpcdns
+    panther_logs.aws_vpcdns
   WHERE
     p_occurs_since(3600) -- 1 hour in seconds
     AND

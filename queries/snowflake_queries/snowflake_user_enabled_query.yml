@@ -38,7 +38,7 @@ DatabricksQuery: |
     query_text,
     user_name,
     role_name
-  FROM panther_logs.public.snowflake_queryhistory
+  FROM panther_logs.snowflake_queryhistory
     WHERE
       p_occurs_since('1 day')
       AND execution_status = 'SUCCESS'

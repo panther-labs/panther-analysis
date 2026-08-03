@@ -39,15 +39,15 @@ DatabricksQuery: |
   --   adust recent lookpack period on line 19 as desired
   --   adjust scheduled query period to be 2 hrs shorter than the lookback window on line 19
   select
-      CLIENT_ENVIRONMENT.APPLICATION as client_application,
-      CLIENT_ENVIRONMENT.OS as client_os,
-      CLIENT_ENVIRONMENT.OS_VERSION as client_os_version,
+      CLIENT_ENVIRONMENT:APPLICATION as client_application,
+      CLIENT_ENVIRONMENT:OS as client_os,
+      CLIENT_ENVIRONMENT:OS_VERSION as client_os_version,
       min(CREATED_ON) as first_seen,
       max(CREATED_ON) as last_seen,
       count(*) as n_sessions,
       p_source_id,
       p_source_label
-  from panther_logs.public.snowflake_sessions
+  from panther_logs.snowflake_sessions
   where p_occurs_since(90d)
   group by client_application, client_os, client_os_version, p_source_id, p_source_label
   having n_sessions > 50

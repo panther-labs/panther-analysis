@@ -87,7 +87,7 @@ DatabricksQuery: |
       bytes_written_to_result as n_bytes,
       p_source_id,
       p_source_label
-    from panther_logs.public.snowflake_queryhistory
+    from panther_logs.snowflake_queryhistory
     where p_occurs_since('90d', , end_time)
   ),
   dimensions as (

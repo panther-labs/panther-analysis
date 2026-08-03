@@ -17,8 +17,8 @@ DatabricksQuery: |-
   SELECT * FROM (
     SELECT
       *,
-      count(distinct requestParameters.target) over (partition by userIdentity.arn) AS session_count
-    FROM panther_logs.public.aws_cloudtrail
+      count(distinct requestParameters:target) over (partition by userIdentity:arn) AS session_count
+    FROM panther_logs.aws_cloudtrail
     WHERE eventName = 'StartSession'
       AND p_occurs_since(1h, , p_parse_time)
   ) WHERE session_count > 2
