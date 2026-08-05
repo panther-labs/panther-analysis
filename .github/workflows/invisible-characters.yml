@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
       - name: Changed Files
         id: changed_files
         uses: ./.github/actions/changed_files
@@ -30,6 +32,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 #v7.0.0
         with:
@@ -60,13 +64,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 #v7.0.0
         with:
           python-version: '3.12'
 
       - name: Detect invisible characters
+        env:
+          CHANGED_FILES: ${{ needs.changed_files.outputs.changed_files }}
         run: |
+          # The list is space-separated and must word-split, so it is deliberately
+          # unquoted; set -f disables globbing so filenames are passed through verbatim.
+          set -f
+          # shellcheck disable=SC2086
           python .github/scripts/lint-invisible-characters/lint-invisible-characters.py \
-          ${{ needs.changed_files.outputs.changed_files }} \
+          $CHANGED_FILES \
           --ignore .github/scripts/lint-invisible-characters

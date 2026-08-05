@@ -41,11 +41,13 @@ jobs:
         run: python3 ./.scripts/generate_indexes.py
       - name: Commit Indexes
         continue-on-error: true # This is to ensure that the workflow does not fail if there are no changes to commit
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
           git config --global user.email "github-service-account-automation@panther.io"
           git config --global user.name "panther-bot-automation"
-          git fetch origin ${{ github.event.pull_request.head.ref }}:${{ github.event.pull_request.head.ref }}
-          git checkout ${{ github.event.pull_request.head.ref }}
+          git fetch origin -- "$HEAD_REF:$HEAD_REF"
+          git checkout "$HEAD_REF"
           git add ./indexes
           git commit -S -m "Update indexes"
-          git push origin ${{ github.event.pull_request.head.ref }}
+          git push origin -- "$HEAD_REF"

@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout panther-analysis
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Set python version
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 #v7.0.0
@@ -48,6 +50,8 @@ jobs:
           
       - name: Checkout panther-analysis
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Set python version
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 #v7.0.0
@@ -62,7 +66,7 @@ jobs:
 
       - name: test
         run: |
-          pipenv run panther_analysis_tool test --api-host ${{ env.API_HOST }} --api-token ${{ env.API_TOKEN }} --show-failures-only
+          pipenv run panther_analysis_tool test --api-host "$API_HOST" --api-token "$API_TOKEN" --show-failures-only
 
   test-generate-versions:
     if: github.event.pull_request.head.repo.fork == false
@@ -71,6 +75,8 @@ jobs:
     steps:
       - name: Checkout panther-analysis
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Set python version
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 #v7.0.0
@@ -94,6 +100,8 @@ jobs:
     steps:
       - name: Checkout panther-analysis
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Set python version
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 #v7.0.0

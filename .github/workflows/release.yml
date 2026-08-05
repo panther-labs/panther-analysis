@@ -35,6 +35,9 @@ jobs:
           ref: ${{ github.event.inputs.branch }}
           fetch-depth: 0
           token: ${{ env.GITHUB_TOKEN }}
+          # Nothing here talks to a git remote (gh uses GITHUB_TOKEN from the env),
+          # so don't leave the bot PAT in .git/config for `make install` to reach.
+          persist-credentials: false
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
         with:
@@ -46,22 +49,29 @@ jobs:
         with:
           python-version: "3.11"
       - name: Create new panther-analysis release
+        env:
+          BUMP: ${{ github.event.inputs.bump }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          KMS_KEY_ARN: ${{ secrets.KMS_KEY_ARN }}
+          SIGNING_ALGORITHM: ${{ secrets.SIGNING_ALGORITHM }}
+          DIGEST_FILE: ${{ secrets.DIGEST_FILE }}
         run: |
-          export AWS_REGION=${{ secrets.AWS_REGION }}
-          export AWS_DEFAULT_REGION=${{ secrets.AWS_REGION }}
-          export OLD_VERSION=$(gh release list | grep Latest | awk '{print $1}')
-          export NEW_VERSION=$(echo $OLD_VERSION | awk -F. -v bump="${{ github.event.inputs.bump }}" '{
+          OLD_VERSION=$(gh release list | grep Latest | awk '{print $1}')
+          NEW_VERSION=$(echo "$OLD_VERSION" | awk -F. -v bump="$BUMP" '{
             major=substr($1,2)+0; minor=$2+0; patch=$3+0;
             if (bump=="major") { major++; minor=0; patch=0 }
             else if (bump=="patch") { patch++ }
             else { minor++; patch=0 }
             printf "v%d.%d.%d", major, minor, patch
           }')
-          export RELEASE_SHA=$(git rev-parse HEAD)
+          RELEASE_SHA=$(git rev-parse HEAD)
           pip3 install --user pipenv
-          rm -rf $(pipenv --venv)
+          # pipenv --venv exits non-zero when no venv exists yet; don't let that abort the step
+          VENV_PATH=$(pipenv --venv 2>/dev/null || true)
+          if [ -n "$VENV_PATH" ]; then rm -rf "$VENV_PATH"; fi
           make install
-          pipenv run panther_analysis_tool release --kms-key ${{ secrets.KMS_KEY_ARN }}
-          openssl dgst -binary -sha512 panther-analysis-all.zip > ${{ secrets.DIGEST_FILE }}
-          aws kms verify --key-id ${{ secrets.KMS_KEY_ARN }} --signing-algorithm ${{ secrets.SIGNING_ALGORITHM }} --message fileb://${{ secrets.DIGEST_FILE }} --message-type DIGEST --output json --signature $(cat panther-analysis-all.sig) | jq '.SignatureValid'
-          gh release create $NEW_VERSION panther-analysis-all.* --title $NEW_VERSION --target $RELEASE_SHA --latest --generate-notes
+          pipenv run panther_analysis_tool release --kms-key "$KMS_KEY_ARN"
+          openssl dgst -binary -sha512 panther-analysis-all.zip > "$DIGEST_FILE"
+          aws kms verify --key-id "$KMS_KEY_ARN" --signing-algorithm "$SIGNING_ALGORITHM" --message "fileb://$DIGEST_FILE" --message-type DIGEST --output json --signature "$(cat panther-analysis-all.sig)" | jq '.SignatureValid'
+          gh release create "$NEW_VERSION" panther-analysis-all.* --title "$NEW_VERSION" --target "$RELEASE_SHA" --latest --generate-notes
