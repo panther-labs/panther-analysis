@@ -51,7 +51,7 @@ jobs:
           branch: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
       # Checkout this repo into the branch
       - name: Checkout your local repo in PR branch
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 #v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
         with:
           ref: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
           token: ${{ steps.set_token.outputs.token }}
