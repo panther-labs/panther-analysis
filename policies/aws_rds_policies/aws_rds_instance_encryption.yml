@@ -21,6 +21,59 @@ Runbook: >
   https://docs.runpanther.io/alert-runbooks/built-in-policies/aws-rds-instance-has-storage-encrypted
 Reference: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.Encryption.html
 Tests:
+  - Name: Aurora Instance With AWS Owned Key (No KmsKeyId)
+    ExpectedResult: true
+    Resource:
+      {
+        "AccountId": "123456789012",
+        "AllocatedStorage": 1,
+        "AutoMinorVersionUpgrade": true,
+        "AvailabilityZone": "us-east-1d",
+        "BackupRetentionPeriod": 1,
+        "CACertificateIdentifier": "",
+        "CopyTagsToSnapshot": false,
+        "DBClusterIdentifier": "example-aurora-cluster",
+        "DBInstanceClass": "db.serverless",
+        "DBInstanceStatus": "available",
+        "DBParameterGroups":
+          [
+            {
+              "DBParameterGroupName": "default.aurora-postgresql17",
+              "ParameterApplyStatus": "in-sync",
+            },
+          ],
+        "DbInstancePort": 0,
+        "DbiResourceId": "db-EXAMPLEID",
+        "DeletionProtection": false,
+        "Endpoint":
+          {
+            "Address": "example-aurora-instance.abcdefghijkl.us-east-1.rds.amazonaws.com",
+            "HostedZoneId": "ABCDEF1234",
+            "Port": 5432,
+          },
+        "Engine": "aurora-postgresql",
+        "EngineVersion": "17.7",
+        "IAMDatabaseAuthenticationEnabled": true,
+        "Id": "example-aurora-instance-1",
+        "LicenseModel": "postgresql-license",
+        "MasterUsername": "admin",
+        "MonitoringInterval": 0,
+        "MultiAZ": false,
+        "OptionGroupMemberships":
+          [{ "OptionGroupName": "default:aurora-postgresql-17", "Status": "in-sync" }],
+        "PerformanceInsightsEnabled": false,
+        "PreferredBackupWindow": "07:58-08:28",
+        "PreferredMaintenanceWindow": "mon:05:45-mon:06:15",
+        "PromotionTier": 1,
+        "PubliclyAccessible": false,
+        "Region": "us-east-1",
+        "ResourceId": "arn:aws:rds:us-east-1:123456789012:db:example-aurora-instance-1",
+        "ResourceType": "AWS.RDS.Instance",
+        "StorageEncrypted": false,
+        "StorageType": "aurora",
+        "Tags": {},
+        "TimeCreated": "2026-07-25T01:12:21.742Z",
+      }
   - Name: KMS Key Does Not Exist
     ExpectedResult: false
     Resource:
