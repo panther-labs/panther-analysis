@@ -9,23 +9,30 @@ on:
 env:
   YOUR_REPO_PRIMARY_BRANCH_NAME: "main"
 
+permissions:
+  contents: read
+
 jobs:
   check_upstream:
     if: |
       github.repository != 'panther-labs/panther-analysis'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Set token
         id: set_token
+        env:
+          PANTHER_SYNC_UPSTREAM: ${{ secrets.PANTHER_SYNC_UPSTREAM }}
+          DEFAULT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Check if PANTHER_SYNC_UPSTREAM secret is available by trying to substitute it
-          PANTHER_SYNC_UPSTREAM="${{ secrets.PANTHER_SYNC_UPSTREAM }}"
           if [ -n "$PANTHER_SYNC_UPSTREAM" ]; then
             echo "Using PANTHER_SYNC_UPSTREAM for authentication"
-            echo "token=${{ secrets.PANTHER_SYNC_UPSTREAM }}" >> $GITHUB_OUTPUT
+            echo "token=$PANTHER_SYNC_UPSTREAM" >> "$GITHUB_OUTPUT"
           else
             echo "PANTHER_SYNC_UPSTREAM not found, using default GITHUB_TOKEN"
-            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+            echo "token=$DEFAULT_TOKEN" >> "$GITHUB_OUTPUT"
           fi
 
       - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 #v9.0.0
@@ -51,8 +58,11 @@ jobs:
           branch: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
       # Checkout this repo into the branch
       - name: Checkout your local repo in PR branch
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 #v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
         with:
+          # Credentials must persist: the Fork-Sync action below fetches from origin
+          # before it rewrites the remote URL with target_repo_token, which private
+          # forks need in order to authenticate.
           ref: "sync_upstream_${{steps.set_upstream.outputs.latest-release}}"
           token: ${{ steps.set_token.outputs.token }}
       # Sync this branch with upstream
@@ -74,18 +84,22 @@ jobs:
         id: create_pr
         name: Create a PR to bring upstream changes into the local repo primary branch
         if: steps.sync.outputs.has_new_commits == 'true'
+        env:
+          LATEST_RELEASE: ${{ steps.set_upstream.outputs.latest-release }}
+          PRIMARY_BRANCH: ${{ env.YOUR_REPO_PRIMARY_BRANCH_NAME }}
         with:
           github-token: ${{ steps.set_token.outputs.token }}
           result-encoding: string
           script: |
             const fs = require('fs');
+            const latestRelease = process.env.LATEST_RELEASE;
             try {
               const response = await github.rest.pulls.create({
-                owner: '${{github.repository_owner}}',
-                repo: '${{  github.event.repository.name }}',
-                title: 'sync this fork to panther-labs/panther-analysis ${{steps.set_upstream.outputs.latest-release}}',
-                head: 'sync_upstream_${{steps.set_upstream.outputs.latest-release}}',
-                base: '${{env.YOUR_REPO_PRIMARY_BRANCH_NAME}}',
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `sync this fork to panther-labs/panther-analysis ${latestRelease}`,
+                head: `sync_upstream_${latestRelease}`,
+                base: process.env.PRIMARY_BRANCH,
               });
             } catch(e) {
               if (e.response && e.response.data && e.response.data.errors && e.response.data.errors.length > 0 && e.response.data.errors[0].message && e.response.data.errors[0].message.includes('No commits between')) {

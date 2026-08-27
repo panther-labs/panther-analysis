@@ -12,9 +12,15 @@ runs:
       uses: tj-actions/changed-files@22103cc46bda19c2b464ffe86db46df6922fd323
     - name: List affected files
       if: ${{ steps.changed_files.outputs.all_changed_files != '' }}
+      env:
+        ALL_CHANGED_FILES: ${{ steps.changed_files.outputs.all_changed_files }}
       run: |
         echo "Affected files:"
-        for file in ${{ steps.changed_files.outputs.all_changed_files }}; do
+        # The list is space-separated and must word-split, so it is deliberately
+        # unquoted; set -f disables globbing so filenames are passed through verbatim.
+        set -f
+        # shellcheck disable=SC2086
+        for file in $ALL_CHANGED_FILES; do
           echo "- ${file}"
         done
       shell: bash
