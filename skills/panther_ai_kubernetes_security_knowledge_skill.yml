@@ -1,0 +1,169 @@
+AnalysisType: "skill"
+SkillName: "kubernetes_security_knowledge"
+DisplayName: "Kubernetes Security Knowledge"
+Description: "Reference mapping of Kubernetes audit-log activity (`verb` + `resource` + `subresource`) to attacker-impact categories — discovery, credential access, RBAC privilege escalation, execution, persistence, container escape, defense evasion, lateral movement, impact, and known multi-step attack chains. Provider-agnostic: written against the normalized UDM fields that EKS / GKE / AKS audit logs map into, so it applies to the unified cross-provider K8s ruleset. Use whenever K8s API activity needs to be classified by adversary impact: incident scoping, threat hunts, detection coverage analysis, or post-mortem triage. Also covers reading audit-log principals (`system:serviceaccount:…`, `system:anonymous`, `system:node:…`) and mapping techniques to deployed Panther detections. Knowledge reference — does not run queries."
+Prompt: |
+  # Kubernetes Security Knowledge — Audit Log Action Impact Reference
+
+  Maps high-signal Kubernetes audit-log actions to the attacker-impact category they belong to.
+  A K8s audit event is mostly `verb` + `resource` (+ optional `subresource`) by a `username` in
+  a `namespace` — bucket by what the action lets an adversary *do*, not just which resource it
+  touched. Lists are canonical high-signal actions, not exhaustive; significance always depends
+  on context (who, whether it was `Forbidden`, and whether it is normal for that principal).
+
+  **Provider-agnostic.** This is written against the normalized UDM fields the unified ruleset
+  uses — `verb`, `resource`, `subresource`, `username`, `namespace`, `responseStatus`,
+  `sourceIPs`, `requestObject.spec.*` — which EKS (`Amazon.EKS.Audit`), GKE (`GCP.AuditLog`),
+  and AKS (`Azure.MonitorActivity`) all map into. Reason in UDM terms, not provider-specific
+  JSON paths.
+
+  ## Reading Kubernetes audit identifiers
+
+  Before the verb, the `username` tells you *what kind of principal* acted:
+
+  - `system:anonymous` (group `system:unauthenticated`) — **unauthenticated** request. Any
+    non-trivial verb from this principal is a finding; the API server should not allow it.
+  - `system:serviceaccount:<namespace>:<name>` — a **workload** identity (pod-mounted token). A
+    service account acting outside its normal namespace / verbs, or from an external IP, is the
+    core token-abuse signal.
+  - `system:node:<node>` — a **kubelet**. Should only touch its own node's objects
+    (NodeRestriction); broad activity = a stolen node credential.
+  - `system:kube-*` / `system:masters` — **control-plane / cluster-admin**. `system:masters` is
+    the built-in break-glass group (bypasses RBAC) — human use of it is high-signal.
+  - Anything else — a **human / federated** user (OIDC, client cert, cloud IAM).
+
+  Other key fields: `namespace` (`kube-system`, `kube-public`, `kube-node-lease` are *system*
+  namespaces — workload changes there by non-system principals are suspicious); `responseStatus`
+  code `403 Forbidden` (RBAC denial — the permission-enumeration signal) / `401`; `sourceIPs`
+  (a public IP hitting the API server is high-signal); `subresource` (`exec`, `attach`,
+  `portforward`, `proxy`, `log` change what a verb means).
+
+  ## Discovery — TA0007 (T1613 Container & Resource Discovery)
+  - `list` / `get` / `watch` on `pods`, `nodes`, `namespaces`, `services`, `deployments`
+  - `list secrets` / `get secrets` (also credential access — see below)
+  - `get` on `selfsubjectaccessreviews` / `selfsubjectrulesreviews` (probe own permissions)
+  - **403 bursts:** many `Forbidden` responses across resources from one principal = RBAC
+    permission enumeration. Anonymous (`system:anonymous`) discovery is its own strong signal.
+
+  ## Credential access — TA0006 (T1552.007)
+  - `get` / `list` `secrets` (single, namespace-wide, or — worst — across *all* namespaces)
+  - `create serviceaccounts/token` (`TokenRequest`) — mint a token for any service account
+  - `create certificatesigningrequests` + `approve` (subresource) — issue a client cert (a
+    durable, hard-to-revoke credential)
+  - Pod service-account token theft — a workload reading
+    `/var/run/secrets/kubernetes.io/serviceaccount/token` shows up as that SA acting from an
+    unexpected context, not as an audit verb itself
+  - `get configmaps` (often hold credentials/config)
+
+  ## RBAC privilege escalation — TA0004 (T1098 Account Manipulation)
+  - `create` / `patch` `clusterrolebindings` / `rolebindings` (bind a subject to cluster-admin)
+  - `escalate` verb on `roles` / `clusterroles` (grant yourself perms you don't hold)
+  - `bind` verb (attach an existing role to a new subject)
+  - `impersonate` (`users` / `groups` / `serviceaccounts`) — act as another identity, bypassing
+    your own RBAC
+  - `create` / `patch` `roles` / `clusterroles` with wildcard `*` verbs/resources, or write
+    verbs (`create`/`update`/`patch`/`delete`), or `pods/exec`, or `nodes/proxy`
+
+  ## Execution — TA0002 (T1609 Container Admin Command / T1610 Deploy Container)
+  - `create pods/exec` or `get pods/exec` (the `exec` subresource — shell in a running pod),
+    `pods/attach`, ephemeral containers (`patch pods/ephemeralcontainers`)
+  - `create pods/portforward` (tunnel to a pod)
+  - `kubectl cp` (implemented as `pods/exec` of `tar` — copy files in/out of a pod)
+  - `create pods` / `deployments` / `jobs` to run an attacker image (T1610)
+
+  ## Container escape / host privesc — TA0004 (T1611 Escape to Host)
+  Pod-spec security settings in `requestObject.spec` on `create pods` (or workload controllers)
+  that grant host access — the classic escape primitives:
+  - `securityContext.privileged: true` (full kernel access, all capabilities)
+  - `hostPID: true`, `hostIPC: true`, `hostNetwork: true` (share host namespaces; `hostNetwork`
+    also *bypasses NetworkPolicies*)
+  - `hostPath` volumes (mount the host filesystem — e.g. `/`, `/etc`, `/var/run/docker.sock`)
+  - dangerous `capabilities.add` — `SYS_ADMIN`, `NET_ADMIN`, `SYS_MODULE`, `SYS_PTRACE`
+  - `allowPrivilegeEscalation: true` / `runAsNonRoot: false` / running as UID 0
+  - a privileged or host-namespace pod created in a **system namespace** is especially high-signal
+
+  ## Persistence — TA0003
+  - `create mutatingwebhookconfigurations` / `validatingwebhookconfigurations` (admission
+    controller — intercept/modify every future API request; a powerful, stealthy backdoor)
+  - `create cronjobs` / `jobs` (scheduled re-execution), `create daemonsets` (a pod on every
+    node, incl. new ones), `create deployments` (self-healing pods)
+  - `create clusterrolebindings` (durable elevated access), `create serviceaccounts/token`
+  - `create certificatesigningrequests` (durable client cert that survives token rotation)
+
+  ## Defense evasion — TA0005 (T1562 Impair Defenses)
+  - `delete` / `patch` on `events`, audit/webhook config, or logging DaemonSets/agents
+  - `patch` / `delete` system `clusterroles` / `clusterrolebindings` (weaken RBAC), modify a
+    `system:*` role
+  - `delete pods` / `deployments` to remove evidence of a workload after use
+  - re-enabling `system:anonymous` access or binding it to a role
+
+  ## Lateral movement — TA0008
+  - `create pods/exec` / `pods/attach` into other workloads, `pods/portforward`
+  - `nodes/proxy` (reach the kubelet API directly — bypasses the API server's RBAC on the node)
+  - `create services` of type `NodePort` / `LoadBalancer` (expose an internal workload
+    externally), `create ingress`
+  - host-network pods to reach the node network and pivot (NetworkPolicies don't apply)
+
+  ## Impact / destruction — TA0040
+  - `delete` `namespaces` / `deployments` / `pods` / `persistentvolumeclaims` at volume
+    (sabotage / ransom; T1485)
+  - `create pods` running cryptominers — resource hijacking (T1496); watch for high-CPU images
+    / mining-pool egress
+  - `delete` or `scale` critical workloads to cause denial of service
+
+  ## High-signal technique combinations
+
+  The strongest signal is a sequence from one principal, not a single call:
+  - **Token theft → escalation:** stolen SA token → `selfsubjectaccessreviews` probing →
+    `create clusterrolebindings` to cluster-admin. (T1552.007 → T1098)
+  - **Exec-to-escape:** `create pods` with `privileged`/`hostPath` → `create pods/exec` →
+    read host filesystem / `/var/run/docker.sock`. (T1610 → T1609 → T1611)
+  - **Admission-controller backdoor:** `create mutatingwebhookconfigurations` pointing at an
+    attacker service → silently mutate every future pod. (T1610 persistence)
+  - **Anonymous foothold:** `system:anonymous` request succeeds (not `Forbidden`) → enumerate →
+    act. Any successful anonymous non-read verb is critical.
+  - **Secret sweep → exfil:** `list secrets` across all namespaces → external egress from the
+    pod. (T1552.007 → T1041)
+
+  ## Mapping techniques to deployed detections
+
+  These techniques are covered by Panther's **unified cross-provider K8s ruleset**
+  (`rules/kubernetes_rules/`) — it normalizes `Amazon.EKS.Audit`,
+  `GCP.AuditLog` (GKE), and `Azure.MonitorActivity` (AKS) into the UDM used above, so one rule
+  covers all three clouds. Don't reason about a technique in isolation:
+  - Resolve an observed technique to deployed coverage via its MITRE tactic-technique ID —
+    query `panther_ai_detections_list` by `mitre_attack_tags`, or hand the list to
+    `coverage_gap_analysis`.
+  - Match signal shape to paradigm: a single high-signal action (`create pods` privileged,
+    `exec`, `create clusterrolebindings`, `list secrets`) → a **rule**; a multi-step chain → a
+    **correlation rule**; a volumetric pattern (403 bursts, bulk secret access) → a **scheduled
+    query**.
+  - A high-impact technique with **no** matching deployed detection is a coverage-gap finding —
+    surface it and route to `coverage_gap_analysis`.
+
+  ## Recording an observed action
+
+  For each high-signal action capture: `verb`, `resource`/`subresource`, `username` (and its
+  principal type), `namespace`, `sourceIPs`, the `responseStatus` code (did it succeed or
+  `Forbidden`?), and — for pods — the relevant `requestObject.spec.*` security settings. A
+  `Forbidden` is still signal: it shows what the principal *tried*.
+
+  ## Caveats
+  - These are high-signal starting points, not allow/deny lists. CI/CD, operators, GitOps
+    controllers, and autoscalers legitimately do many of these — classify by impact, then judge
+    by principal + namespace + context, not presence alone.
+  - System principals (`system:serviceaccount:kube-system:*`, `system:node:*`) do privileged
+    things by design; the signal is a *non-system* or *external* principal doing them, or a
+    system principal acting from an unexpected source.
+  - A single bucket hit is a lead, not a verdict — cross-bucket sequences from one principal
+    (discovery → escalation → execution → exfil) are the stronger signal.
+DependsOn: []
+EagerLoading: false
+RequiredTools:
+  - panther_ai_detections_list
+Enabled: true
+Tags:
+  - kubernetes
+  - k8s
+  - mitre
+  - knowledge-primitive

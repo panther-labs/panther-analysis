@@ -1,0 +1,197 @@
+AnalysisType: "skill"
+SkillName: "azure_security_knowledge"
+DisplayName: "Azure Security Knowledge"
+Description: "Reference mapping of Azure activity to attacker-impact categories across BOTH planes — Entra ID identity (`Azure.Audit` operations) and ARM resource management (`Azure.MonitorActivity` `operationName`). Covers initial access, credential access, privilege escalation, persistence, defense evasion, lateral movement, data access / exfil, impact, and known multi-step attack chains. Use whenever Azure activity needs to be classified by adversary impact: incident scoping, threat hunts, detection coverage analysis, or post-mortem triage. Also covers reading `caller` identity types and mapping techniques to deployed Panther detections. Technique coverage is validated against Microsoft's Azure Threat Research Matrix (ATRM). Knowledge reference — does not run queries itself."
+Prompt: |
+  # Azure Security Knowledge — Activity Impact Reference
+
+  Maps high-signal Azure activity to the attacker-impact category it belongs to. **Azure has two
+  distinct planes — always identify which you're looking at:**
+
+  - **Entra ID (identity plane)** — directory audit / sign-in (`Azure.Audit`). Operations on
+    users, groups, roles, applications, service principals, and federation. Fields:
+    `operationName`, `properties.userPrincipalName`, `properties.appDisplayName`,
+    `properties.targetResources`, `properties.ipAddress`, `properties.riskState`.
+  - **Azure Resource Manager (control plane)** — subscription/resource ops
+    (`Azure.MonitorActivity`). `operationName` is `Microsoft.<Provider>/<resource>/<verb>`
+    (e.g. `Microsoft.Compute/virtualMachines/runCommand/action`). Fields: `operationName`,
+    `caller`, `resourceId`, `properties`.
+
+  Bucket by what the action lets an adversary *do*, not just which resource. Lists are canonical
+  high-signal operations, not exhaustive; significance depends on who, success/failure, and
+  whether it's normal for that principal. Technique IDs below are cross-referenced with
+  Microsoft's Azure Threat Research Matrix (ATRM, `AZT…`) alongside MITRE ATT&CK. (ATRM has no
+  Defense-Evasion / Lateral-Movement / Exfiltration tactic — those buckets here use MITRE
+  Enterprise framing and fold ATRM techniques in where they fit.)
+
+  ## Reading Azure identifiers
+
+  `caller` (ARM) / `userPrincipalName` / `targetResources` (Entra) tell you the principal type:
+
+  - `user@domain` (UPN) — a **human** Entra user.
+  - a **service principal** — an app identity (GUID `appId` / object ID, `appDisplayName`). SP
+    activity from a new IP, or an SP suddenly doing ARM control-plane work, is high-signal.
+  - a **managed identity** — bound to a resource (system- or user-assigned); its token is fetched
+    from IMDS (`169.254.169.254/metadata/identity/oauth2/token`, header `Metadata: true`). A
+    managed identity acting beyond its resource's role is the token-abuse signal.
+  - **Global Administrator / Privileged Role Administrator** — Entra tenant admins; their use of
+    role/credential operations is the highest-signal identity activity.
+
+  Cues: `properties.riskState` / `riskLevelAggregated` (risky sign-in), `properties.status.errorCode`
+  (auth failure), `ipAddress` / `callerIp` outside expected ranges.
+
+  ## Reconnaissance — TA0043 (ATRM Reconnaissance, AZT101–108)
+  Mostly Entra ID / Graph enumeration, often by an already-valid but low-priv principal:
+  - Gather user / group info (AZT104), application & service-principal info (AZT105), directory
+    **role** assignments (AZT106) — find who is Global Admin and which apps are privileged.
+  - Gather resource & subscription data (AZT107/AZT108) —
+    `Microsoft.Resources/subscriptions/…/read`, tenant-wide resource listing.
+  - Public-accessible-resource discovery (AZT103); IP & port mapping (AZT101/AZT102). Much of
+    this runs attacker-side and may not all reach your tenant logs.
+
+  ## Initial access — TA0001 (ATRM InitialAccess, AZT201–203)
+  - **Valid credentials (AZT201, T1078.004)** — sign-in with stolen user / SP / MI creds. Watch
+    `properties.riskState` and impossible-travel sign-ins.
+  - **Password spraying (AZT202, T1110.003)** — many failed Entra sign-ins across *different*
+    users from one source, then a success. A burst of sign-in failures followed by a clean login
+    is the signal.
+  - **Malicious application consent (AZT203, T1528)** — `Consent to application` /
+    `Add OAuth2PermissionGrant` (Entra): trick a user into consenting an attacker app, granting
+    Graph access to mail/files.
+
+  ## Credential access — TA0006 (ATRM CredentialAccess, AZT601–605)
+  - **Add credentials to an app / service principal (AZT602/AZT603, T1098.001)** — `Update
+    application – Certificates and secrets management`, `Add service principal credentials`
+    (Entra): plant a secret/cert on an existing (often privileged) app to authenticate as it — a
+    stealthy backdoor + token theft.
+  - **Steal managed-identity token / IMDS (AZT601, T1552.005):** stolen via the resource's
+    metadata endpoint; detect the *use* — the MI acting from an unexpected resource/IP.
+  - **Key Vault dumping (AZT604)** — `Microsoft.KeyVault/vaults/secrets/read` +
+    `…/accessPolicies/write` (read or grant access to secrets).
+  - **Resource secret reveal (AZT605)** — `…/storageAccounts/listKeys/action`, connection
+    strings, automation/VM credentials.
+
+  ## Privilege escalation — TA0004 (ATRM PrivilegeEscalation, AZT401–405)
+  - **Elevated access toggle (AZT402)** — `Microsoft.Authorization/elevateAccess/action`: a
+    Global Admin grants themselves **User Access Administrator at root**, gaining RBAC over
+    *every* subscription. Rare and very high-signal.
+  - **Azure RBAC assignment** — `Microsoft.Authorization/roleAssignments/write`: assign an Azure
+    role (e.g. Owner) to a principal.
+  - **PIM role activation / assignment (AZT401)** — activating or assigning an eligible
+    Privileged Identity Management role (e.g. Global Administrator); watch role-activation audit
+    events outside change windows.
+  - **Add member to a privileged directory role** — `Add member to role` (Entra) granting Global
+    Administrator / Privileged Role Administrator.
+  - **Principal impersonation (AZT404)** / **Azure AD application abuse (AZT405)** — act as a
+    more-privileged app/SP, or add API permissions / credentials to an app that already holds
+    privileged Graph roles.
+  - **Local resource hijack (AZT403)** — take over a resource's own identity (e.g. a VM's
+    managed identity or local admin) to act with its assigned roles.
+
+  ## Execution & lateral movement — TA0002 / TA0008 (ATRM Execution AZT301–303; T1059 / T1021)
+  - **VM scripting (AZT301)** — `Microsoft.Compute/virtualMachines/runCommand/action`: run
+    scripts on a VM as `SYSTEM` (Windows) / `root` (Linux); RCE without SSH/RDP.
+  - `Microsoft.Compute/virtualMachines/extensions/write` — install a Custom Script Extension
+    (RCE + persistence).
+  - **Managed device scripting (AZT303)** — push scripts via Intune / endpoint management to
+    enrolled devices; **unmanaged scripting (AZT302)** — run commands on a VM with compromised
+    local creds, outside Azure's control plane.
+  - `Microsoft.Automation/automationAccounts/runbooks/draft/write` + `…/publish/action` +
+    `…/webhooks/action` — run code via Automation runbooks (often with a privileged Run-As / MI).
+  - Bastion / serial-console / managed-identity hops between resources.
+
+  ## Persistence — TA0003 (ATRM Persistence, AZT501–509)
+  - **Account manipulation / creation (AZT501/AZT502)** — `Create user`, `Add member to role`,
+    app/SP credential addition (above) — survives password resets.
+  - **Federation backdoor (T1556)** — `Set domain authentication` / `Set federation settings on
+    domain` (Entra): convert a domain to a federated IdP the attacker controls → forge tokens for
+    any user (Golden SAML class).
+  - **External entity access (AZT507)** — invite an attacker-controlled **guest / B2B** account
+    (`Invite external user`) into the tenant for durable access.
+  - **Azure Policy abuse (AZT508)** — a `deployIfNotExists` / `modify` policy assignment that
+    auto-deploys attacker resources or config on every matching resource (self-healing backdoor).
+  - **HTTP trigger / scheduled jobs / watcher tasks (AZT503/AZT505/AZT504)** — Automation
+    runbooks + schedules + webhooks, Function / Logic App triggers, custom script extensions.
+  - **Azure Bastion (AZT509)** — a standing remote-access path into the VNet.
+
+  ## Defense evasion — TA0005 (T1562 / T1578)
+  - `Microsoft.Authorization/locks/delete` (remove resource locks before tampering),
+    `Microsoft.Insights/diagnosticSettings/delete`, `Microsoft.Insights/logProfiles/delete`
+    (kill activity-log export), disabling Microsoft Defender for Cloud / policy assignments.
+  - Deleting / modifying network security groups (AZT506); disabling NSG flow logs.
+
+  ## Data access / exfil — TA0009 / TA0010 (ATRM Impact AZT701–704; T1530 / T1537)
+  - **Anonymous blob access** — a Storage container set to *Blob* or *Container* public access is
+    readable with no credentials (`…/blobServices/containers/write` setting public access, or
+    account `allowBlobPublicAccess`).
+  - **Soft-deleted blob/resource recovery (AZT704)** — deleted blobs/containers remain
+    recoverable during the retention window; an attacker with access can undelete and read them.
+  - **SAS URI generation (AZT701)** — `Microsoft.Storage/storageAccounts/listAccountSas` /
+    `listServiceSas`, or disk `Microsoft.Compute/disks/beginGetAccess/action` (+ `snapshots/write`)
+    to mint a time-boxed download URL (analog of EBS snapshot exfil — data leaves via a URL, not
+    an RBAC grant, so it can evade IAM-focused detection).
+  - **File share mounting (AZT702)** — `…/storageAccounts/listKeys/action` then mount the Azure
+    Files share with the account key.
+  - **Replication (AZT703)** — object replication / copy to an attacker-controlled account.
+
+  ## Impact / destruction — TA0040 (ATRM Impact AZT705; T1485 / T1486 / T1490 / T1496)
+  - `Microsoft.Compute/virtualMachines/delete`, `Microsoft.Compute/disks/delete`,
+    `Microsoft.Compute/snapshots/delete`, `Microsoft.Authorization/locks/delete` then bulk
+    resource deletes (sabotage / ransom).
+  - **Azure Backup delete (AZT705, T1490)** — `Microsoft.RecoveryServices/vaults/…/delete` or
+    stop-protection-with-data-deletion: destroy backups so data can't be restored.
+  - `Microsoft.KeyVault/vaults/delete` or key destroy (make encrypted data unrecoverable);
+    cryptomining VMs / VMSS scale-out (resource hijacking).
+
+  ## High-signal technique combinations
+  - **Consent → mail theft:** `Consent to application` → app reads mailboxes via Graph. (T1528)
+  - **SP backdoor → escalation:** `Add service principal credentials` on a privileged app →
+    authenticate as it → `roleAssignments/write` or `elevateAccess`. (T1098 → T1548)
+  - **Elevate-to-root:** Global Admin → `Microsoft.Authorization/elevateAccess/action` → RBAC
+    over all subscriptions → `runCommand` on any VM. (T1548 → T1059)
+  - **Federation backdoor:** `Set domain authentication` → forge SAML tokens for any user.
+    (T1556)
+  - **Lock removal → destruction:** `locks/delete` → bulk `delete` of VMs/disks. (T1485)
+
+  ## Mapping techniques to deployed detections
+
+  These techniques are covered by Panther's Azure ruleset (`rules/azure_activity_rules/` for ARM
+  `Azure.MonitorActivity`, `rules/azure_signin_rules/` for `Azure.Audit` identity). Don't reason
+  in isolation:
+  - Resolve an observed technique to deployed coverage via its MITRE tactic-technique ID — query
+    `panther_ai_detections_list` by `mitre_attack_tags`, or hand the list to
+    `coverage_gap_analysis`.
+  - Match signal shape to paradigm: a single high-signal `operationName` (`elevateAccess/action`,
+    `runCommand/action`, `roleAssignments/write`, `Consent to application`) → a **rule**; a
+    multi-step chain → a **correlation rule**; a volumetric / risk pattern (failed-sign-in bursts,
+    risky sign-ins) → a **scheduled query**.
+  - A high-impact technique with **no** matching deployed detection is a coverage-gap finding —
+    surface it and route to `coverage_gap_analysis`.
+
+  ## Recording an observed action
+
+  For each high-signal action capture: which **plane** (Entra vs ARM), the `operationName`, the
+  `caller` / `userPrincipalName` (and identity type), `resourceId` / `targetResources`, source IP,
+  risk state, and success/failure. Failed attempts are still signal.
+
+  ## Caveats
+  - High-signal starting points, not allow/deny lists. IaC (ARM/Bicep/Terraform), CI/CD service
+    principals, and platform automation legitimately do many of these — classify by impact, then
+    judge by principal + plane + context.
+  - Service principals and managed identities act programmatically by design; the signal is one
+    acting outside its normal scope, role, or source.
+  - Don't conflate the planes — an Entra `Add member to role` (directory role) is different from
+    an ARM `roleAssignments/write` (Azure RBAC). Both matter; they're separate authorization
+    systems.
+  - A single bucket hit is a lead; cross-bucket / cross-plane sequences from one principal are
+    the verdict.
+DependsOn: []
+EagerLoading: false
+RequiredTools:
+  - panther_ai_detections_list
+Enabled: true
+Tags:
+  - azure
+  - entra-id
+  - mitre
+  - knowledge-primitive

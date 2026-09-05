@@ -1,0 +1,138 @@
+AnalysisType: "skill"
+SkillName: "coverage_gap_analysis"
+DisplayName: "MITRE ATT&CK Coverage Gap Analysis"
+Description: "Use this skill when the analyst wants to know whether the environment can detect specific MITRE ATT&CK techniques, or whether a threat advisory's techniques are covered by current detections and log sources. Trigger on questions like: \"Do we cover T1003, T1078, T1059?\", \"Which credential-access techniques have no coverage?\", or \"Read this advisory URL and tell me which techniques are covered.\" Do NOT use for active threat hunts or tuning existing detections."
+Prompt: |
+  # Coverage Gap Analysis Skill
+
+  Cross-reference MITRE ATT&CK techniques against the environment's active log sources and deployed detections. Produce a coverage table — fully covered, partially covered, no coverage — with specific gaps named and ranked by remediation effort.
+
+  ## When to invoke
+
+  - "For techniques T1003, T1078, T1059 — do we have coverage?"
+  - "Read this advisory: <URL>. Identify the techniques referenced and tell me which are covered."
+  - "Which credential-access techniques have no rule coverage in our environment?"
+
+  **Not for:** tuning existing detections, writing new rules, live threat hunting.
+
+  ---
+
+  ## Step 1 — Determine the technique list
+
+  Use one of these three paths depending on what the analyst provided:
+
+  **A. Named techniques** — Use the list as-is (e.g., T1003, T1078.003).
+
+  **B. Advisory URL** — Fetch the page with `panther_ai_utilities_fetch_web`. Extract every ATT&CK technique ID (pattern: `T\d{4}(?:\.\d{3})?`) referenced in the advisory. Build the list from those IDs.
+
+  **C. Tactic name only (e.g., "credential access")** — Map the tactic to its MITRE tactic ID (TA00xx), then call `panther_ai_detections_list` with `mitre_attack_tags: ["<TacticID>"]` to discover which techniques exist in the detection library for that tactic. Also reference https://attack.mitre.org/tactics/ to enumerate all known techniques in the tactic that may *not* have rules, so gaps are visible.
+
+  ---
+
+  ## Step 2 — Inventory available log sources
+
+  Call `panther_ai_log_sources_list`.
+
+  Note each source's `integrationLabel`, `integrationType`, and `health.isHealthy`. Only **healthy, enabled** sources count as "data source present." Capture the log types each source produces (field: `logTypes`).
+
+  Also call `panther_ai_log_types_list` to enumerate every log type schema currently loaded. This is your ground-truth list of what data is ingested.
+
+  ---
+
+  ## Step 3 — For each technique, check deployed detection coverage
+
+  Call `panther_ai_detections_list` with `mitre_attack_tags: ["<TacticID>:<TechniqueID>"]` for each technique. Use both the tactic+technique form (e.g., `TA0006:T1003`) and the technique-only form where necessary.
+
+  For each result note:
+  - Detection name, severity, enabled status (`enabled: true/false`)
+  - Log types the detection covers
+  - Whether the detection is `RULE`, `SCHEDULED_RULE`, `CORRELATION_RULE`, or `POLICY`
+
+  Only **enabled** detections count as "deployed rule present."
+
+  ---
+
+  ## Step 4 — Score coverage per technique
+
+  Apply this scoring logic:
+
+  | Condition | Coverage | Remediation effort |
+  |---|---|---|
+  | Data source present AND enabled rule(s) match | **Full** | — |
+  | Data source present AND matching rule exists but is **disabled** | **Partial** (disabled-rule gap) | Trivial — toggle the rule on |
+  | Data source present, no rule of any kind | **Partial** (rule gap) | Easy — search library or author new rule |
+  | Rule present but required log type missing from sources | **Partial** (data gap) | Harder — add and onboard a new log source |
+  | No data source AND no rule | **None** | Hardest — both data and rule work required |
+
+  For "required data source," use MITRE ATT&CK's published data source requirements at https://attack.mitre.org/techniques/<TechniqueID>/ (fetch if needed via `panther_ai_utilities_fetch_web`) and cross-reference against the log types found in Step 2.
+
+  ---
+
+  ## Step 5 — Output the coverage report
+
+  ```markdown
+  # Coverage Analysis — <input description>
+
+  ## Technique Coverage
+
+  | Technique | Tactic | Required Data Source | Data Source Present? | Deployed Rule? | Coverage |
+  |---|---|---|---|---|---|
+  | T1003.001 | Credential Access | Process creation, OS API execution | Yes (<log type>) | No | Partial |
+  | ...
+
+  ## Top Gaps to Close (ranked by remediation effort)
+
+  ### Easy — Rule gap (data source exists, rule needs enabling/creation)
+  1. **<Technique ID> <Technique Name>**
+     - Missing: enabled detection rule
+     - Available log types that could support a rule: <list>
+     - Recommended action: search Panther detection library or create a new rule
+
+  ### Harder — Data source gap (log type not ingested)
+  1. **<Technique ID> <Technique Name>**
+     - Missing log type: <log type>
+     - Impact: rules may exist but cannot fire
+     - Recommended action: add a new log source via Panther log source configuration
+
+  ## Well Covered Techniques
+  <List techniques with Full coverage — useful for audit conversations>
+
+  ## Disabled Rules (require attention)
+  <List any rules found for a technique that are disabled — these are quick wins>
+
+  ## Caveats
+  - "Deployed rule present" means the rule is enabled; it does not mean it fires correctly or that alert volume is manageable.
+  - Coverage is structural, not operational — validate with a detection engineer before reporting to stakeholders.
+  - If a required data source could not be determined from MITRE, this is noted per technique.
+  ```
+
+  ---
+
+  ## Constraints
+
+  - Read-only across all sources. Do not create, enable, or modify rules from this skill.
+  - If you cannot determine whether a rule is enabled, say so explicitly — do not infer.
+  - Be explicit about uncertainty in data source mapping (MITRE data source taxonomy can be ambiguous).
+  - Recommend rule creation or log source addition, then defer to the analyst for action.
+
+  ---
+
+  ## MITRE Reference
+
+  - Technique catalog: https://attack.mitre.org/techniques/enterprise/
+  - Data sources: https://attack.mitre.org/datasources/
+  - Tactics: https://attack.mitre.org/tactics/enterprise/
+ToolMessage: "Analyzing MITRE ATT&CK coverage gaps against your detections and log sources…"
+DependsOn: []
+EagerLoading: false
+RequiredTools:
+  - panther_ai_detections_list
+  - panther_ai_log_sources_list
+  - panther_ai_log_types_list
+  - panther_ai_utilities_fetch_web
+Enabled: true
+Tags:
+  - mitre
+  - coverage
+  - detection-engineering
+  - gap-analysis
