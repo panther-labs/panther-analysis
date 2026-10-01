@@ -2001,8 +2001,8 @@
   - GSuite reported a suspicious activity on a user's device.
 - [GSuite Document External Ownership Transfer](../rules/gsuite_activityevent_rules/gsuite_doc_ownership_transfer.yml)
   - A GSuite document's ownership was transferred to an external party.
-- [GSuite Drive Many Documents Deleted](../queries/gsuite_queries/gsuite_drive_many_docs_deleted.yml)
-  - Scheduled rule for the GSuite Drive Many Documents Deleted query. Looks for users who have deleted more than 10 (tunable) documents the past day.
+- [GSuite Drive Many Documents Deleted](../rules/gsuite_activityevent_rules/gsuite_drive_many_docs_deleted.yml)
+  - Detects when a user moves more than 10 distinct documents to the trash in Google Drive within 60 minutes. This may indicate accidental or malicious bulk deletion of files.
 - [Gsuite Email Bypassed Spam Filter](../rules/gsuite_activityevent_rules/gsuite_bypass_spam_filter_email.yml)
   - Detects if an email received by a user has bypassed the organization's spam filter.
 - [GSuite External Drive Document](../rules/gsuite_reports_rules/gsuite_drive_visibility_change.yml)
@@ -2620,7 +2620,7 @@
   - Monitor for malicious IPs interacting with Snowflake as part of ongoing cyber threat activity reported May 31st, 2024
 - [Snowflake Configuration Drift](../queries/snowflake_queries/snowflake_0108977_configuration_drift.yml)
   - Monitor for configuration drift made by malicious actors as part of ongoing cyber threat activity reported May 31st, 2024
-- [Snowflake Data Exfiltration](../correlation_rules/snowflake_data_exfiltration_streaming.yml)
+- [Snowflake Data Exfiltration](../correlation_rules/snowflake_data_exfiltration.yml)
   - Detects multi-step Snowflake data exfiltration by identifying temporary stage creation, table data copied to stage, and file downloads. This technique was used in the April 2024 Snowflake breach (UNC5537) targeting accounts without MFA. The correlation of all three steps provides high-confidence evidence of active data theft beyond legitimate ETL operations.
 - [Snowflake External Data Share](../rules/snowflake_rules/snowflake_stream_external_shares.yml)
   - Detect when an external share has been initiated from one source cloud to another target cloud.
