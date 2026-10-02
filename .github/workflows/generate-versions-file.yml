@@ -62,8 +62,6 @@ jobs:
 
       - name: Branch and commit changes
         if: steps.check-for-changes.outputs.has_changes == 'true'
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           git config --global user.email "github-service-account-automation@panther.io"
           git config --global user.name "panther-bot-automation"
