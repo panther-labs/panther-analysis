@@ -6125,13 +6125,13 @@
         "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_doc_ownership_transfer.yml"
     },
     {
-        "AnalysisType": "Scheduled Rule",
-        "Description": "Scheduled rule for the GSuite Drive Many Documents Deleted query. Looks for users who have deleted more than 10 (tunable) documents the past day.",
+        "AnalysisType": "Rule",
+        "Description": "Detects when a user moves more than 10 distinct documents to the trash in Google Drive within 60 minutes. This may indicate accidental or malicious bulk deletion of files.",
         "DisplayName": "GSuite Drive Many Documents Deleted",
         "LogTypes": [
             "GSuite.ActivityEvent"
         ],
-        "YAMLPath": "queries/gsuite_queries/gsuite_drive_many_docs_deleted.yml"
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_drive_many_docs_deleted.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -8789,9 +8789,9 @@
         "Description": "Detects multi-step Snowflake data exfiltration by identifying temporary stage creation, table data copied to stage, and file downloads. This technique was used in the April 2024 Snowflake breach (UNC5537) targeting accounts without MFA. The correlation of all three steps provides high-confidence evidence of active data theft beyond legitimate ETL operations.",
         "DisplayName": "Snowflake Data Exfiltration",
         "LogTypes": [
-            "Snowflake.QueryHistory"
+            "Snowflake.AccountUsage"
         ],
-        "YAMLPath": "correlation_rules/snowflake_data_exfiltration_streaming.yml"
+        "YAMLPath": "correlation_rules/snowflake_data_exfiltration.yml"
     },
     {
         "AnalysisType": "Rule",
