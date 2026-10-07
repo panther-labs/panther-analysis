@@ -27,14 +27,18 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    env:
-      GITHUB_TOKEN: ${{ secrets.PANTHER_BOT_AUTOMATION_TOKEN }}
     steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.PANTHER_BOT_APP_ID }}
+          private-key: ${{ secrets.PANTHER_BOT_APP_PRIVATE_KEY }}
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
         with:
           ref: ${{ github.event.inputs.branch }}
           fetch-depth: 0
-          token: ${{ env.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           # Nothing here talks to a git remote (gh uses GITHUB_TOKEN from the env),
           # so don't leave the bot PAT in .git/config for `make install` to reach.
           persist-credentials: false
@@ -56,6 +60,7 @@ jobs:
           KMS_KEY_ARN: ${{ secrets.KMS_KEY_ARN }}
           SIGNING_ALGORITHM: ${{ secrets.SIGNING_ALGORITHM }}
           DIGEST_FILE: ${{ secrets.DIGEST_FILE }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           OLD_VERSION=$(gh release list | grep Latest | awk '{print $1}')
           NEW_VERSION=$(echo "$OLD_VERSION" | awk -F. -v bump="$BUMP" '{
