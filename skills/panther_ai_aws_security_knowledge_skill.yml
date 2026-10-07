@@ -1,0 +1,233 @@
+AnalysisType: "skill"
+SkillName: "aws_security_knowledge"
+DisplayName: "AWS Security Knowledge"
+Description: "Reference mapping of AWS CloudTrail `eventName` values to attacker-impact categories — identity & access, credential access, persistence, data access / exfil, defense evasion, reconnaissance, lateral movement, impact / destruction, and known multi-step attack chains. Use whenever AWS API activity needs to be classified by adversary impact: incident scoping, threat hunts, detection coverage analysis, or post-mortem triage. Also covers reading AWS identifier prefixes (AKIA / ASIA / AROA …) in CloudTrail and mapping techniques to the deployed Panther detections (rules, correlation rules, scheduled queries) that cover them. Knowledge reference — does not run queries itself."
+Prompt: |
+  # AWS Security Knowledge — CloudTrail Action Impact Reference
+
+  Maps high-signal AWS CloudTrail `eventName` values to the attacker-impact category they
+  belong to. Use it to bucket observed API activity by what it lets an adversary *do* —
+  not just what service it touched. The lists are the canonical high-signal calls per
+  category; they are not exhaustive, and a call's significance always depends on context
+  (who made it, whether it succeeded, and whether it is normal for that principal).
+
+  Group an observed event set by `eventName` and classify each into the buckets below.
+
+  ## Reading AWS identifiers in CloudTrail
+
+  Two `userIdentity` fields tell you *what kind of credential* acted before you even look at
+  the eventName. The 4-char prefix on a 21-char unique ID is the type:
+
+  - `userIdentity.accessKeyId` — **`AKIA…`** = long-term IAM user key (no expiry; the prime
+    vehicle for initial access and persistence). **`ASIA…`** = temporary STS credentials
+    (short-lived session token; an attacker must use them before they expire). **`ABIA…`** =
+    STS bearer token.
+  - `userIdentity.principalId` — **`AIDA…`** = IAM user, **`AROA…`** = role, **`AIPA…`** = EC2
+    instance profile, **`AGPA…`** = group, **`ANPA…`** = managed policy.
+
+  Triage cues: an `AKIA…` key acting from a new IP, or an `AROA…` / instance-profile session
+  used far from its workload, is worth a closer look. `AKIA…` exposure is urgent (no expiry);
+  `ASIA…` exposure is time-boxed.
+
+  ## Identity & access changes (IAM) — TA0003 Persistence / TA0004 Privilege Escalation
+  - `CreateUser`, `CreateAccessKey`, `UpdateAccessKey`, `AttachUserPolicy`,
+    `PutUserPolicy`, `AddUserToGroup`, `CreateLoginProfile`, `UpdateLoginProfile`,
+    `DeactivateMFADevice`, `DeleteVirtualMFADevice`, `PassRole`, `UpdateAssumeRolePolicy`,
+    `CreateRole`, `AttachRolePolicy`, `PutRolePolicy`, `CreateServiceSpecificCredential`
+  - `CreatePolicyVersion`, `SetDefaultPolicyVersion` (sneak admin into a customer-managed
+    policy without changing its attachment), `CreatePolicy`
+  - `UpdateDevEndpoint` (Glue — inject an SSH key / code into a privileged dev endpoint)
+  - **`PassRole` is the hinge of most privesc.** Watch it paired with a compute-create call
+    (`RunInstances`, `CreateFunction` / `UpdateFunctionCode`, `CreateDevEndpoint`) that runs
+    attacker-controlled code under a more privileged role.
+
+  ## Credential access — TA0006
+  Calls that hand back usable credentials or tokens — treat a success as "the actor now
+  holds new creds":
+  - `CreateAccessKey`, `CreateLoginProfile` (IAM — long-lived key / console password)
+  - `AssumeRole`, `AssumeRoleWithWebIdentity`, `AssumeRoleWithSAML`, `GetFederationToken`,
+    `GetSessionToken` (STS — temporary credentials). **IR note:** `ASIA…` sessions minted via
+    `GetFederationToken` / `AssumeRole` keep working until they expire even after the source
+    `AKIA…` key is deleted — deactivating the key does *not* revoke already-issued sessions, so
+    eviction must also deny the live session (e.g. an `aws:TokenIssueTime` policy condition).
+  - `GetAuthorizationToken` (ECR), `GetClusterCredentials` (Redshift),
+    `GetCredentialsForIdentity` (Cognito), `rds-db:connect` (RDS IAM auth)
+  - `GetSecretValue` (Secrets Manager), `GetParameter` / `GetParameters` (SSM Parameter Store)
+  - `DescribeInstanceAttribute` (attribute `userData`), `ModifyInstanceAttribute` (EC2 user
+    data often holds bootstrap secrets and credentials)
+  - **IMDS SSRF (T1552.001):** EC2 / Fargate role credentials stolen via the metadata service
+    (`169.254.169.254`, `169.254.170.2`) produce no CloudTrail event of their own — detect the
+    *use* instead: instance-role session credentials appearing from an IP or account that is
+    not the instance. GuardDuty raises
+    `UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration.OutsideAWS` (used from outside
+    AWS) or `.InsideAWS` (used from a different AWS account). Credentials replayed through a
+    VPC endpoint historically evaded the `OutsideAWS` variant; since late 2024 GuardDuty
+    detects many such bypasses via CloudTrail network-activity events (~26 services by
+    mid-2025), so test current behavior. IMDSv2 (token-required PUT) closes the SSRF path; IMDSv1-enabled
+    instances stay exposed.
+
+  ## Persistence — TA0003
+  - `CreateFunction`, `UpdateFunctionCode`, `CreateEventSourceMapping` (Lambda)
+  - `RunInstances`, `CreateLaunchTemplate`, `CreateLaunchConfiguration` (EC2)
+  - `SendSSHPublicKey` (EC2 Instance Connect — push an SSH key without a key pair),
+    `ImportKeyPair` (register an attacker public key)
+  - `PutRule`, `PutTargets` (EventBridge)
+  - `CreateStack`, `UpdateStack` (CloudFormation)
+  - `CreateOpenIDConnectProvider` + a role trusting it via `AssumeRoleWithWebIdentity` (rogue
+    OIDC IdP — a federated backdoor that blends in with legitimate web-identity federation)
+  - `rolesanywhere:CreateTrustAnchor` + `rolesanywhere:CreateProfile` (IAM Roles Anywhere —
+    cert-based access from outside AWS that survives IAM key rotation)
+  - `CreateProject` + `CreateWebhook` + `ImportSourceCredentials` (CodeBuild — GitHub-runner
+    persistence; pairs with `UpdateAssumeRolePolicy`)
+  - `CreateAccessKey`, `CreateLoginProfile` (also identity changes above — dual-purpose)
+
+  ## Data access / exfil — TA0009 Collection / TA0010 Exfiltration
+  - `GetObject`, `ListObjects`, `GetObjectAcl`, `PutObjectAcl` (S3)
+  - `Decrypt`, `GenerateDataKey` (KMS — at unusual volume)
+  - `GetSecretValue` (Secrets Manager), `GetParameter` (SSM Parameter Store)
+  - `CopyDBSnapshot`, `CreateDBSnapshot`, `RestoreDBClusterFromSnapshot` (RDS)
+  - `CreateSnapshot`, `CopySnapshot`, `CreateVolume`, `AttachVolume`, `ModifySnapshotAttribute`,
+    `CreateImage`, `ModifyImageAttribute` (EC2 EBS/AMI — the snapshot-share exfil chain:
+    snapshot a victim volume, share/copy it to an attacker account, mount and read it; T1537).
+    Distinguish **shared to a specific account** (`createVolumePermission` / `launchPermission`
+    adds a `userId`) from **made fully public** (`groups: all`): public EBS snapshots and AMIs
+    are listable by anyone (`describe-snapshots --restorable-by-user-ids all`) and are actively
+    looted. The public-exposure signal is `ModifySnapshotAttribute` / `ModifyImageAttribute`
+    with `add … groups=all` — not the attacker's cross-account read, which never hits your logs.
+  - `GetFunction` (Lambda — pull `Code.Location` for hardcoded secrets and env vars)
+  - `Subscribe`, `AddPermission`, `SetTopicAttributes` (SNS) / `SetQueueAttributes` (SQS) —
+    subscribe to or re-permission a topic/queue to intercept its message data
+  - `PutBucketReplication` (S3 — silently replicate all current and future objects to an
+    attacker bucket, including cross-account; pairs with `CreateRole` / `UpdateAssumeRolePolicy`
+    for the replication role and `s3:InitiateReplication` batch ops; T1537)
+
+  ## Defense evasion — TA0005
+  - `StopLogging`, `DeleteTrail`, `UpdateTrail`, `PutEventSelectors` (CloudTrail)
+  - `DeleteDetector`, `UpdateDetector`, `StopMonitoringMembers` (GuardDuty — disable/suspend),
+    `CreateFilter` (auto-archive findings), `CreateIPSet` / `UpdateIPSet` (add an attacker IP to
+    the *trusted* list → no findings raised on its traffic — tamper, not deletion)
+  - `DeleteFlowLogs` (VPC Flow)
+  - `PutBucketLogging`, `PutBucketPolicy` (S3 logging tamper)
+  - `DeleteConfigurationRecorder`, `StopConfigurationRecorder` (Config)
+  - `AuthorizeSecurityGroupIngress`, `RevokeSecurityGroupIngress` (SG opening)
+  - **User-Agent masquerading (T1036):** offensive frameworks (e.g. Pacu) rewrite the boto3
+    `userAgent` to hide "kali" / "parrot" / "pentoo" — generic or spoofed `userAgent` values
+    on sensitive calls are a weak-but-useful corroborating signal.
+  - **Low-visibility credential validation:** `sqs:ListQueues` (and other data-plane calls)
+    can confirm stolen credentials while staying out of CloudTrail *management* events — the
+    absence of a `GetCallerIdentity` does not mean the credentials were never tested.
+  - **Obfuscated admin policy (T1027):** privesc that dodges string-match detection — `"*:*"`,
+    `"*:Create*"` / `"*:Put*"`, `?` wildcards, or `iam:Put*` instead of a bare `"*"` /
+    `AdministratorAccess`, often placed as an *inline* policy. Evaluate effective permissions
+    (or use Access Analyzer `ValidatePolicy`) on `CreatePolicy` / `CreatePolicyVersion` /
+    `PutUserPolicy` / `PutRolePolicy` / `PutGroupPolicy` — don't match only on the literal `"*"`.
+
+  ## Reconnaissance — TA0007 Discovery
+  - `GetCallerIdentity` — the classic "who am I" first move of a stolen-credential holder;
+    it requires no permissions and cannot be denied by policy, so it always succeeds and
+    always logs. `SimulatePrincipalPolicy`, `GetAccountAuthorizationDetails` (full IAM dump —
+    strong enumeration signal)
+  - `ListUsers`, `ListRoles`, `ListPolicies`
+  - `DescribeInstances`, `DescribeSecurityGroups`, `DescribeVpcs`
+  - `ListBuckets`, `GetBucketPolicy`, `GetBucketAcl`
+  - `ListFunctions` (Lambda), `ListSecrets` (Secrets Manager), `ListTables` / `Scan` (DynamoDB),
+    `DescribeInstanceInformation` (SSM — find managed targets before `SendCommand`)
+  - High-volume `Describe*` / `List*` calls from a single principal = enumeration
+  - **Permission brute-forcing (seen in the wild):** a burst of `Get*` / `List*` / `Describe*`
+    across many *unrelated* services from one principal in a short window — often with a spray
+    of `errorCode = AccessDenied` — is automated IAM permission enumeration (e.g. enumerate-iam,
+    Pacu). Any single call looks benign; the breadth + volume + AccessDenied ratio is the signal.
+
+  ## Lateral movement — TA0008
+  - `AssumeRole`, `AssumeRoleWithWebIdentity`, `AssumeRoleWithSAML` (STS — identity chaining)
+  - `AssumeRole` into `OrganizationAccountAccessRole` — the default `AdministratorAccess` role
+    created in every Organizations *member* account, trusted by the management account root;
+    assuming it is the canonical management-account → member-account org pivot
+  - `SendCommand` (SSM — remote execution on EC2), `StartSession` (SSM Session Manager — shell)
+  - `SendSSHPublicKey` (EC2 Instance Connect — transient SSH key push for direct access)
+  - `CreateRoute`, `CreateVpcPeeringConnection`, `AcceptVpcPeeringConnection` (open a network
+    path between VPCs / accounts for lateral movement)
+  - `CreateHostedZone`, `ChangeResourceRecordSets` (Route 53 — DNS manipulation for traffic
+    redirection / subdomain takeover; privesc when records front trusted services)
+  - **Role-chain juggling:** repeated / cyclical `AssumeRole` (role A → B → A …) that keeps
+    re-minting `ASIA…` sessions from one principal to outlive the max session duration
+  - `GetPasswordData` (Windows EC2 instance password retrieval)
+
+  ## Impact / destruction — TA0040
+  Mass deletion or teardown — ransom, anti-forensics, or sabotage (tools like Cloud-Nuke
+  automate this). A burst of these from one principal in a short window is the signal:
+  - `TerminateInstances`, `DeleteVolume`, `DeleteSnapshot` (EC2)
+  - `DeleteBucket`, `DeleteObject`, `PutBucketLifecycle` (S3 — delete or force-expire data)
+  - `DeleteDBInstance`, `DeleteDBCluster` (RDS), `DeleteTable` (DynamoDB)
+  - `ScheduleKeyDeletion`, `DisableKey` (KMS — destroy keys to make encrypted data
+    unrecoverable; a cloud ransomware primitive)
+  - `DeleteSecret`, `DeleteStack`, `DeleteFunction`
+  - (T1485 Data Destruction / T1486 Data Encrypted for Impact / T1490 Inhibit System Recovery)
+
+  ## High-signal technique combinations
+
+  The strongest signal is rarely one call — it's a sequence from a single principal. Known
+  AWS attack chains to recognize:
+
+  - **Pass-role privilege escalation:** `PassRole` + (`RunInstances` | `CreateFunction` |
+    `UpdateFunctionCode` | `CreateDevEndpoint`) — run code under a higher-privileged role.
+    (T1548 / T1098)
+  - **Policy-version privesc:** `CreatePolicyVersion` + `SetDefaultPolicyVersion` — quietly
+    grant admin on an already-attached policy. (T1098)
+  - **Trust-policy takeover:** `UpdateAssumeRolePolicy` + `AssumeRole` — rewrite a role's
+    trust to include the attacker, then assume it. (T1098)
+  - **Stolen instance credentials:** IMDS SSRF → instance-role session used off-instance
+    (`sourceIPAddress` ≠ the instance, or a different account). (T1552.001)
+  - **Snapshot / AMI exfil to attacker account:** `CreateSnapshot` / `CreateImage` +
+    `ModifySnapshotAttribute` / `ModifyImageAttribute` (share externally) + `CopySnapshot` /
+    `CreateVolume` / `AttachVolume` in the attacker account. (T1537)
+  - **SSM remote execution:** `DescribeInstanceInformation` + `SendCommand`
+    (`AWS-RunShellScript`) or `StartSession` — RCE / shell on managed instances. (T1651)
+  - **Golden SAML:** forged SAML assertion → `AssumeRoleWithSAML` from an unusual IdP or
+    source, bypassing MFA. (T1556)
+  - **Organization pivot:** management-account principal → `AssumeRole` into a member account's
+    `OrganizationAccountAccessRole`, or new IAM Identity Center permission sets / delegated-admin
+    grants — one path to admin across every member account. (T1098 / T1199)
+
+  ## Mapping techniques to deployed detections
+
+  Most techniques here already correspond to Panther detections — don't reason about them in
+  isolation. Resolve an observed technique to deployed coverage using the **MITRE tactic /
+  technique IDs above as the join key**: query `panther_ai_detections_list` by
+  `mitre_attack_tags`, or hand the technique list to `coverage_gap_analysis`.
+
+  Match the signal shape to the detection paradigm:
+  - **A single high-signal `eventName`** (e.g. `StopLogging`, `CreateAccessKey`,
+    `ModifySnapshotAttribute` with `groups=all`, `UpdateIPSet`) → a single-event **rule**.
+  - **A multi-step chain** (the technique combinations above — create-admin, backdoor-role,
+    privesc-via-compromise, S3 exfil-then-delete) → a **correlation rule** spanning events.
+  - **A volumetric / threshold pattern** (permission brute-forcing = burst of `AccessDenied`,
+    enumeration sweeps, abnormal data-access volume) → a **scheduled query**.
+
+  A high-impact technique with **no** matching deployed detection is itself a coverage-gap
+  finding — surface it, and route to `coverage_gap_analysis`.
+
+  ## Recording an observed action
+
+  For each high-impact `eventName` seen, capture: which call, when, the target resource
+  (from the `resources` array), whether it succeeded (`errorCode` IS NULL), and the source
+  IP. Failed calls (`errorCode` IS NOT NULL) are still signal — they reveal what the actor
+  *tried*, not just what landed.
+
+  ## Caveats
+  - These lists are high-signal starting points, not allow/deny lists. Many appear in
+    legitimate automation (CI/CD, IaC, backup jobs) — classify by impact, then judge by
+    context, not by presence alone.
+  - A single bucket hit is a lead, not a verdict. Adversary activity usually spans several
+    buckets (recon → identity change → persistence → exfil); cross-bucket sequences from
+    one principal are the stronger signal.
+DependsOn: []
+EagerLoading: false
+RequiredTools:
+  - panther_ai_detections_list
+Enabled: true
+Tags:
+  - aws
+  - cloudtrail
+  - guardduty
+  - knowledge-primitive
