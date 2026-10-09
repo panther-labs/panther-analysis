@@ -1,4 +1,16 @@
+from urllib.parse import unquote
+
 from panther_aws_helpers import aws_cloudtrail_success, aws_rule_context
+
+
+def copy_source_bucket(event):
+    # CloudTrail records x-amz-copy-source as "/bucket/key" (leading slash) and URL-encodes
+    # the value, so a naive split on "/" yields an empty bucket name for most real events.
+    # Normalize both so the source bucket matches the DeleteObject bucketName in correlation.
+    source_path = unquote(
+        event.deep_get("requestParameters", "x-amz-copy-source", default="")
+    ).lstrip("/")
+    return source_path.split("/")[0] if source_path else "<UNKNOWN_SOURCE_BUCKET>"
 
 
 def extract_resources(event):
@@ -36,9 +48,7 @@ def title(event):
     dest_bucket = event.deep_get(
         "requestParameters", "bucketName", default="<UNKNOWN_DESTINATION_BUCKET>"
     )
-    source_bucket = event.deep_get(
-        "requestParameters", "x-amz-copy-source", default="<UNKNOWN_SOURCE_BUCKET>"
-    )
+    source_bucket = copy_source_bucket(event)
     actor = event.udm("actor_user")
 
     return (
@@ -53,9 +63,7 @@ def alert_context(event):
     context["dest_bucket"] = event.deep_get(
         "requestParameters", "bucketName", default="<UNKNOWN_DESTINATION_BUCKET>"
     )
-    # Extract just the bucket name from x-amz-copy-source (format: bucket/key)
-    source_path = event.deep_get(
-        "requestParameters", "x-amz-copy-source", default="<UNKNOWN_SOURCE_BUCKET>"
-    )
-    context["bucketName"] = source_path.split("/")[0] if "/" in source_path else source_path
+    # bucketName is the copy *source* bucket, matched against the DeleteObject bucketName
+    # in the AWS.S3.ObjectExfiltration.WITH.ObjectDeletion correlation rule.
+    context["bucketName"] = copy_source_bucket(event)
     return context
