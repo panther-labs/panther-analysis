@@ -1,0 +1,214 @@
+AnalysisType: skill
+SkillName: github_actions_security_audit_skill
+DisplayName: GitHub Actions Security Audit
+Description: Use when the user asks to audit GitHub Actions workflows for security vulnerabilities, supply chain risks, script injection, dangerous triggers, or attack vectors from the Wiz GitHub Actions threat model. Triggers on requests like "check my GitHub Actions for vulnerabilities", "audit workflows for pwn requests", "scan for script injection in workflows", "check if actions are pinned to commit SHAs", or "audit all public repos for GitHub Actions issues".
+Prompt: |4
+    # GitHub Actions Security Audit Skill
+
+    You are performing a security audit of GitHub Actions workflows based on the Wiz GitHub Actions Threat Model (https://www.wiz.io/blog/github-actions-security-threat-model-and-defenses).
+
+    The three primary attack vector categories to check are listed below. Use the GitHub MCP tools to retrieve workflow files and analyze them systematically.
+
+    ---
+
+    ## Step 0: Discover Repositories (if no specific repo is provided)
+
+    If the user has **not** specified a particular `owner/repo`, use **`git_hub_search_repositories`** to enumerate all public repositories for the target organization or user before auditing.
+
+    1. Call `git_hub_search_repositories` with a query such as `org:<org-name> is:public` (or `user:<username> is:public`) to list all public repositories.
+    2. Collect the full list of `owner/repo` identifiers from the results.
+    3. For each repository discovered, proceed with Steps 1–4 below to audit its `.github/workflows/` directory.
+    4. If the result set is large (>20 repos), ask the user whether to audit all of them or prioritize by last-push date, visibility, or topic.
+
+    > **Tip:** You can narrow the search with qualifiers like `topic:ci`, `language:python`, or `pushed:>2024-01-01` to focus on actively maintained repositories first.
+
+    If the user **has** specified a repository, skip this step and proceed directly to Step 1.
+
+    ---
+
+    ## Step 1: Discover Workflows
+
+    Use **`git_hub_get_file_contents`** to list the `.github/workflows/` directory for the target repository. This tool returns directory listings when given a directory path, and file contents when given a file path.
+
+    1. Call `git_hub_get_file_contents` with `path: ".github/workflows"` to list all workflow files.
+    2. For each `.yml` or `.yaml` file found, call `git_hub_get_file_contents` again with the full file path to retrieve its content.
+
+    Alternatively, use **`git_hub_search_code`** to locate workflow files across a repository or organization:
+    - Query example: `path:.github/workflows extension:yml` scoped to the target repo.
+    - This is useful when the repository structure is unknown or when scanning multiple repositories.
+
+    ---
+
+    ## Step 2: Check for Attack Vector 1 — Dangerous Triggers ("Pwn Requests")
+
+    **What to look for:**
+    The following triggers run workflows in the context of the base branch (with access to secrets and write permissions) but can be initiated by untrusted actors:
+
+    | Trigger | Attack Vector |
+    |---|---|
+    | `pull_request_target` | Malicious PR content (code checkout) |
+    | `issues`, `issue_comment` | Malicious issue title / body / comment |
+    | `discussion`, `discussion_comment` | Malicious discussion content |
+    | `fork`, `watch` | Attacker-triggered fork / star events |
+    | `workflow_run` | Inherits from a parent workflow triggered by untrusted actors |
+
+    **Specific high-risk pattern — Pwn Request:**
+    A workflow is **critically vulnerable** if it:
+    1. Uses `pull_request_target` as a trigger, AND
+    2. Checks out PR head code using `actions/checkout` with `ref: ${{ github.event.pull_request.head.sha }}` or `ref: ${{ github.event.pull_request.head.ref }}`, AND
+    3. Subsequently executes commands that use that checked-out code (e.g., `run: make build`, `run: npm install`, or any composite/local action that reads the workspace)
+
+    For `workflow_run`, flag any workflow that:
+    - Triggers on `workflow_run`
+    - Downloads artifacts or checks out code from the triggering workflow
+    - Then uses those artifacts in `run:` steps or passes them to actions
+
+    **Tip:** Use **`git_hub_search_code`** to efficiently find all workflows containing dangerous triggers across many files:
+    - Query: `pull_request_target path:.github/workflows` to find pwn-request candidates.
+    - Query: `workflow_run path:.github/workflows` to find workflow_run consumers.
+
+    **For each finding, report:**
+    - Workflow file name
+    - The dangerous trigger(s) present
+    - Whether code from an untrusted source is checked out and executed
+    - Severity: CRITICAL if secrets are accessible and attacker code executes; HIGH otherwise
+
+    ---
+
+    ## Step 3: Check for Attack Vector 2 — Script Injection (Expression Injection)
+
+    **What to look for:**
+    Unsanitized GitHub context expressions interpolated directly into `run:` shell blocks. These are vulnerable because an attacker controls the value of these expressions.
+
+    **High-risk untrusted inputs (user-controlled values):**
+    - `${{ github.event.issue.title }}`
+    - `${{ github.event.issue.body }}`
+    - `${{ github.event.pull_request.title }}`
+    - `${{ github.event.pull_request.body }}`
+    - `${{ github.event.pull_request.head.ref }}` (branch name)
+    - `${{ github.head_ref }}`
+    - `${{ github.event.comment.body }}`
+    - `${{ github.event.discussion.body }}`
+    - `${{ github.event.discussion.title }}`
+    - `${{ github.event.review.body }}`
+    - `${{ github.event.inputs.* }}` (when triggered by an untrusted actor)
+
+    **Vulnerable pattern — direct interpolation in `run:` block:**
+    ```yaml
+    - run: |
+        echo "Title: ${{ github.event.issue.title }}"   # VULNERABLE
+    ```
+
+    **Safe patterns (NOT flagged):**
+    ```yaml
+    # Safe: bound to env var first
+    - env:
+        ISSUE_TITLE: ${{ github.event.issue.title }}
+      run: |
+        echo "Title: $ISSUE_TITLE"   # safe, shell treats as literal string
+
+    # Safe: used in non-shell contexts (e.g., as action input values, not run: blocks)
+    - uses: some-action@v1
+      with:
+        title: ${{ github.event.issue.title }}   # depends on action, but lower risk
+    ```
+
+    **Tip:** Use **`git_hub_search_code`** to find injection candidates across the repository:
+    - Query: `github.event.issue.title path:.github/workflows` to find issue title interpolations.
+    - Query: `github.head_ref path:.github/workflows` to find head ref interpolations.
+
+    **For each finding, report:**
+    - Workflow file name and step name
+    - The exact vulnerable expression(s) found in `run:` blocks
+    - Whether it is on a dangerous trigger (compound severity)
+    - Severity: CRITICAL if on a dangerous trigger with secret access; HIGH otherwise
+
+    ---
+
+    ## Step 4: Check for Attack Vector 3 — Unpinned 3rd-party Actions (Supply Chain Risk)
+
+    **What to look for:**
+    Third-party actions (any `uses:` reference that is NOT `actions/` official or a local path starting with `./`) that are pinned to **mutable references** (branch names or version tags) rather than **immutable commit SHAs**.
+
+    **Vulnerable patterns:**
+    ```yaml
+    uses: tj-actions/changed-files@v44          # VULNERABLE — mutable tag
+    uses: some-org/some-action@main             # VULNERABLE — mutable branch
+    uses: some-org/some-action@master           # VULNERABLE — mutable branch
+    ```
+
+    **Safe pattern:**
+    ```yaml
+    uses: tj-actions/changed-files@d6e91a2266cdb9d62096cebf1e8546899c6aa18f  # SAFE — commit SHA
+    ```
+
+    **Scope:**
+    - Flag ALL third-party actions not pinned to a full 40-character commit SHA
+    - Official GitHub-owned actions (`actions/*`) should still be flagged if on mutable tags (lower severity)
+    - Local actions (`./path/to/action`) are out of scope for this check
+
+    **Additional supply chain checks:**
+    - Check if any workflow uses `actions/checkout` to check out an external action's repo and then runs it locally — this negates pinning protections
+    - Check for reusable workflows (`uses: org/repo/.github/workflows/file.yml@ref`) that are also not pinned to commit SHAs
+
+    **Tip:** Use **`git_hub_search_code`** to scan for unpinned action references:
+    - Query: `uses: path:.github/workflows` scoped to the repo, then inspect results for non-SHA pins.
+
+    For suspicious or high-profile third-party actions found, you may use **`git_hub_get_commit`** to verify whether a given commit SHA is valid and what it resolves to, or **`git_hub_get_tag`** to inspect whether a tag has been moved (a sign of a compromised action).
+
+    **For each finding, report:**
+    - Workflow file name
+    - The unpinned action reference
+    - Whether it is a popular/high-risk action (e.g., tj-actions, reviewdog, any action with broad permissions)
+    - Severity: HIGH for all unpinned third-party actions; MEDIUM for unpinned official `actions/*` actions
+
+    ---
+
+    ## Step 5: Synthesize and Report
+
+    After analyzing all workflow files, produce a structured report in the following format:
+
+    ### Summary Table
+
+    | Finding | Workflow File | Repository | Severity | Attack Vector |
+    |---|---|---|---|---|
+    | `pull_request_target` + head checkout | `ci.yml` | `org/repo` | CRITICAL | Dangerous Trigger / Pwn Request |
+    | Script injection via `github.head_ref` | `lint.yml` | `org/repo` | HIGH | Script Injection |
+    | Unpinned action `tj-actions/changed-files@v44` | `release.yml` | `org/repo` | HIGH | Supply Chain |
+
+    ### Detailed Findings
+
+    For each finding, include:
+    1. **Description** of the vulnerability
+    2. **Exact code snippet** that is vulnerable (quote the relevant YAML)
+    3. **Exploitation scenario** — how an attacker would exploit it
+    4. **Remediation** — the specific fix with a corrected code snippet
+
+    ### Overall Risk Posture
+
+    Summarize the overall risk:
+    - Total repositories scanned
+    - Total workflow files scanned
+    - Count of CRITICAL / HIGH / MEDIUM findings
+    - Top recommendation
+
+    ---
+
+    ## Important Notes
+
+    - A workflow with ZERO dangerous triggers is at significantly lower risk for script injection (since the injected code runs without secrets/write access under `pull_request`). Still flag it, but adjust severity accordingly.
+    - Compound findings (e.g., dangerous trigger + script injection in the same workflow) should be escalated to CRITICAL.
+    - When in doubt about whether a pattern is exploitable, flag it as a finding and note the uncertainty.
+    - The tj-actions incident (CVE-2025-30066) and Ultralytics PyPI compromise are real-world examples of these patterns being exploited in production environments.
+ToolMessage: Auditing GitHub Actions workflows for security vulnerabilities...
+Enabled: true
+Tags:
+    - github
+    - supply-chain
+    - ci-cd
+    - security-audit
+    - detection-engineering
+RequiredTools:
+    - git_hub_get_file_contents
+    - git_hub_search_code
+    - git_hub_search_repositories
