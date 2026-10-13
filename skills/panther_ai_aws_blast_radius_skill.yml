@@ -1,0 +1,326 @@
+AnalysisType: "skill"
+SkillName: "aws_blast_radius"
+DisplayName: "AWS Blast Radius"
+Description: "Scoping workflow for a compromised AWS principal — IAM user, role ARN, assumed-role session, access key ID, account ID, or EC2 instance. Leads with the alerts and deployed detections Panther already has, then walks the assumed-role chain across accounts and classifies actions by impact — reusing deployed detection logic, with ad-hoc CloudTrail SQL only for the gaps — to produce an IR-style blast-radius timeline. Use whenever an AWS incident anchor is confirmed and the question is \"what else did they touch\"."
+Prompt: |
+  # AWS Blast Radius — Principal Scoping Workflow
+
+  Given a confirmed-compromised AWS principal, enumerate every API call that principal
+  made, every resource they touched, every role they assumed, every account they
+  reached, and every other entity that appeared alongside them. Produce an IR-style
+  timeline and a containment-advisory report.
+
+  **Not for**: confirming whether an indicator is malicious, scoping non-AWS
+  principals such as SaaS users or Okta sessions (different log shape — separate
+  skill), drafting new detections, or
+  executing containment actions. This skill is read-only and advisory.
+
+  **Reuse before you query.** Don't scope this principal in a vacuum with ad-hoc SQL. Lead with
+  what Panther already knows — alerts that fired on the principal, and deployed AWS detections /
+  scheduled queries that already encode these techniques. Hand-write CloudTrail SQL only to fill
+  the gaps deployed content doesn't already answer. The MITRE tactic / technique IDs in
+  `aws_security_knowledge` are the join key for finding that coverage.
+
+  ---
+
+  ## Step 1 — Normalize the principal and pick an anchor time
+
+  Identify what was given and map it to the canonical CloudTrail field path. Use the
+  matching `p_any_*` field for the fast initial sweep, then pull the CloudTrail field
+  directly when analyzing identity details.
+
+  | Principal type | Example | Fast filter (`p_any_*`) | CloudTrail field path |
+  |---|---|---|---|
+  | IAM user ARN | `arn:aws:iam::123:user/Alice` | `p_any_aws_arns` | `userIdentity:arn::VARCHAR` |
+  | IAM role ARN | `arn:aws:iam::123:role/Deploy` | `p_any_aws_arns` | `userIdentity:sessionContext:sessionIssuer:arn::VARCHAR` |
+  | Assumed-role session | `arn:aws:sts::123:assumed-role/Deploy/i-abc` | `p_any_aws_arns` | `userIdentity:arn::VARCHAR` |
+  | Access key ID | `AKIA...` / `ASIA...` | n/a — use CloudTrail field | `userIdentity:accessKeyId::VARCHAR` |
+  | Principal ID | `AIDA...` / `AROA...:session` | `p_any_actor_ids` | `userIdentity:principalId::VARCHAR` |
+  | Account ID | `123456789012` | `p_any_aws_account_ids` | `recipientAccountId::VARCHAR` or `userIdentity:accountId::VARCHAR` |
+  | EC2 instance ID | `i-0abc...` | `p_any_aws_instance_ids` | extract from assumed-role session name, or `resources` array |
+  | Source IP | `203.0.113.10` | `p_any_ip_addresses` | `sourceIPAddress::VARCHAR` |
+
+  **Anchor time (T0)**: ask the analyst — when is the suspected compromise / first
+  malicious action? If unknown, anchor on the earliest alert involving the principal.
+
+  **CloudTrail `userIdentity.type` matters**: `Root` (full account), `IAMUser` (long-lived
+  creds), `AssumedRole` (STS session — has a parent role), `FederatedUser` (SAML/web ID),
+  `AWSService` (service-linked — usually benign). Record the type — it shapes how broad
+  the blast radius can be.
+
+  ---
+
+  ## Step 2 — Anchor on what Panther already knows
+
+  Before writing any SQL, pull existing signal — it's free, fast, and shapes the whole scope:
+
+  - **Alerts already fired on this principal.** Call `panther_ai_alerts_list` filtered by the
+    principal's identifiers (ARN, access key, account, source IP) across the window. Each alert
+    is a confirmed-suspicious event with its rule, severity, and triage state — and often a
+    better anchor time (T0) than the analyst's estimate. Single-event rules, correlation rules,
+    and scheduled queries all surface here.
+  - **Deployed detections relevant to this investigation.** Call `panther_ai_detections_list`
+    (filter by AWS / CloudTrail log type, or by the MITRE tactics in `aws_security_knowledge`)
+    to learn what is *already covered*, and `panther_ai_datalake_list_saved_queries` to find
+    deployed/scheduled query logic you can reuse. Their SQL is audited, parameterised logic for
+    the steps below (timeline, role-chain, exfil) — prefer executing a matching saved query with
+    `panther_ai_datalake_execute_saved_query` (passing the principal / window as template params)
+    over inventing new SQL.
+
+  Carry forward two lists: (a) confirmed events from fired alerts — your scope seeds; and
+  (b) deployed detection logic you can reuse instead of hand-writing SQL.
+
+  ---
+
+  ## Step 3 — Discover available AWS log sources
+
+  Call `panther_ai_log_sources_list` and `panther_ai_log_types_list` to confirm which
+  AWS log types are ingested and healthy. The high-value sources, in priority order: CloudTrail, GuardDuty, VPC Flow, Config, S3 Server Access, ALB/ELB/CloudFront, Access Analyzer.
+
+  Any healthy source with non-zero events in the window but no query coverage is a
+  visibility gap, call it out in the final report.
+
+  ---
+
+  ## Step 4 — Build the activity timeline (tiered windows)
+
+  If a deployed saved/scheduled query (from Step 2) already returns principal-scoped CloudTrail
+  activity, execute it with `panther_ai_datalake_execute_saved_query` (passing the principal and
+  window as template params) first. Only when none fits, fall back to
+  `panther_ai_datalake_execute_sql` with this template — it is the gap-filler, not the default.
+
+  **W1 — Tight (T0 ± 3 days)** — first pass, lowest false-positive risk:
+
+  ```sql
+  SELECT p_event_time,
+         awsRegion,
+         eventSource,
+         eventName,
+         userIdentity:type::VARCHAR        AS identity_type,
+         userIdentity:arn::VARCHAR         AS principal_arn,
+         userIdentity:accessKeyId::VARCHAR AS access_key,
+         sourceIPAddress,
+         userAgent,
+         errorCode,
+         readOnly,
+         ARRAY_TO_STRING(p_any_aws_arns, ',') AS arns_in_event
+  FROM panther_logs.public.aws_cloudtrail
+  WHERE ARRAY_CONTAINS('{principal_arn}'::VARIANT, p_any_aws_arns)
+    AND p_event_time BETWEEN DATEADD('day', -3, '{T0}') AND DATEADD('day', 3, '{T0}')
+  ORDER BY p_event_time ASC
+  LIMIT 1000
+  ```
+
+  Replace the `p_any_*` filter with whichever fast filter from Step 1 matches the
+  principal type. For an access-key investigation, use
+  `userIdentity:accessKeyId::VARCHAR = '{AKIA...}'` directly (no `p_any_*` index).
+
+  **W2 — Campaign window** — once W1 confirms relevant activity, expand from first-seen
+  to last-seen of confirmed-malicious calls.
+
+  **W3 — Full lookback (up to 90 days)** — only when hunting for dormant precursor
+  activity (e.g. when the credential was first staged or first used). Expect noise.
+
+  For each event, capture: `eventName`, `eventSource`, `awsRegion`, `errorCode`,
+  `readOnly`, `sourceIPAddress`, `userAgent`, and the `resources` array. Failed actions
+  (`errorCode` IS NOT NULL) are signal — they reveal what the attacker *tried*, not
+  just what succeeded.
+
+  ---
+
+  ## Step 5 — Walk the assumed-role chain
+
+  Compromised AWS principals frequently chain identities: long-lived IAM user → AssumeRole
+  into a role → AssumeRole into a cross-account role → activity in target account.
+  Reconstruct the chain.
+
+  For every `sts:AssumeRole`, `sts:AssumeRoleWithWebIdentity`, or `sts:AssumeRoleWithSAML`
+  call made by the principal in the window, extract the target role from
+  `requestParameters:roleArn::VARCHAR` and the resulting session ARN from
+  `responseElements:assumedRoleUser:arn::VARCHAR`.
+
+  ```sql
+  SELECT p_event_time,
+         awsRegion,
+         userIdentity:arn::VARCHAR                          AS source_principal,
+         requestParameters:roleArn::VARCHAR                 AS target_role,
+         responseElements:assumedRoleUser:arn::VARCHAR      AS new_session_arn,
+         requestParameters:roleSessionName::VARCHAR         AS session_name,
+         recipientAccountId
+  FROM panther_logs.public.aws_cloudtrail
+  WHERE eventName IN ('AssumeRole', 'AssumeRoleWithWebIdentity', 'AssumeRoleWithSAML')
+    AND (
+      ARRAY_CONTAINS('{principal_arn}'::VARIANT, p_any_aws_arns)
+      OR userIdentity:accessKeyId::VARCHAR = '{access_key}'
+    )
+    AND p_event_time BETWEEN '{W_start}' AND '{W_end}'
+  ORDER BY p_event_time ASC
+  LIMIT 500
+  ```
+
+  For each `new_session_arn`, re-run Step 4 with that ARN as the principal — this is
+  how you cross account boundaries. **Cap chain depth at 3 hops** (source → role A →
+  role B → role C) — beyond that you are almost certainly chasing legitimate service
+  role chains.
+
+  Cross-account hops (where `recipientAccountId` differs from the source account) are
+  high-signal — record them prominently in the report.
+
+  ---
+
+  ## Step 6 — Co-occurring entities (lateral movement candidates)
+
+  For each event found in Steps 4 and 5, pull the *other* `p_any_*` fields. These are
+  resources and identities the principal interacted with in the same call.
+
+  ```sql
+  SELECT DISTINCT
+         ARRAY_TO_STRING(p_any_aws_arns, ',')          AS other_arns,
+         ARRAY_TO_STRING(p_any_aws_instance_ids, ',')  AS other_instances,
+         ARRAY_TO_STRING(p_any_ip_addresses, ',')      AS other_ips,
+         ARRAY_TO_STRING(p_any_aws_account_ids, ',')   AS other_accounts,
+         COUNT(*) AS event_count
+  FROM panther_logs.public.aws_cloudtrail
+  WHERE ARRAY_CONTAINS('{principal_arn}'::VARIANT, p_any_aws_arns)
+    AND p_event_time BETWEEN '{W_start}' AND '{W_end}'
+  GROUP BY 1,2,3,4
+  ORDER BY event_count DESC
+  LIMIT 200
+  ```
+
+  As in Step 4, the `WHERE` filter must match the anchor type from Step 1 — swap the
+  `p_any_aws_arns` predicate for the principal's actual filter (`p_any_actor_ids`,
+  `p_any_aws_account_ids`, `p_any_aws_instance_ids`, `p_any_ip_addresses`, or the direct
+  `userIdentity:accessKeyId::VARCHAR` match for access keys).
+
+  Cap entity pivots at 2 hops — entities pivoted to once may be worth re-scoping; entities
+  two hops out usually aren't.
+
+  ---
+
+  ## Step 7 — Classify actions by impact and map to deployed detections
+
+  Group the windowed event set by `eventName` and bucket each call into an attacker-impact
+  category — identity & access, credential access, persistence, data access / exfil, defense
+  evasion, reconnaissance, lateral movement, impact / destruction. The `aws_security_knowledge`
+  reference holds the canonical high-signal `eventName` lists (with MITRE tactic mappings) for
+  each bucket; use it to classify, and do not redefine the lists here.
+
+  For each high-impact eventName observed, list: which call, when, target resource
+  (from `resources` array), whether it succeeded (`errorCode` NULL), and source IP.
+  `AssumeRole` was already enumerated in Step 5 — cross-reference rather than re-listing.
+
+  Then close the loop against deployed coverage — reuse what Step 2 surfaced, don't re-derive:
+  - For each classified action / chain, resolve its MITRE tactic-technique ID to a deployed
+    detection via the `aws_security_knowledge` "Mapping techniques to deployed detections"
+    guidance (single-event → rule, multi-step chain → correlation rule, volumetric → scheduled
+    query). If an alert already fired (Step 2), mark the action **covered & alerted**.
+  - A high-impact action with **no** deployed detection is a coverage-gap finding for the
+    post-mortem — record it and route to `coverage_gap_analysis`.
+
+  ---
+
+  ## Step 8 — Output: Blast Radius Report
+
+  ```markdown
+  # AWS Blast Radius — <principal ARN or identifier>
+
+  ## Principal Profile
+  - Identity type (`userIdentity.type`): <IAMUser / AssumedRole / Root / FederatedUser>
+  - Canonical ARN: <full ARN>
+  - Access key(s) used: <list of AKIA/ASIA values, if applicable>
+  - Source IPs observed: <list>
+  - User agents observed: <list — flag CLI / SDK / unusual UAs>
+  - Anchor time (T0): <ISO timestamp>
+  - Windows examined: W1 <range>, W2 <range>, W3 <range if used>
+  - Log sources queried: <list, with unhealthy sources or visibility gaps called out>
+
+  ## Activity Timeline (W1)
+  | Time | Region | Source | Event | Resource | Result | Notes |
+  |---|---|---|---|---|---|---|
+
+  ## Assumed-Role Chain
+  | Hop | Source Principal | Target Role | New Session ARN | Account | Cross-account? |
+  |---|---|---|---|---|---|
+
+  ## Resources Touched
+  | Resource ARN | Type | First Action | Last Action | Action Count | Impact |
+  |---|---|---|---|---|---|
+
+  ## High-Impact Actions Observed
+  ### Identity & Access Changes
+  - <eventName @ time, target, success?>
+
+  ### Persistence
+  - <...>
+
+  ### Data Access / Exfil
+  - <...>
+
+  ### Defense Evasion
+  - <...>
+
+  ### Reconnaissance
+  - <...>
+
+  ### Lateral Movement
+  - <...>
+
+  ## Co-occurring Entities
+  | Entity | Type | Co-occurrence Count | Recommended Follow-up |
+  |---|---|---|---|
+
+  ## Existing Detection Coverage
+  - Alerts fired on this principal in window: <list>
+  - High-impact actions with no matching detection: <list — detection-gap findings>
+
+  ## Containment Recommendations (advisory only)
+  - Disable access key(s): <which>
+  - Revoke active sessions: `aws iam list-attached-user-policies` → review; for roles, set `MaxSessionDuration` to minimum and / or attach an explicit deny policy
+  - Rotate credentials: <which IAM users>
+  - Review derived resources (created by the principal): <list>
+  - Review newly attached policies / role trust changes: <list>
+
+  ## Caveats
+  - Co-occurring entities are correlation, not causation — confirm before declaring lateral movement.
+  - `errorCode` NULL means the API call succeeded; failed calls reveal intent but not impact.
+  - Unhealthy / missing AWS log sources during the window: <list> — these are visibility gaps.
+  - If W3 (full lookback) was not run, dormant precursor activity may exist outside the window.
+  - Assumed-role chain capped at 3 hops; deeper chains may exist.
+  ```
+
+  ---
+
+  ## Constraints
+
+  - Read-only. Never disable a principal, revoke a key, attach a deny policy, or modify
+    a rule from this skill. Recommendations only.
+  - Cap entity-pivot recursion at 2 hops; cap assumed-role chain depth at 3 hops.
+  - Every query must have a `LIMIT` and a `p_event_time` bound (no unbounded scans).
+  - Prefer reusing deployed detections and saved queries (`panther_ai_datalake_execute_saved_query`)
+    over ad-hoc SQL; `panther_ai_datalake_execute_sql` is the gap-filler, not the default.
+  - Failed actions (`errorCode` IS NOT NULL) are signal — include them; do not filter out.
+  - If the principal identifier doesn't match any field after Step 1, ask the analyst to
+    clarify rather than guessing.
+  - Surface visibility gaps (unhealthy sources, missing log types) in the report — IR
+    scoping with blind spots is more dangerous than incomplete scoping that names them.
+ToolMessage: "Scoping AWS blast radius for the compromised principal…"
+DependsOn:
+  - aws_security_knowledge
+EagerLoading: false
+RequiredTools:
+  - panther_ai_alerts_list
+  - panther_ai_detections_list
+  - panther_ai_log_sources_list
+  - panther_ai_log_types_list
+  - panther_ai_datalake_list_saved_queries
+  - panther_ai_datalake_execute_saved_query
+  - panther_ai_datalake_execute_sql
+  - panther_ai_datalake_get_query_results
+Enabled: true
+Tags:
+  - aws
+  - cloudtrail
+  - incident-response
+  - blast-radius
+  - scoping
