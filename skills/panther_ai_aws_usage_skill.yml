@@ -1,0 +1,72 @@
+AnalysisType: skill
+SkillName: aws_mcp_usage
+DisplayName: AWS MCP Tools
+Description: >-
+  Use BEFORE answering or investigating anything that needs live data from the
+  customer's AWS account (IAM, EC2, S3, VPC, CloudTrail, GuardDuty, Config,
+  Organizations, etc.) reached through a connected AWS MCP server. Explains how to
+  call AWS API operations safely (read-only first), how to choose service / operation
+  / region, and how to correlate AWS findings with Panther alerts and detections. Load
+  this whenever an AWS MCP tool is present or the user asks Panther AI to look something
+  up directly in AWS.
+ToolMessage: Loaded AWS MCP usage guidance.
+Enabled: true
+EagerLoading: false
+Tags:
+  - aws
+  - mcp
+  - cloud
+  - investigation
+  - integrations
+# Gate this skill on an AWS MCP server actually being connected. Each pattern is
+# full-match anchored (compiled as `^<pattern>$`) and must match >=1 registered tool
+# name, else the skill is skipped. AWS MCP servers expose a `call_aws` tool, registered
+# as `<sanitized_server_name>_call_aws` (buildToolFQN joins with a single underscore and
+# lowercases). The admin-chosen server name is the variable prefix, so match it with
+# `.*_`; `call_aws` is the always-present, distinctive tool, so it's the right signal.
+RequiredTools:
+  - .*_call_aws
+Prompt: |
+  # Using the AWS MCP server
+
+  A connected AWS MCP server lets you run AWS API calls against the customer's own
+  AWS account. Panther signs each request with temporary credentials from an IAM role
+  the customer granted (scoped, least-privilege) — you are acting AS that role, under
+  the requesting user's identity (every call is attributed in the customer's CloudTrail).
+
+  ## Calling the tool
+  You already have the AWS tool (commonly `call_aws`) and its input schema. Pass exactly
+  the AWS service, operation, region, and minimal flags needed — e.g.
+  `aws ec2 describe-instances --region us-east-1` — and let the input schema shape the
+  arguments rather than guessing field names.
+
+  ## When to use it
+  Reach for it to pull live AWS context that answers a security question or enriches a
+  Panther alert/detection — e.g. resolve an IAM principal or its policies, inspect an
+  EC2 instance or security group, read an S3 bucket policy, or pull recent GuardDuty /
+  Config / CloudTrail findings. Prefer Panther's own data first; use AWS for the live
+  detail Panther doesn't hold.
+
+  ## Operate safely
+  - Default to read-only operations: `Describe*`, `List*`, `Get*`, `Lookup*`.
+  - Treat any mutating call (create / delete / put / modify / attach / detach / revoke)
+    as high-risk. Only attempt one when the user clearly intends it; state plainly what
+    will change and confirm before acting.
+  - Be specific and minimal — target a resource ID rather than dumping a whole account,
+    paginate large results, and summarize rather than pasting raw output.
+
+  ## Region & scope awareness
+  - AWS APIs are regional; pass the right `--region` (a few services, e.g. IAM, are
+    global). If you don't know the region, find it from the alert/resource context or
+    ask, rather than guessing.
+  - The assumed role is intentionally least-privilege. An `AccessDenied` usually means
+    "this role is not permitted to do that" by design — not a transient failure. Explain
+    that and suggest the operation the role likely can do, instead of retrying blindly.
+
+  ## Correlate with Panther
+  Combine AWS findings with Panther context to answer the real question. For example,
+  pull the alert with
+  {{tool:panther_ai_alerts_get}}
+  or search related activity with
+  {{tool:panther_ai_datalake_search_logs}}
+  then use AWS to fill in the live account-side detail.
