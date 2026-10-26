@@ -134,7 +134,7 @@ test('requires an https broker_url and never prints it', async (t) => {
   t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
   let calls = 0;
   const fetchImpl = async () => { calls += 1; };
-  for (const brokerUrl of [undefined, '', 'not a url', 'http://broker.example/secret-path', 'ftp://broker.example/secret-path', 'https://user:secret-password@broker.example/token']) {
+  for (const brokerUrl of [undefined, '', 'not a url', 'http://broker.example/secret-path', 'ftp://broker.example/secret-path', 'https://user:secret-password@broker.example/token', 'https://:secret-password@broker.example/token']) {
     await assert.rejects(
       mintToken({ ...env, INPUT_BROKER_URL: brokerUrl }, fetchImpl, stdout),
       (error) => /broker_url input was missing or invalid/.test(error.message) && !/secret-(path|password)/.test(error.message)
@@ -187,6 +187,7 @@ test('reports only HTTP status and validated broker fields without writing a tok
     request_id: 'x'.repeat(65),
     token: 'installation-token',
   });
+  const brokerFailure = (fields) => new Response(JSON.stringify(fields), { status: 502 });
   const networkError = new TypeError('fetch failed');
   const bodyReadError = new TypeError('body read failed');
   const timeoutError = new DOMException('request timed out', 'TimeoutError');
@@ -204,6 +205,21 @@ test('reports only HTTP status and validated broker fields without writing a tok
     {
       name: 'broker non-JSON failure',
       replies: [oidc, new Response('Bad gateway', { status: 502 })],
+      error: { message: 'broker request failed (HTTP 502)' },
+    },
+    {
+      name: 'broker valid phase with disallowed request_id character',
+      replies: [oidc, brokerFailure({ phase: 'policy', request_id: 'req!1' })],
+      error: { message: 'broker request failed (HTTP 502, phase=policy)' },
+    },
+    {
+      name: 'broker disallowed phase with valid request_id',
+      replies: [oidc, brokerFailure({ phase: 'Policy-1', request_id: 'req-1' })],
+      error: { message: 'broker request failed (HTTP 502, request_id=req-1)' },
+    },
+    {
+      name: 'broker non-string phase and request_id',
+      replies: [oidc, brokerFailure({ phase: 1, request_id: ['req-1'] })],
       error: { message: 'broker request failed (HTTP 502)' },
     },
     {
