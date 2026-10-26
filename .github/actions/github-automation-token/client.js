@@ -90,7 +90,13 @@ async function requestJson(fetchImpl, url, options, errorMessage) {
   if (!response.ok) {
     fail(`${errorMessage} (${await failureDetails(response)})`);
   }
-  const body = await response.json();
+  let body;
+  try {
+    body = await response.json();
+  } catch {
+    // Parse errors can quote the raw body, so never surface them.
+    fail(`${errorMessage} (invalid response)`);
+  }
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
     fail(`${errorMessage} (invalid response)`);
   }

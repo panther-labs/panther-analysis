@@ -5,7 +5,7 @@ const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
 
-const { OIDC_AUDIENCE, REVOKE_URL, mintToken, revokeToken } = require('./client');
+const { mintToken, revokeToken } = require('./client');
 
 const BROKER_URL = 'https://broker.example/token';
 
@@ -46,7 +46,7 @@ test('mints the exact repository scope, masks credentials, and saves cleanup sta
   const oidcUrl = new URL(requests[0].url);
   assert.equal(oidcUrl.origin + oidcUrl.pathname, 'https://actions.example/oidc');
   assert.equal(oidcUrl.searchParams.get('request'), '1');
-  assert.equal(oidcUrl.searchParams.get('audience'), OIDC_AUDIENCE);
+  assert.equal(oidcUrl.searchParams.get('audience'), 'panther-github-app-token-broker');
   assert.equal(requests[0].options.headers.Authorization, 'Bearer oidc-request-token');
   assert.equal(requests[1].url, BROKER_URL);
   assert.equal(requests[1].options.method, 'POST');
@@ -188,6 +188,7 @@ test('reports only HTTP status and validated broker fields without writing a tok
     token: 'installation-token',
   });
   const brokerFailure = (fields) => new Response(JSON.stringify(fields), { status: 502 });
+  const privateBody = '<html>PRIVATE-MARKER internal.example 10.0.0.1</html>';
   const networkError = new TypeError('fetch failed');
   const bodyReadError = new TypeError('body read failed');
   const timeoutError = new DOMException('request timed out', 'TimeoutError');
@@ -231,11 +232,20 @@ test('reports only HTTP status and validated broker fields without writing a tok
     { name: 'broker null body', replies: [oidc, response(200, null)], error: { message: 'broker request failed (invalid response)' } },
     { name: 'OIDC fetch failure', replies: [networkError], error: networkError },
     { name: 'broker timeout', replies: [oidc, timeoutError], error: timeoutError },
-    { name: 'broker malformed success', replies: [oidc, new Response('not JSON')], error: SyntaxError },
+    {
+      name: 'OIDC malformed success',
+      replies: [new Response(privateBody)],
+      error: { message: 'OIDC request failed (invalid response)' },
+    },
+    {
+      name: 'broker malformed success',
+      replies: [oidc, new Response(privateBody)],
+      error: { message: 'broker request failed (invalid response)' },
+    },
     {
       name: 'broker successful body read failure',
       replies: [oidc, { ok: true, status: 200, json: async () => { throw bodyReadError; } }],
-      error: bodyReadError,
+      error: { message: 'broker request failed (invalid response)' },
     },
     {
       name: 'broker error body read failure',
@@ -322,7 +332,7 @@ test('rejected expiry metadata retains masking and post-revocation state without
       assert.equal(fs.existsSync(output), false);
       const savedToken = fs.readFileSync(state, 'utf8').trim().slice('token='.length);
       const revoke = async (url, options) => {
-        assert.equal(url, REVOKE_URL);
+        assert.equal(url, 'https://api.github.com/installation/token');
         assert.equal(options.headers.Authorization, 'Bearer installation-token');
         return response(204);
       };
@@ -361,7 +371,7 @@ test('post revokes only its saved token and tolerates an expired token', async (
   const stdout = { write: (text) => { printed += text; } };
 
   await revokeToken({ STATE_token: 'installation-token' }, fetchImpl, stdout);
-  assert.equal(requests[0].url, REVOKE_URL);
+  assert.equal(requests[0].url, 'https://api.github.com/installation/token');
   assert.equal(requests[0].options.method, 'DELETE');
   assert.equal(requests[0].options.headers.Authorization, 'Bearer installation-token');
   assert.equal(printed, '::add-mask::installation-token\n');
@@ -371,11 +381,11 @@ test('post revokes only its saved token and tolerates an expired token', async (
   await revokeToken({ STATE_token: 'already-gone' }, async () => response(404), stdout);
   await assert.rejects(
     revokeToken({ STATE_token: 'installation-token' }, async () => response(503), stdout),
-    /token revocation failed/
+    { message: 'token revocation failed' }
   );
   await assert.rejects(
     revokeToken({ STATE_token: 'installation-token' }, async () => { throw new Error('private network detail'); }, stdout),
-    /token revocation failed/
+    { message: 'token revocation failed' }
   );
   assert.doesNotMatch(printed, /private network detail/);
 });
@@ -394,8 +404,10 @@ test('entrypoints fail mint errors and warn without failing the job on cleanup e
     path.join(__dirname, 'post.js'),
   ], { encoding: 'utf8', env: { ...process.env, STATE_token: 'installation-token' } });
   assert.equal(post.status, 0);
-  assert.match(post.stdout, /::warning::token revocation failed/);
-  assert.match(post.stdout, /::add-mask::installation-token/);
+  assert.equal(
+    post.stdout,
+    '::add-mask::installation-token\n::warning::token revocation failed; token will expire automatically\n'
+  );
 
   const noToken = spawnSync(process.execPath, [path.join(__dirname, 'post.js')], {
     encoding: 'utf8', env: { ...process.env, STATE_token: '' },
@@ -456,4 +468,26 @@ test('main escapes %, CR and LF in a multiline error message', () => {
   });
   assert.equal(main.status, 1);
   assert.match(main.stdout, /^::error::denied 100%25%0D%0Asecond line$/m);
+});
+
+test('main never annotates malformed success bodies', () => {
+  const main = spawnSync(process.execPath, [
+    '-e',
+    `globalThis.fetch = async () => new Response('<html>PRIVATE-MARKER internal.example 10.0.0.1</html>');
+    require(process.argv[1]);`,
+    path.join(__dirname, 'main.js'),
+  ], {
+    encoding: 'utf8',
+    env: {
+      ...process.env,
+      GITHUB_REPOSITORY: 'example-org/source-repo',
+      INPUT_BROKER_URL: BROKER_URL,
+      INPUT_PERMISSIONS: '{"statuses":"write"}',
+      ACTIONS_ID_TOKEN_REQUEST_URL: 'https://actions.example/oidc',
+      ACTIONS_ID_TOKEN_REQUEST_TOKEN: 'oidc-request-token',
+    },
+  });
+  assert.equal(main.status, 1);
+  assert.equal(main.stdout, '::add-mask::oidc-request-token\n::error::OIDC request failed (invalid response)\n');
+  assert.doesNotMatch(main.stdout + main.stderr, /PRIVATE-MARKER|internal\.example/);
 });
