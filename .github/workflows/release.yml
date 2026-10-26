@@ -38,7 +38,7 @@ jobs:
         id: github-automation
         uses: ./bootstrap/.github/actions/github-automation-token
         with:
-          broker_url: ${{ secrets.PANTHER_GITHUB_TOKEN_BROKER_URL }}
+          token_url: ${{ secrets.GITHUB_APP_TOKEN_URL }}
           permissions: '{"contents":"write"}'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
         with:

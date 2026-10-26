@@ -19,7 +19,7 @@ function fixture() {
   const state = path.join(directory, 'state');
   const env = {
     GITHUB_REPOSITORY: 'example-org/source-repo',
-    INPUT_BROKER_URL: BROKER_URL,
+    INPUT_TOKEN_URL: BROKER_URL,
     INPUT_PERMISSIONS: '{"statuses":"write"}',
     ACTIONS_ID_TOKEN_REQUEST_URL: 'https://actions.example/oidc?request=1',
     ACTIONS_ID_TOKEN_REQUEST_TOKEN: 'oidc-request-token',
@@ -129,15 +129,15 @@ test('rejects malformed inputs before requesting OIDC', async (t) => {
   assert.equal(calls, 0);
 });
 
-test('requires an https broker_url and never prints it', async (t) => {
+test('requires an https token_url and never prints it', async (t) => {
   const { directory, env, stdout, printed } = fixture();
   t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
   let calls = 0;
   const fetchImpl = async () => { calls += 1; };
   for (const brokerUrl of [undefined, '', 'not a url', 'http://broker.example/secret-path', 'ftp://broker.example/secret-path', 'https://user:secret-password@broker.example/token', 'https://:secret-password@broker.example/token']) {
     await assert.rejects(
-      mintToken({ ...env, INPUT_BROKER_URL: brokerUrl }, fetchImpl, stdout),
-      (error) => /broker_url input was missing or invalid/.test(error.message) && !/secret-(path|password)/.test(error.message)
+      mintToken({ ...env, INPUT_TOKEN_URL: brokerUrl }, fetchImpl, stdout),
+      (error) => /token_url\) was missing or invalid/.test(error.message) && !/secret-(path|password)/.test(error.message)
     );
   }
   assert.equal(calls, 0);
@@ -191,6 +191,7 @@ test('reports only HTTP status and validated broker fields without writing a tok
   const privateBody = '<html>PRIVATE-MARKER internal.example 10.0.0.1</html>';
   const networkError = new TypeError('fetch failed');
   const bodyReadError = new TypeError('body read failed');
+  const leakyReadError = new TypeError(`terminated ${BROKER_URL} PRIVATE-MARKER`);
   const timeoutError = new DOMException('request timed out', 'TimeoutError');
   const cases = [
     {
@@ -201,35 +202,45 @@ test('reports only HTTP status and validated broker fields without writing a tok
     {
       name: 'broker policy denial',
       replies: [oidc, new Response(policyBody, { status: 401 })],
-      error: { message: 'broker request failed (HTTP 401, phase=policy, request_id=FfjmnhkIvHcEPZA=)' },
+      error: { message: 'token service request failed (HTTP 401, phase=policy, request_id=FfjmnhkIvHcEPZA=)' },
     },
     {
       name: 'broker non-JSON failure',
       replies: [oidc, new Response('Bad gateway', { status: 502 })],
-      error: { message: 'broker request failed (HTTP 502)' },
+      error: { message: 'token service request failed (HTTP 502)' },
     },
     {
       name: 'broker valid phase with disallowed request_id character',
       replies: [oidc, brokerFailure({ phase: 'policy', request_id: 'req!1' })],
-      error: { message: 'broker request failed (HTTP 502, phase=policy)' },
+      error: { message: 'token service request failed (HTTP 502, phase=policy)' },
     },
     {
       name: 'broker disallowed phase with valid request_id',
       replies: [oidc, brokerFailure({ phase: 'Policy-1', request_id: 'req-1' })],
-      error: { message: 'broker request failed (HTTP 502, request_id=req-1)' },
+      error: { message: 'token service request failed (HTTP 502, request_id=req-1)' },
+    },
+    {
+      name: 'broker over-long phase with valid request_id',
+      replies: [oidc, brokerFailure({ phase: 'a'.repeat(33), request_id: 'req-1' })],
+      error: { message: 'token service request failed (HTTP 502, request_id=req-1)' },
+    },
+    {
+      name: 'broker array phase with valid request_id',
+      replies: [oidc, brokerFailure({ phase: ['policy'], request_id: 'req-1' })],
+      error: { message: 'token service request failed (HTTP 502, request_id=req-1)' },
     },
     {
       name: 'broker non-string phase and request_id',
       replies: [oidc, brokerFailure({ phase: 1, request_id: ['req-1'] })],
-      error: { message: 'broker request failed (HTTP 502)' },
+      error: { message: 'token service request failed (HTTP 502)' },
     },
     {
       name: 'broker unsafe fields',
       replies: [oidc, new Response(unsafeBody, { status: 502 })],
-      error: { message: 'broker request failed (HTTP 502)' },
+      error: { message: 'token service request failed (HTTP 502)' },
     },
     { name: 'OIDC array body', replies: [response(200, [])], error: { message: 'OIDC request failed (invalid response)' } },
-    { name: 'broker null body', replies: [oidc, response(200, null)], error: { message: 'broker request failed (invalid response)' } },
+    { name: 'broker null body', replies: [oidc, response(200, null)], error: { message: 'token service request failed (invalid response)' } },
     { name: 'OIDC fetch failure', replies: [networkError], error: networkError },
     { name: 'broker timeout', replies: [oidc, timeoutError], error: timeoutError },
     {
@@ -240,17 +251,27 @@ test('reports only HTTP status and validated broker fields without writing a tok
     {
       name: 'broker malformed success',
       replies: [oidc, new Response(privateBody)],
-      error: { message: 'broker request failed (invalid response)' },
+      error: { message: 'token service request failed (invalid response)' },
+    },
+    {
+      name: 'OIDC successful body read failure',
+      replies: [{ ok: true, status: 200, json: async () => { throw leakyReadError; } }],
+      error: { message: 'OIDC request failed (unreadable response)' },
     },
     {
       name: 'broker successful body read failure',
-      replies: [oidc, { ok: true, status: 200, json: async () => { throw bodyReadError; } }],
-      error: { message: 'broker request failed (invalid response)' },
+      replies: [oidc, { ok: true, status: 200, json: async () => { throw leakyReadError; } }],
+      error: { message: 'token service request failed (unreadable response)' },
+    },
+    {
+      name: 'broker successful body read timeout',
+      replies: [oidc, { ok: true, status: 200, json: async () => { throw timeoutError; } }],
+      error: { message: 'token service request failed (unreadable response)' },
     },
     {
       name: 'broker error body read failure',
       replies: [oidc, { ok: false, status: 502, text: async () => { throw bodyReadError; } }],
-      error: { message: 'broker request failed (HTTP 502)' },
+      error: { message: 'token service request failed (HTTP 502)' },
     },
   ];
 
@@ -306,7 +327,7 @@ test('rejects malformed GitHub automation tokens without writing a token or part
         return response(200, body);
       };
 
-      await assert.rejects(mintToken(env, fetchImpl, stdout), /broker response was invalid/);
+      await assert.rejects(mintToken(env, fetchImpl, stdout), /token service response was invalid/);
       assert.equal(fs.existsSync(state), false);
       assert.equal(fs.existsSync(output), false);
       assert.doesNotMatch(printed(), /line-one|installation-token/);
@@ -326,7 +347,7 @@ test('rejected expiry metadata retains masking and post-revocation state without
         return response(200, { token: 'installation-token', expires_at: expiresAt });
       };
 
-      await assert.rejects(mintToken(env, fetchImpl, stdout), /broker response was invalid/);
+      await assert.rejects(mintToken(env, fetchImpl, stdout), /token service response was invalid/);
       assert.match(printed(), /::add-mask::installation-token\n/);
       assert.equal(fs.readFileSync(state, 'utf8'), 'token=installation-token\n');
       assert.equal(fs.existsSync(output), false);
@@ -393,7 +414,7 @@ test('post revokes only its saved token and tolerates an expired token', async (
 test('entrypoints fail mint errors and warn without failing the job on cleanup errors', () => {
   const main = spawnSync(process.execPath, [path.join(__dirname, 'main.js')], {
     encoding: 'utf8',
-    env: { ...process.env, GITHUB_REPOSITORY: 'example-org/source-repo', INPUT_BROKER_URL: BROKER_URL, INPUT_PERMISSIONS: '{}' },
+    env: { ...process.env, GITHUB_REPOSITORY: 'example-org/source-repo', INPUT_TOKEN_URL: BROKER_URL, INPUT_PERMISSIONS: '{}' },
   });
   assert.equal(main.status, 1);
   assert.match(main.stdout, /::error::GitHub automation token input was invalid/);
@@ -431,7 +452,7 @@ test('main annotates broker HTTP status and validated fields only', () => {
     env: {
       ...process.env,
       GITHUB_REPOSITORY: 'example-org/source-repo',
-      INPUT_BROKER_URL: BROKER_URL,
+      INPUT_TOKEN_URL: BROKER_URL,
       INPUT_PERMISSIONS: '{"statuses":"write"}',
       ACTIONS_ID_TOKEN_REQUEST_URL: 'https://actions.example/oidc',
       ACTIONS_ID_TOKEN_REQUEST_TOKEN: 'oidc-request-token',
@@ -441,7 +462,7 @@ test('main annotates broker HTTP status and validated fields only', () => {
   assert.equal(main.stdout, [
     '::add-mask::oidc-request-token',
     '::add-mask::oidc-jwt',
-    '::error::broker request failed (HTTP 401, phase=policy, request_id=FfjmnhkIvHcEPZA=)',
+    '::error::token service request failed (HTTP 401, phase=policy, request_id=FfjmnhkIvHcEPZA=)',
     '',
   ].join('\n'));
   assert.equal(main.stderr, '');
@@ -460,7 +481,7 @@ test('main escapes %, CR and LF in a multiline error message', () => {
     env: {
       ...process.env,
       GITHUB_REPOSITORY: 'example-org/source-repo',
-      INPUT_BROKER_URL: BROKER_URL,
+      INPUT_TOKEN_URL: BROKER_URL,
       INPUT_PERMISSIONS: '{"statuses":"write"}',
       ACTIONS_ID_TOKEN_REQUEST_URL: 'https://actions.example/oidc',
       ACTIONS_ID_TOKEN_REQUEST_TOKEN: 'oidc-request-token',
@@ -481,7 +502,7 @@ test('main never annotates malformed success bodies', () => {
     env: {
       ...process.env,
       GITHUB_REPOSITORY: 'example-org/source-repo',
-      INPUT_BROKER_URL: BROKER_URL,
+      INPUT_TOKEN_URL: BROKER_URL,
       INPUT_PERMISSIONS: '{"statuses":"write"}',
       ACTIONS_ID_TOKEN_REQUEST_URL: 'https://actions.example/oidc',
       ACTIONS_ID_TOKEN_REQUEST_TOKEN: 'oidc-request-token',

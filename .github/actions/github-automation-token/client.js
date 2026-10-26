@@ -20,17 +20,17 @@ function appendCommandFile(path, key, value) {
   fs.appendFileSync(path, `${key}=${value}\n`, { encoding: 'utf8' });
 }
 
-// The broker URL is deployment-specific, so callers supply it; never echo it in errors.
-function brokerUrlInput(env) {
+// The token service URL is deployment-specific, so callers supply it; never echo it in errors.
+function tokenUrlInput(env) {
   let url;
   try {
-    url = new URL(env.INPUT_BROKER_URL);
+    url = new URL(env.INPUT_TOKEN_URL);
   } catch {
-    fail('GitHub automation token broker_url input was missing or invalid');
+    fail('GitHub automation token service URL (token_url) was missing or invalid');
   }
   // Userinfo could surface in fetch errors, so reject it along with non-https schemes.
   if (url.protocol !== 'https:' || url.username || url.password) {
-    fail('GitHub automation token broker_url input was missing or invalid');
+    fail('GitHub automation token service URL (token_url) was missing or invalid');
   }
   return url.href;
 }
@@ -64,7 +64,7 @@ function permissionsInput(value) {
   return permissions;
 }
 
-// Public annotations may only carry the status plus broker-contract fields that match
+// Public annotations may only carry the status plus token service fields that match
 // fixed patterns; never echo the raw response body.
 async function failureDetails(response) {
   const details = [`HTTP ${response.status}`];
@@ -93,9 +93,9 @@ async function requestJson(fetchImpl, url, options, errorMessage) {
   let body;
   try {
     body = await response.json();
-  } catch {
-    // Parse errors can quote the raw body, so never surface them.
-    fail(`${errorMessage} (invalid response)`);
+  } catch (error) {
+    // Parse and read errors can quote the body or URL, so only a fixed label is surfaced.
+    fail(`${errorMessage} (${error instanceof SyntaxError ? 'invalid' : 'unreadable'} response)`);
   }
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
     fail(`${errorMessage} (invalid response)`);
@@ -104,7 +104,7 @@ async function requestJson(fetchImpl, url, options, errorMessage) {
 }
 
 async function mintToken(env = process.env, fetchImpl = globalThis.fetch, stdout = process.stdout) {
-  const brokerUrl = brokerUrlInput(env);
+  const tokenUrl = tokenUrlInput(env);
   const repository = repositoryInput(env);
   const permissions = permissionsInput(env.INPUT_PERMISSIONS);
   if (!env.ACTIONS_ID_TOKEN_REQUEST_URL || !env.ACTIONS_ID_TOKEN_REQUEST_TOKEN) {
@@ -124,9 +124,9 @@ async function mintToken(env = process.env, fetchImpl = globalThis.fetch, stdout
   if (typeof oidcToken !== 'string' || !oidcToken) fail('OIDC response was invalid');
   mask(oidcToken, stdout, 'OIDC response was invalid');
 
-  const brokerResponse = await requestJson(
+  const tokenResponse = await requestJson(
     fetchImpl,
-    brokerUrl,
+    tokenUrl,
     {
       method: 'POST',
       headers: {
@@ -135,14 +135,14 @@ async function mintToken(env = process.env, fetchImpl = globalThis.fetch, stdout
       },
       body: JSON.stringify({ repository, permissions }),
     },
-    'broker request failed'
+    'token service request failed'
   );
-  const { token, expires_at: expiresAt } = brokerResponse;
+  const { token, expires_at: expiresAt } = tokenResponse;
   // Keep a valid minted token revocable even when expiry metadata is rejected.
-  mask(token, stdout, 'broker response was invalid');
+  mask(token, stdout, 'token service response was invalid');
   appendCommandFile(env.GITHUB_STATE, 'token', token);
   if (typeof expiresAt !== 'string' || !expiresAt) {
-    fail('broker response was invalid');
+    fail('token service response was invalid');
   }
   appendCommandFile(env.GITHUB_OUTPUT, 'token', token);
 }
@@ -168,8 +168,6 @@ async function revokeToken(env = process.env, fetchImpl = globalThis.fetch, stdo
 }
 
 module.exports = {
-  OIDC_AUDIENCE,
-  REVOKE_URL,
   mintToken,
   revokeToken,
 };
