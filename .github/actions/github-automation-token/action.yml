@@ -1,0 +1,23 @@
+name: GitHub Automation Token
+description: Exchange GitHub Actions OIDC identity for a scoped Panther GitHub App token
+
+inputs:
+  broker_url:
+    description: HTTPS URL of the GitHub App token broker
+    required: true
+  repository:
+    description: Target repository in owner/repository form; defaults to the calling repository
+    required: false
+  permissions:
+    description: JSON object of GitHub App permissions to request
+    required: true
+
+outputs:
+  token:
+    description: Short-lived GitHub App installation token
+
+runs:
+  using: node24
+  main: main.js
+  post: post.js
+  post-if: always()

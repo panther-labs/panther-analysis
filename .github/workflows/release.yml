@@ -28,15 +28,24 @@ jobs:
       id-token: write
       contents: read
     steps:
+      - name: Checkout token action
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
+        with:
+          path: bootstrap
+          sparse-checkout: .github/actions/github-automation-token
+          persist-credentials: false
       - name: Request GitHub automation token
         id: github-automation
-        uses: panther-labs/github-actions/github-automation-token@7205948673bd6c8bb8b7ec2fda07683c6e7832ce
+        uses: ./bootstrap/.github/actions/github-automation-token
         with:
+          broker_url: ${{ secrets.PANTHER_GITHUB_TOKEN_BROKER_URL }}
           permissions: '{"contents":"write"}'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
         with:
           ref: ${{ github.event.inputs.branch }}
           fetch-depth: 0
+          # Separate from bootstrap/ so the token action survives for its post hook.
+          path: release
           # Nothing here talks to a git remote (gh uses GH_TOKEN from the env),
           # so don't leave credentials in .git/config for `make install` to reach.
           persist-credentials: false
@@ -59,6 +68,7 @@ jobs:
           SIGNING_ALGORITHM: ${{ secrets.SIGNING_ALGORITHM }}
           DIGEST_FILE: ${{ secrets.DIGEST_FILE }}
           GH_TOKEN: ${{ steps.github-automation.outputs.token }}
+        working-directory: release
         run: |
           OLD_VERSION=$(gh release list | grep Latest | awk '{print $1}')
           NEW_VERSION=$(echo "$OLD_VERSION" | awk -F. -v bump="$BUMP" '{
