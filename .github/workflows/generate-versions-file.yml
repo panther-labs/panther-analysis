@@ -71,6 +71,7 @@ jobs:
           passphrase: ${{ secrets.PANTHER_BOT_GPG_PRIVATE_KEY_PASSPHRASE }}
           git_user_signingkey: true
           git_commit_gpgsign: true
+          workdir: repo
 
       - name: Branch and commit changes
         if: steps.check-for-changes.outputs.has_changes == 'true'
