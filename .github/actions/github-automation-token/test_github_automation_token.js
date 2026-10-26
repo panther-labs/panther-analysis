@@ -55,6 +55,7 @@ test('mints the exact repository scope, masks credentials, and saves cleanup sta
     permissions: { statuses: 'write' },
   });
   assert.equal(requests[1].options.headers.Authorization, 'Bearer oidc-jwt');
+  assert.equal(requests[1].options.headers['Content-Type'], 'application/json');
   assert.equal(fs.readFileSync(state, 'utf8'), 'token=installation-token\n');
   assert.equal(fs.readFileSync(output, 'utf8'), 'token=installation-token\n');
   assert.deepEqual(printed().trim().split('\n'), [
@@ -119,6 +120,12 @@ test('rejects malformed inputs before requesting OIDC', async (t) => {
     mintToken({ ...env, GITHUB_REPOSITORY: 'invalid' }, fetchImpl, stdout),
     /GitHub automation token input/
   );
+  for (const repository of ['invalid', 'owner/', '/repo', 'a/b/c', 'owner/repo name', 'owner/repo\n']) {
+    await assert.rejects(
+      mintToken({ ...env, INPUT_REPOSITORY: repository }, fetchImpl, stdout),
+      /GitHub automation token input/
+    );
+  }
   assert.equal(calls, 0);
 });
 
@@ -127,14 +134,14 @@ test('requires an https broker_url and never prints it', async (t) => {
   t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
   let calls = 0;
   const fetchImpl = async () => { calls += 1; };
-  for (const brokerUrl of [undefined, '', 'not a url', 'http://broker.example/secret-path', 'ftp://broker.example/secret-path']) {
+  for (const brokerUrl of [undefined, '', 'not a url', 'http://broker.example/secret-path', 'ftp://broker.example/secret-path', 'https://user:secret-password@broker.example/token']) {
     await assert.rejects(
       mintToken({ ...env, INPUT_BROKER_URL: brokerUrl }, fetchImpl, stdout),
-      (error) => /broker_url input was missing or invalid/.test(error.message) && !/secret-path/.test(error.message)
+      (error) => /broker_url input was missing or invalid/.test(error.message) && !/secret-(path|password)/.test(error.message)
     );
   }
   assert.equal(calls, 0);
-  assert.doesNotMatch(printed(), /secret-path/);
+  assert.doesNotMatch(printed(), /secret-(path|password)/);
 });
 
 test('rejects missing OIDC credentials and malformed OIDC tokens before broker access', async (t) => {
@@ -171,9 +178,15 @@ test('identifies which OIDC credential failed the line-break check', async (t) =
   assert.equal(calls, 1);
 });
 
-test('reports HTTP status and response text without writing a token', async (t) => {
+test('reports only HTTP status and validated broker fields without writing a token', async (t) => {
   const oidc = response(200, { value: 'oidc-jwt' });
-  const policyBody = JSON.stringify({ error: 'request denied', phase: 'policy', request_id: 'FfjmnhkIvHcEPZA=' });
+  const policyBody = JSON.stringify({ message: 'unauthorized', phase: 'policy', request_id: 'FfjmnhkIvHcEPZA=' });
+  const unsafeBody = JSON.stringify({
+    message: 'leak installation-token',
+    phase: 'policy\n::error::injected',
+    request_id: 'x'.repeat(65),
+    token: 'installation-token',
+  });
   const networkError = new TypeError('fetch failed');
   const bodyReadError = new TypeError('body read failed');
   const timeoutError = new DOMException('request timed out', 'TimeoutError');
@@ -181,17 +194,22 @@ test('reports HTTP status and response text without writing a token', async (t) 
     {
       name: 'OIDC denial',
       replies: [new Response('OIDC denied', { status: 403 })],
-      error: { message: 'OIDC request failed (HTTP 403): OIDC denied' },
+      error: { message: 'OIDC request failed (HTTP 403)' },
     },
     {
       name: 'broker policy denial',
       replies: [oidc, new Response(policyBody, { status: 401 })],
-      error: { message: `broker request failed (HTTP 401): ${policyBody}` },
+      error: { message: 'broker request failed (HTTP 401, phase=policy, request_id=FfjmnhkIvHcEPZA=)' },
     },
     {
       name: 'broker non-JSON failure',
       replies: [oidc, new Response('Bad gateway', { status: 502 })],
-      error: { message: 'broker request failed (HTTP 502): Bad gateway' },
+      error: { message: 'broker request failed (HTTP 502)' },
+    },
+    {
+      name: 'broker unsafe fields',
+      replies: [oidc, new Response(unsafeBody, { status: 502 })],
+      error: { message: 'broker request failed (HTTP 502)' },
     },
     { name: 'OIDC array body', replies: [response(200, [])], error: { message: 'OIDC request failed (invalid response)' } },
     { name: 'broker null body', replies: [oidc, response(200, null)], error: { message: 'broker request failed (invalid response)' } },
@@ -206,7 +224,7 @@ test('reports HTTP status and response text without writing a token', async (t) 
     {
       name: 'broker error body read failure',
       replies: [oidc, { ok: false, status: 502, text: async () => { throw bodyReadError; } }],
-      error: bodyReadError,
+      error: { message: 'broker request failed (HTTP 502)' },
     },
   ];
 
@@ -370,13 +388,13 @@ test('entrypoints fail mint errors and warn without failing the job on cleanup e
   assert.equal(noToken.stdout, '');
 });
 
-test('main annotates broker HTTP status and response text', () => {
+test('main annotates broker HTTP status and validated fields only', () => {
   const main = spawnSync(process.execPath, [
     '-e',
     `globalThis.fetch = async (url) => String(url).startsWith('https://actions.example/')
       ? { ok: true, status: 200, json: async () => ({ value: 'oidc-jwt' }) }
       : new Response(JSON.stringify({
-          error: 'request denied', phase: 'policy', request_id: 'FfjmnhkIvHcEPZA='
+          message: 'unauthorized', phase: 'policy', request_id: 'FfjmnhkIvHcEPZA='
         }), { status: 401 });
     require(process.argv[1]);`,
     path.join(__dirname, 'main.js'),
@@ -395,18 +413,18 @@ test('main annotates broker HTTP status and response text', () => {
   assert.equal(main.stdout, [
     '::add-mask::oidc-request-token',
     '::add-mask::oidc-jwt',
-    '::error::broker request failed (HTTP 401): {"error":"request denied","phase":"policy","request_id":"FfjmnhkIvHcEPZA="}',
+    '::error::broker request failed (HTTP 401, phase=policy, request_id=FfjmnhkIvHcEPZA=)',
     '',
   ].join('\n'));
   assert.equal(main.stderr, '');
 });
 
-test('main escapes %, CR and LF in a multiline error annotation', () => {
+test('main escapes %, CR and LF in a multiline error message', () => {
   const main = spawnSync(process.execPath, [
     '-e',
     `globalThis.fetch = async (url) => String(url).startsWith('https://actions.example/')
       ? { ok: true, status: 200, json: async () => ({ value: 'oidc-jwt' }) }
-      : new Response('denied 100%\\r\\nsecond line', { status: 502 });
+      : Promise.reject(new Error('denied 100%\\r\\nsecond line'));
     require(process.argv[1]);`,
     path.join(__dirname, 'main.js'),
   ], {
@@ -421,5 +439,5 @@ test('main escapes %, CR and LF in a multiline error annotation', () => {
     },
   });
   assert.equal(main.status, 1);
-  assert.match(main.stdout, /^::error::broker request failed \(HTTP 502\): denied 100%25%0D%0Asecond line$/m);
+  assert.match(main.stdout, /^::error::denied 100%25%0D%0Asecond line$/m);
 });

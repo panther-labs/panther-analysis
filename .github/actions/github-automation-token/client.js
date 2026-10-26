@@ -28,7 +28,10 @@ function brokerUrlInput(env) {
   } catch {
     fail('GitHub automation token broker_url input was missing or invalid');
   }
-  if (url.protocol !== 'https:') fail('GitHub automation token broker_url input was missing or invalid');
+  // Userinfo could surface in fetch errors, so reject it along with non-https schemes.
+  if (url.protocol !== 'https:' || url.username || url.password) {
+    fail('GitHub automation token broker_url input was missing or invalid');
+  }
   return url.href;
 }
 
@@ -61,13 +64,31 @@ function permissionsInput(value) {
   return permissions;
 }
 
+// Public annotations may only carry the status plus broker-contract fields that match
+// fixed patterns; never echo the raw response body.
+async function failureDetails(response) {
+  const details = [`HTTP ${response.status}`];
+  try {
+    const body = JSON.parse(await response.text());
+    if (typeof body.phase === 'string' && /^[a-z_]{1,32}$/.test(body.phase)) {
+      details.push(`phase=${body.phase}`);
+    }
+    if (typeof body.request_id === 'string' && /^[A-Za-z0-9_=-]{1,64}$/.test(body.request_id)) {
+      details.push(`request_id=${body.request_id}`);
+    }
+  } catch {
+    // Unreadable or non-JSON bodies fall back to the status alone.
+  }
+  return details.join(', ');
+}
+
 async function requestJson(fetchImpl, url, options, errorMessage) {
   const response = await fetchImpl(url, {
     ...options,
     signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
   });
   if (!response.ok) {
-    fail(`${errorMessage} (HTTP ${response.status}): ${await response.text()}`);
+    fail(`${errorMessage} (${await failureDetails(response)})`);
   }
   const body = await response.json();
   if (!body || typeof body !== 'object' || Array.isArray(body)) {
