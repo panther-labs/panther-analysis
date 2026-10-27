@@ -8,7 +8,7 @@ on:
       - 'indexes/**'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   generate-indexes:
@@ -16,18 +16,28 @@ jobs:
     if: github.repository == 'panther-labs/panther-analysis' && github.actor != 'dependabot[bot]'
     permissions:
       id-token: write
-      contents: write
+      contents: read
+    defaults:
+      run:
+        working-directory: repo
     steps:
-      - name: Generate GitHub App token
-        id: app-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+      - name: Checkout token action
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
         with:
-          app-id: ${{ secrets.PANTHER_BOT_APP_ID }}
-          private-key: ${{ secrets.PANTHER_BOT_APP_PRIVATE_KEY }}
+          path: bootstrap
+          sparse-checkout: .github/actions/github-automation-token
+          persist-credentials: false
+      - name: Request GitHub automation token
+        id: github-automation
+        uses: ./bootstrap/.github/actions/github-automation-token
+        with:
+          token_url: ${{ secrets.APP_TOKEN_SERVICE_URL }}
+          permissions: '{"contents":"write"}'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
         with:
           fetch-depth: 0
-          token: ${{ steps.app-token.outputs.token }}
+          path: repo
+          token: ${{ steps.github-automation.outputs.token }}
       - name: Install Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 #v7.0.0
         with:
@@ -41,13 +51,14 @@ jobs:
           passphrase: ${{ secrets.PANTHER_BOT_GPG_PRIVATE_KEY_PASSPHRASE }}
           git_user_signingkey: true
           git_commit_gpgsign: true
+          workdir: repo
       - name: Generate indexes
         run: python3 ./.scripts/generate_indexes.py
       - name: Commit Indexes
         continue-on-error: true # This is to ensure that the workflow does not fail if there are no changes to commit
         env:
           HEAD_REF: ${{ github.event.pull_request.head.ref }}
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ steps.github-automation.outputs.token }}
         run: |
           git config --global user.email "github-service-account-automation@panther.io"
           git config --global user.name "panther-bot-automation"

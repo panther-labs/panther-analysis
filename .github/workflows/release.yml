@@ -28,19 +28,26 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - name: Generate GitHub App token
-        id: app-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+      - name: Checkout token action
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
         with:
-          app-id: ${{ secrets.PANTHER_BOT_APP_ID }}
-          private-key: ${{ secrets.PANTHER_BOT_APP_PRIVATE_KEY }}
+          path: bootstrap
+          sparse-checkout: .github/actions/github-automation-token
+          persist-credentials: false
+      - name: Request GitHub automation token
+        id: github-automation
+        uses: ./bootstrap/.github/actions/github-automation-token
+        with:
+          token_url: ${{ secrets.APP_TOKEN_SERVICE_URL }}
+          permissions: '{"contents":"write"}'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
         with:
           ref: ${{ github.event.inputs.branch }}
           fetch-depth: 0
-          token: ${{ steps.app-token.outputs.token }}
-          # Nothing here talks to a git remote (gh uses GITHUB_TOKEN from the env),
-          # so don't leave the bot PAT in .git/config for `make install` to reach.
+          # Separate from bootstrap/ so the token action survives for its post hook.
+          path: release
+          # Nothing here talks to a git remote (gh uses GH_TOKEN from the env),
+          # so don't leave credentials in .git/config for `make install` to reach.
           persist-credentials: false
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
@@ -60,7 +67,8 @@ jobs:
           KMS_KEY_ARN: ${{ secrets.KMS_KEY_ARN }}
           SIGNING_ALGORITHM: ${{ secrets.SIGNING_ALGORITHM }}
           DIGEST_FILE: ${{ secrets.DIGEST_FILE }}
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ steps.github-automation.outputs.token }}
+        working-directory: release
         run: |
           OLD_VERSION=$(gh release list | grep Latest | awk '{print $1}')
           NEW_VERSION=$(echo "$OLD_VERSION" | awk -F. -v bump="$BUMP" '{
