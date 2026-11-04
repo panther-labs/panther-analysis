@@ -1,0 +1,143 @@
+AnalysisType: "skill"
+SkillName: "threat_intel_feed_catalog"
+DisplayName: "Threat Intel Feed Catalog"
+Description: "Catalog of external threat-intelligence feeds and enrichment sources — supply-chain / npm, general APT & malware reporting, machine-readable IoC feeds, and pivot/enrichment services — each with a fetch URL, expected format, and the indicator types you'll typically extract. Use for multi-feed sweeps and campaign research (pulling fresh IoCs from public reporting). For a single indicator checked against Panther's *own* enrichments (GreyNoise / VirusTotal / OTX), use `ioc_enrichment_check` instead — this catalog is the external layer."
+Prompt: |
+  # Threat Intel Feed Catalog
+
+  A catalog of external sources for IoC sweeps, campaign research, and pivot-time enrichment.
+  Each entry lists the fetch URL, the format to expect, and the indicator types you'll typically
+  extract. Note that these domains may need to be allowlisted for fetching within your environment.
+
+  ## When to use / not for
+
+  - **Use** for: multi-feed sweeps, campaign / actor research, harvesting fresh IoCs from public
+    reporting, and enriching an indicator during a pivot.
+  - **Not for**: a single-indicator reputation check against Panther's own integrated
+    enrichments — use `ioc_enrichment_check` (GreyNoise / VirusTotal / OTX in-platform).
+    This catalog is the *external* layer that complements it.
+
+  ## Fetching guidance
+
+  - Many security blogs are JavaScript SPAs that return an empty shell when fetched directly —
+    **prefer the RSS / Atom feed URL** over the HTML page wherever one exists.
+  - If a feed is unreachable, **note it in the report header and continue** with the rest; never
+    fail silently.
+  - Respect rate limits and source terms of service; cache results within an investigation rather
+    than re-fetching.
+
+  ## Supply chain / npm-focused feeds
+
+  Primary sources for package-level IoCs. Check these when investigating a supply-chain attack or
+  running an npm sweep.
+
+  | Source | Fetch URL | Format | Typical indicators |
+  |--------|-----------|--------|--------------------|
+  | Panther | `https://panther.com/blog/` | HTML (parse) | package names, campaign analysis, C2 infrastructure, detection guidance |
+  | OpenSourceMalware | `https://opensourcemalware.com/rss.xml` | RSS | package names, versions, malware families |
+  | Socket.dev | `https://socket.dev/api/blog/feed.atom` | Atom | package names, npm accounts, C2 domains, campaign names |
+  | Aikido | `https://www.aikido.dev/blog/rss.xml` | RSS | package names, attack chains, C2 infrastructure |
+  | 0dayfans | `https://0dayfans.com/feed.rss` | RSS | package names, vulnerability disclosures |
+  | SafeDep | `https://safedep.io/blog/` | HTML (parse) | package names, dependency analysis |
+  | DPRK Research (KMSec) | `https://dprk-research.kmsec.uk/` | HTML (parse) | DPRK actor campaigns, npm accounts, infrastructure |
+  | StepSecurity | `https://www.stepsecurity.io/blog/rss.xml` | RSS | supply-chain attack analysis, package-level IoCs |
+  | GitGuardian | `https://blog.gitguardian.com/rss/` | RSS | campaign analysis, detection guidance, vulnerability disclosures |
+  | GitHub Security Blog | `https://github.blog/security/feed/` | RSS | vulnerability disclosures, attack chains, package-level IoCs |
+  | JFrog | `https://jfrog.com/blog/tag/security-research/feed/` | RSS | package names, vulnerability disclosures, attack chains |
+
+  ## General threat-intelligence feeds
+
+  Check these for actor attribution, broader campaigns, or non-supply-chain indicators.
+
+  | Source | Fetch URL | Format | Typical indicators |
+  |--------|-----------|--------|--------------------|
+  | Talos Intelligence | `https://blog.talosintelligence.com/rss/` | RSS | IPs, domains, hashes, campaign analysis |
+  | SentinelOne Labs | `https://www.sentinelone.com/labs/feed/` | RSS | APT campaigns, malware analysis, hashes |
+  | Unit 42 (Palo Alto) | `https://unit42.paloaltonetworks.com/feed/` | RSS | campaign reports, actor profiles, IoC lists |
+  | Microsoft Security | `https://www.microsoft.com/en-us/security/blog/feed/` | RSS | actor tracking (Storm-*, Midnight Blizzard, …) |
+  | Securelist (Kaspersky) | `https://securelist.com/feed/` | RSS | APT reports, malware families, IoC appendices |
+  | Check Point Research | `https://research.checkpoint.com/feed/` | RSS | campaign analysis, malware teardowns |
+  | CrowdStrike | `https://www.crowdstrike.com/blog/feed/` | RSS | actor tracking, campaign reports |
+  | Wiz | `https://www.wiz.io/feed/rss.xml` | RSS | cloud-attack campaigns, IPs, domains, malware families |
+  | Google TAG / Mandiant | `https://blog.google/threat-analysis-group/rss/` | RSS | nation-state campaigns, 0-day actors |
+  | CISA Advisories | `https://www.cisa.gov/cybersecurity-advisories/all.xml` | RSS | exploited CVEs, actor TTPs, IoC appendices |
+  | Elastic Security Labs | `https://www.elastic.co/security-labs/rss/feed.xml` | RSS | campaign analysis, detection guidance, IoCs |
+  | Apple Security Research | `https://security.apple.com/blog/feed.rss` | RSS | Apple-focused vulnerabilities, attack chains, IoCs |
+  | Trail of Bits | `https://blog.trailofbits.com/feed/` | RSS | vulnerability research, exploit chains |
+
+  ## Machine-readable IoC feeds
+
+  Structured feeds you can ingest directly (no article parsing) — best for bulk pivots and
+  blocklist cross-referencing.
+
+  | Source | Fetch URL | Format | Typical indicators |
+  |--------|-----------|--------|--------------------|
+  | abuse.ch URLhaus | `https://urlhaus.abuse.ch/downloads/csv_recent/` | CSV | malware-distribution URLs, payload hashes |
+  | abuse.ch ThreatFox | `https://threatfox.abuse.ch/export/json/recent/` | JSON | IPs, domains, URLs, hashes tagged by malware family |
+  | abuse.ch Feodo Tracker | `https://feodotracker.abuse.ch/downloads/ipblocklist.json` | JSON | botnet C2 IPs (Emotet, Dridex, etc.) |
+  | MalwareBazaar | `https://bazaar.abuse.ch/export/` | API / CSV | malware sample hashes by family / tag |
+  | CISA KEV | `https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json` | JSON | known-exploited CVEs |
+
+  ## Specialized / enrichment sources
+
+  Not feeds to sweep — query these per indicator during a pivot. VirusTotal, GreyNoise, and OTX
+  are also available as **Panther lookup tables** (see `ioc_enrichment_check` for the
+  in-platform path); the URLs below are for deep dives the lookup tables don't cover.
+
+  | Source | Usage | Access method |
+  |--------|-------|---------------|
+  | VirusTotal | hash / domain / IP / URL reputation | Panther lookup table; web UI for relations & pivots |
+  | GreyNoise | IP noise / scanner classification | Panther lookup table; web UI for RIOT/context |
+  | OTX (AlienVault) | IoC pulse membership, CVE context | Panther lookup table; web UI for pulses |
+  | Shodan / Censys | IP / port / service exposure | web search or API (if available) |
+  | Validin | passive DNS, domain history | web UI — domain → IP resolution history |
+  | SilentPush | domain / IP threat scoring | web UI — infrastructure pivoting |
+  | urlscan.io | URL analysis, screenshot, DOM | web search `site:urlscan.io {domain}` |
+  | whatsmyname.app | username cross-platform search | web UI — paste username, check coding platforms |
+  | npm registry | package metadata, maintainer info | `https://registry.npmjs.org/{package}` / `https://www.npmjs.com/~{username}` |
+  | Socket.dev package | package-level risk assessment | `https://socket.dev/npm/package/{package}` |
+
+  ## Feed parsing strategy
+
+  **RSS / Atom** — for each entry extract:
+  - **Title** — often the package name or campaign label
+  - **Description / summary** — scan for IoCs (IPs, domains, hashes, package names)
+  - **Published date** — filter to your target window
+  - **Link** — fetch the full article for detailed IoC extraction when the summary is thin
+
+  **HTML blog pages** (no feed) — look for: dated article listings (filter to recent), individual
+  article pages (fetch the most relevant), IoC tables / code blocks / "Indicators of Compromise"
+  sections, and campaign / actor names in headers.
+
+  ## IoC extraction patterns
+
+  - **IPs**: `\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b` — drop non-IoC IPs (127.0.0.1, 0.0.0.0,
+    255.255.255.255, RFC1918 ranges)
+  - **Domains**: re-fang defanged notation (`hxxps://`, `[.]com`) before use
+  - **Hashes**: SHA-256 (64 hex), SHA-1 (40 hex), MD5 (32 hex)
+  - **npm packages**: usually in code blocks, inline code, or IoC tables
+  - **Emails**: standard pattern, often in maintainer fields
+  - **CVEs**: `CVE-\d{4}-\d{4,7}`
+  - **MITRE ATT&CK**: `T\d{4}(\.\d{3})?`
+
+  ## Caveats
+
+  - **Feeds drift.** URLs, RSS paths, and formats change without notice — if a fetch 404s or
+    returns HTML where RSS is expected, try the site root for the current feed link and note the
+    change; don't treat this list as guaranteed-current.
+  - **De-fang on output.** Always present extracted indicators defanged (`.` → `[.]`,
+    `https` → `hxxps`) to prevent accidental clicks.
+  - **Reputation ≠ verdict.** A feed hit is a lead; corroborate against internal telemetry
+    (hand matched indicators to `ioc_enrichment_check`) before acting.
+ToolMessage: "Sweeping external threat-intel feeds for fresh indicators…"
+DependsOn: []
+EagerLoading: false
+RequiredTools:
+  - panther_ai_utilities_fetch_web
+Enabled: true
+Tags:
+  - iocs
+  - threat-intelligence
+  - feeds
+  - enrichment
+  - osint

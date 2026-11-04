@@ -1,0 +1,188 @@
+AnalysisType: "skill"
+SkillName: "gcp_security_knowledge"
+DisplayName: "GCP Security Knowledge"
+Description: "Reference mapping of GCP Cloud Audit Log `protoPayload.methodName` values to attacker-impact categories — discovery, credential access, privilege escalation, persistence, defense evasion, lateral movement, data access / exfil, impact, and known multi-step attack chains. Use whenever GCP API activity needs to be classified by adversary impact: incident scoping, threat hunts, detection coverage analysis, or post-mortem triage. Also covers reading `principalEmail` service account formats and mapping techniques to deployed Panther detections. Technique coverage is cross-referenced with the GCP & Workspace Attack Matrix. Knowledge reference — does not run queries itself."
+Prompt: |
+  # GCP Security Knowledge — Cloud Audit Log Action Impact Reference
+
+  Maps high-signal GCP `protoPayload.methodName` values to the attacker-impact category they
+  belong to. A GCP audit event is mostly a `methodName` (e.g. `SetIamPolicy`,
+  `google.iam.admin.v1.CreateServiceAccountKey`) by a `principalEmail` against a `resourceName`
+  — bucket by what it lets an adversary *do*, not just which service it touched. Lists are
+  canonical high-signal calls, not exhaustive; significance always depends on context (who,
+  whether `authorizationInfo.granted` was false, and whether it is normal for that principal).
+
+  Reason in these fields: `protoPayload.methodName`, `serviceName`, `resourceName`,
+  `authenticationInfo.principalEmail`, `requestMetadata.callerIp` / `callerSuppliedUserAgent`,
+  `authorizationInfo[].granted`, `resource.labels.project_id`.
+
+  ## Reading GCP identifiers
+
+  The `principalEmail` tells you *what kind of identity* acted:
+
+  - `user@domain` — a **human** (Workspace / Cloud Identity / federated).
+  - `NAME@PROJECT.iam.gserviceaccount.com` — a **user-created service account** (workload).
+  - `PROJECT_ID@appspot.gserviceaccount.com` — the **App Engine default SA**, and
+    `PROJECT_NUMBER-compute@developer.gserviceaccount.com` — the **Compute Engine default SA**.
+    Both get the broad **Editor** role by default — over-privileged and the prime escalation
+    target; a default SA minting keys or calling IAM is high-signal.
+  - `service-PROJECT_NUMBER@…gserviceaccount.com` / `@cloudservices.gserviceaccount.com` —
+    **Google-managed service agents** (usually benign).
+
+  Other cues: `authorizationInfo[].granted = false` (permission denied — the enumeration signal,
+  GCP's analog of `AccessDenied`); `callerIp` outside expected ranges; a service account acting
+  far from its workload or normal services.
+
+  ## Discovery — TA0007 (T1580 / T1087 / T1526)
+  - `projects.testIamPermissions`, `*.getIamPolicy` (probe what the caller can do / who can do what)
+  - `*.list` / `*.get` across compute, storage, iam, resourcemanager
+  - A burst of `authorizationInfo.granted = false` across methods = permission enumeration.
+  - Enumerate SA bindings, org hierarchy, Cloud Asset Inventory, Security Command Center.
+
+  ## Initial access — TA0001 (T1078.004 / T1199 / T1195)
+  - **Leaked / committed SA key** — a `…iam.gserviceaccount.com` principal authenticating from a
+    new IP (keys get committed to git or baked into images). Pairs with key creation below.
+  - **OAuth / consent-grant phishing** — a user consents a malicious third-party OAuth app
+    (Workspace `Authorize access` audit event) granting offline Drive / Gmail / API access.
+  - **SSRF → metadata** — an exposed web app reaching `metadata.google.internal` to steal the
+    instance SA token (see Credential access below).
+  - **Dependency confusion (CloudImposer)** — a malicious package pulled into Cloud Build /
+    App Engine / Composer build pipelines.
+
+  ## Execution — TA0002 (T1059 / T1610 / T1648)
+  The same compute / serverless surfaces that drive privesc are also raw code-execution vectors;
+  watch creates / deploys that run attacker code:
+  - `compute.instances.insert` with a `startup-script`, `compute.instances.setMetadata`
+    (startup-script swap), serial-console / OS Login command execution.
+  - `cloudfunctions.functions.create` / `update`, `run.services.create` (Cloud Run),
+    `cloudbuild.builds.create`, `dataflow.jobs.create`, `dataproc.jobs.create`, Cloud Composer
+    DAG deploy, Cloud Workflows, BigQuery jobs with UDFs.
+  - GKE / Cloud Run container deploy (T1610) — run an attacker image.
+
+  ## Credential access — TA0006 (T1552 / T1528)
+  - `google.iam.admin.v1.CreateServiceAccountKey` (`iam.serviceAccountKeys.create`) — mints a
+    **long-lived SA key** (no expiry; GCP's closest analog to a static access key — durable
+    persistence + initial access).
+  - `GenerateAccessToken` / `iam.serviceAccounts.getAccessToken`, `SignBlob` / `SignJwt`,
+    `iam.serviceAccounts.implicitDelegation` — borrow a service account's identity (short-lived
+    token) without its key.
+  - **Metadata SSRF (T1552.005):** GCE/Cloud Run SA tokens stolen from the metadata server
+    (`metadata.google.internal` / `169.254.169.254`,
+    `/computeMetadata/v1/instance/service-accounts/default/token`, requires `Metadata-Flavor:
+    Google`) leave no audit event of their own — detect the *use*: the instance SA acting from an
+    IP that isn't the instance.
+  - `*.secrets.versions.access` (Secret Manager), `cloudkms` decrypt at volume.
+  - Secrets harvested from **Cloud Build logs**, **Cloud Source Repositories**, and instance /
+    function env vars and metadata; **OAuth refresh-token abuse** (long-lived Workspace / 3P
+    app tokens).
+
+  ## Privilege escalation — TA0004 (T1548)
+  - `SetIamPolicy` — the hinge of GCP privesc: bind a principal to a more privileged role
+    (`roles/owner`, `roles/iam.serviceAccountTokenCreator`, `roles/iam.serviceAccountUser`).
+  - `google.iam.admin.v1.UpdateRole` (`iam.roles.update`) — add permissions to a custom role the
+    attacker already holds.
+  - **actAs + resource-create** (GCP's `PassRole` equivalent): attaching a more-privileged SA to
+    a new compute resource to run code as it — `compute.instances.create`,
+    `cloudfunctions.functions.create` / `update`, `run.services.create`,
+    `cloudbuild.builds.create`, `deploymentmanager.deployments.create`,
+    `dataflow.jobs.create`, `dataproc.clusters.create`, `cloudscheduler.jobs.create`.
+  - **Cloud Build privesc** — `cloudbuild.builds.create` runs as the highly privileged Cloud
+    Build SA (`@cloudbuild.gserviceaccount.com`, often Editor); a classic GCP escalation.
+  - **Domain-wide delegation abuse** — a service account granted Workspace DWD can impersonate
+    *any* Workspace user (read all Gmail / Drive); granting or using DWD bridges GCP → Workspace.
+  - **GKE container escape to node**, **cross-project role assumption** via
+    `iam.serviceAccountTokenCreator`, and **Workload Identity Federation abuse**.
+
+  ## Persistence — TA0003 (T1098 / T1136)
+  - `CreateServiceAccountKey` (durable key), `CreateServiceAccount` + `SetIamPolicy` (new
+    backdoor identity), adding an **external** principal in `SetIamPolicy`.
+  - `google.iam.v1.WorkloadIdentityPools.CreateWorkloadIdentityPoolProvider` /
+    `google.iam.admin.v1.WorkforcePools.CreateWorkforcePool` — **federation backdoor**: trust an
+    attacker-controlled IdP to impersonate GCP identities (analog of a rogue OIDC provider).
+  - `cloudfunctions.functions.create`, `run.services.create`, `cloudscheduler.jobs.create`
+    (scheduled re-exec), compute instance with a malicious `startup-script` metadata key.
+  - **API keys** (`google.api.apikeys.v2.CreateKey`), **project-wide SSH keys** via
+    `compute.projects.setCommonInstanceMetadata`, **OAuth app with offline access** (durable
+    refresh token), **backdoor container images** in GCR / Artifact Registry, and modifying
+    **organization policies** to relax constraints.
+
+  ## Defense evasion — TA0005 (T1562 / T1578)
+  - Logging sink / settings modified, `compute.subnetworks` flow-logs disabled (VPC Flow
+    Logs off), bucket/log retention reduced.
+  - `compute.firewalls.insert` / `update` / `delete` (open or remove network controls).
+  - `google.iam.admin.v1.DeleteRole`, removing IAM bindings, deleting audit log entries / sinks.
+  - Disable **Security Command Center**, **VPC Service Controls** perimeter bypass / dry-run
+    abuse, deploying in low-monitoring regions, living-off-the-land with `gcloud`.
+
+  ## Lateral movement — TA0008 (T1021 / T1199)
+  - `GenerateAccessToken` / `actAs` chaining across service accounts (token-creator hops).
+  - `compute.instances.setMetadata` injecting SSH keys, OS Login abuse, `compute.instances.osLogin`.
+  - IAP / cross-project `SetIamPolicy` granting access into another project.
+
+  ## Data access / exfil — TA0009 / TA0010 (T1530 / T1537)
+  - `storage.objects.get` / `list` at volume, `storage.buckets.setIamPolicy` granting
+    `allUsers` / `allAuthenticatedUsers` (**make a bucket public** — the GCS exposure signal).
+  - BigQuery large scans / **extract jobs** to an external GCS bucket (`bigquery.tables.export`),
+    Cloud SQL / Spanner / Bigtable reads, and **Storage Transfer Service** abuse to copy buckets out.
+  - `compute.snapshots.insert` + `compute.snapshots.setIamPolicy` /
+    `compute.images.setIamPolicy` — share a disk image/snapshot to an attacker project (analog
+    of the EBS snapshot-share exfil chain).
+
+  ## Impact / destruction — TA0040 (T1485 / T1486 / T1496 / T1490)
+  - `storage.buckets.delete` / `storage.objects.delete` at volume, destructive BigQuery queries,
+    a GCS "ransom note" object upload.
+  - `compute.instances.delete`, `cloudkms` key version `destroy` (make encrypted data
+    unrecoverable), deleting projects.
+  - Spinning up compute for cryptomining — resource hijacking (watch mining-pool egress).
+
+  ## High-signal technique combinations
+  - **Stolen SA token → escalation:** metadata SSRF / leaked key → `testIamPermissions` probing
+    → `SetIamPolicy` granting owner. (T1552.005 → T1548)
+  - **actAs privesc:** `compute.instances.create` (or function/cloud-run) attaching the
+    over-privileged default Compute SA → run code as Editor. (T1548)
+  - **Federation backdoor:** `CreateWorkloadIdentityPoolProvider` trusting an attacker IdP →
+    impersonate GCP SAs from outside. (T1098)
+  - **Snapshot exfil:** `compute.snapshots.insert` → `setIamPolicy` sharing to an external
+    project → read it there. (T1537)
+
+  ## Mapping techniques to deployed detections
+
+  These techniques are covered by Panther's GCP ruleset (`rules/gcp_audit_rules/`,
+  `rules/gcp_k8s_rules/`, `rules/gcp_http_lb_rules/`) keyed on `GCP.AuditLog`. Don't reason in
+  isolation:
+  - Resolve an observed technique to deployed coverage via its MITRE tactic-technique ID — query
+    `panther_ai_detections_list` by `mitre_attack_tags`, or hand the list to
+    `coverage_gap_analysis`.
+  - Match signal shape to paradigm: a single high-signal `methodName` (`CreateServiceAccountKey`,
+    `SetIamPolicy`, firewall delete) → a **rule**; a multi-step chain → a **correlation rule**; a
+    volumetric pattern (denied-permission bursts, BigQuery large scans) → a **scheduled query**.
+  - A high-impact technique with **no** matching deployed detection is a coverage-gap finding —
+    surface it and route to `coverage_gap_analysis`.
+
+  ## Recording an observed action
+
+  For each high-signal action capture: `methodName`, `serviceName`, `principalEmail` (and its
+  identity type), `resourceName`, `callerIp`, and whether it was authorized
+  (`authorizationInfo[].granted`). A denied call is still signal — it shows intent.
+
+  ## Caveats
+  - High-signal starting points, not allow/deny lists. Terraform / Deployment Manager, CI/CD,
+    and Google service agents legitimately do many of these — classify by impact, then judge by
+    principal + project + context.
+  - Default service accounts (`appspot`, `developer`) act broadly by design; the signal is *who*
+    is driving them and from *where*.
+  - A single bucket hit is a lead; cross-bucket sequences from one principal are the verdict.
+  - **Google Workspace is a separate log source** (admin / login / token / drive audit), not GCP
+    Cloud Audit Logs. Workspace techniques (admin-console compromise, OAuth grants, Drive access)
+    and the GCP↔Workspace bridge (domain-wide delegation) need the Workspace audit feed — out of
+    scope for this GCP-audit reference; cover them with a Workspace-specific detection set.
+DependsOn: []
+EagerLoading: false
+RequiredTools:
+  - panther_ai_detections_list
+Enabled: true
+Tags:
+  - gcp
+  - audit
+  - mitre
+  - knowledge-primitive
