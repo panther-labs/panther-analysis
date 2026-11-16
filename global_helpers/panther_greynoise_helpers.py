@@ -364,7 +364,7 @@ def greynoise_v3_alert_context(event, field):
 GreyNoiseSeverityDecode = greynoise_severity_decode  # pylint: disable=invalid-name
 SeverityGreaterThan = severity_greater_than  # pylint: disable=invalid-name
 GetGreyNoiseV3Object = get_greynoise_v3_object  # pylint: disable=invalid-name
-GetGreyNoiseV3BusinessServiceObject = (
-    get_greynoise_v3_business_service_object  # pylint: disable=invalid-name
+GetGreyNoiseV3BusinessServiceObject = (  # pylint: disable=invalid-name
+    get_greynoise_v3_business_service_object
 )
 GreyNoiseV3Severity = greynoise_v3_severity  # pylint: disable=invalid-name
