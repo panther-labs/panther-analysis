@@ -1,0 +1,138 @@
+AnalysisType: "skill"
+SkillName: "ioc_enrichment_check"
+DisplayName: "IoC Enrichment Check"
+Description: "Investigate one or more IoCs (IP, domain, URL, file hash, or email) using ONLY Panther's built-in enrichment sources — GreyNoise, VirusTotal, and OTX — plus observed activity in the data lake and alert history. Produces a per-indicator threat-intel report. Use when you want a fast reputation-and-activity check grounded entirely in Panther data. Not for external OSINT / web pivoting, multi-feed campaign sweeps, or hypothesis-driven hunts."
+Prompt: |
+  # IoC Enrichment Check — Panther Enrichment Sources Only
+
+  Given one or more IoCs, produce a threat-intel report built from Panther's
+  built-in enrichment sources (GreyNoise, VirusTotal, OTX), observed activity in the data
+  lake, and alert history. Do NOT web-search, scrape, or call third-party APIs directly —
+  this skill is scoped to what Panther already enriches and ingests.
+
+  **Core principle — silence is a finding.** "No enrichment hit and no observed activity in
+  the queried window" is the honest conclusion when nothing returns. Never escalate that to
+  "the indicator is clean" or "we are not affected."
+
+  ---
+
+  ## Step 1 — Parse and classify the input
+
+  Accept a single indicator or a pasted block. For each item:
+
+  1. **Re-fang defanged notation** before anything else: `hxxps://` → `https://`,
+     `[.]` → `.`, `[@]` → `@`, `[:]` → `:`. Never query the defanged form.
+  2. **Classify** the type: IPv4/IPv6, domain, URL, file hash (SHA-256 / SHA-1 / MD5), or
+     email. For a URL, also extract the host domain so it can be enriched and searched
+     separately.
+  3. **Deduplicate** the set, and **flag anything unparseable** — ask the analyst rather
+     than guessing.
+
+  ---
+
+  ## Step 2 — Enrichment lookup
+
+  Use `panther_ai_enrichments_lookup` to query all available enrichment sources for each
+  indicator. Expect results from the
+  integrated feeds:
+  - **GreyNoise** — internet-scanner classification, noise / RIOT status, actor, tags
+  - **VirusTotal** — AV-engine detections, community score, file / URL / domain / IP context
+  - **OTX (AlienVault Open Threat Exchange)** — pulse associations, threat-actor attribution,
+    malware families, related CVEs
+
+  Query each available source for the indicator. If multiple IoC types were provided, query
+  each one. If a source returns no data or is unavailable, record that explicitly — an
+  unavailable source is itself a reporting caveat, not a silent skip.
+
+  ---
+
+  ## Step 3 — Activity in Panther logs
+
+  Use `panther_ai_datalake_activity_histogram` to check for observed activity in the data
+  lake. The histogram sweeps the `p_any_*` fields
+  across all log types — route the indicator to the matching field:
+  - IPs → `p_any_ip_addresses`
+  - Domains (and URL hosts) → `p_any_domain_names`
+  - File hashes → `p_any_sha256_hashes` / `p_any_sha1_hashes` / `p_any_md5_hashes`
+  - Emails → `p_any_emails`
+
+  Use a lookback window of at least 30 days unless the analyst specifies otherwise. Record
+  which log sources the indicator appeared in, and the first-seen / last-seen timestamps.
+
+  ---
+
+  ## Step 4 — Alert / signal history
+
+  Use `panther_ai_alerts_list` to search for alerts associated with the indicator to learn whether Panther's detections have
+  already fired on it. Filter by relevant name keywords, the matched entity, or time range.
+  Note the rule, severity, and triage state of any matching alert.
+
+  ---
+
+  ## Step 5 — Synthesize and report
+
+  Combine enrichment reputation (Step 2) with observed activity (Step 3) and alert history
+  (Step 4). Classify each indicator:
+
+  - **✅ Detected** — observed in logs AND a Panther alert has fired
+  - **⚠️ Visible but undetected** — observed in logs, no alert (potential detection gap)
+  - **🔎 Flagged by enrichment only** — known-bad per GreyNoise / VT / OTX, no log activity
+  - **❌ No matches** — nothing in enrichments, logs, or alerts within the queried window
+    (this is silence, NOT "clean")
+
+  ```markdown
+  # IoC Enrichment Check — <single indicator or "bulk">
+
+  ## Summary
+  - Indicators processed: <N> (unique after dedup: <M>)
+  - Enrichment hits: <K> | Observed in logs: <K> | Alerts fired: <K>
+  - Enrichment sources unavailable: <list, explicit>
+
+  ## Per-Indicator Findings
+  ### <indicator> (<type>)
+  - Status: <✅ / ⚠️ / 🔎 / ❌>
+  - GreyNoise: <classification / RIOT / actor / tags, or "no data">
+  - VirusTotal: <detection ratio / community score, or "no data">
+  - OTX: <pulses / families / actors, or "no data">
+  - Observed activity: <log sources + first/last seen, or "none in window">
+  - Alerts: <rule, severity, state, or "none">
+
+  ## Could not classify
+  <unparseable items — ask the analyst to clarify>
+
+  ## Caveats
+  - Enrichment sources unavailable during this run: <list>
+  - "No matches" means silence in the queried sources and window — not a clean verdict.
+  - Scope is Panther enrichments + data lake only; external OSINT was not consulted.
+  ```
+
+  ---
+
+  ## Constraints
+
+  - **Enrichment-only.** No external web search, scraping, or direct third-party API calls.
+    If a question genuinely needs OSINT beyond Panther's enrichments, say so and stop —
+    don't improvise an external lookup.
+  - Read-only. Never create a blocklist entry, alert, or rule from this skill — report and
+    recommend, don't act.
+  - Re-fang defanged indicators before querying; never query the defanged form.
+  - Distinguish exact hash matches (sha256 / sha1 / md5) from fuzzy ones — exact is high
+    confidence, fuzzy is corroborating only.
+  - If a query or enrichment source times out or is unavailable, report it explicitly — do
+    not silently retry or omit it.
+  - Silence is a finding. State the sources queried and the window.
+ToolMessage: "Investigating the IoC across Panther enrichments, activity, and alerts…"
+DependsOn: []
+EagerLoading: false
+RequiredTools:
+  - panther_ai_enrichments_lookup
+  - panther_ai_datalake_activity_histogram
+  - panther_ai_alerts_list
+Enabled: true
+Tags:
+  - ioc
+  - enrichment
+  - threat-intelligence
+  - greynoise
+  - virustotal
+  - otx
