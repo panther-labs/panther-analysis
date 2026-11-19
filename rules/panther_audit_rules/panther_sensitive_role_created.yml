@@ -45,7 +45,7 @@ Tests:
           {
             "attributes":
               {
-                "email": "homer@example.org",
+                "email": "example.user42@example.org",
                 "emailVerified": true,
                 "roleId": "1111111",
               },
@@ -56,7 +56,7 @@ Tests:
         "errors": null,
         "p_log_type": "Panther.Audit",
         "pantherVersion": "1.2.3",
-        "sourceIP": "192.0.2.4",
+        "sourceIP": "999.999.999.23",
         "timestamp": "2022-04-27 20:47:09.425",
       }
   - Name: Non-Admin Role Created
@@ -81,7 +81,7 @@ Tests:
           {
             "attributes":
               {
-                "email": "homer@example.org",
+                "email": "example.user42@example.org",
                 "emailVerified": true,
                 "roleId": "1111111",
               },
@@ -92,14 +92,14 @@ Tests:
         "errors": null,
         "p_log_type": "Panther.Audit",
         "pantherVersion": "1.2.3",
-        "sourceIP": "192.0.2.4",
+        "sourceIP": "999.999.999.23",
         "timestamp": "2022-04-27 20:47:09.425",
       }
   - Name: nonetype error
     ExpectedResult: false
     Log:
       {
-        "XForwardedFor": ["192.0.2.4", "192.0.2.8"],
+        "XForwardedFor": ["999.999.999.23", "999.999.999.24"],
         "actionDescription": "Adds a new User role to Panther",
         "actionName": "CREATE_USER_ROLE",
         "actionParams":
@@ -121,13 +121,13 @@ Tests:
           {
             "attributes":
               {
-                "email": "random@example.net",
+                "email": "example.user71@example.net",
                 "emailVerified": false,
                 "roleId": "00000000-0000-0000-0000-000000000021",
                 "roleName": "Admin",
               },
-            "id": "ExampleSSO_random@example.net",
-            "name": "random@example.net",
+            "id": "example.user33@example.net",
+            "name": "example.user71@example.net",
             "type": "USER",
           },
         "errors":
@@ -140,9 +140,9 @@ Tests:
         "p_alert_id": "00000000000000000000000000000014",
         "p_alert_severity": "HIGH",
         "p_alert_update_time": "2023-02-09 21:47:09.745566000",
-        "p_any_ip_addresses": ["192.0.2.4", "192.0.2.8"],
-        "p_any_trace_ids": ["ExampleSSO_random@example.net"],
-        "p_any_usernames": ["random@example.net"],
+        "p_any_ip_addresses": ["999.999.999.23", "999.999.999.24"],
+        "p_any_trace_ids": ["example.user33@example.net"],
+        "p_any_usernames": ["example.user71@example.net"],
         "p_enrichment":
           {
             "ipinfo_asn":
@@ -152,7 +152,7 @@ Tests:
                     "asn": "AS396982",
                     "domain": "google.com",
                     "name": "Google LLC",
-                    "route": "192.0.2.0/24",
+                    "route": "999.999.999.25/24",
                     "type": "hosting",
                   },
               },
@@ -184,7 +184,7 @@ Tests:
         "p_source_id": "00000000-0000-0000-0000-00000000004c",
         "p_source_label": "example-audit-logs-us-east-1",
         "pantherVersion": "1.53.7",
-        "sourceIP": "192.0.2.4",
+        "sourceIP": "999.999.999.23",
         "timestamp": "2023-02-09 21:45:59.352910070",
         "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36",
       }

@@ -16,7 +16,7 @@ Tests:
       Log:
         awsRegion: us-east-1
         errorCode: AccessDenied
-        errorMessage: 'User: arn:aws:iam::111111111111:user/example.user is not authorized to perform: lambda:ListFunctions on resource: * because no identity-based policy allows the lambda:ListFunctions action'
+        errorMessage: 'User: arn:aws:iam::111111111111:user/EXAMPLE_USER_12 is not authorized to perform: lambda:ListFunctions on resource: * because no identity-based policy allows the lambda:ListFunctions action'
         eventCategory: Management
         eventID: 00000000-0000-0000-0000-000000000060
         eventName: ListFunctions20150331
@@ -30,13 +30,13 @@ Tests:
         p_any_aws_account_ids:
             - "111111111111"
         p_any_aws_arns:
-            - arn:aws:iam::111111111111:user/example.user
+            - arn:aws:iam::111111111111:user/EXAMPLE_USER_12
         p_any_ip_addresses:
-            - 198.51.100.172
+            - 999.999.999.33
         p_any_trace_ids:
             - AKIA_EXAMPLE_0004
         p_any_usernames:
-            - example.user
+            - EXAMPLE_USER_12
         p_event_time: "2024-06-02 20:16:32.000000000"
         p_log_type: AWS.CloudTrail
         p_parse_time: "2024-06-02 20:25:54.290533382"
@@ -50,7 +50,7 @@ Tests:
         readOnly: true
         recipientAccountId: "111111111111"
         requestID: 00000000-0000-0000-0000-000000000177
-        sourceIPAddress: 198.51.100.172
+        sourceIPAddress: 999.999.999.33
         tlsDetails:
             cipherSuite: TLS_AES_128_GCM_SHA256
             clientProvidedHostHeader: lambda.us-east-1.amazonaws.com
@@ -59,10 +59,10 @@ Tests:
         userIdentity:
             accessKeyId: AKIA_EXAMPLE_0004
             accountId: "111111111111"
-            arn: arn:aws:iam::111111111111:user/example.user
+            arn: arn:aws:iam::111111111111:user/EXAMPLE_USER_12
             principalId: AIDA_EXAMPLE_0004
             type: IAMUser
-            userName: example.user
+            userName: EXAMPLE_USER_12
     - Name: Access Key Action Success
       ExpectedResult: true
       Log:
@@ -80,13 +80,13 @@ Tests:
         p_any_aws_account_ids:
             - "111111111111"
         p_any_aws_arns:
-            - arn:aws:iam::111111111111:user/example.user
+            - arn:aws:iam::111111111111:user/EXAMPLE_USER_12
         p_any_ip_addresses:
-            - 198.51.100.172
+            - 999.999.999.33
         p_any_trace_ids:
             - AKIA_EXAMPLE_0004
         p_any_usernames:
-            - example.user
+            - EXAMPLE_USER_12
         p_event_time: "2024-06-02 20:16:22.000000000"
         p_log_type: AWS.CloudTrail
         p_parse_time: "2024-06-02 20:25:54.289981899"
@@ -100,7 +100,7 @@ Tests:
         readOnly: true
         recipientAccountId: "111111111111"
         requestID: 00000000-0000-0000-0000-000000000148
-        sourceIPAddress: 198.51.100.172
+        sourceIPAddress: 999.999.999.33
         tlsDetails:
             cipherSuite: TLS_AES_128_GCM_SHA256
             clientProvidedHostHeader: sts.us-east-1.amazonaws.com
@@ -109,10 +109,10 @@ Tests:
         userIdentity:
             accessKeyId: AKIA_EXAMPLE_0004
             accountId: "111111111111"
-            arn: arn:aws:iam::111111111111:user/example.user
+            arn: arn:aws:iam::111111111111:user/EXAMPLE_USER_12
             principalId: AIDA_EXAMPLE_0004
             type: IAMUser
-            userName: example.user
+            userName: EXAMPLE_USER_12
     - Name: Console Login
       ExpectedResult: false
       Log:
@@ -130,20 +130,20 @@ Tests:
         managementEvent: true
         p_any_actor_ids:
             - AROA_EXAMPLE_0019
-            - AROA_EXAMPLE_0019:jane.doe
+            - AROA_EXAMPLE_0019:EXAMPLE_USER_02
         p_any_aws_account_ids:
             - "111111111111"
         p_any_aws_arns:
             - arn:aws:iam::111111111111:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin_0000000000000000
-            - arn:aws:sts::111111111111:assumed-role/AWSReservedSSO_DevAdmin_0000000000000000/jane.doe
+            - arn:aws:sts::111111111111:assumed-role/AWSReservedSSO_DevAdmin_0000000000000000/EXAMPLE_USER_02
             - arn:aws:iam::111111111111:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin_0000000000000000
         p_any_ip_addresses:
-            - 198.51.100.172
+            - 999.999.999.33
         p_any_trace_ids:
             - ASIA_EXAMPLE_0015
         p_any_usernames:
             - AWSReservedSSO_DevAdmin_0000000000000000
-            - jane.doe
+            - EXAMPLE_USER_02
         p_event_time: "2024-06-02 19:41:40.000000000"
         p_log_type: AWS.CloudTrail
         p_parse_time: "2024-06-02 19:50:54.391407154"
@@ -158,17 +158,17 @@ Tests:
         recipientAccountId: "111111111111"
         responseElements:
             ConsoleLogin: Success
-        sourceIPAddress: 198.51.100.172
+        sourceIPAddress: 999.999.999.33
         tlsDetails:
             cipherSuite: TLS_AES_128_GCM_SHA256
             clientProvidedHostHeader: us-west-2.signin.aws.amazon.com
             tlsVersion: TLSv1.3
-        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/198.51.100.153 Safari/537.36
+        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/999.999.999.14 Safari/537.36
         userIdentity:
             accessKeyId: ASIA_EXAMPLE_0015
             accountId: "111111111111"
-            arn: arn:aws:sts::111111111111:assumed-role/AWSReservedSSO_DevAdmin_0000000000000000/jane.doe
-            principalId: AROA_EXAMPLE_0019:jane.doe
+            arn: arn:aws:sts::111111111111:assumed-role/AWSReservedSSO_DevAdmin_0000000000000000/EXAMPLE_USER_02
+            principalId: AROA_EXAMPLE_0019:EXAMPLE_USER_02
             sessionContext:
                 attributes:
                     creationDate: "2024-06-02T19:41:40Z"
@@ -198,19 +198,19 @@ Tests:
         managementEvent: true
         p_any_actor_ids:
             - AROA_EXAMPLE_0019
-            - AROA_EXAMPLE_0019:jane.doe
+            - AROA_EXAMPLE_0019:EXAMPLE_USER_02
         p_any_aws_account_ids:
             - "111111111111"
         p_any_aws_arns:
             - arn:aws:iam::111111111111:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin_0000000000000000
-            - arn:aws:sts::111111111111:assumed-role/AWSReservedSSO_DevAdmin_0000000000000000/jane.doe
+            - arn:aws:sts::111111111111:assumed-role/AWSReservedSSO_DevAdmin_0000000000000000/EXAMPLE_USER_02
             - arn:aws:iam::111111111111:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin_0000000000000000
         p_any_ip_addresses:
-            - 198.51.100.172
+            - 999.999.999.33
         p_any_trace_ids:
             - ASIA_EXAMPLE_0015
         p_any_usernames:
-            - jane.doe
+            - EXAMPLE_USER_02
         p_event_time: "2024-06-02 19:41:40.000000000"
         p_log_type: AWS.CloudTrail
         p_parse_time: "2024-06-02 19:50:54.391407154"
@@ -225,16 +225,16 @@ Tests:
         recipientAccountId: "111111111111"
         responseElements:
             ConsoleLogin: Success
-        sourceIPAddress: 198.51.100.172
+        sourceIPAddress: 999.999.999.33
         tlsDetails:
             cipherSuite: TLS_AES_128_GCM_SHA256
             clientProvidedHostHeader: us-west-2.signin.aws.amazon.com
             tlsVersion: TLSv1.3
-        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/198.51.100.153 Safari/537.36
+        userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/999.999.999.14 Safari/537.36
         userIdentity:
             accountId: "111111111111"
-            arn: arn:aws:sts::111111111111:assumed-role/AWSReservedSSO_DevAdmin_0000000000000000/jane.doe
-            principalId: AROA_EXAMPLE_0019:jane.doe
+            arn: arn:aws:sts::111111111111:assumed-role/AWSReservedSSO_DevAdmin_0000000000000000/EXAMPLE_USER_02
+            principalId: AROA_EXAMPLE_0019:EXAMPLE_USER_02
             sessionContext:
                 attributes:
                     creationDate: "2024-06-02T19:41:40Z"

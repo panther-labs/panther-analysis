@@ -7,20 +7,20 @@ EXCEPTION_PATTERNS = {
     # The glob pattern for the document title (lowercased)
     "1 document title p*": {  # allow any title "all"
         "allowed_to_send": {
-            "alice@example.net",
-            "samuel@example.net",
-            "nathan@example.net",
-            "barry@example.net",
+            "example.user10@example.net",
+            "example.user31@example.net",
+            "example.user32@example.net",
+            "example.user23@example.net",
             # Allow any user
             # "all"
             # Allow any user in a specific domain
             # "*@example.net"
         },
         "allowed_to_receive": {
-            "alice@example.org",
-            "samuel@example.org",
-            "nathan@example.org",
-            "barry@example.org",
+            "example.user10@example.org",
+            "example.user31@example.org",
+            "example.user32@example.org",
+            "example.user23@example.org",
             # Allow any user
             # "all"
             # Allow any user in a specific domain
@@ -31,7 +31,7 @@ EXCEPTION_PATTERNS = {
     },
     "2 document title p*": {
         "allowed_to_send": {
-            "alice@example.org",
+            "example.user10@example.org",
         },
         "allowed_to_receive": {
             "*@example.net",

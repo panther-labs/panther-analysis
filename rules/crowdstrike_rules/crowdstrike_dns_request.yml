@@ -23,7 +23,7 @@ Reports:
     - TA0010:T1567
 Description: >
   Detects DNS requests to domains on a custom denylist configured by security teams based on their threat landscape. This template rule requires configuration before enabling and monitors for C2 communication, phishing infrastructure, malware distribution, and data exfiltration. Organizations populate the denylist with threat intelligence indicators, known malicious infrastructure, and domains associated with targeted campaigns.
-Reference: https://docs.vendor.example.com/data-onboarding/supported-logs/crowdstrike#crowdstrike-dnsrequest
+Reference: https://example-sub-05.example-org-28.example.com/data-onboarding/supported-logs/crowdstrike#crowdstrike-dnsrequest
 Runbook: |
   1. Query CrowdStrike ProcessRollup events for ContextProcessId matching this DNS request to identify the process, user account, and parent process that initiated the query to DomainName
   2. Search CrowdStrike DNS logs for all queries to the same DomainName from the affected host (aid) in the past 30 days to determine when it was first queried and the frequency of attempts
@@ -42,7 +42,7 @@ Tests:
         "event_simpleName": "DnsRequest",
         "name": "DnsRequestMacV1",
         "aid": "00000000000000000000000000000001",
-        "aip": "198.51.100.11",
+        "aip": "999.999.999.15",
         "cid": "00000000000000000000000000000002",
         "id": "11111111-0000-1111-0000-111111111111",
         "event_platform": "Mac",
@@ -62,7 +62,7 @@ Tests:
         "p_row_id": "2ed00000000000000000000000000001",
         "p_source_id": "11111111-1111-1111-1111-111111111111",
         "p_source_label": "Crowdstrike",
-        "p_any_ip_addresses": ["198.51.100.11"],
+        "p_any_ip_addresses": ["999.999.999.15"],
         "p_any_domain_names": ["baddomain.example.com"],
         "p_any_trace_ids":
           [
@@ -77,7 +77,7 @@ Tests:
         "event_simpleName": "DnsRequest",
         "name": "DnsRequestMacV1",
         "aid": "00000000000000000000000000000001",
-        "aip": "198.51.100.11",
+        "aip": "999.999.999.15",
         "cid": "00000000000000000000000000000002",
         "id": "11111111-0000-1111-0000-111111111111",
         "event_platform": "Mac",
@@ -97,7 +97,7 @@ Tests:
         "p_row_id": "2ed00000000000000000000000000001",
         "p_source_id": "11111111-1111-1111-1111-111111111111",
         "p_source_label": "Crowdstrike",
-        "p_any_ip_addresses": ["198.51.100.11"],
+        "p_any_ip_addresses": ["999.999.999.15"],
         "p_any_domain_names": ["gooddomain.example.com"],
         "p_any_trace_ids":
           [
@@ -224,7 +224,7 @@ Tests:
         "event_simpleName": "Event_EppDetectionSummaryEvent",
         "name": "DnsRequestMacV1",
         "aid": "00000000000000000000000000000001",
-        "aip": "198.51.100.11",
+        "aip": "999.999.999.15",
         "cid": "00000000000000000000000000000002",
         "id": "11111111-0000-1111-0000-111111111111",
         "event":
@@ -232,7 +232,7 @@ Tests:
             "aid": "00000000000000000000000000000001",
             "event_simpleName": "Event_EppDetectionSummaryEvent",
             "name": "DnsRequestMacV1",
-            "aip": "198.51.100.11",
+            "aip": "999.999.999.15",
             "cid": "00000000000000000000000000000002",
             "id": "11111111-0000-1111-0000-111111111111",
             "event_platform": "Mac",
@@ -264,7 +264,7 @@ Tests:
         "p_row_id": "2ed00000000000000000000000000001",
         "p_source_id": "11111111-1111-1111-1111-111111111111",
         "p_source_label": "Crowdstrike",
-        "p_any_ip_addresses": ["198.51.100.11"],
+        "p_any_ip_addresses": ["999.999.999.15"],
         "p_any_domain_names": ["baddomain.example.com"],
         "p_any_trace_ids":
           [

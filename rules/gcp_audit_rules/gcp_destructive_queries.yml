@@ -11,15 +11,15 @@ Tests:
   - ExpectedResult: true
     Log:
       insertid: abcdefghijklmn
-      logname: projects/gcp-project1/logs/cloudaudit.googleapis.com%2Fdata_access
+      logname: projects/example-project-01/logs/cloudaudit.googleapis.com%2Fdata_access
       operation:
-        id: 1234567890123-gcp-project1:abcdefghijklmnopqrstuvwz
+        id: 1234567890123-example-project-01:abcdefghijklmnopqrstuvwz
         last: true
         producer: bigquery.googleapis.com
       p_any_emails:
         - user@example.com
       p_any_ip_addresses:
-        - 192.0.2.1
+        - 999.999.998.1
       p_event_time: "2023-03-28 18:37:06.079"
       p_log_type: GCP.AuditLog
       p_parse_time: "2023-03-28 18:38:14.478"
@@ -34,7 +34,7 @@ Tests:
         authorizationInfo:
           - granted: true
             permission: bigquery.jobs.create
-            resource: projects/gcp-project1
+            resource: projects/example-project-01
         metadata:
           "@type": type.googleapis.com/google.cloud.audit.BigQueryAuditMetadata
           jobChange:
@@ -43,13 +43,13 @@ Tests:
               jobConfig:
                 queryConfig:
                   createDisposition: CREATE_IF_NEEDED
-                  destinationTable: projects/gcp-project1/datasets/test1/tables/newtable
+                  destinationTable: projects/example-project-01/datasets/test1/tables/newtable
                   priority: QUERY_INTERACTIVE
                   query: DROP TABLE test1.newtable
                   statementType: DROP_TABLE
                   writeDisposition: WRITE_EMPTY
                 type: QUERY
-              jobName: projects/gcp-project1/jobs/abcdefghijklmnopqrstuvwz
+              jobName: projects/example-project-01/jobs/abcdefghijklmnopqrstuvwz
               jobStats:
                 createTime: "2023-03-28T18:37:05.842Z"
                 endTime: "2023-03-28T18:37:06.073Z"
@@ -59,16 +59,16 @@ Tests:
                 jobState: DONE
         methodName: google.cloud.bigquery.v2.JobService.InsertJob
         requestMetadata:
-          callerIP: 192.0.2.1
+          callerIP: 999.999.998.1
           callerSuppliedUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36,gzip(gfe),gzip(gfe)
-        resourceName: projects/gcp-project1/jobs/abcdefghijklmnopqrstuvwz
+        resourceName: projects/example-project-01/jobs/abcdefghijklmnopqrstuvwz
         serviceName: bigquery.googleapis.com
         status: {}
       receivetimestamp: "2023-03-28 18:37:06.745"
       resource:
         labels:
           location: US
-          project_id: gcp-project1
+          project_id: example-project-01
         type: bigquery_project
       severity: INFO
       timestamp: "2023-03-28 18:37:06.079"
@@ -76,15 +76,15 @@ Tests:
   - ExpectedResult: true
     Log:
       insertid: abcdefghijklmn
-      logname: projects/gcp-project1/logs/cloudaudit.googleapis.com%2Factivity
+      logname: projects/example-project-01/logs/cloudaudit.googleapis.com%2Factivity
       operation:
-        id: 1234567890123-gcp-project1:abcdefghijklmnopqrstuvwz
+        id: 1234567890123-example-project-01:abcdefghijklmnopqrstuvwz
         last: true
         producer: bigquery.googleapis.com
       p_any_emails:
         - user@example.com
       p_any_ip_addresses:
-        - 192.0.2.1
+        - 999.999.998.1
       p_event_time: "2023-03-28 18:37:06.079"
       p_log_type: GCP.AuditLog
       p_parse_time: "2023-03-28 18:38:14.478"
@@ -99,24 +99,24 @@ Tests:
         authorizationInfo:
           - granted: true
             permission: bigquery.tables.delete
-            resource: projects/gcp-project1/datasets/test1/tables/newtable
+            resource: projects/example-project-01/datasets/test1/tables/newtable
         metadata:
           "@type": type.googleapis.com/google.cloud.audit.BigQueryAuditMetadata
           methodName: google.cloud.bigquery.v2.JobService.InsertJob
           requestMetadata:
-            callerIP: 192.0.2.1
+            callerIP: 999.999.998.1
             callerSuppliedUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36,gzip(gfe),gzip(gfe)
-          resourceName: projects/gcp-project1/datasets/test1/tables/newtable
+          resourceName: projects/example-project-01/datasets/test1/tables/newtable
           serviceName: bigquery.googleapis.com
           status: {}
           tableDeletion:
-            jobName: projects/gcp-project1/jobs/bquxjob_0000000000000000_0000000000000
+            jobName: projects/example-project-01/jobs/bquxjob_0000000000000000_0000000000000
             reason: QUERY
         receivetimestamp: "2023-03-28 18:37:06.745"
         resource:
           labels:
             dataset_id: test1
-            project_id: gcp-project1
+            project_id: example-project-01
           type: bigquery_dataset
         severity: NOTICE
         timestamp: "2023-03-28 18:37:06.079"
@@ -124,15 +124,15 @@ Tests:
   - ExpectedResult: true
     Log:
       insertid: abcdefghijklmn
-      logname: projects/gcp-project1/logs/cloudaudit.googleapis.com%2Fdata_access
+      logname: projects/example-project-01/logs/cloudaudit.googleapis.com%2Fdata_access
       operation:
-        id: 1234567890123-gcp-project1:abcdefghijklmnopqrstuvwz
+        id: 1234567890123-example-project-01:abcdefghijklmnopqrstuvwz
         last: true
         producer: bigquery.googleapis.com
       p_any_emails:
         - user@example.com
       p_any_ip_addresses:
-        - 192.0.2.1
+        - 999.999.998.1
       p_event_time: "2023-03-28 18:37:06.079"
       p_log_type: GCP.AuditLog
       p_parse_time: "2023-03-28 18:38:14.478"
@@ -147,7 +147,7 @@ Tests:
         authorizationInfo:
           - granted: true
             permission: bigquery.jobs.create
-            resource: projects/gcp-project1
+            resource: projects/example-project-01
         metadata:
           "@type": type.googleapis.com/google.cloud.audit.BigQueryAuditMetadata
           jobChange:
@@ -156,13 +156,13 @@ Tests:
               jobConfig:
                 queryConfig:
                   createDisposition: CREATE_IF_NEEDED
-                  destinationTable: projects/gcp-project1/datasets/test1/tables/newtable
+                  destinationTable: projects/example-project-01/datasets/test1/tables/newtable
                   priority: QUERY_INTERACTIVE
                   query: DELETE from test1.newtable WHERE foo = bar
                   statementType: DELETE
                   writeDisposition: WRITE_EMPTY
                 type: QUERY
-              jobName: projects/gcp-project1/jobs/abcdefghijklmnopqrstuvwz
+              jobName: projects/example-project-01/jobs/abcdefghijklmnopqrstuvwz
               jobStats:
                 createTime: "2023-03-28T18:37:05.842Z"
                 endTime: "2023-03-28T18:37:06.073Z"
@@ -172,16 +172,16 @@ Tests:
                 jobState: DONE
         methodName: google.cloud.bigquery.v2.JobService.InsertJob
         requestMetadata:
-          callerIP: 192.0.2.1
+          callerIP: 999.999.998.1
           callerSuppliedUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36,gzip(gfe),gzip(gfe)
-        resourceName: projects/gcp-project1/jobs/abcdefghijklmnopqrstuvwz
+        resourceName: projects/example-project-01/jobs/abcdefghijklmnopqrstuvwz
         serviceName: bigquery.googleapis.com
         status: {}
       receivetimestamp: "2023-03-28 18:37:06.745"
       resource:
         labels:
           location: US
-          project_id: gcp-project1
+          project_id: example-project-01
         type: bigquery_project
       severity: INFO
       timestamp: "2023-03-28 18:37:06.079"

@@ -59,13 +59,13 @@ Tests:
             "_return": true,
             "requestId": "00000000-0000-0000-0000-000000000106",
           },
-        "sourceIPAddress": "198.51.100.165",
+        "sourceIPAddress": "999.999.999.26",
         "userAgent": "console.ec2.amazonaws.com",
         "userIdentity":
           {
             "type": "AssumedRole",
-            "principalid": "ARORJ4ULULLE0EEJAAKDO:alice",
-            "arn": "arn:aws:sts::112233445566:assumed-role/TestAdmin/alice",
+            "principalid": "AROA_EXAMPLE_0099:EXAMPLE_USER_06",
+            "arn": "arn:aws:sts::112233445566:assumed-role/TestAdmin/EXAMPLE_USER_06",
             "accountid": "112233445566",
             "accesskeyid": "ASIA_EXAMPLE_0013",
             "sessioncontext":
@@ -91,12 +91,12 @@ Tests:
         "p_row_id": "1a57ff7ade26aaf5a1a4d7d20775",
         "p_source_id": "00000000-0000-0000-0000-000000000172",
         "p_source_label": "CloudTrail Test",
-        "p_any_ip_addresses": ["198.51.100.165"],
+        "p_any_ip_addresses": ["999.999.999.26"],
         "p_any_aws_account_ids": ["112233445566"],
         "p_any_aws_arns":
           [
             "arn:aws:iam::112233445566:role/TestAdmin",
-            " arn:aws:sts::112233445566:assumed-role/TestAdmin/alice",
+            " arn:aws:sts::112233445566:assumed-role/TestAdmin/EXAMPLE_USER_06",
           ],
       }
   - Name: Terraform Security Group Creation
@@ -108,7 +108,7 @@ Tests:
         "userIdentity":
           {
             "type": "AssumedRole",
-            "principalId": "AROA_EXAMPLE_0014:ryan@example.com",
+            "principalId": "AROA_EXAMPLE_0014:example.user09@example.com",
             "arn": "arn:aws:sts::112233445566:assumed-role/Operator/ryan@example.com",
             "accountId": "112233445566",
             "accessKeyId": "ASIA_EXAMPLE_0021",
@@ -134,7 +134,7 @@ Tests:
         "eventSource": "ec2.amazonaws.com",
         "eventName": "CreateSecurityGroup",
         "awsRegion": "us-east-1",
-        "sourceIPAddress": "198.51.100.164",
+        "sourceIPAddress": "999.999.999.25",
         "userAgent": "aws-sdk-go/1.29.7 (go1.13.7; darwin; amd64) APN/1.0 HashiCorp/1.0 Terraform/0.12.24 (+https://www.terraform.io)",
         "requestParameters":
           {
@@ -162,7 +162,7 @@ Tests:
         "userIdentity":
           {
             "type": "AssumedRole",
-            "principalId": "AROA_EXAMPLE_0012:ryan@example.com",
+            "principalId": "AROA_EXAMPLE_0012:example.user09@example.com",
             "arn": "arn:aws:sts::112233445566:assumed-role/ContinousDeployment/ryan@example.com",
             "accountId": "112233445566",
             "accessKeyId": "ASIA_EXAMPLE_0021",
@@ -188,7 +188,7 @@ Tests:
         "eventSource": "ec2.amazonaws.com",
         "eventName": "AuthorizeSecurityGroupEgress",
         "awsRegion": "us-east-1",
-        "sourceIPAddress": "198.51.100.164",
+        "sourceIPAddress": "999.999.999.25",
         "userAgent": "aws-sdk-go/1.29.7 (go1.13.7; darwin; amd64) APN/1.0 HashiCorp/1.0 Terraform/0.12.24 (+https://www.terraform.io)",
         "requestParameters":
           {
@@ -235,7 +235,7 @@ Tests:
         "userIdentity":
           {
             "type": "AssumedRole",
-            "principalId": "AROA_EXAMPLE_0012:ryan@example.com",
+            "principalId": "AROA_EXAMPLE_0012:example.user09@example.com",
             "arn": "arn:aws:sts::112233445566:assumed-role/Operator/ryan@example.com",
             "accountId": "112233445566",
             "accessKeyId": "ASIA_EXAMPLE_0020",
@@ -261,7 +261,7 @@ Tests:
         "eventSource": "ec2.amazonaws.com",
         "eventName": "AuthorizeSecurityGroupIngress",
         "awsRegion": "us-east-1",
-        "sourceIPAddress": "198.51.100.164",
+        "sourceIPAddress": "999.999.999.25",
         "userAgent": "aws-sdk-go/1.24.1 (go1.14; darwin; amd64)",
         "requestParameters":
           {
@@ -333,13 +333,13 @@ Tests:
             "_return": true,
             "requestId": "00000000-0000-0000-0000-000000000106",
           },
-        "sourceIPAddress": "198.51.100.165",
+        "sourceIPAddress": "999.999.999.26",
         "userAgent": "console.ec2.amazonaws.com",
         "userIdentity":
           {
             "type": "AssumedRole",
-            "principalid": "ARORJ4ULULLE0EEJAAKDO:alice",
-            "arn": "arn:aws:sts::112233445566:assumed-role/TestAdmin/alice",
+            "principalid": "AROA_EXAMPLE_0099:EXAMPLE_USER_06",
+            "arn": "arn:aws:sts::112233445566:assumed-role/TestAdmin/EXAMPLE_USER_06",
             "accountid": "112233445566",
             "accesskeyid": "ASIA_EXAMPLE_0013",
             "sessioncontext":
@@ -365,11 +365,11 @@ Tests:
         "p_row_id": "1a57ff7ade26aaf5a1a4d7d20775",
         "p_source_id": "00000000-0000-0000-0000-000000000172",
         "p_source_label": "CloudTrail Test",
-        "p_any_ip_addresses": ["198.51.100.165"],
+        "p_any_ip_addresses": ["999.999.999.26"],
         "p_any_aws_account_ids": ["112233445566"],
         "p_any_aws_arns":
           [
             "arn:aws:iam::112233445566:role/TestAdmin",
-            " arn:aws:sts::112233445566:assumed-role/TestAdmin/alice",
+            " arn:aws:sts::112233445566:assumed-role/TestAdmin/EXAMPLE_USER_06",
           ],
       }

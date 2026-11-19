@@ -77,7 +77,7 @@ Tests:
         "category": "kube-audit",
         "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
         "properties": {
-          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"malicious-user@example.com\"},\"sourceIPs\":[\"192.0.2.1\"],\"objectRef\":{\"resource\":\"roles\",\"namespace\":\"production\",\"name\":\"pod-admin\",\"apiGroup\":\"rbac.authorization.k8s.io\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"kind\":\"Role\",\"metadata\":{\"name\":\"pod-admin\",\"namespace\":\"production\"},\"rules\":[{\"apiGroups\":[\"\"],\"resources\":[\"pods\"],\"verbs\":[\"*\"]}]}}"
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"malicious-user@example.com\"},\"sourceIPs\":[\"999.999.998.1\"],\"objectRef\":{\"resource\":\"roles\",\"namespace\":\"production\",\"name\":\"pod-admin\",\"apiGroup\":\"rbac.authorization.k8s.io\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"kind\":\"Role\",\"metadata\":{\"name\":\"pod-admin\",\"namespace\":\"production\"},\"rules\":[{\"apiGroups\":[\"\"],\"resources\":[\"pods\"],\"verbs\":[\"*\"]}]}}"
         },
         "p_source_label": "aks-cluster"
       }

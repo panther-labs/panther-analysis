@@ -28,11 +28,11 @@ Tests:
     ExpectedResult: true
     Log:
       {
-        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "logName": "projects/example-project-02/logs/cloudaudit.googleapis.com%2Factivity",
         "operation":
           {
             "first": true,
-            "id": "operations/build/some-project/EXAMPLE_BUILD_OPERATION_ID",
+            "id": "operations/build/example-project-02/EXAMPLE_BUILD_OPERATION_ID",
             "producer": "cloudbuild.googleapis.com",
           },
         "protoPayload":
@@ -40,16 +40,16 @@ Tests:
             "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "authenticationInfo":
               {
-                "principalEmail": "whodoneit@some-project.iam.gserviceaccount.com",
-                "principalSubject": "serviceAccount:whodoneit@some-project.iam.gserviceaccount.com",
-                "serviceAccountKeyName": "//iam.googleapis.com/projects/some-project/serviceAccounts/whodoneit@some-project.iam.gserviceaccount.com/keys/123er456788",
+                "principalEmail": "whodoneit@example-project-02.iam.gserviceaccount.com",
+                "principalSubject": "serviceAccount:whodoneit@example-project-02.iam.gserviceaccount.com",
+                "serviceAccountKeyName": "//iam.googleapis.com/projects/example-project-02/serviceAccounts/whodoneit@example-project-02.iam.gserviceaccount.com/keys/123er456788",
               },
             "authorizationInfo":
               [
                 {
                   "granted": true,
                   "permission": "cloudbuild.builds.create",
-                  "resource": "projects/some-project",
+                  "resource": "projects/example-project-02",
                   "resourceAttributes": {},
                 },
               ],
@@ -58,18 +58,18 @@ Tests:
               {
                 "@type": "type.googleapis.com/google.devtools.cloudbuild.v1.CreateBuildRequest",
                 "build": {},
-                "projectId": "some-project",
+                "projectId": "example-project-02",
               },
             "requestMetadata":
               {
-                "callerIP": "192.0.2.5",
+                "callerIP": "999.999.998.5",
                 "callerSuppliedUserAgent": "(gzip),gzip(gfe),gzip(gfe)",
                 "destinationAttributes": {},
                 "requestAttributes":
                   { "auth": {}, "time": "2024-01-25T11:55:09.740095Z" },
               },
             "resourceLocation": { "currentLocations": ["global"] },
-            "resourceName": "projects/some-project/builds",
+            "resourceName": "projects/example-project-02/builds",
             "serviceName": "cloudbuild.googleapis.com",
           },
         "receiveTimestamp": "2024-01-25 11:55:09.854909113",
@@ -79,7 +79,7 @@ Tests:
               {
                 "build_id": "00000000-0000-0000-0000-000000000023",
                 "build_trigger_id": "",
-                "project_id": "some-project",
+                "project_id": "example-project-02",
               },
             "type": "build",
           },
@@ -90,18 +90,18 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "logName": "projects/example-project-02/logs/cloudaudit.googleapis.com%2Factivity",
         "protoPayload":
           {
             "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "authenticationInfo":
-              { "principalEmail": "john.doe@example.com" },
+              { "principalEmail": "example.user08@example.com" },
             "authorizationInfo":
               [
                 {
                   "granted": true,
                   "permission": "clientauthconfig.brands.create",
-                  "resource": "brands/210987654321",
+                  "resource": "brands/888888888888",
                   "resourceAttributes": {},
                 },
               ],
@@ -111,25 +111,25 @@ Tests:
                 "brand":
                   {
                     "displayName": "NewBrand",
-                    "projectNumbers": ["333344445555"],
-                    "supportEmail": "john.doe@example.com",
+                    "projectNumbers": ["333333333333"],
+                    "supportEmail": "example.user08@example.com",
                   },
                 "visibility": "INTERNAL",
               },
             "requestMetadata":
               {
-                "callerIP": "192.0.2.5",
+                "callerIP": "999.999.998.5",
                 "destinationAttributes": {},
                 "requestAttributes":
                   { "auth": {}, "time": "2024-01-24T14:30:05.891336Z" },
               },
-            "resourceName": "brands/777788889999",
+            "resourceName": "brands/777777777777",
             "response":
               {
-                "brandId": "210987654321",
+                "brandId": "888888888888",
                 "creationTime": "2024-01-24T14:30:05.400Z",
                 "displayName": "NewBrand test",
-                "projectNumbers": ["210987654321"],
+                "projectNumbers": ["888888888888"],
                 "supportEmail": "some.user@example.org",
                 "updateTime": "2024-01-24T14:30:05.866002Z",
               },
@@ -140,7 +140,7 @@ Tests:
         "resource":
           {
             "labels":
-              { "brand_id": "210987654321", "project_id": "some-project" },
+              { "brand_id": "888888888888", "project_id": "example-project-02" },
             "type": "client_auth_config_brand",
           },
         "severity": "NOTICE",

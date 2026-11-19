@@ -45,12 +45,12 @@ Tests:
       - ID: Okta
         Matches:
           actor.alternateId:
-            frodo.baggins@example.com:
+            example.user12@example.com:
               - 3
       - ID: Push
         Matches:
           new.email:
-            frodo.baggins@example.com:
+            example.user12@example.com:
               - 0
   - Name: Okta Login, Not Followed By Push Authorized Login
     ExpectedResult: true
@@ -58,7 +58,7 @@ Tests:
       - ID: Okta
         Matches:
           actor.alternateId:
-            frodo.baggins@example.com:
+            example.user12@example.com:
               - 0
   - Name: Okta Login, Followed By Push Authorized Login By Other User
     ExpectedResult: true
@@ -66,10 +66,10 @@ Tests:
       - ID: Okta
         Matches:
           actor.alternateId:
-            frodo.baggins@example.com:
+            example.user12@example.com:
               - 0
       - ID: Push
         Matches:
           new.email:
-            samwise.gamgee@example.com:
+            example.user13@example.com:
               - 3

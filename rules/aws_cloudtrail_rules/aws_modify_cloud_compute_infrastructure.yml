@@ -140,7 +140,7 @@ Tests:
       { additionalEventData:
           { insufficientLakeFormationPermissions:
               [ "panther_rule_errors:gsuite_activityevent" ],
-              lakeFormationPrincipal: "arn:aws:iam::111222333444:role/example-stack-LogAnal-CompactorRole-0123456789AB" },
+              lakeFormationPrincipal: "arn:aws:iam::111111111111:role/example-stack-LogAnal-CompactorRole-EXAMPLE0001" },
           awsRegion: "us-east-1",
           errorCode: "EntityNotFoundException",
           errorMessage: "Cannot find partition.",
@@ -154,10 +154,10 @@ Tests:
           p_any_aws_account_ids:
             [ "111222333444" ],
           p_any_aws_arns:
-            [ "arn:aws:iam::111222333444:role/example-stack-LogAnal-CompactorRole-0123456789AB",
-              "arn:aws:sts::111222333444:assumed-role/example-stack-LogAnal-CompactorRole-0123456789AB/example-datacatalog-compactor" ],
+            [ "arn:aws:iam::111111111111:role/example-stack-LogAnal-CompactorRole-EXAMPLE0001",
+              "arn:aws:sts::111111111111:assumed-role/example-stack-LogAnal-CompactorRole-EXAMPLE0001/example-datacatalog-compactor" ],
           p_any_ip_addresses:
-            [ "198.51.100.161" ],
+            [ "999.999.999.22" ],
           p_event_time: "2021-10-14 14:21:22",
           p_log_type: "AWS.CloudTrail",
           p_parse_time: "2021-10-14 14:27:06.54",
@@ -176,12 +176,12 @@ Tests:
                     "19",
                     "1634151600" ],
                 tableName: "gsuite_activityevent" },
-          sourceIPAddress: "198.51.100.161",
+          sourceIPAddress: "999.999.999.22",
           userAgent: "aws-sdk-go/1.40.21 (go1.17; linux; amd64) exec-env/AWS_Lambda_go1.x",
           userIdentity:
             { accessKeyId: "ASIA_EXAMPLE_0008",
                 accountId: "111222333444",
-                arn: "arn:aws:sts::111222333444:assumed-role/example-stack-LogAnal-CompactorRole-0123456789AB/example-datacatalog-compactor",
+                arn: "arn:aws:sts::111111111111:assumed-role/example-stack-LogAnal-CompactorRole-EXAMPLE0001/example-datacatalog-compactor",
                 principalId: "AROA_EXAMPLE_0008:example-datacatalog-compactor",
                 sessionContext:
                   { attributes:
@@ -189,10 +189,10 @@ Tests:
                           mfaAuthenticated: "false" },
                       sessionIssuer:
                         { accountId: "111222333444",
-                            arn: "arn:aws:iam::111222333444:role/example-stack-LogAnal-CompactorRole-0123456789AB",
+                            arn: "arn:aws:iam::111111111111:role/example-stack-LogAnal-CompactorRole-EXAMPLE0001",
                             principalId: "AROA_EXAMPLE_0008",
                             type: "Role",
-                            userName: "example-stack-LogAnal-CompactorRole-0123456789AB" },
+                            userName: "example-stack-LogAnal-CompactorRole-EXAMPLE0001" },
                       webIdFederationData: { } },
                 type: "AssumedRole" } }
     Name: Get Partition
@@ -499,7 +499,7 @@ Tests:
         "userIdentity":
           {
             "accountId": "123412341234",
-            "arn": "arn:aws:sts::123412341234:assumed-role/funky-role-doing-dryrun/example-managed-0000000000",
+            "arn": "arn:aws:sts::222222222222:assumed-role/funky-role-doing-dryrun/example-managed-0000000000",
             "invokedBy": "AWS Internal",
             "principalId": "AROA_EXAMPLE_0027:example-managed-0000000000",
             "sessionContext":

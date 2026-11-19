@@ -10,24 +10,24 @@ Tests:
     Log:
       httprequest:
         latency: 0.048180s
-        remoteIp: 192.0.2.1
+        remoteIp: 999.999.998.1
         requestMethod: GET
         requestSize: 77
-        requestUrl: http://192.0.2.6/
+        requestUrl: http://999.999.998.6/
         responseSize: 211
         status: 403
         userAgent: curl/7.85.0
       insertid: u94qwjf25yzns
       jsonpayload:
         at_sign_type: type.googleapis.com/google.cloud.loadbalancing.type.LoadBalancerLogEntry
-        remoteIp: 192.0.2.1
+        remoteIp: 999.999.998.1
         statusDetails: handled_by_identity_aware_proxy
-      logname: projects/gcp-project1/logs/requests
+      logname: projects/example-project-01/logs/requests
       p_any_ip_addresses:
-        - 192.0.2.6
-        - 192.0.2.1
+        - 999.999.998.6
+        - 999.999.998.1
       p_any_trace_ids:
-        - projects/gcp-project1/traces/00000000000000000000000000000037
+        - projects/example-project-01/traces/00000000000000000000000000000037
       p_event_time: "2023-03-09 23:19:25.712"
       p_log_type: GCP.HTTPLoadBalancer
       p_parse_time: "2023-03-09 23:21:14.47"
@@ -40,7 +40,7 @@ Tests:
         labels:
           backend_service_name: web-backend-service
           forwarding_rule_name: http-content-rule
-          project_id: gcp-project1
+          project_id: example-project-01
           target_proxy_name: http-lb-proxy-2
           url_map_name: web-map-http-2
           zone: global
@@ -48,30 +48,30 @@ Tests:
       severity: INFO
       spanid: 0000000000000039
       timestamp: "2023-03-09 23:19:25.712"
-      trace: projects/gcp-project1/traces/00000000000000000000000000000037
+      trace: projects/example-project-01/traces/00000000000000000000000000000037
     Name: Blocked By IAP
   - ExpectedResult: false
     Log:
       httprequest:
         latency: 0.048180s
-        remoteIp: 192.0.2.1
+        remoteIp: 999.999.998.1
         requestMethod: GET
         requestSize: 77
-        requestUrl: http://192.0.2.6/
+        requestUrl: http://999.999.998.6/
         responseSize: 211
         status: 302
         userAgent: curl/7.85.0
       insertid: u94qwjf25yzns
       jsonpayload:
         at_sign_type: type.googleapis.com/google.cloud.loadbalancing.type.LoadBalancerLogEntry
-        remoteIp: 192.0.2.1
+        remoteIp: 999.999.998.1
         statusDetails: handled_by_identity_aware_proxy
-      logname: projects/gcp-project1/logs/requests
+      logname: projects/example-project-01/logs/requests
       p_any_ip_addresses:
-        - 192.0.2.6
-        - 192.0.2.1
+        - 999.999.998.6
+        - 999.999.998.1
       p_any_trace_ids:
-        - projects/gcp-project1/traces/00000000000000000000000000000037
+        - projects/example-project-01/traces/00000000000000000000000000000037
       p_event_time: "2023-03-09 23:19:25.712"
       p_log_type: GCP.HTTPLoadBalancer
       p_parse_time: "2023-03-09 23:21:14.47"
@@ -84,7 +84,7 @@ Tests:
         labels:
           backend_service_name: web-backend-service
           forwarding_rule_name: http-content-rule
-          project_id: gcp-project1
+          project_id: example-project-01
           target_proxy_name: http-lb-proxy-2
           url_map_name: web-map-http-2
           zone: global
@@ -92,7 +92,7 @@ Tests:
       severity: INFO
       spanid: 0000000000000039
       timestamp: "2023-03-09 23:19:25.712"
-      trace: projects/gcp-project1/traces/00000000000000000000000000000037
+      trace: projects/example-project-01/traces/00000000000000000000000000000037
     Name: Redirected by IAP
 DedupPeriodMinutes: 60
 LogTypes:

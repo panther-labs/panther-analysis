@@ -42,7 +42,7 @@ Tests:
         "auditID": "abc-123",
         "verb": "list",
         "user": {"username": "admin@example.com"},
-        "sourceIPs": ["192.0.2.1"],
+        "sourceIPs": ["999.999.998.1"],
         "userAgent": "kubectl/v1.28.0",
         "objectRef": {
           "resource": "pods",
@@ -54,7 +54,7 @@ Tests:
         "p_log_type": "Amazon.EKS.Audit",
         "p_source_label": "eks-cluster",
         "p_enrichment": {
-          "tor_exit_nodes": ["192.0.2.1"]
+          "tor_exit_nodes": ["999.999.998.1"]
         }
       }
   - Name: AKS Activity from Tor Exit Node
@@ -65,11 +65,11 @@ Tests:
         "category": "kube-audit",
         "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
         "properties": {
-          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"get\",\"user\":{\"username\":\"admin@example.com\"},\"sourceIPs\":[\"192.0.2.3\"],\"objectRef\":{\"resource\":\"pods\",\"namespace\":\"default\"},\"responseStatus\":{\"code\":200}}"
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"get\",\"user\":{\"username\":\"admin@example.com\"},\"sourceIPs\":[\"999.999.998.3\"],\"objectRef\":{\"resource\":\"pods\",\"namespace\":\"default\"},\"responseStatus\":{\"code\":200}}"
         },
         "p_source_label": "aks-cluster",
         "p_enrichment": {
-          "tor_exit_nodes": ["192.0.2.3"]
+          "tor_exit_nodes": ["999.999.998.3"]
         }
       }
   - Name: GCP GKE Activity from Tor Exit Node
@@ -137,6 +137,6 @@ Tests:
         "category": "Administrative",
         "operationName": "Microsoft.Compute/virtualMachines/write",
         "p_enrichment": {
-          "tor_exit_nodes": ["192.0.2.1"]
+          "tor_exit_nodes": ["999.999.998.1"]
         }
       }

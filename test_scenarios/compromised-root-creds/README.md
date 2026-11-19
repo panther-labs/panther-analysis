@@ -17,18 +17,18 @@ python send_data.py --account-id 050603629XXX --region us-east-1 --compromise-da
 
 ## Background Info
 
-Legit IP: `198.51.100.108`
-Attacker IP: `198.51.100.107`
+Legit IP: `999.999.999.26`
+Attacker IP: `999.999.999.25`
 Compromised Account: `123456789012`
-Legit Employee: Alice Doe
-Attacker Alias: alic doe (no e)
+Legit Employee: Example User 04
+Attacker Alias: EXAMPLE_ATTACKER_01 (lookalike of the legitimate user)
 Malicious access key: AKIA_EXAMPLE_0003
 
 ## Usernames
 
-alic (attacker)
-alice (legit)
-alice.doe@example.com
+EXAMPLE_ATTACKER_01 (attacker)
+EXAMPLE_USER_05 (legit)
+example.user04@example.com
 
 ## Data
 

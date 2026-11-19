@@ -14,16 +14,16 @@ Tests:
     ExpectedResult: false
     Log:
       actor:
-        alternateId: john.doe@example.com
-        displayName: John Doe
-        id: 00u00000000000000001
+        alternateId: example.user08@example.com
+        displayName: Example User 04
+        id: EXAMPLE_OKTA_USER_04
         type: User
       authenticationContext:
         authenticationStep: 0
         externalSessionId: EXAMPLE000000000000000061
       client:
         device: Unknown
-        ipAddress: 203.0.113.7
+        ipAddress: 999.999.999.7
         userAgent:
           browser: UNKNOWN
           os: Unknown
@@ -41,7 +41,7 @@ Tests:
           timeSpan: "1"
           timeUnit: MINUTES
           url: /api/v1/logs?since=2023-09-21T17%3A04%3A22Z&limit=1000&after=1714675441520_1
-          userId: 00u00000000000000001
+          userId: EXAMPLE_OKTA_USER_04
           warningPercent: "60"
       displayMessage: Rate limit warning
       eventType: system.org.rate_limit.warning
@@ -51,7 +51,7 @@ Tests:
       published: "2024-05-02 18:46:21.121000000"
       request:
         ipChain:
-          - ip: 203.0.113.7
+          - ip: 999.999.999.7
             version: V4
       securityContext: {}
       severity: WARN
@@ -62,7 +62,7 @@ Tests:
           type: Bucket Uuid
       transaction:
         detail:
-          requestApiTokenId: 00T00000000000000003
+          requestApiTokenId: EXAMPLE_OKTA_TOKEN_02
         id: 00000000000000000000000000000037
         type: WEB
       uuid: 00000000-0000-0000-0000-000000000026
@@ -71,9 +71,9 @@ Tests:
     ExpectedResult: true
     Log:
       actor:
-        alternateId: jane.doe@example.com
-        displayName: Jane Doe
-        id: 00u00000000000000006
+        alternateId: example.user11@example.com
+        displayName: Example User 05
+        id: EXAMPLE_OKTA_USER_05
         type: User
       authenticationContext:
         authenticationStep: 0
@@ -81,14 +81,14 @@ Tests:
       client:
         device: Computer
         geographicalContext:
-          city: Anytown
+          city: EXAMPLE_CITY_03
           country: United States
           geolocation:
             lat: 0.0
             lon: 0.0
-          postalCode: "12345"
+          postalCode: "00000"
           state: Georgia
-        ipAddress: 203.0.113.8
+        ipAddress: 999.999.999.8
         userAgent:
           browser: CHROME
           os: Mac OS 14.4.1 (Sonoma)
@@ -113,21 +113,21 @@ Tests:
       request:
         ipChain:
           - geographicalContext:
-              city: Anytown
+              city: EXAMPLE_CITY_03
               country: United States
               geolocation:
                 lat: 0.0
                 lon: 0.0
-              postalCode: "12345"
+              postalCode: "00000"
               state: Georgia
-            ip: 203.0.113.8
+            ip: 999.999.999.8
             version: V4
       securityContext:
-        asNumber: 64497
-        asOrg: Example ISP
+        asNumber: 0
+        asOrg: EXAMPLE_ISP
         domain: alpha.example.org
         isProxy: false
-        isp: Example ISP
+        isp: EXAMPLE_ISP
       severity: INFO
       target:
         - alternateId: unknown
@@ -136,7 +136,7 @@ Tests:
           type: AuthenticatorEnrollment
         - alternateId: Okta Dashboard
           displayName: Okta Dashboard
-          id: 0oa00000000000000005
+          id: EXAMPLE_OKTA_APP_01
           type: AppInstance
       transaction:
         detail: {}
@@ -148,9 +148,9 @@ Tests:
     ExpectedResult: false
     Log:
       actor:
-        alternateId: jane.doe@example.com
-        displayName: Jane Doe
-        id: 00u00000000000000006
+        alternateId: example.user11@example.com
+        displayName: Example User 05
+        id: EXAMPLE_OKTA_USER_05
         type: User
       authenticationContext:
         authenticationStep: 0
@@ -158,14 +158,14 @@ Tests:
       client:
         device: Computer
         geographicalContext:
-          city: Anytown
+          city: EXAMPLE_CITY_03
           country: United States
           geolocation:
             lat: 0.0
             lon: 0.0
-          postalCode: "12345"
+          postalCode: "00000"
           state: Georgia
-        ipAddress: 203.0.113.8
+        ipAddress: 999.999.999.8
         userAgent:
           browser: CHROME
           os: Mac OS 14.4.1 (Sonoma)
@@ -190,21 +190,21 @@ Tests:
       request:
         ipChain:
           - geographicalContext:
-              city: Anytown
+              city: EXAMPLE_CITY_03
               country: United States
               geolocation:
                 lat: 0.0
                 lon: 0.0
-              postalCode: "12345"
+              postalCode: "00000"
               state: Georgia
-            ip: 203.0.113.8
+            ip: 999.999.999.8
             version: V4
       securityContext:
-        asNumber: 64497
-        asOrg: Example ISP
+        asNumber: 0
+        asOrg: EXAMPLE_ISP
         domain: alpha.example.org
         isProxy: false
-        isp: Example ISP
+        isp: EXAMPLE_ISP
       severity: INFO
       target:
         - alternateId: unknown
@@ -213,7 +213,7 @@ Tests:
           type: AuthenticatorEnrollment
         - alternateId: Okta Dashboard
           displayName: Okta Dashboard
-          id: 0oa00000000000000005
+          id: EXAMPLE_OKTA_APP_01
           type: AppInstance
       transaction:
         detail: {}

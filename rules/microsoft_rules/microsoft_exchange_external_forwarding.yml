@@ -53,25 +53,25 @@ Tests:
   - Name: External Organization Forwarding
     ExpectedResult: true
     Log:
-      clientip: 198.51.100.1
+      clientip: 999.999.999.1
       creationtime: "2022-12-12 22:19:00"
       externalaccess: false
       id: 111-22-33
       objectid: homer.simpson
       operation: Set-Mailbox
       organizationid: 11-aa-bb
-      organizationname: contoso.onmicrosoft.com
-      originatingserver: QWERTY (198.51.100.1)
+      organizationname: example-tenant-03.onmicrosoft.com
+      originatingserver: QWERTY (999.999.999.1)
       parameters:
         - Name: Identity
-          Value: homer.simpson@contoso.onmicrosoft.com
+          Value: example.user43@example-tenant-03.onmicrosoft.com
         - Name: ForwardingSmtpAddress
-          Value: smtp:peter.griffin@familyguy.example.com
+          Value: smtp:example.user69@example-org-09.example.com
         - Name: DeliverToMailboxAndForward
           Value: "False"
       recordtype: 1
       resultstatus: "True"
-      userid: homer.simpson@contoso.onmicrosoft.com
+      userid: example.user43@example-tenant-03.onmicrosoft.com
       userkey: "12345"
       usertype: 2
       workload: Exchange
@@ -79,25 +79,25 @@ Tests:
   - Name: Internal Organization Forwarding
     ExpectedResult: false
     Log:
-      clientip: 198.51.100.1
+      clientip: 999.999.999.1
       creationtime: "2022-12-12 22:19:00"
       externalaccess: false
       id: 111-22-33
       objectid: homer.simpson
       operation: Set-Mailbox
       organizationid: 11-aa-bb
-      organizationname: contoso.onmicrosoft.com
-      originatingserver: QWERTY (198.51.100.1)
+      organizationname: example-tenant-03.onmicrosoft.com
+      originatingserver: QWERTY (999.999.999.1)
       parameters:
         - Name: Identity
-          Value: marge.simpson@contoso.onmicrosoft.com
+          Value: example.user57@example-tenant-03.onmicrosoft.com
         - Name: ForwardingSmtpAddress
-          Value: smtp:marge.simpson@simpsons.example.com
+          Value: smtp:example.user57@example-org-23.example.com
         - Name: DeliverToMailboxAndForward
           Value: "True"
       recordtype: 1
       resultstatus: "True"
-      userid: homer.simpson@simpsons.example.com
+      userid: example.user43@example-org-23.example.com
       userkey: "12345"
       usertype: 2
       workload: Exchange
@@ -105,20 +105,20 @@ Tests:
   - Name: Suspicious Forwarding Pattern
     ExpectedResult: true
     Log:
-      clientip: 198.51.100.1
+      clientip: 999.999.999.1
       creationtime: "2022-12-12 22:19:00"
       externalaccess: false
       id: 111-22-33
       objectid: homer.simpson
       operation: New-InboxRule
       organizationid: 11-aa-bb
-      organizationname: contoso.onmicrosoft.com
-      originatingserver: QWERTY (198.51.100.1)
+      organizationname: example-tenant-03.onmicrosoft.com
+      originatingserver: QWERTY (999.999.999.1)
       parameters:
         - Name: Identity
           Value: "Delete and Forward Rule"
         - Name: Mailbox
-          Value: homer.simpson@contoso.onmicrosoft.com
+          Value: example.user43@example-tenant-03.onmicrosoft.com
         - Name: ForwardTo
           Value: external@example.com
         - Name: DeleteMessage
@@ -127,7 +127,7 @@ Tests:
           Value: "True"
       recordtype: 1
       resultstatus: "True"
-      userid: homer.simpson@contoso.onmicrosoft.com
+      userid: example.user43@example-tenant-03.onmicrosoft.com
       userkey: "12345"
       usertype: 2
       workload: Exchange
@@ -135,27 +135,27 @@ Tests:
   - Name: Multiple Forwarding Addresses
     ExpectedResult: true
     Log:
-      clientip: 198.51.100.1
+      clientip: 999.999.999.1
       creationtime: "2022-12-12 22:19:00"
       externalaccess: false
       id: 111-22-33
       objectid: homer.simpson
       operation: New-InboxRule
       organizationid: 11-aa-bb
-      organizationname: contoso.onmicrosoft.com
-      originatingserver: QWERTY (198.51.100.1)
+      organizationname: example-tenant-03.onmicrosoft.com
+      originatingserver: QWERTY (999.999.999.1)
       parameters:
         - Name: Identity
           Value: "Multiple Forward Rule"
         - Name: Mailbox
-          Value: homer.simpson@contoso.onmicrosoft.com
+          Value: example.user43@example-tenant-03.onmicrosoft.com
         - Name: ForwardTo
           Value: "external1@example.com;external2@example.com;external3@example.com"
         - Name: DeliverToMailboxAndForward
           Value: "False"
       recordtype: 1
       resultstatus: "True"
-      userid: homer.simpson@contoso.onmicrosoft.com
+      userid: example.user43@example-tenant-03.onmicrosoft.com
       userkey: "12345"
       usertype: 2
       workload: Exchange
@@ -163,25 +163,25 @@ Tests:
   - Name: Invalid Identity Format
     ExpectedResult: true
     Log:
-      clientip: 198.51.100.1
+      clientip: 999.999.999.1
       creationtime: "2022-12-12 22:19:00"
       externalaccess: false
       id: 111-22-33
       objectid: homer.simpson
       operation: Set-Mailbox
       organizationid: 11-aa-bb
-      organizationname: contoso.onmicrosoft.com
-      originatingserver: QWERTY (198.51.100.1)
+      organizationname: example-tenant-03.onmicrosoft.com
+      originatingserver: QWERTY (999.999.999.1)
       parameters:
         - Name: Identity
           Value: Invalid/Path/Format
         - Name: ForwardingSmtpAddress
-          Value: smtp:hello@familyguy.example.com
+          Value: smtp:example.user41@example-org-09.example.com
         - Name: DeliverToMailboxAndForward
           Value: "False"
       recordtype: 1
       resultstatus: "True"
-      userid: homer.simpson@contoso.onmicrosoft.com
+      userid: example.user43@example-tenant-03.onmicrosoft.com
       userkey: "12345"
       usertype: 2
       workload: Exchange
@@ -189,7 +189,7 @@ Tests:
   - Name: Missing Organization Name
     ExpectedResult: true
     Log:
-      clientip: 198.51.100.1
+      clientip: 999.999.999.1
       creationtime: "2022-12-12 22:19:00"
       externalaccess: false
       id: 111-22-33
@@ -197,17 +197,17 @@ Tests:
       operation: Set-Mailbox
       organizationid: 11-aa-bb
       organizationname: ""
-      originatingserver: QWERTY (198.51.100.1)
+      originatingserver: QWERTY (999.999.999.1)
       parameters:
         - Name: Identity
-          Value: ABC1.prod.outlook.com/Microsoft Exchange Hosted Organizations/contoso.onmicrosoft.com/homer.simpson
+          Value: ABC1.prod.outlook.com/Microsoft Exchange Hosted Organizations/example-tenant-03.onmicrosoft.com/EXAMPLE_USER_43
         - Name: ForwardingSmtpAddress
-          Value: smtp:hello@familyguy.example.com
+          Value: smtp:example.user41@example-org-09.example.com
         - Name: DeliverToMailboxAndForward
           Value: "False"
       recordtype: 1
       resultstatus: "True"
-      userid: homer.simpson@contoso.onmicrosoft.com
+      userid: example.user43@example-tenant-03.onmicrosoft.com
       userkey: "12345"
       usertype: 2
       workload: Exchange
@@ -215,25 +215,25 @@ Tests:
   - Name: Subdomain Forwarding (Internal)
     ExpectedResult: false
     Log:
-      clientip: 198.51.100.1
+      clientip: 999.999.999.1
       creationtime: "2022-12-12 22:19:00"
       externalaccess: false
       id: 111-22-33
       objectid: homer.simpson
       operation: Set-Mailbox
       organizationid: 11-aa-bb
-      organizationname: contoso.onmicrosoft.com
-      originatingserver: QWERTY (198.51.100.1)
+      organizationname: example-tenant-03.onmicrosoft.com
+      originatingserver: QWERTY (999.999.999.1)
       parameters:
         - Name: Identity
-          Value: homer.simpson@contoso.onmicrosoft.com
+          Value: example.user43@example-tenant-03.onmicrosoft.com
         - Name: ForwardingSmtpAddress
-          Value: smtp:bart.simpson@springfield.simpsons.example.com
+          Value: smtp:example.user13@example-sub-07.example-org-23.example.com
         - Name: DeliverToMailboxAndForward
           Value: "True"
       recordtype: 1
       resultstatus: "True"
-      userid: homer.simpson@simpsons.example.com
+      userid: example.user43@example-org-23.example.com
       userkey: "12345"
       usertype: 2
       workload: Exchange
@@ -241,25 +241,25 @@ Tests:
   - Name: Similar Domain Forwarding (External)
     ExpectedResult: true
     Log:
-      clientip: 198.51.100.1
+      clientip: 999.999.999.1
       creationtime: "2022-12-12 22:19:00"
       externalaccess: false
       id: 111-22-33
       objectid: homer.simpson
       operation: Set-Mailbox
       organizationid: 11-aa-bb
-      organizationname: contoso.onmicrosoft.com
-      originatingserver: QWERTY (198.51.100.1)
+      organizationname: example-tenant-03.onmicrosoft.com
+      originatingserver: QWERTY (999.999.999.1)
       parameters:
         - Name: Identity
-          Value: homer.simpson@contoso.onmicrosoft.com
+          Value: example.user43@example-tenant-03.onmicrosoft.com
         - Name: ForwardingSmtpAddress
-          Value: smtp:evil@simpsons2.example.com
+          Value: smtp:example.user30@example-org-24.example.com
         - Name: DeliverToMailboxAndForward
           Value: "True"
       recordtype: 1
       resultstatus: "True"
-      userid: homer.simpson@simpsons.example.com
+      userid: example.user43@example-org-23.example.com
       userkey: "12345"
       usertype: 2
       workload: Exchange
@@ -267,40 +267,40 @@ Tests:
   - Name: Non-Com TLD Organization
     ExpectedResult: false
     Log:
-      clientip: 198.51.100.1
+      clientip: 999.999.999.1
       creationtime: "2022-12-12 22:19:00"
       externalaccess: false
       id: 111-22-33
       objectid: homer.simpson
       operation: Set-Mailbox
       organizationid: 11-aa-bb
-      organizationname: contoso.onmicrosoft.com
-      originatingserver: QWERTY (198.51.100.1)
+      organizationname: example-tenant-03.onmicrosoft.com
+      originatingserver: QWERTY (999.999.999.1)
       parameters:
         - Name: Identity
-          Value: john@justice.example.com
+          Value: example.user50@example-org-12.example.com
         - Name: ForwardingSmtpAddress
-          Value: smtp:bruce@justice.example.com
+          Value: smtp:example.user16@example-org-12.example.com
         - Name: DeliverToMailboxAndForward
           Value: "True"
       recordtype: 1
       resultstatus: "True"
-      userid: john@justice.example.com
+      userid: example.user50@example-org-12.example.com
       userkey: "12345"
       usertype: 2
       workload: Exchange
   - Name: Internal Forwarding with Suspicious Pattern
     ExpectedResult: false
     Log:
-      clientip: "198.51.100.1:10736"
+      clientip: "999.999.999.1:10736"
       creationtime: "2025-07-07 09:11:11.000000000"
       externalaccess: false
       id: 111-22-33
-      objectid: "ABC001.prod.outlook.com/Microsoft Exchange Hosted Organizations/contoso.onmicrosoft.com/444-55-66\\Move GitHub emails"
+      objectid: "ABC001.prod.outlook.com/Microsoft Exchange Hosted Organizations/example-tenant-03.onmicrosoft.com/444-55-66\\Move GitHub emails"
       operation: New-InboxRule
       organizationid: 11-aa-bb
-      organizationname: contoso.onmicrosoft.com
-      originatingserver: QWERTY (198.51.100.1)
+      organizationname: example-tenant-03.onmicrosoft.com
+      originatingserver: QWERTY (999.999.999.1)
       parameters:
         - Name: AlwaysDeleteOutlookRulesBlob
           Value: "False"
@@ -316,7 +316,7 @@ Tests:
           Value: "True"
       recordtype: 1
       resultstatus: "True"
-      userid: homer.simpson@contoso.onmicrosoft
-      userkey: homer.simpson@contoso.onmicrosoft
+      userid: example.user43@example-tenant-02.onmicrosoft
+      userkey: example.user43@example-tenant-02.onmicrosoft
       usertype: 2
       workload: Exchange

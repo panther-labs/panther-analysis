@@ -34,7 +34,7 @@ Tests:
         "RELATED_EVENT_ID": "0",
         "REPORTED_CLIENT_TYPE": "OTHER",
         "REPORTED_CLIENT_VERSION": "1.11.1",
-        "USER_NAME": "ckent@example.org"
+        "USER_NAME": "example.user18@example.org"
       }
   - Name: Unsuccessful Login
     ExpectedResult: true
@@ -43,7 +43,7 @@ Tests:
         "p_event_time": "2024-10-08 14:38:46.061000000",
         "p_log_type": "Snowflake.LoginHistory",
         "p_source_label": "Snowflake Prod",
-        "CLIENT_IP": "192.0.2.4",
+        "CLIENT_IP": "999.999.999.23",
         "EVENT_ID": "393754014361778",
         "EVENT_TIMESTAMP": "2024-10-08 14:38:46.061000000",
         "EVENT_TYPE": "LOGIN",
@@ -52,7 +52,7 @@ Tests:
         "RELATED_EVENT_ID": "0",
         "REPORTED_CLIENT_TYPE": "OTHER",
         "REPORTED_CLIENT_VERSION": "1.11.1",
-        "USER_NAME": "luthor@example.org"
+        "USER_NAME": "example.user54@example.org"
       }
   - Name: Unsuccessful Login due to Invalid JWT Fingerprint
     ExpectedResult: true
@@ -61,7 +61,7 @@ Tests:
         "p_event_time": "2024-10-08 14:38:46.061000000",
         "p_log_type": "Snowflake.LoginHistory",
         "p_source_label": "Snowflake Prod",
-        "CLIENT_IP": "192.0.2.4",
+        "CLIENT_IP": "999.999.999.23",
         "ERROR_CODE": 394304,
         "ERROR_MESSAGE": "JWT_TOKEN_INVALID_PUBLIC_KEY_FINGERPRINT_MISMATCH",
         "EVENT_ID": "393754014361778",
@@ -72,7 +72,7 @@ Tests:
         "RELATED_EVENT_ID": "0",
         "REPORTED_CLIENT_TYPE": "OTHER",
         "REPORTED_CLIENT_VERSION": "1.11.1",
-        "USER_NAME": "luthor@example.org"
+        "USER_NAME": "example.user54@example.org"
       }
   - Name: Overflow Failure
     ExpectedResult: false
@@ -91,5 +91,5 @@ Tests:
         "RELATED_EVENT_ID": "0",
         "REPORTED_CLIENT_TYPE": "OTHER",
         "REPORTED_CLIENT_VERSION": "0",
-        "USER_NAME": "luthor@example.org"
+        "USER_NAME": "example.user54@example.org"
       }

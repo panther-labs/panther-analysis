@@ -33,17 +33,17 @@ Tests:
       insertid: ezyd47c12y
       logname: projects/gcp-project1/logs/cloudaudit.googleapis.com%2Factivity
       p_any_ip_addresses:
-        - 192.0.2.1
+        - 999.999.998.1
       p_event_time: "2023-03-09 16:41:30.524"
       p_log_type: GCP.AuditLog
       p_parse_time: "2023-03-09 16:44:14.617"
-      p_row_id: "1000000000000000001"
+      p_row_id: "0000000000000000002"
       p_source_id: 00000000-0000-0000-0000-000000000001
       p_source_label: gcplogsource
       protoPayload:
         at_sign_type: type.googleapis.com/google.cloud.audit.AuditLog
         authenticationInfo:
-          principalEmail: john@example.org
+          principalEmail: example.user02@example.org
         authorizationInfo:
           - granted: true
             permission: logging.sinks.update
@@ -60,13 +60,13 @@ Tests:
               - filter: protoPayload.serviceName = 'k8s.io
                 name: excludek8s
             name: log-sink
-            writerIdentity: serviceAccount:denethor@example.com
+            writerIdentity: serviceAccount:example.user01@example.com
           sinkName: projects/gcp-project1/sinks/log-sink
           uniqueWriterIdentity: true
           updateMask: exclusions
         requestMetadata:
-          callerIP: 192.0.2.1
-          callerSuppliedUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/192.0.2.1 Safari/537.36,gzip(gfe),gzip(gfe)
+          callerIP: 999.999.998.1
+          callerSuppliedUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/0.0.0.0 Safari/537.36,gzip(gfe),gzip(gfe)
           destinationAttributes: {}
           requestAttributes:
             auth: {}
@@ -89,7 +89,7 @@ Tests:
       insertId: asdf1234asdfg
       logName: projects/gcp-project1/logs/cloudaudit.googleapis.com%2Factivity
       p_any_ip_addresses:
-        - 192.0.2.1
+        - 999.999.998.1
       p_event_time: "2023-03-09 10:05:23.603"
       p_log_type: GCP.AuditLog
       p_parse_time: "2023-03-09 10:07:14.731"
@@ -107,7 +107,7 @@ Tests:
             resourceAttributes: {}
         methodName: storage.buckets.update
         requestMetadata:
-          callerIP: 192.0.2.1
+          callerIP: 999.999.998.1
           callerSuppliedUserAgent: apitools Python/3.9.11 gsutil/5.11 (darwin) analytics/enabled interactive/True command/notification google-cloud-sdk/394.0.0,gzip(gfe)
           destinationAttributes: {}
           requestAttributes:

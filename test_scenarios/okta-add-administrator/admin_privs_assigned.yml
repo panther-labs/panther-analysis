@@ -10,10 +10,10 @@ Logs:
     legacyEventType: core.user.admin_privilege.granted
     displayMessage: Grant user privilege
     actor:
-      id: 00u00000000000000001
+      id: EXAMPLE_OKTA_USER_01
       type: User
-      alternateId: jane.doe@example.com
-      displayName: Jane Doe
+      alternateId: example.user01@example.com
+      displayName: Example User 01
     client:
       userAgent:
         browser: CHROME
@@ -28,25 +28,25 @@ Logs:
         city: Othertown
         state: Somestate
         country: France
-        postalCode: "12346"
+        postalCode: "00001"
       zone: "null"
-      ipAddress: 198.51.100.101
+      ipAddress: 999.999.999.19
       device: Computer
     request: {}
     outcome:
       result: SUCCESS
     target:
-      - id: 00u00000000000000003
+      - id: EXAMPLE_OKTA_USER_03
         type: User
-        alternateId: john.doe@example.com
-        displayName: John Doe
+        alternateId: example.user03@example.com
+        displayName: Example User 03
     transaction: {}
     debugContext:
       debugData:
         privilegeGranted: Organization administrator, Application administrator (all)
-        requestUri: "/api/internal/administrators/00u00000000000000002"
+        requestUri: "/api/internal/administrators/EXAMPLE_OKTA_USER_02"
         threatSuspected: "false"
-        url: "/api/internal/administrators/00u00000000000000002"
+        url: "/api/internal/administrators/EXAMPLE_OKTA_USER_02"
         requestId: EXAMPLE-REQUEST-ID-1
     authenticationContext: {}
     securityContext: {}

@@ -152,7 +152,7 @@ Tests:
               "domain": "amazon.com",
               "name": "Amazon.com, Inc.",
               "p_match": "9.9.9.9",
-              "route": "203.0.113.0/24",
+              "route": "999.999.999.0/24",
               "type": "hosting"
             }]
           }
@@ -316,7 +316,7 @@ Tests:
         "kind": "Event",
         "verb": "watch",
         "user": {"username": "system:serviceaccount:default:app"},
-        "sourceIPs": ["10.0.1.5", "9.9.9.9"],
+        "sourceIPs": ["192.0.2.101", "9.9.9.9"],
         "objectRef": {"resource": "endpoints"},
         "responseStatus": {"code": 200},
         "stage": "ResponseComplete",
@@ -330,7 +330,7 @@ Tests:
         "category": "kube-audit",
         "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
         "properties": {
-          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"system:node:aks-nodepool1-12345-vmss000001\",\"groups\":[\"system:nodes\",\"system:authenticated\"]},\"sourceIPs\":[\"64.6.64.6\"],\"objectRef\":{\"resource\":\"leases\"},\"responseStatus\":{\"code\":201},\"stage\":\"ResponseComplete\"}"
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"system:node:example-nodepool-01-vmss000001\",\"groups\":[\"system:nodes\",\"system:authenticated\"]},\"sourceIPs\":[\"64.6.64.6\"],\"objectRef\":{\"resource\":\"leases\"},\"responseStatus\":{\"code\":201},\"stage\":\"ResponseComplete\"}"
         },
         "p_source_label": "aks-cluster",
         "p_enrichment": {
@@ -352,7 +352,7 @@ Tests:
         "kind": "Event",
         "verb": "get",
         "user": {"username": "system:serviceaccount:kube-system:coredns"},
-        "sourceIPs": ["not-an-ip", "10.0.1.5"],
+        "sourceIPs": ["not-an-ip", "192.0.2.101"],
         "objectRef": {"resource": "services"},
         "responseStatus": {"code": 200},
         "stage": "ResponseComplete",

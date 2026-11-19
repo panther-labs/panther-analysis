@@ -35,7 +35,7 @@ Tests:
         "apiVersion": "audit.k8s.io/v1",
         "verb": "create",
         "user": {"username": "user@example.com"},
-        "sourceIPs": ["192.0.2.1"],
+        "sourceIPs": ["999.999.998.1"],
         "userAgent": "kubectl/v1.28.2",
         "objectRef": {
           "resource": "services",
@@ -92,7 +92,7 @@ Tests:
               "ports": [{"port": 5678, "targetPort": 8080}]
             }
           },
-          "requestMetadata": {"callerIP": "192.0.2.1"},
+          "requestMetadata": {"callerIP": "999.999.998.1"},
           "resourceName": "core/v1/namespaces/default/services/test-ns",
           "serviceName": "k8s.io",
           "status": {}

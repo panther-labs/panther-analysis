@@ -21,8 +21,8 @@ This scenario shows brute force logins
 
 ## Usernames
 
-jane.doe@example.com
-john.doe@example.com
+example.user01@example.com
+example.user03@example.com
 
 ## Data
 

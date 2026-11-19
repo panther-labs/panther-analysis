@@ -34,7 +34,7 @@ Tests:
             id: 00000000-0000-0000-0000-000000000002
             operation: ListObjects
             request:
-                ip: 203.0.113.10
+                ip: 999.999.999.29
                 user_agent:
                     label: AWS Console
                     raw: '[S3Console/0.4, aws-internal/3 aws-sdk-java/1.12.750 Linux/5.10.223-190.873.amzn2int.x86_64 OpenJDK_64-Bit_Server_VM/25.412-b09 java/1.8.0_412 vendor/Oracle_Corporation cfg/retry-mode/standard]'
@@ -48,9 +48,9 @@ Tests:
         principal:
             aws:
                 account_id: "123456789012"
-                arn: arn:aws:sts::123456789012:assumed-role/AWSReservedSSO_Admin_EXAMPLE/jane.doe@example.com
+                arn: arn:aws:sts::123456789012:assumed-role/AWSReservedSSO_Admin_EXAMPLE/example.user01@example.com
                 type: AssumedRole
-            id: AWSReservedSSO_Admin_EXAMPLE/jane.doe@example.com
+            id: AWSReservedSSO_Admin_EXAMPLE/example.user01@example.com
         provider: aws
         severity: Medium
         timestamp: "2024-09-04T08:06:28Z"
@@ -69,7 +69,7 @@ Tests:
                   value: kandji
                 - name: source_type
                   value: endpoint
-            name: jane.doe@example-host-01
+            name: example.user01@example-host-01
             type: aws_temporary_security_credentials
         discriminator:
             subtype: canary_credential_used
@@ -78,7 +78,7 @@ Tests:
             id: 00000000-0000-0000-0000-000000000004
             operation: GetCallerIdentity
             request:
-                ip: 203.0.113.10
+                ip: 999.999.999.29
                 user_agent:
                     label: AWS CLI
                     raw: aws-cli/2.15.42 Python/3.11.8 Darwin/23.5.0 exe/x86_64 prompt/off command/sts.get-caller-identity
@@ -87,10 +87,10 @@ Tests:
         message: Canary AWS credentials used
         principal:
             aws:
-                account_id: "111122223333"
-                arn: arn:aws:sts::111122223333:federated-user/EXAMPLEFEDUSER
+                account_id: "222222222222"
+                arn: arn:aws:sts::222222222222:federated-user/EXAMPLEFEDUSER
                 type: FederatedUser
-            id: 111122223333:EXAMPLEFEDUSER
+            id: 222222222222:EXAMPLEFEDUSER
         provider: aws
         severity: High
         timestamp: "2024-09-03T15:49:28Z"
@@ -116,7 +116,7 @@ Tests:
             id: 00000000-0000-0000-0000-000000000007
             operation: ListBlobs
             request:
-                ip: 203.0.113.10
+                ip: 999.999.999.29
                 user_agent:
                     label: Chrome 128.0.0, Mac OS X 10.15.7, Mac
                     raw: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36
@@ -142,9 +142,9 @@ Tests:
             name: Audit Logs
             okta:
                 domain: example.okta.com
-                organization_id: 00o00000000000000001
-            provider_account_id: 00o00000000000000001
-            provider_id: 0oa00000000000000002
+                organization_id: EXAMPLE_OKTA_ORG_01
+            provider_account_id: EXAMPLE_OKTA_ORG_01
+            provider_id: EXAMPLE_AUTH_SERVER_01
             tracebit_id: 00000000-0000-0000-0000-000000000010
             type: Okta::App
         discriminator:
@@ -154,7 +154,7 @@ Tests:
             id: 00000000-0000-0000-0000-000000000011
             operation: policy.evaluate_sign_on
             request:
-                ip: 203.0.113.10
+                ip: 999.999.999.29
                 user_agent:
                     label: Mac OS X (CHROME)
                     raw: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36
@@ -166,10 +166,10 @@ Tests:
         id: 00000000-0000-0000-0000-000000000011
         message: Canary resource activity detected in Okta
         principal:
-            id: 00u00000000000000003
+            id: EXAMPLE_OKTA_USER_03
             okta:
-                alternate_id: jane.doe+user@example.com
-                id: 00u00000000000000003
+                alternate_id: example.user01+user@example.com
+                id: EXAMPLE_OKTA_USER_03
                 type: User
         provider: okta
         severity: High

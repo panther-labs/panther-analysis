@@ -21,26 +21,26 @@ Tests:
     ExpectedResult: true
     Log:
       {
-        "clientIp": "198.51.100.10",
-        "description": "User john.doe@acme.example.com retrieved secret for API ID EXAMPLE001 in org 12345",
+        "clientIp": "999.999.999.12",
+        "description": "User example.user51@example-org-01.example.com retrieved secret for API ID EXAMPLE001 in org 12345",
         "eventId": "66443924833011eeac3cb393f3d07f9f",
         "eventTime": "2023-11-14 20:57:19.186000000",
         "flagged": true,
-        "loginName": "john.doe@acme.example.com",
-        "orgName": "acme.example.com",
+        "loginName": "example.user51@example-org-01.example.com",
+        "orgName": "example-org-01.example.com",
         "verbose": false,
       }
   - Name: Other role granted
     ExpectedResult: false
     Log:
       {
-        "clientIp": "198.51.100.10",
+        "clientIp": "999.999.999.12",
         "description": "Created grant: psc:cnn:A1234567:BC1234567890 with role Read Only",
         "eventId": "66443924833011eeac3cb393f3d07f9f",
         "eventTime": "2023-11-14 20:57:19.186000000",
         "flagged": false,
-        "loginName": "john.doe@acme.example.com",
-        "orgName": "acme.example.com",
+        "loginName": "example.user51@example-org-01.example.com",
+        "orgName": "example-org-01.example.com",
         "requestUrl": "/access/v2/orgs/A1234567/grants",
         "verbose": false,
       }
@@ -53,7 +53,7 @@ Tests:
         "eventTime": "2024-07-10 09:13:29.952000000",
         "flagged": true,
         "loginName": "",
-        "orgName": "acme.example.com",
+        "orgName": "example-org-01.example.com",
         "requestUrl": "/settings/users/pushSensorKits",
         "verbose": false
       }

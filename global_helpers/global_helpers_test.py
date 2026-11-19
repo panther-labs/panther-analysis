@@ -64,12 +64,12 @@ class TestEksPantherObjRef(unittest.TestCase):
                     "resource": "pods",
                     "subresource": "log",
                 },
-                "p_any_aws_account_ids": ["111122223333"],
+                "p_any_aws_account_ids": ["222222222222"],
                 "p_any_aws_arns": [
-                    "arn:aws:iam::111122223333:role/KubeAdministrator",
-                    "arn:aws:sts::111122223333:assumed-role/KubeAdministrator/1669660343296132000",
+                    "arn:aws:iam::222222222222:role/KubeAdministrator",
+                    "arn:aws:sts::222222222222:assumed-role/KubeAdministrator/1669660343296132000",
                 ],
-                "p_any_ip_addresses": ["192.0.2.55"],
+                "p_any_ip_addresses": ["999.999.999.11"],
                 "p_any_usernames": ["kubernetes-admin"],
                 "p_event_time": "2022-11-29 00:09:04.38",
                 "p_log_type": "Amazon.EKS.Audit",
@@ -80,20 +80,20 @@ class TestEksPantherObjRef(unittest.TestCase):
                 "requestReceivedTimestamp": "2022-11-29 00:09:04.38",
                 "requestURI": "/api/v1/namespaces/default/pods/kube-bench-00004/log?container=kube-bench",
                 "responseStatus": {"code": 200},
-                "sourceIPs": ["192.0.2.55"],
+                "sourceIPs": ["999.999.999.11"],
                 "stage": "ResponseComplete",
                 "stageTimestamp": "2022-11-29 00:09:04.394",
                 "user": {
                     "extra": {
                         "accessKeyId": ["ASIA_EXAMPLE_0001"],
                         "arn": [
-                            "arn:aws:sts::111122223333:assumed-role/KubeAdministrator/1669660343296132000"
+                            "arn:aws:sts::222222222222:assumed-role/KubeAdministrator/1669660343296132000"
                         ],
-                        "canonicalArn": ["arn:aws:iam::111122223333:role/KubeAdministrator"],
+                        "canonicalArn": ["arn:aws:iam::222222222222:role/KubeAdministrator"],
                         "sessionName": ["1669660343296132000"],
                     },
                     "groups": ["system:masters", "system:authenticated"],
-                    "uid": "aws-iam-authenticator:111122223333:AROA_EXAMPLE_0013",
+                    "uid": "aws-iam-authenticator:222222222222:AROA_EXAMPLE_0013",
                     "username": "kubernetes-admin",
                 },
                 "userAgent": "kubectl/v1.25.4 (darwin/arm64) kubernetes/872a965",
@@ -107,7 +107,7 @@ class TestEksPantherObjRef(unittest.TestCase):
         self.assertEqual(response.get("object", ""), "some-job-xxx1y")
         self.assertEqual(response.get("ns", ""), "default")
         self.assertEqual(len(response.get("sourceIPs", [])), 1)
-        self.assertEqual(response.get("sourceIPs", [])[0], "192.0.2.55")
+        self.assertEqual(response.get("sourceIPs", [])[0], "999.999.999.11")
         self.assertEqual(response.get("resource", ""), "pods/log")
         self.assertEqual(response.get("verb", ""), "get")
         self.assertEqual(response.get("p_source_label", ""), "example-cluster-eks-logs")
@@ -215,7 +215,7 @@ class TestTorExitNodes(unittest.TestCase):
         self.event = PantherEvent(
             {
                 "p_enrichment": {
-                    "tor_exit_nodes": {"foo": {"ip": "192.0.2.4"}, "p_match": "192.0.2.4"}
+                    "tor_exit_nodes": {"foo": {"ip": "999.999.999.5"}, "p_match": "999.999.999.5"}
                 }
             }
         )
@@ -226,8 +226,8 @@ class TestTorExitNodes(unittest.TestCase):
                 "p_enrichment": {
                     "tor_exit_nodes": {
                         "p_any_ip_addresses": [
-                            {"ip": "192.0.2.4", "p_match": "192.0.2.4"},
-                            {"ip": "192.0.2.5", "p_match": "192.0.2.5"},
+                            {"ip": "999.999.999.5", "p_match": "999.999.999.5"},
+                            {"ip": "999.999.999.6", "p_match": "999.999.999.6"},
                         ]
                     }
                 }
@@ -245,14 +245,14 @@ class TestTorExitNodes(unittest.TestCase):
         """Should find enrichment"""
         tor_exit_nodes = p_tor_h.TorExitNodes(self.event)
         ip_address = tor_exit_nodes.ip_address("foo")
-        self.assertEqual(ip_address, "192.0.2.4")
+        self.assertEqual(ip_address, "999.999.999.5")
         self.assertEqual(tor_exit_nodes.has_exit_nodes(), True)
 
     def test_ip_address_found_list(self):
         """Should find enrichment list"""
         tor_exit_nodes = p_tor_h.TorExitNodes(self.event_list)
         ip_address_list = tor_exit_nodes.ip_address("p_any_ip_addresses")
-        self.assertEqual(ip_address_list, ["192.0.2.4", "192.0.2.5"])
+        self.assertEqual(ip_address_list, ["999.999.999.5", "999.999.999.6"])
         self.assertEqual(tor_exit_nodes.has_exit_nodes(), True)
 
     def test_url(self):
@@ -263,7 +263,7 @@ class TestTorExitNodes(unittest.TestCase):
         # pylint: disable=line-too-long
         self.assertEqual(
             url,
-            f"https://metrics.torproject.org/exonerator.html?ip=192.0.2.4&timestamp={today}&lang=en",
+            f"https://metrics.torproject.org/exonerator.html?ip=999.999.999.5&timestamp={today}&lang=en",
         )
 
     def test_url_list(self):
@@ -275,8 +275,8 @@ class TestTorExitNodes(unittest.TestCase):
         self.assertEqual(
             urls,
             [
-                f"https://metrics.torproject.org/exonerator.html?ip=192.0.2.4&timestamp={today}&lang=en",
-                f"https://metrics.torproject.org/exonerator.html?ip=192.0.2.5&timestamp={today}&lang=en",
+                f"https://metrics.torproject.org/exonerator.html?ip=999.999.999.5&timestamp={today}&lang=en",
+                f"https://metrics.torproject.org/exonerator.html?ip=999.999.999.6&timestamp={today}&lang=en",
             ],
         )
 
@@ -288,9 +288,9 @@ class TestTorExitNodes(unittest.TestCase):
         self.assertEqual(
             context,
             {
-                "IP": "192.0.2.4",
+                "IP": "999.999.999.5",
                 # pylint: disable=line-too-long
-                "ExoneraTorURL": f"https://metrics.torproject.org/exonerator.html?ip=192.0.2.4&timestamp={today}&lang=en",
+                "ExoneraTorURL": f"https://metrics.torproject.org/exonerator.html?ip=999.999.999.5&timestamp={today}&lang=en",
             },
         )
 
@@ -304,7 +304,7 @@ class TestGreyNoiseV3ScannerIntelligence(
                 "p_enrichment": {
                     "my_custom_greynoise_noise": {
                         "ClientIP": {
-                            "ip": "192.0.2.250",
+                            "ip": "999.999.999.15",
                             "internet_scanner_intelligence": {
                                 "actor": "alphastrike",
                                 "bot": False,
@@ -397,11 +397,11 @@ class TestGreyNoiseV3ScannerIntelligence(
 
     def test_ip_address(self):
         scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
-        self.assertEqual(scanner.ip_address("ClientIP"), "192.0.2.250")
+        self.assertEqual(scanner.ip_address("ClientIP"), "999.999.999.15")
 
     def test_url(self):
         scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
-        self.assertEqual(scanner.url("ClientIP"), "https://www.greynoise.io/viz/ip/192.0.2.250")
+        self.assertEqual(scanner.url("ClientIP"), "https://www.greynoise.io/viz/ip/999.999.999.15")
 
     def test_asn(self):
         scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
@@ -478,7 +478,7 @@ class TestGreyNoiseV3ScannerIntelligence(
     def test_context(self):
         scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
         context = scanner.context("ClientIP")
-        self.assertEqual(context["IP"], "192.0.2.250")
+        self.assertEqual(context["IP"], "999.999.999.15")
         self.assertEqual(context["Classification"], "malicious")
         self.assertEqual(context["Actor"], "alphastrike")
         self.assertEqual(context["VPN"], "NordVPN")
@@ -506,7 +506,7 @@ class TestGreyNoiseV3ScannerIntelligence(
                     "my_custom_greynoise_noise": {
                         "MultiMatch": [
                             {
-                                "ip": "192.0.2.250",
+                                "ip": "999.999.999.15",
                                 "internet_scanner_intelligence": {
                                     "classification": "malicious",
                                     "found": True,
@@ -528,7 +528,7 @@ class TestGreyNoiseV3ScannerIntelligence(
                     "my_custom_greynoise_noise": {
                         "MultiMatch": [
                             {
-                                "ip": "192.0.2.250",
+                                "ip": "999.999.999.15",
                                 "internet_scanner_intelligence": {
                                     "classification": "unknown",
                                     "found": False,
@@ -557,7 +557,7 @@ class TestGreyNoiseV3ScannerIntelligence(
                     "my_custom_greynoise_noise": {
                         "MultiMatch": [
                             {
-                                "ip": "192.0.2.250",
+                                "ip": "999.999.999.15",
                                 "internet_scanner_intelligence": {
                                     "found": False,
                                 },
@@ -671,7 +671,7 @@ class TestGreyNoiseV3BusinessService(unittest.TestCase):
                     "my_custom_greynoise_noise": {
                         "MultiMatch": [
                             {
-                                "ip": "192.0.2.250",
+                                "ip": "999.999.999.15",
                                 "internet_scanner_intelligence": {"found": False},
                                 "business_service_intelligence": {"found": False},
                             }
@@ -1195,7 +1195,7 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
                 "p_enrichment": {
                     p_i_h.IPINFO_LOCATION_LUT_NAME: {
                         self.match_field: {
-                            "p_match": "192.0.2.120",
+                            "p_match": "999.999.999.14",
                             "city": "Constantinople",
                             "country": "Byzantium",
                             "lat": "41.008610",
@@ -1268,11 +1268,11 @@ class TestIpInfoHelpersASN(unittest.TestCase):
                 "p_enrichment": {
                     p_i_h.IPINFO_ASN_LUT_NAME: {
                         self.match_field: {
-                            "p_match": "192.0.2.15",
+                            "p_match": "999.999.999.8",
                             "asn": "AS00000",
                             "domain": "example.com",
                             "name": "Byzantine Empire",
-                            "route": "192.0.2.4/24",
+                            "route": "999.999.999.5/24",
                             "type": "isp",
                         }
                     }
@@ -1295,7 +1295,7 @@ class TestIpInfoHelpersASN(unittest.TestCase):
 
     def test_route(self):
         route = self.ip_info.route(self.match_field)
-        self.assertEqual(route, "192.0.2.4/24")
+        self.assertEqual(route, "999.999.999.5/24")
 
     def test_type(self):
         _type = self.ip_info.type(self.match_field)
@@ -1309,7 +1309,7 @@ class TestIpInfoHelpersASN(unittest.TestCase):
             "ASN": "AS00000",
             "Domain": "example.com",
             "Name": "Byzantine Empire",
-            "Route": "192.0.2.4/24",
+            "Route": "999.999.999.5/24",
             "Type": "isp",
         }
         self.assertEqual(expected, self.ip_info.context(self.match_field))
@@ -1393,7 +1393,7 @@ class TestIpInfoHelpersPrivacy(unittest.TestCase):
                 "p_enrichment": {
                     p_i_h.IPINFO_PRIVACY_LUT_NAME: {
                         self.match_field: {
-                            "p_match": "192.0.2.4",
+                            "p_match": "999.999.999.5",
                             "hosting": False,
                             "proxy": False,
                             "tor": False,
@@ -1454,17 +1454,17 @@ class TestGeoInfoFromIP(unittest.TestCase):
                 "p_enrichment": {
                     p_i_h.IPINFO_ASN_LUT_NAME: {
                         self.match_field: {
-                            "p_match": "192.0.2.12",
+                            "p_match": "999.999.999.7",
                             "asn": "AS00000",
                             "domain": "example.com",
                             "name": "Byzantine Empire",
-                            "route": "192.0.2.4/24",
+                            "route": "999.999.999.5/24",
                             "type": "isp",
                         }
                     },
                     p_i_h.IPINFO_LOCATION_LUT_NAME: {
                         self.match_field: {
-                            "p_match": "192.0.2.2",
+                            "p_match": "999.999.999.4",
                             "city": "Constantinople",
                             "country": "Byzantium",
                             "lat": "41.008610",
@@ -1476,7 +1476,7 @@ class TestGeoInfoFromIP(unittest.TestCase):
                         }
                     },
                 },
-                self.match_field: "192.0.2.4",
+                self.match_field: "999.999.999.5",
             }
         )
 
@@ -1485,7 +1485,7 @@ class TestGeoInfoFromIP(unittest.TestCase):
         expected = {
             "city": "Constantinople",
             "country": "Byzantium",
-            "ip": "192.0.2.4",
+            "ip": "999.999.999.5",
             "loc": "41.008610,28.971111",
             "org": "AS00000 Byzantine Empire",
             "postal": "NA",
@@ -1763,7 +1763,7 @@ class TestCloudflareHelpers(unittest.TestCase):
         self.event = PantherEvent(
             {
                 "Source": "firewallrules",
-                "ClientIP": "192.0.2.120",
+                "ClientIP": "999.999.999.14",
                 "BotScore": 0,
                 "Action": "block",
             }
@@ -1780,7 +1780,7 @@ class TestCloudflareHelpers(unittest.TestCase):
                 "ClientASN": 15169,
                 "ClientCountry": "us",
                 "ClientDeviceType": "desktop",
-                "ClientIP": "192.0.2.120",
+                "ClientIP": "999.999.999.14",
                 "ClientIPClass": "searchEngine",
                 "ClientMTLSAuthCertFingerprint": "",
                 "ClientMTLSAuthStatus": "unknown",
@@ -1860,14 +1860,14 @@ class TestCloudflareHelpers(unittest.TestCase):
         context = p_cf_h.cloudflare_fw_alert_context(tmp_event)
         self.assertEqual("<Source_NOT_IN_EVENT>", context.get("Source"))
         self.assertEqual("block", context.get("Action"))
-        self.assertEqual("192.0.2.120", context.get("ClientIP"))
+        self.assertEqual("999.999.999.14", context.get("ClientIP"))
 
     def test_http_context_helper(self):
         context = p_cf_h.cloudflare_http_alert_context(self.http_event)
         # We have only 10 keeper keys in http alert context
         self.assertLessEqual(len(context), 10)
         self.assertIsNone(context.get("BotScore"))
-        self.assertEqual("192.0.2.120", context.get("ClientIP"))
+        self.assertEqual("999.999.999.14", context.get("ClientIP"))
 
 
 class TestAsanaHelpers(unittest.TestCase):
@@ -1881,7 +1881,7 @@ class TestAsanaHelpers(unittest.TestCase):
                     "name": "Users Name",
                 },
                 "context": {
-                    "client_ip_address": "192.0.2.22",
+                    "client_ip_address": "999.999.999.9",
                     "context_type": "web",
                     "user_agent": "AsanaDesktopOfficial darwin_arm64/1.12.0 Chrome/108.0.5359.62",
                 },
@@ -2011,7 +2011,7 @@ class TestTinesHelpers(unittest.TestCase):
                 "created_at": "2023-05-01 01:02:03",
                 "id": 7206820,
                 "operation_name": "Login",
-                "request_ip": "192.0.2.120",
+                "request_ip": "999.999.999.14",
                 "request_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) UserAgent",
                 "tenant_id": "1234",
                 "user_email": "user@example.com",
@@ -2031,7 +2031,7 @@ class TestTinesHelpers(unittest.TestCase):
                 "user_email": "user@example.com",
                 "user_id": "17171",
                 "operation_name": "Login",
-                "request_ip": "192.0.2.120",
+                "request_ip": "999.999.999.14",
             },
         )
         returns = p_tines_h.tines_alert_context(ImmutableCaseInsensitiveDict({}))
@@ -2071,7 +2071,7 @@ class TestAuth0Helpers(unittest.TestCase):
                             },
                             "body": {"description": "custom_role", "name": "custom_role"},
                             "channel": "https://manage.auth0.com/",
-                            "ip": "192.0.2.120",
+                            "ip": "999.999.999.14",
                             "method": "post",
                             "path": "/api/v2/roles",
                             "query": {},
@@ -2085,7 +2085,7 @@ class TestAuth0Helpers(unittest.TestCase):
                             "statusCode": 200,
                         },
                     },
-                    "ip": "192.0.2.120",
+                    "ip": "999.999.999.14",
                     "log_id": "90020230515174135349782000000000000001223372037486042970",
                     "type": "sapi",
                     "user_id": "google-oauth2|000000000000000000019",
@@ -2123,7 +2123,7 @@ class TestTailscaleHelpers(unittest.TestCase):
                     "actor": {
                         "displayName": "Homer Simpson",
                         "id": "uodc9f3CNTRL",
-                        "loginName": "homer.simpson@example.com",
+                        "loginName": "example.user07@example.com",
                         "type": "USER",
                     },
                     "eventGroupID": "9f880e02981e341447958344b7b4071f",
@@ -2143,7 +2143,7 @@ class TestTailscaleHelpers(unittest.TestCase):
             {
                 "displayName": "Homer Simpson",
                 "id": "uodc9f3CNTRL",
-                "loginName": "homer.simpson@example.com",
+                "loginName": "example.user07@example.com",
                 "type": "USER",
             },
         )
@@ -2166,7 +2166,7 @@ class TestKmBetweenTwoIPInfoLocs(unittest.TestCase):
                 "country": "US",
                 "lat": "40.71427",
                 "lng": "-74.00597",
-                "postal_code": "12356",
+                "postal_code": "00011",
                 "region": "New York",
                 "region_code": "NY",
                 "timezone": "America/New_York",
@@ -2178,7 +2178,7 @@ class TestKmBetweenTwoIPInfoLocs(unittest.TestCase):
                 "country": "US",
                 "lat": "37.77493",
                 "lng": "-122.41942",
-                "postal_code": "12354",
+                "postal_code": "00009",
                 "region": "California",
                 "region_code": "CA",
                 "timezone": "America/Los_Angeles",
@@ -2202,7 +2202,7 @@ class TestKmBetweenTwoIPInfoLocs(unittest.TestCase):
                 "country": "NZ",
                 "lat": "-36.84853",
                 "lng": "174.76349",
-                "postal_code": "12355",
+                "postal_code": "00010",
                 "region": "Auckland",
                 "region_code": "AUK",
                 "timezone": "Pacific/Auckland",
@@ -2267,22 +2267,22 @@ class TestLookupTableHelpers(unittest.TestCase):
     # pylint: disable=protected-access
     def setUp(self):
         self.simple_event_no_pmatch = PantherEvent(
-            {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "192.0.2.4"}}}}
+            {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "999.999.999.5"}}}}
         )
         self.simple_event = PantherEvent(
             {
                 "p_enrichment": {
                     "tor_exit_nodes": {
-                        "foo": {"ip": "192.0.2.4", "p_match": "192.0.2.4"},
-                        "bar": {"ip": "192.0.2.5", "p_match": "192.0.2.5"},
+                        "foo": {"ip": "999.999.999.5", "p_match": "999.999.999.5"},
+                        "bar": {"ip": "999.999.999.6", "p_match": "999.999.999.6"},
                     },
                     "ipinfo_asn": {
                         "foo": {
                             "asn": "AS99999",
                             "domain": "example.net",
                             "name": "Super Trustworthy, LLC",
-                            "p_match": "192.0.2.4",
-                            "route": "192.0.0.0/8",
+                            "p_match": "999.999.999.5",
+                            "route": "999.0.0.0/8",
                             "type": "isp",
                         }
                     },
@@ -2295,8 +2295,8 @@ class TestLookupTableHelpers(unittest.TestCase):
                 "p_enrichment": {
                     "tor_exit_nodes": {
                         "p_any_ip_addresses": [
-                            {"ip": "192.0.2.4", "p_match": "192.0.2.4"},
-                            {"ip": "192.0.2.5", "p_match": "192.0.2.5"},
+                            {"ip": "999.999.999.5", "p_match": "999.999.999.5"},
+                            {"ip": "999.999.999.6", "p_match": "999.999.999.6"},
                         ]
                     }
                 }
@@ -2309,8 +2309,8 @@ class TestLookupTableHelpers(unittest.TestCase):
         self.assertEqual(
             lut.lut_matches,
             {
-                "foo": {"ip": "192.0.2.4", "p_match": "192.0.2.4"},
-                "bar": {"ip": "192.0.2.5", "p_match": "192.0.2.5"},
+                "foo": {"ip": "999.999.999.5", "p_match": "999.999.999.5"},
+                "bar": {"ip": "999.999.999.6", "p_match": "999.999.999.6"},
             },
         )
         # call lut._register with non-extant key
@@ -2321,29 +2321,29 @@ class TestLookupTableHelpers(unittest.TestCase):
         lut = p_l_h.LookupTableMatches()
         self.assertEqual(lut.p_matches(None, None), {})
         self.assertEqual(lut.p_matches({}), {})
-        self.assertEqual(lut.p_matches(self.simple_event_no_pmatch, "192.0.2.4"), {})
+        self.assertEqual(lut.p_matches(self.simple_event_no_pmatch, "999.999.999.5"), {})
         self.assertEqual(lut.p_matched, {})
 
         self.assertEqual(
-            lut.p_matches(self.simple_event, "192.0.2.4"),
+            lut.p_matches(self.simple_event, "999.999.999.5"),
             {
-                "tor_exit_nodes": {"ip": "192.0.2.4", "p_match": "192.0.2.4"},
+                "tor_exit_nodes": {"ip": "999.999.999.5", "p_match": "999.999.999.5"},
                 "ipinfo_asn": {
                     "asn": "AS99999",
                     "domain": "example.net",
                     "name": "Super Trustworthy, LLC",
-                    "p_match": "192.0.2.4",
-                    "route": "192.0.0.0/8",
+                    "p_match": "999.999.999.5",
+                    "route": "999.0.0.0/8",
                     "type": "isp",
                 },
             },
         )
         self.assertEqual(
-            lut.p_matches(self.list_event, "192.0.2.4"),
-            {"tor_exit_nodes": {"ip": "192.0.2.4", "p_match": "192.0.2.4"}},
+            lut.p_matches(self.list_event, "999.999.999.5"),
+            {"tor_exit_nodes": {"ip": "999.999.999.5", "p_match": "999.999.999.5"}},
         )
         self.assertEqual(
-            lut.p_matched, {"tor_exit_nodes": {"ip": "192.0.2.4", "p_match": "192.0.2.4"}}
+            lut.p_matched, {"tor_exit_nodes": {"ip": "999.999.999.5", "p_match": "999.999.999.5"}}
         )
 
 
@@ -2353,7 +2353,7 @@ class TestAzureSigninHelpers(unittest.TestCase):
         self.event_noninteractive = PantherEvent(
             {
                 "Level": 4,
-                "callerIpAddress": "192.0.2.120",
+                "callerIpAddress": "999.999.999.14",
                 "category": "NonInteractiveUserSignInLogs",
                 "correlationId": "00000000-0000-0000-0000-000000000006",
                 "durationMs": 0,
@@ -2401,7 +2401,7 @@ class TestAzureSigninHelpers(unittest.TestCase):
                     "homeTenantId": "00000000-0000-0000-0000-000000000009",
                     "id": "00000000-0000-0000-0000-000000000010",
                     "incomingTokenType": "primaryRefreshToken",
-                    "ipAddress": "192.0.2.120",
+                    "ipAddress": "999.999.999.14",
                     "isInteractive": False,
                     "isTenantRestricted": False,
                     "location": {
@@ -2444,7 +2444,7 @@ class TestAzureSigninHelpers(unittest.TestCase):
                     "userAgent": "Go-http-client/1.1",
                     "userDisplayName": "Some DisplayName",
                     "userId": "00000000-0000-0000-0000-000000000016",
-                    "userPrincipalName": "homer.simpson@example.org",
+                    "userPrincipalName": "example.user07@example.org",
                     "userType": "Member",
                 },
                 "resourceId": "/tenants/00000000-0000-0000-0000-000000000017/providers/Microsoft.aadiam",
@@ -2457,7 +2457,7 @@ class TestAzureSigninHelpers(unittest.TestCase):
         self.event_signin = PantherEvent(
             {
                 "Level": 4,
-                "callerIpAddress": "192.0.2.120",
+                "callerIpAddress": "999.999.999.14",
                 "category": "SignInLogs",
                 "correlationId": "00000000-0000-0000-0000-000000000019",
                 "durationMs": 0,
@@ -2517,7 +2517,7 @@ class TestAzureSigninHelpers(unittest.TestCase):
                     "homeTenantId": "00000000-0000-0000-0000-000000000022",
                     "id": "00000000-0000-0000-0000-000000000023",
                     "incomingTokenType": "none",
-                    "ipAddress": "192.0.2.120",
+                    "ipAddress": "999.999.999.14",
                     "isInteractive": True,
                     "isTenantRestricted": False,
                     "location": {
@@ -2560,7 +2560,7 @@ class TestAzureSigninHelpers(unittest.TestCase):
                     "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
                     "userDisplayName": "Some Username",
                     "userId": "00000000-0000-0000-0000-000000000029",
-                    "userPrincipalName": "marge.simpson@example.org",
+                    "userPrincipalName": "example.user11@example.org",
                     "userType": "Member",
                 },
                 "resourceId": "/tenants/00000000-0000-0000-0000-000000000030/providers/Microsoft.aadiam",
@@ -2576,9 +2576,9 @@ class TestAzureSigninHelpers(unittest.TestCase):
         self.assertEqual(
             returns,
             {
-                "actor_user": "homer.simpson@example.org",
+                "actor_user": "example.user07@example.org",
                 "tenantId": "00000000-0000-0000-0000-000000000018",
-                "source_ip": "192.0.2.120",
+                "source_ip": "999.999.999.14",
                 "resourceDisplayName": "Microsoft Graph",
                 "resourceId": "00000000-0000-0000-0000-000000000012",
             },
@@ -2587,9 +2587,9 @@ class TestAzureSigninHelpers(unittest.TestCase):
         self.assertEqual(
             returns,
             {
-                "actor_user": "marge.simpson@example.org",
+                "actor_user": "example.user11@example.org",
                 "tenantId": "00000000-0000-0000-0000-000000000031",
-                "source_ip": "192.0.2.120",
+                "source_ip": "999.999.999.14",
                 "resourceDisplayName": "Windows Azure Service Management API",
                 "resourceId": "00000000-0000-0000-0000-000000000025",
             },
@@ -2631,20 +2631,20 @@ class TestPantherFlowInvestigation(unittest.TestCase):
     def test_pantherflow_investigation(self):
         # pylint: disable=line-too-long
         event = {
-            "p_any_ip_addresses": ["192.0.2.78"],
+            "p_any_ip_addresses": ["999.999.999.13"],
             "p_source_file": {
                 "aws_s3_bucket": "example-trail-bucket",
-                "aws_s3_key": "AWSLogs/444455556666/CloudTrail/us-east-1/2024/11/25/444455556666_CloudTrail_us-east-1_20241125T1505Z_XLixf09QqBSOD7c4.json.gz",
+                "aws_s3_key": "AWSLogs/333333333333/CloudTrail/us-east-1/2024/11/25/333333333333_CloudTrail_us-east-1_20241125T1505Z_XLixf09QqBSOD7c4.json.gz",
             },
             "p_any_trace_ids": ["ASIA_EXAMPLE_0002"],
-            "p_any_actor_ids": ["AROA_EXAMPLE_0024", "AROA_EXAMPLE_0024:jdoe"],
-            "p_any_aws_account_ids": ["444455556666"],
+            "p_any_actor_ids": ["AROA_EXAMPLE_0024", "AROA_EXAMPLE_0024:EXAMPLE_USER_19"],
+            "p_any_aws_account_ids": ["333333333333"],
             "p_any_aws_arns": [
-                "arn:aws:iam::444455556666:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin",
-                "arn:aws:sts::444455556666:assumed-role/AWSReservedSSO_DevAdmin/jdoe",
-                "arn:aws:iam::444455556666:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin",
+                "arn:aws:iam::333333333333:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin",
+                "arn:aws:sts::333333333333:assumed-role/AWSReservedSSO_DevAdmin/EXAMPLE_USER_19",
+                "arn:aws:iam::333333333333:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin",
             ],
-            "p_any_usernames": ["AWSReservedSSO_DevAdmin", "jdoe"],
+            "p_any_usernames": ["AWSReservedSSO_DevAdmin", "EXAMPLE_USER_19"],
             "p_event_time": "2024-11-25 15:00:21.000000",
             "p_log_type": "AWS.CloudTrail",
             "p_parse_time": "2024-11-25 15:05:54.123385",
@@ -2657,11 +2657,11 @@ class TestPantherFlowInvestigation(unittest.TestCase):
         query = """union panther_signals.public.correlation_signals
     , panther_logs.public.aws_cloudtrail
 | where p_event_time between time.parse_timestamp('2024-11-25 15:00:21.000000') - time.parse_timespan('30m') .. time.parse_timestamp('2024-11-25 15:00:21.000000') + time.parse_timespan('30m')
-| where arrays.overlap(p_any_ip_addresses, ['192.0.2.78'])
+| where arrays.overlap(p_any_ip_addresses, ['999.999.999.13'])
      or arrays.overlap(p_any_trace_ids, ['ASIA_EXAMPLE_0002'])
-     or arrays.overlap(p_any_actor_ids, ['AROA_EXAMPLE_0024', 'AROA_EXAMPLE_0024:jdoe'])
-     or arrays.overlap(p_any_aws_arns, ['arn:aws:iam::444455556666:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin', 'arn:aws:sts::444455556666:assumed-role/AWSReservedSSO_DevAdmin/jdoe', 'arn:aws:iam::444455556666:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin'])
-     or arrays.overlap(p_any_usernames, ['AWSReservedSSO_DevAdmin', 'jdoe'])
+     or arrays.overlap(p_any_actor_ids, ['AROA_EXAMPLE_0024', 'AROA_EXAMPLE_0024:EXAMPLE_USER_19'])
+     or arrays.overlap(p_any_aws_arns, ['arn:aws:iam::333333333333:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin', 'arn:aws:sts::333333333333:assumed-role/AWSReservedSSO_DevAdmin/EXAMPLE_USER_19', 'arn:aws:iam::333333333333:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin'])
+     or arrays.overlap(p_any_usernames, ['AWSReservedSSO_DevAdmin', 'EXAMPLE_USER_19'])
 | sort p_event_time"""
         self.assertEqual(p_b_h.pantherflow_investigation(event), query)
 
