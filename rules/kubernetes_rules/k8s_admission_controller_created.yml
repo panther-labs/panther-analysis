@@ -43,7 +43,7 @@ Tests:
         "apiVersion": "audit.k8s.io/v1",
         "verb": "create",
         "user": {"username": "admin@example.com"},
-        "sourceIPs": ["1.2.3.4"],
+        "sourceIPs": ["192.0.2.1"],
         "userAgent": "kubectl/v1.28.0",
         "objectRef": {
           "resource": "mutatingwebhookconfigurations",
@@ -88,14 +88,14 @@ Tests:
     Log:
       {
         "protoPayload": {
-          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authenticationInfo": {"principalEmail": "user@example.org"},
           "authorizationInfo": [{
             "granted": true,
             "permission": "io.k8s.admissionregistration.v1.mutatingwebhookconfigurations.create",
             "resource": "admissionregistration.k8s.io/v1/mutatingwebhookconfigurations/istio-sidecar"
           }],
           "methodName": "io.k8s.admissionregistration.v1.mutatingwebhookconfigurations.create",
-          "requestMetadata": {"callerIP": "1.2.3.4"},
+          "requestMetadata": {"callerIP": "192.0.2.1"},
           "resourceName": "admissionregistration.k8s.io/v1/mutatingwebhookconfigurations/istio-sidecar",
           "serviceName": "k8s.io",
           "request": {

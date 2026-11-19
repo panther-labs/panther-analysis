@@ -1,5 +1,5 @@
 AnalysisType: rule
-RuleID: "CarbonBlack.Audit.User.Added.Outside.Org"
+RuleID: "CarbonBlack.Audit.User.Added.Outside.example.com"
 LogTypes:
   - CarbonBlack.Audit
 Description: "Detects when a user from a different organization is added to Carbon Black."
@@ -21,25 +21,25 @@ Tests:
     ExpectedResult: true
     Log:
       {
-        "clientIp": "12.34.56.78",
-        "description": "Added user badguy@acme.io to org 12345 (Email Invitation)",
+        "clientIp": "198.51.100.10",
+        "description": "Added user badguy@acme.example.net to org 12345 (Email Invitation)",
         "eventId": "d109e568832111ee8ab2057b240e65f8",
         "eventTime": "2023-11-14 19:12:55.917000000",
         "flagged": false,
-        "loginName": "bob.ross@acme.com",
-        "orgName": "acme.com",
+        "loginName": "john.doe@acme.example.com",
+        "orgName": "acme.example.com",
         "verbose": false,
       }
   - Name: Inside org
     ExpectedResult: false
     Log:
       {
-        "clientIp": "12.34.56.78",
-        "description": "Added user goodguy@acme.com to org 12345 (Email Invitation)",
+        "clientIp": "198.51.100.10",
+        "description": "Added user goodguy@acme.example.com to org 12345 (Email Invitation)",
         "eventId": "d109e568832111ee8ab2057b240e65f8",
         "eventTime": "2023-11-14 19:12:55.917000000",
         "flagged": false,
-        "loginName": "bob.ross@acme.com",
-        "orgName": "acme.com",
+        "loginName": "john.doe@acme.example.com",
+        "orgName": "acme.example.com",
         "verbose": false,
       }

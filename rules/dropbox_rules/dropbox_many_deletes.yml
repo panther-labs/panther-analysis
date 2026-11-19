@@ -31,7 +31,7 @@ Tests:
     Log:
       actor:
         user:
-          email: alice@company.com
+          email: jane@example.com
           _tag: team_member
       event_type:
         _tag: file_delete
@@ -41,13 +41,13 @@ Tests:
       involve_non_team_member: false
       origin:
         geo_location:
-          ip_address: 1.2.3.4
+          ip_address: 203.0.113.10
   - Name: File Deleted - Non-Team Member Involved
     ExpectedResult: true
     Log:
       actor:
         user:
-          email: alice@company.com
+          email: jane@example.com
           _tag: team_member
       event_type:
         _tag: file_delete
@@ -57,13 +57,13 @@ Tests:
       involve_non_team_member: true
       origin:
         geo_location:
-          ip_address: 5.6.7.8
+          ip_address: 203.0.113.11
   - Name: Non-Delete Event
     ExpectedResult: false
     Log:
       actor:
         user:
-          email: alice@company.com
+          email: jane@example.com
           _tag: team_member
       event_type:
         _tag: file_download

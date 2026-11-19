@@ -42,7 +42,7 @@ Tests:
       {
         "awsRegion": "us-west-2",
         "eventCategory": "Management",
-        "eventID": "41fab871-150b-43ad-b42a-39fff3f2ca4e",
+        "eventID": "00000000-0000-0000-0000-000000000040",
         "eventName": "RunInstances",
         "eventSource": "ec2.amazonaws.com",
         "eventTime": "2024-12-16 18:41:07.000000000",
@@ -51,11 +51,11 @@ Tests:
         "managementEvent": true,
         "readOnly": false,
         "recipientAccountId": "111122223333",
-        "requestID": "95cdbe4d-8ff7-4111-8f08-44f510371035",
+        "requestID": "00000000-0000-0000-0000-000000000111",
         "requestParameters": {
           "availabilityZone": "us-west-2a",
           "blockDeviceMapping": {},
-          "clientToken": "fleet-180da986-0bb4-c936-0c9a-0e20a0c6d1aa-0",
+          "clientToken": "fleet-00000000-0000-0000-0000-000000000012-0",
           "disableApiStop": false,
           "disableApiTermination": false,
           "instanceType": "p2.xlarge",
@@ -70,7 +70,7 @@ Tests:
           "monitoring": {
             "enabled": false
           },
-          "subnetId": "subnet-083e5906ef2809ac2"
+          "subnetId": "subnet-0000000000000002a"
         },
         "responseElements": {
           "groupSet": {},
@@ -84,7 +84,7 @@ Tests:
                 "capacityReservationSpecification": {
                   "capacityReservationPreference": "open"
                 },
-                "clientToken": "fleet-180da986-0bb4-c936-0c9a-0e20a0c6d1aa-0",
+                "clientToken": "fleet-00000000-0000-0000-0000-000000000012-0",
                 "cpuOptions": {
                   "coreCount": 2,
                   "threadsPerCore": 1
@@ -98,7 +98,7 @@ Tests:
                 "groupSet": {
                   "items": [
                     {
-                      "groupId": "sg-03d704b35372e74e8",
+                      "groupId": "sg-0000000000000004a",
                       "groupName": "my-group"
                     }
                   ]
@@ -108,8 +108,8 @@ Tests:
                   "arn": "arn:aws:iam::111122223333:instance-profile/profile-id",
                   "id": "PROFILE_ID"
                 },
-                "imageId": "ami-013e7d3a6659f358d",
-                "instanceId": "i-07d06021b0da55115",
+                "imageId": "ami-0000000000000001a",
+                "instanceId": "i-0000000000000007a",
                 "instanceState": {
                   "code": 0,
                   "name": "pending"
@@ -145,7 +145,7 @@ Tests:
                       "groupSet": {
                         "items": [
                           {
-                            "groupId": "sg-03d704b35372e74e8",
+                            "groupId": "sg-0000000000000004a",
                             "groupName": "eks-cluster-sg-k8s-goat-cluster-816437967"
                           }
                         ]
@@ -153,7 +153,7 @@ Tests:
                       "interfaceType": "interface",
                       "ipv6AddressesSet": {},
                       "macAddress": "02:fc:9a:8a:db:c3",
-                      "networkInterfaceId": "eni-03ac9043f76fab96c",
+                      "networkInterfaceId": "eni-0000000000000001a",
                       "operator": {
                         "managed": false
                       },
@@ -171,9 +171,9 @@ Tests:
                       },
                       "sourceDestCheck": true,
                       "status": "in-use",
-                      "subnetId": "subnet-083e5906ef2809ac2",
+                      "subnetId": "subnet-0000000000000002a",
                       "tagSet": {},
-                      "vpcId": "vpc-0330bfd33da75b36e"
+                      "vpcId": "vpc-0000000000000001a"
                     }
                   ]
                 },
@@ -199,7 +199,7 @@ Tests:
                   "code": "pending",
                   "message": "pending"
                 },
-                "subnetId": "subnet-083e5906ef2809ac2",
+                "subnetId": "subnet-0000000000000002a",
                 "tagSet": {
                   "items": [
                     {
@@ -208,11 +208,11 @@ Tests:
                     },
                     {
                       "key": "aws:autoscaling:groupName",
-                      "value": "eks-ng-0ca246e9-cac9e862-bfd9-a821-c9fd-9916df5654eb"
+                      "value": "eks-ng-0ca246e9-00000000-0000-0000-0000-000000000150"
                     },
                     {
                       "key": "aws:ec2:fleet-id",
-                      "value": "fleet-180da986-0bb4-c936-0c9a-0e20a0c6d1aa"
+                      "value": "fleet-00000000-0000-0000-0000-000000000012"
                     },
                     {
                       "key": "eks:cluster-name",
@@ -236,7 +236,7 @@ Tests:
                     },
                     {
                       "key": "aws:ec2launchtemplate:id",
-                      "value": "lt-07a0b5cea4ece8ffd"
+                      "value": "lt-0000000000000003a"
                     },
                     {
                       "key": "aws:ec2launchtemplate:version",
@@ -253,13 +253,13 @@ Tests:
                   ]
                 },
                 "virtualizationType": "hvm",
-                "vpcId": "vpc-0330bfd33da75b36e"
+                "vpcId": "vpc-0000000000000001a"
               }
             ]
           },
           "ownerId": "111122223333",
-          "requestId": "95cdbe4d-8ff7-4111-8f08-44f510371035",
-          "requesterId": "414886084714",
+          "requestId": "00000000-0000-0000-0000-000000000111",
+          "requesterId": "333333333333",
           "reservationId": "r-0ff0b006325a10345"
         },
         "sourceIPAddress": "autoscaling.amazonaws.com",
@@ -294,9 +294,9 @@ Tests:
       {
         "awsRegion": "ca-south-3r",
         "errorCode": "Client.UnauthorizedOperation",
-        "errorMessage": "You are not authorized to perform this operation. User: arn:aws:sts::751353041310:assumed-role/stratus-red-team-ec2lui-role-idtzskbvtd/aws-go-sdk-1722511821294449000 is not authorized to perform: ec2:RunInstances on resource: arn:aws:ec2:ca-south-3r:751353041310:instance/* because no identity-based policy allows the ec2:RunInstances action. Encoded authorization failure message: T-kSWIRFn32_fxSgyNzoE36avE5lRaRniAjDs-OdhlNgyecEbeTN_dCroUmnEqAbDOrevkgWv8iyUzs0XJxEDlAcgDztlJ-QPNokwAE1JUrWPZcLqpsuM6kK46d5jCUvmzpU_Egq-fML4ed58JHxMdyU4Iz1WGOb6S3W3FB5jghu3JqyDR1B8S8qHryW-e8H1ukHarLt7Ogr4rvYezZ3sf_DNCPDjCGLOSI75x4W0X4Wcl9B9eAuhG-hRbB8KG3e-15CmtpWvw5brndvmrK0sAKwOdcyI47AXNV1DKVLKBNjxwNSQB4knWTX00TASAtGZYroYLyadRTdjZO_CwPGIkcI7wiuAPwSJTrri9xF8zPb5ZJ-Zt4-fQRZoge3sWBFv_wRNOcdGXu8MidJV1ev4CJOpwygM9bO68S_ueU2u_MvKE_zRYrMzTYSMiBKpZGZBDiIZGOGOSzJK8aZ5_F0g5CzhI0IzBxBQh2QFLF0eZe6prRdYEnOZ33EDlaD68PhuyM5xFYzNATqG8UlMtNG7eE1XCMpAmLRAv8ZSnE0PUMrg-Z7RhLyIb3p37VxzKKQHVTdEarNtE22jp38CJ0uRZy5eiNmu-O3JMLeB-AuSYFFoGPtH6h2dH2uV4Fj27vJ4...",
+        "errorMessage": "You are not authorized to perform this operation. User: arn:aws:sts::444455556666:assumed-role/stratus-red-team-ec2lui-role-abcdefghij/aws-go-sdk-1722511821294449000 is not authorized to perform: ec2:RunInstances on resource: arn:aws:ec2:ca-south-3r:444455556666:instance/* because no identity-based policy allows the ec2:RunInstances action. Encoded authorization failure message: T-kSWIRFn32_fxSgyNzoE36avE5lRaRniAjDs-OdhlNgyecEbeTN_dCroUmnEqAbDOrevkgWv8iyUzs0XJxEDlAcgDztlJ-QPNokwAE1JUrWPZcLqpsuM6kK46d5jCUvmzpU_Egq-fML4ed58JHxMdyU4Iz1WGOb6S3W3FB5jghu3JqyDR1B8S8qHryW-e8H1ukHarLt7Ogr4rvYezZ3sf_DNCPDjCGLOSI75x4W0X4Wcl9B9eAuhG-hRbB8KG3e-15CmtpWvw5brndvmrK0sAKwOdcyI47AXNV1DKVLKBNjxwNSQB4knWTX00TASAtGZYroYLyadRTdjZO_CwPGIkcI7wiuAPwSJTrri9xF8zPb5ZJ-Zt4-fQRZoge3sWBFv_wRNOcdGXu8MidJV1ev4CJOpwygM9bO68S_ueU2u_MvKE_zRYrMzTYSMiBKpZGZBDiIZGOGOSzJK8aZ5_F0g5CzhI0IzBxBQh2QFLF0eZe6prRdYEnOZ33EDlaD68PhuyM5xFYzNATqG8UlMtNG7eE1XCMpAmLRAv8ZSnE0PUMrg-Z7RhLyIb3p37VxzKKQHVTdEarNtE22jp38CJ0uRZy5eiNmu-O3JMLeB-AuSYFFoGPtH6h2dH2uV4Fj27vJ4...",
         "eventCategory": "Management",
-        "eventID": "1a4debbb-12e9-4bde-b8c7-ea29002bb2a7",
+        "eventID": "00000000-0000-0000-0000-000000000013",
         "eventName": "RunInstances",
         "eventSource": "ec2.amazonaws.com",
         "eventTime": "2024-08-01T11:30:23Z",
@@ -304,11 +304,11 @@ Tests:
         "eventVersion": "1.09",
         "managementEvent": true,
         "readOnly": false,
-        "recipientAccountId": "900138736586",
-        "requestID": "b663854b-4ebf-4be3-8de0-9c5471904762",
+        "recipientAccountId": "222222222222",
+        "requestID": "00000000-0000-0000-0000-000000000138",
         "requestParameters": {
           "blockDeviceMapping": {},
-          "clientToken": "5dd59182-3917-421c-9b2c-7c92954b66ee",
+          "clientToken": "00000000-0000-0000-0000-000000000067",
           "disableApiStop": false,
           "disableApiTermination": false,
           "instanceType": "p2.xlarge",
@@ -324,10 +324,10 @@ Tests:
           "monitoring": {
             "enabled": false
           },
-          "subnetId": "subnet-0e540f0c7ffb48ae9"
+          "subnetId": "subnet-0000000000000006a"
         },
         "responseElements": null,
-        "sourceIPAddress": "06.237.252.245",
+        "sourceIPAddress": "198.51.100.167",
         "tlsDetails": {
           "cipherSuite": "TLS_AES_128_GCM_SHA256",
           "clientProvidedHostHeader": "ec2.ca-south-3r.amazonaws.com",
@@ -335,21 +335,21 @@ Tests:
         },
         "userAgent": "stratus-red-team_c8ff220a-7e52-429b-868f-d979123ed2d3",
         "userIdentity": {
-          "accessKeyId": "ASIA9F6MXE9HSYOXYQOS",
-          "accountId": "900138736586",
-          "arn": "arn:aws:sts::900138736586:assumed-role/stratus-red-team-ec2lui-role-idtzskbvtd/aws-go-sdk-1722511821294449000",
-          "principalId": "AROA13YEHY3VAS32TD341:aws-go-sdk-1722511821294449000",
+          "accessKeyId": "ASIA_EXAMPLE_0006",
+          "accountId": "222222222222",
+          "arn": "arn:aws:sts::222222222222:assumed-role/stratus-red-team-ec2lui-role-abcdefghij/aws-go-sdk-1722511821294449000",
+          "principalId": "AROA_EXAMPLE_0005:aws-go-sdk-1722511821294449000",
           "sessionContext": {
             "attributes": {
               "creationDate": "2024-08-01T11:30:22Z",
               "mfaAuthenticated": "false"
             },
             "sessionIssuer": {
-              "accountId": "900138736586",
-              "arn": "arn:aws:iam::900138736586:role/stratus-red-team-ec2lui-role-idtzskbvtd",
-              "principalId": "AROA13YEHY3VAS32TD341",
+              "accountId": "222222222222",
+              "arn": "arn:aws:iam::222222222222:role/stratus-red-team-ec2lui-role-abcdefghij",
+              "principalId": "AROA_EXAMPLE_0005",
               "type": "Role",
-              "userName": "stratus-red-team-ec2lui-role-idtzskbvtd"
+              "userName": "stratus-red-team-ec2lui-role-abcdefghij"
             }
           },
           "type": "AssumedRole"
@@ -364,7 +364,7 @@ Tests:
       {
         "awsRegion": "us-west-2",
         "eventCategory": "Management",
-        "eventID": "41fab871-150b-43ad-b42a-39fff3f2ca4e",
+        "eventID": "00000000-0000-0000-0000-000000000040",
         "eventName": "RunInstances",
         "eventSource": "ec2.amazonaws.com",
         "eventTime": "2024-12-16 18:41:07.000000000",
@@ -373,11 +373,11 @@ Tests:
         "managementEvent": true,
         "readOnly": false,
         "recipientAccountId": "111122223333",
-        "requestID": "95cdbe4d-8ff7-4111-8f08-44f510371035",
+        "requestID": "00000000-0000-0000-0000-000000000111",
         "requestParameters": {
           "availabilityZone": "us-west-2a",
           "blockDeviceMapping": {},
-          "clientToken": "fleet-180da986-0bb4-c936-0c9a-0e20a0c6d1aa-0",
+          "clientToken": "fleet-00000000-0000-0000-0000-000000000012-0",
           "disableApiStop": false,
           "disableApiTermination": false,
           "instanceType": {
@@ -394,7 +394,7 @@ Tests:
           "monitoring": {
             "enabled": false
           },
-          "subnetId": "subnet-083e5906ef2809ac2"
+          "subnetId": "subnet-0000000000000002a"
         },
         "responseElements": {
           "groupSet": {},
@@ -408,7 +408,7 @@ Tests:
                 "capacityReservationSpecification": {
                   "capacityReservationPreference": "open"
                 },
-                "clientToken": "fleet-180da986-0bb4-c936-0c9a-0e20a0c6d1aa-0",
+                "clientToken": "fleet-00000000-0000-0000-0000-000000000012-0",
                 "cpuOptions": {
                   "coreCount": 2,
                   "threadsPerCore": 1
@@ -422,7 +422,7 @@ Tests:
                 "groupSet": {
                   "items": [
                     {
-                      "groupId": "sg-03d704b35372e74e8",
+                      "groupId": "sg-0000000000000004a",
                       "groupName": "my-group"
                     }
                   ]
@@ -432,8 +432,8 @@ Tests:
                   "arn": "arn:aws:iam::111122223333:instance-profile/profile-id",
                   "id": "PROFILE_ID"
                 },
-                "imageId": "ami-013e7d3a6659f358d",
-                "instanceId": "i-07d06021b0da55115",
+                "imageId": "ami-0000000000000001a",
+                "instanceId": "i-0000000000000007a",
                 "instanceState": {
                   "code": 0,
                   "name": "pending"
@@ -469,7 +469,7 @@ Tests:
                       "groupSet": {
                         "items": [
                           {
-                            "groupId": "sg-03d704b35372e74e8",
+                            "groupId": "sg-0000000000000004a",
                             "groupName": "eks-cluster-sg-k8s-goat-cluster-816437967"
                           }
                         ]
@@ -477,7 +477,7 @@ Tests:
                       "interfaceType": "interface",
                       "ipv6AddressesSet": {},
                       "macAddress": "02:fc:9a:8a:db:c3",
-                      "networkInterfaceId": "eni-03ac9043f76fab96c",
+                      "networkInterfaceId": "eni-0000000000000001a",
                       "operator": {
                         "managed": false
                       },
@@ -495,9 +495,9 @@ Tests:
                       },
                       "sourceDestCheck": true,
                       "status": "in-use",
-                      "subnetId": "subnet-083e5906ef2809ac2",
+                      "subnetId": "subnet-0000000000000002a",
                       "tagSet": {},
-                      "vpcId": "vpc-0330bfd33da75b36e"
+                      "vpcId": "vpc-0000000000000001a"
                     }
                   ]
                 },
@@ -523,7 +523,7 @@ Tests:
                   "code": "pending",
                   "message": "pending"
                 },
-                "subnetId": "subnet-083e5906ef2809ac2",
+                "subnetId": "subnet-0000000000000002a",
                 "tagSet": {
                   "items": [
                     {
@@ -532,11 +532,11 @@ Tests:
                     },
                     {
                       "key": "aws:autoscaling:groupName",
-                      "value": "eks-ng-0ca246e9-cac9e862-bfd9-a821-c9fd-9916df5654eb"
+                      "value": "eks-ng-0ca246e9-00000000-0000-0000-0000-000000000150"
                     },
                     {
                       "key": "aws:ec2:fleet-id",
-                      "value": "fleet-180da986-0bb4-c936-0c9a-0e20a0c6d1aa"
+                      "value": "fleet-00000000-0000-0000-0000-000000000012"
                     },
                     {
                       "key": "eks:cluster-name",
@@ -560,7 +560,7 @@ Tests:
                     },
                     {
                       "key": "aws:ec2launchtemplate:id",
-                      "value": "lt-07a0b5cea4ece8ffd"
+                      "value": "lt-0000000000000003a"
                     },
                     {
                       "key": "aws:ec2launchtemplate:version",
@@ -577,13 +577,13 @@ Tests:
                   ]
                 },
                 "virtualizationType": "hvm",
-                "vpcId": "vpc-0330bfd33da75b36e"
+                "vpcId": "vpc-0000000000000001a"
               }
             ]
           },
           "ownerId": "111122223333",
-          "requestId": "95cdbe4d-8ff7-4111-8f08-44f510371035",
-          "requesterId": "414886084714",
+          "requestId": "00000000-0000-0000-0000-000000000111",
+          "requesterId": "333333333333",
           "reservationId": "r-0ff0b006325a10345"
         },
         "sourceIPAddress": "autoscaling.amazonaws.com",

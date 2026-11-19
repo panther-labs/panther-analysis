@@ -25,12 +25,12 @@ Tests:
                   - update:users
               strategy: jwt
               user:
-                email: user.name@yourcompany.io
+                email: user.name@example.net
                 name: User Name
                 user_id: google-oauth2|XXX
             body: []
             channel: https://manage.auth0.com/
-            ip: 12.12.12.12
+            ip: 203.0.113.2
             method: put
             path: /api/v2/guardian/policies
             query: {}
@@ -38,7 +38,7 @@ Tests:
           response:
             body: []
             statusCode: 200
-        ip: 12.12.12.12
+        ip: 203.0.113.2
         log_id: "XXX"
         type: sapi
         user_agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36
@@ -65,7 +65,7 @@ Tests:
                         "strategy": "jwt",
                         "user":
                           {
-                            "email": "homer.simpson@yourcompany.com",
+                            "email": "homer.simpson@example.org",
                             "name": "Homer Simpson",
                             "user_id": "google-oauth2|XXX",
                           },
@@ -81,7 +81,7 @@ Tests:
                           ],
                       },
                     "channel": "https://manage.auth0.com/",
-                    "ip": "12.12.12.12",
+                    "ip": "203.0.113.2",
                     "method": "patch",
                     "path": "/api/v2/actions/triggers/post-login/bindings",
                     "query": {},
@@ -101,7 +101,7 @@ Tests:
                                   "current_version":
                                     {
                                       "created_at": "2023-05-11T17:26:53.569382908Z",
-                                      "id": "c4c1d580-2f51-4d7b-afa5-ad4216f40ad3",
+                                      "id": "00000000-0000-0000-0000-000000000027",
                                       "runtime": "node16",
                                       "status": "BUILT",
                                       "updated_at": "2023-05-11T17:26:53.724617041Z",
@@ -112,7 +112,7 @@ Tests:
                                       "created_at": "2023-05-11T17:26:53.569382908Z",
                                       "dependencies": [],
                                       "deployed": true,
-                                      "id": "c4c1d580-2f51-4d7b-afa5-ad4216f40ad3",
+                                      "id": "00000000-0000-0000-0000-000000000027",
                                       "runtime": "node16",
                                       "secrets": [],
                                       "status": "built",
@@ -128,7 +128,7 @@ Tests:
                                         { "id": "", "semver": {} },
                                       "description": "This Action allows you to configure the number of days a password is valid before it expires and the user must rotate it.\n",
                                       "feature_type": "action",
-                                      "id": "64bee519-818f-4473-ab08-7c380f28da77",
+                                      "id": "00000000-0000-0000-0000-000000000022",
                                       "logo": "https://cdn.auth0.com/marketplace/catalog/content/assets/creators/auth0/auth0-avatar.png",
                                       "name": "Password Rotation",
                                       "partner_id": "XXX",
@@ -150,7 +150,7 @@ Tests:
                                 },
                               "created_at": "2023-05-23T20:53:36.528608347Z",
                               "display_name": "Password Rotation",
-                              "id": "a12b9e2a-ec0f-4060-b476-18547030088a",
+                              "id": "00000000-0000-0000-0000-000000000030",
                               "trigger_id": "post-login",
                               "updated_at": "2023-05-23T20:53:36.528608347Z",
                             },
@@ -159,7 +159,7 @@ Tests:
                     "statusCode": 200,
                   },
               },
-            "ip": "12.12.12.12",
+            "ip": "203.0.113.2",
             "log_id": "XXX",
             "type": "sapi",
             "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
@@ -185,11 +185,11 @@ Tests:
                     "auth":
                       {
                         "credentials":
-                          { "jti": "e6343ec1d24a41e6bd43a6be748cac11" },
+                          { "jti": "0000000000000000000000000000002e" },
                         "strategy": "jwt",
                         "user":
                           {
-                            "email": "homer.simpson@yourcompany.com",
+                            "email": "homer.simpson@example.org",
                             "name": "Homer Simpson",
                             "user_id": "google-oauth2|XXX",
                           },
@@ -200,7 +200,7 @@ Tests:
                           [{ "ref": { "type": "binding_id", "value": "XXX" } }],
                       },
                     "channel": "https://manage.auth0.com/",
-                    "ip": "12.12.12.12",
+                    "ip": "203.0.113.2",
                     "method": "patch",
                     "path": "/api/v2/actions/triggers/post-login/bindings",
                     "query": {},
@@ -279,7 +279,7 @@ Tests:
                     "statusCode": 200,
                   },
               },
-            "ip": "12.12.12.12",
+            "ip": "203.0.113.2",
             "log_id": "XXX",
             "type": "sapi",
             "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
@@ -308,14 +308,14 @@ Tests:
                         "strategy": "jwt",
                         "user":
                           {
-                            "email": "homer.simpson@yourcompany.com",
+                            "email": "homer.simpson@example.org",
                             "name": "Homer Simpson",
                             "user_id": "google-oauth2|XXX",
                           },
                       },
                     "body": { "bindings": [] },
                     "channel": "https://manage.auth0.com/",
-                    "ip": "12.12.12.12",
+                    "ip": "203.0.113.2",
                     "method": "patch",
                     "path": "/api/v2/actions/triggers/post-login/bindings",
                     "query": {},
@@ -323,7 +323,7 @@ Tests:
                   },
                 "response": { "body": { "bindings": [] }, "statusCode": 200 },
               },
-            "ip": "12.12.12.12",
+            "ip": "203.0.113.2",
             "log_id": "XXX",
             "type": "sapi",
             "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",

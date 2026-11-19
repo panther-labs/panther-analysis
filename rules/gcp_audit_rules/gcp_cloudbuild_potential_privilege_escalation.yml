@@ -32,7 +32,7 @@ Tests:
         "operation":
           {
             "first": true,
-            "id": "operations/build/some-project/YzNhZWI0YWYtNjAwNi00YzM5LTgxYmUtMjhmMjc1YzJkOGEz",
+            "id": "operations/build/some-project/EXAMPLE_BUILD_OPERATION_ID",
             "producer": "cloudbuild.googleapis.com",
           },
         "protoPayload":
@@ -62,7 +62,7 @@ Tests:
               },
             "requestMetadata":
               {
-                "callerIP": "189.163.74.177",
+                "callerIP": "192.0.2.5",
                 "callerSuppliedUserAgent": "(gzip),gzip(gfe),gzip(gfe)",
                 "destinationAttributes": {},
                 "requestAttributes":
@@ -77,7 +77,7 @@ Tests:
           {
             "labels":
               {
-                "build_id": "c3aeb4ap-6006-4c39-81be-28f275c2d8a3",
+                "build_id": "00000000-0000-0000-0000-000000000023",
                 "build_trigger_id": "",
                 "project_id": "some-project",
               },
@@ -95,13 +95,13 @@ Tests:
           {
             "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "authenticationInfo":
-              { "principalEmail": "john.doe@some-project.com" },
+              { "principalEmail": "john.doe@example.com" },
             "authorizationInfo":
               [
                 {
                   "granted": true,
                   "permission": "clientauthconfig.brands.create",
-                  "resource": "brands/1028347248702",
+                  "resource": "brands/210987654321",
                   "resourceAttributes": {},
                 },
               ],
@@ -111,26 +111,26 @@ Tests:
                 "brand":
                   {
                     "displayName": "NewBrand",
-                    "projectNumbers": ["1028345275902"],
-                    "supportEmail": "john.doe@some-project.com",
+                    "projectNumbers": ["333344445555"],
+                    "supportEmail": "john.doe@example.com",
                   },
                 "visibility": "INTERNAL",
               },
             "requestMetadata":
               {
-                "callerIP": "189.163.74.177",
+                "callerIP": "192.0.2.5",
                 "destinationAttributes": {},
                 "requestAttributes":
                   { "auth": {}, "time": "2024-01-24T14:30:05.891336Z" },
               },
-            "resourceName": "brands/1028347275902",
+            "resourceName": "brands/777788889999",
             "response":
               {
-                "brandId": "1028347248702",
+                "brandId": "210987654321",
                 "creationTime": "2024-01-24T14:30:05.400Z",
                 "displayName": "NewBrand test",
-                "projectNumbers": ["1028347248702"],
-                "supportEmail": "some.user@company.com",
+                "projectNumbers": ["210987654321"],
+                "supportEmail": "some.user@example.org",
                 "updateTime": "2024-01-24T14:30:05.866002Z",
               },
             "serviceName": "clientauthconfig.googleapis.com",
@@ -140,7 +140,7 @@ Tests:
         "resource":
           {
             "labels":
-              { "brand_id": "1028347248702", "project_id": "some-project" },
+              { "brand_id": "210987654321", "project_id": "some-project" },
             "type": "client_auth_config_brand",
           },
         "severity": "NOTICE",

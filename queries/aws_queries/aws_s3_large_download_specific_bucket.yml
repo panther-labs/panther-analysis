@@ -56,7 +56,7 @@ Tests:
       user_name: "data-engineer"
       user_type: "IAMUser"
       bucket_name: "sensitive-data-bucket"
-      source_ip: "3.3.3.3"
+      source_ip: "192.0.2.33"
       user_agent: "aws-cli/2.0.0"
       total_bytes_downloaded: 78643200  # 75MB
       object_count: 75
@@ -72,7 +72,7 @@ Tests:
       user_name: "suspicious-user"
       user_type: "IAMUser"
       bucket_name: "sensitive-data-bucket"
-      source_ip: "2.2.2.2"
+      source_ip: "192.0.2.2"
       user_agent: "python-requests/2.28.0"
       total_bytes_downloaded: 1073741824  # 1GB
       object_count: 200
@@ -104,7 +104,7 @@ Tests:
       user_name: "DataAnalyst"
       user_type: "AssumedRole"
       bucket_name: "analytics-bucket"
-      source_ip: "1.2.3.4"
+      source_ip: "192.0.2.4"
       user_agent: "boto3/1.26.0"
       total_bytes_downloaded: 62914560  # 60MB
       object_count: 30
@@ -116,8 +116,8 @@ Tests:
   - Name: FederatedUser large download triggers alert
     ExpectedResult: true
     Log:
-      user_arn: "arn:aws:sts::123456789012:federated-user/contractor@company.com"
-      user_name: "contractor@company.com"
+      user_arn: "arn:aws:sts::123456789012:federated-user/contractor@example.com"
+      user_name: "contractor@example.com"
       user_type: "FederatedUser"
       bucket_name: "project-data"
       source_ip: "203.0.113.100"

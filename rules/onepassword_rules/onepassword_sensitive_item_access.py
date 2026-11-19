@@ -8,7 +8,7 @@ There is an alternative method for creating this rule that uses Panther's lookup
 BETA - Sensitive 1Password Item Accessed (onepassword_lut_sensitive_item_access.py)
 """
 
-SENSITIVE_ITEM_WATCHLIST = {"ecd1d435c26440dc930ddfbbef201a11": "demo_item"}
+SENSITIVE_ITEM_WATCHLIST = {"0000000000000000000000000000002d": "demo_item"}
 
 
 def rule(event):

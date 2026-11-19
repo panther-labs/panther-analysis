@@ -69,7 +69,7 @@ Tests:
         "category": "kube-audit",
         "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
         "properties": {
-          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"malicious-user@example.com\"},\"sourceIPs\":[\"1.2.3.4\"],\"objectRef\":{\"resource\":\"pods\",\"subresource\":\"exec\",\"namespace\":\"default\",\"name\":\"api-server\"},\"responseStatus\":{\"code\":200},\"requestObject\":{\"command\":[\"tar\",\"cf\",\"-\",\"/root/.ssh/id_rsa\"],\"container\":\"api\"}}"
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"malicious-user@example.com\"},\"sourceIPs\":[\"192.0.2.1\"],\"objectRef\":{\"resource\":\"pods\",\"subresource\":\"exec\",\"namespace\":\"default\",\"name\":\"api-server\"},\"responseStatus\":{\"code\":200},\"requestObject\":{\"command\":[\"tar\",\"cf\",\"-\",\"/root/.ssh/id_rsa\"],\"container\":\"api\"}}"
         },
         "p_source_label": "aks-cluster"
       }
@@ -78,7 +78,7 @@ Tests:
     Log:
       {
         "protoPayload": {
-          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authenticationInfo": {"principalEmail": "user@example.org"},
           "authorizationInfo": [{
             "granted": true,
             "permission": "io.k8s.core.v1.pods.exec",

@@ -48,7 +48,7 @@ Tests:
           "username": "system:serviceaccount:kube-system:coredns",
           "groups": ["system:serviceaccounts", "system:authenticated"]
         },
-        "sourceIPs": ["1.2.3.4"],
+        "sourceIPs": ["1.0.0.1"],
         "objectRef": {
           "resource": "endpointslices",
           "apiVersion": "v1"
@@ -63,7 +63,7 @@ Tests:
               "asn": "AS12345",
               "domain": "example-isp.com",
               "name": "Example ISP",
-              "p_match": "1.2.3.4",
+              "p_match": "1.0.0.1",
               "type": "isp"
             }]
           }
@@ -100,7 +100,7 @@ Tests:
           "authenticationInfo": {"principalEmail": "system:serviceaccount:kube-system:default"},
           "methodName": "io.k8s.core.v1.pods.list",
           "requestMetadata": {
-            "callerIP": "1.2.3.4",
+            "callerIP": "1.0.0.1",
             "callerSuppliedUserAgent": "kubectl/v1.27.0"
           },
           "resourceName": "core/v1/namespaces/default/pods",
@@ -119,7 +119,7 @@ Tests:
               "asn": "AS12345",
               "domain": "example-isp.com",
               "name": "Example ISP",
-              "p_match": "1.2.3.4",
+              "p_match": "1.0.0.1",
               "type": "isp"
             }]
           }
@@ -136,7 +136,7 @@ Tests:
           "username": "system:node:ip-192-168-3-178.us-west-2.compute.internal",
           "groups": ["system:nodes", "system:authenticated"]
         },
-        "sourceIPs": ["54.212.83.236"],
+        "sourceIPs": ["9.9.9.9"],
         "objectRef": {
           "resource": "serviceaccounts",
           "subresource": "token"
@@ -151,8 +151,8 @@ Tests:
               "asn": "AS16509",
               "domain": "amazon.com",
               "name": "Amazon.com, Inc.",
-              "p_match": "54.212.83.236",
-              "route": "54.212.0.0/16",
+              "p_match": "9.9.9.9",
+              "route": "203.0.113.0/24",
               "type": "hosting"
             }]
           }
@@ -171,7 +171,7 @@ Tests:
           },
           "groups": ["system:authenticated"]
         },
-        "sourceIPs": ["35.163.244.48"],
+        "sourceIPs": ["149.112.112.112"],
         "objectRef": {"resource": "deployments", "namespace": "kube-system"},
         "responseStatus": {"code": 200},
         "stage": "ResponseComplete",
@@ -184,7 +184,7 @@ Tests:
         "kind": "Event",
         "verb": "get",
         "user": {"username": "admin@example.com"},
-        "sourceIPs": ["1.2.3.4"],
+        "sourceIPs": ["1.0.0.1"],
         "objectRef": {"resource": "pods"},
         "responseStatus": {"code": 200},
         "stage": "ResponseComplete",
@@ -210,7 +210,7 @@ Tests:
         "kind": "Event",
         "verb": "get",
         "user": {"username": "system:serviceaccount:default:test"},
-        "sourceIPs": ["1.2.3.4"],
+        "sourceIPs": ["1.0.0.1"],
         "objectRef": {"resource": "secrets"},
         "responseStatus": {"code": 403},
         "stage": "ResponseComplete",
@@ -224,7 +224,7 @@ Tests:
         "category": "kube-audit",
         "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
         "properties": {
-          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"get\",\"user\":{\"username\":\"system:serviceaccount:kube-system:csi-azuredisk-node-sa\",\"groups\":[\"system:serviceaccounts\",\"system:authenticated\"]},\"sourceIPs\":[\"20.127.0.45\"],\"objectRef\":{\"resource\":\"nodes\"},\"responseStatus\":{\"code\":200},\"stage\":\"ResponseComplete\"}"
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"get\",\"user\":{\"username\":\"system:serviceaccount:kube-system:csi-azuredisk-node-sa\",\"groups\":[\"system:serviceaccounts\",\"system:authenticated\"]},\"sourceIPs\":[\"4.2.2.2\"],\"objectRef\":{\"resource\":\"nodes\"},\"responseStatus\":{\"code\":200},\"stage\":\"ResponseComplete\"}"
         },
         "p_source_label": "aks-cluster",
         "p_enrichment": {
@@ -233,7 +233,7 @@ Tests:
               "asn": "AS8075",
               "domain": "microsoft.com",
               "name": "Microsoft Corporation",
-              "p_match": "20.127.0.45",
+              "p_match": "4.2.2.2",
               "type": "hosting"
             }]
           }
@@ -247,7 +247,7 @@ Tests:
         "category": "kube-audit",
         "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
         "properties": {
-          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"list\",\"user\":{\"username\":\"system:serviceaccount:kube-system:csi-azurefile-node-sa\",\"groups\":[\"system:serviceaccounts\",\"system:authenticated\"]},\"sourceIPs\":[\"52.152.245.238\"],\"objectRef\":{\"resource\":\"persistentvolumes\"},\"responseStatus\":{\"code\":200},\"stage\":\"ResponseComplete\"}"
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"list\",\"user\":{\"username\":\"system:serviceaccount:kube-system:csi-azurefile-node-sa\",\"groups\":[\"system:serviceaccounts\",\"system:authenticated\"]},\"sourceIPs\":[\"1.1.1.2\"],\"objectRef\":{\"resource\":\"persistentvolumes\"},\"responseStatus\":{\"code\":200},\"stage\":\"ResponseComplete\"}"
         },
         "p_source_label": "aks-cluster"
       }
@@ -259,7 +259,7 @@ Tests:
           "authenticationInfo": {"principalEmail": "system:anonymous"},
           "methodName": "io.k8s.core.v1.healthz.get",
           "requestMetadata": {
-            "callerIP": "35.186.224.25",
+            "callerIP": "208.67.222.222",
             "callerSuppliedUserAgent": "GoogleHC/1.0"
           },
           "resourceName": "core/v1/healthz",
@@ -278,7 +278,7 @@ Tests:
               "asn": "AS15169",
               "domain": "google.com",
               "name": "Google LLC",
-              "p_match": "35.186.224.25",
+              "p_match": "208.67.222.222",
               "type": "hosting"
             }]
           }
@@ -292,7 +292,7 @@ Tests:
           "authenticationInfo": {"principalEmail": "system:anonymous"},
           "methodName": "io.k8s.readyz",
           "requestMetadata": {
-            "callerIP": "108.177.75.65",
+            "callerIP": "208.67.220.220",
             "callerSuppliedUserAgent": "GoogleKubernetesEngineFrontend"
           },
           "serviceName": "k8s.io",
@@ -316,7 +316,7 @@ Tests:
         "kind": "Event",
         "verb": "watch",
         "user": {"username": "system:serviceaccount:default:app"},
-        "sourceIPs": ["10.0.1.5", "54.212.83.236"],
+        "sourceIPs": ["10.0.1.5", "9.9.9.9"],
         "objectRef": {"resource": "endpoints"},
         "responseStatus": {"code": 200},
         "stage": "ResponseComplete",
@@ -330,7 +330,7 @@ Tests:
         "category": "kube-audit",
         "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
         "properties": {
-          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"system:node:aks-nodepool1-12345-vmss000001\",\"groups\":[\"system:nodes\",\"system:authenticated\"]},\"sourceIPs\":[\"20.127.0.100\"],\"objectRef\":{\"resource\":\"leases\"},\"responseStatus\":{\"code\":201},\"stage\":\"ResponseComplete\"}"
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"system:node:aks-nodepool1-12345-vmss000001\",\"groups\":[\"system:nodes\",\"system:authenticated\"]},\"sourceIPs\":[\"64.6.64.6\"],\"objectRef\":{\"resource\":\"leases\"},\"responseStatus\":{\"code\":201},\"stage\":\"ResponseComplete\"}"
         },
         "p_source_label": "aks-cluster",
         "p_enrichment": {
@@ -339,7 +339,7 @@ Tests:
               "asn": "AS8075",
               "domain": "microsoft.com",
               "name": "Microsoft Corporation",
-              "p_match": "20.127.0.100",
+              "p_match": "64.6.64.6",
               "type": "hosting"
             }]
           }
@@ -365,7 +365,7 @@ Tests:
         "kind": "Event",
         "verb": "propfind",
         "user": {"username": "system:anonymous"},
-        "sourceIPs": ["176.65.134.20"],
+        "sourceIPs": ["4.2.2.1"],
         "objectRef": {"resource": ""},
         "responseStatus": {"code": 403},
         "stage": "ResponseComplete",
@@ -378,7 +378,7 @@ Tests:
         "kind": "Event",
         "verb": "get",
         "user": {"username": "system:unauthenticated"},
-        "sourceIPs": ["1.2.3.4"],
+        "sourceIPs": ["1.0.0.1"],
         "objectRef": {"resource": "apis"},
         "responseStatus": {"code": 403},
         "stage": "ResponseComplete",
@@ -392,7 +392,7 @@ Tests:
           "authenticationInfo": {"principalEmail": "system:anonymous"},
           "methodName": "io.k8s.readyz",
           "requestMetadata": {
-            "callerIP": "108.177.75.65",
+            "callerIP": "208.67.220.220",
             "callerSuppliedUserAgent": "GoogleHC/1.0"
           },
           "resourceName": "/readyz",

@@ -38,7 +38,7 @@ Tests:
           "username": "john.doe@example.com",
           "groups": ["system:authenticated"]
         },
-        "sourceIPs": ["1.2.3.4"],
+        "sourceIPs": ["192.0.2.1"],
         "userAgent": "kubectl/v1.28.0",
         "objectRef": {
           "resource": "pods",
@@ -60,7 +60,7 @@ Tests:
         "category": "kube-audit",
         "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
         "properties": {
-          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"level\":\"Request\",\"stage\":\"ResponseStarted\",\"verb\":\"get\",\"user\":{\"username\":\"masterclient\",\"groups\":[\"system:masters\",\"system:authenticated\"]},\"sourceIPs\":[\"20.43.245.209\",\"172.31.52.37\"],\"userAgent\":\"kubectl/v1.35.0\",\"objectRef\":{\"resource\":\"pods\",\"subresource\":\"exec\",\"namespace\":\"default\",\"name\":\"nginx-pod\",\"apiVersion\":\"v1\"},\"responseStatus\":{\"code\":101},\"requestURI\":\"/api/v1/namespaces/default/pods/nginx-pod/exec\"}"
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"level\":\"Request\",\"stage\":\"ResponseStarted\",\"verb\":\"get\",\"user\":{\"username\":\"masterclient\",\"groups\":[\"system:masters\",\"system:authenticated\"]},\"sourceIPs\":[\"192.0.2.12\",\"172.31.52.37\"],\"userAgent\":\"kubectl/v1.35.0\",\"objectRef\":{\"resource\":\"pods\",\"subresource\":\"exec\",\"namespace\":\"default\",\"name\":\"nginx-pod\",\"apiVersion\":\"v1\"},\"responseStatus\":{\"code\":101},\"requestURI\":\"/api/v1/namespaces/default/pods/nginx-pod/exec\"}"
         },
         "p_source_label": "aks-cluster"
       }
@@ -69,7 +69,7 @@ Tests:
     Log:
       {
         "protoPayload": {
-          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authenticationInfo": {"principalEmail": "user@example.org"},
           "authorizationInfo": [{
             "granted": true,
             "permission": "io.k8s.core.v1.pods.exec.create",
@@ -77,7 +77,7 @@ Tests:
           }],
           "methodName": "io.k8s.core.v1.pods.exec.create",
           "requestMetadata": {
-            "callerIP": "1.2.3.4",
+            "callerIP": "192.0.2.1",
             "callerSuppliedUserAgent": "kubectl/v1.27.0"
           },
           "resourceName": "core/v1/namespaces/default/pods/nginx-pod/exec",

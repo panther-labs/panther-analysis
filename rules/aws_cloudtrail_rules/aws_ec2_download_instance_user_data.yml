@@ -48,7 +48,7 @@ Tests:
         "errorCode": "Client.UnauthorizedOperation",
         "errorMessage": "You are not authorized to perform this operation. User: arn:aws:sts::111122223333:assumed-role/SampleRole/sample-session is not authorized to perform: ec2:DescribeInstanceAttribute on resource: arn:aws:ec2:us-west-2:111122223333:instance/* because no identity-based policy allows the ec2:DescribeInstanceAttribute action. Encoded authorization failure message: 2RCBDBB0PcDpowyBFV7UpJobr-4iGb1MWqjKES--SAO_ca79pxBjKLQQ-sBGm2_m8jjcTAITBlNRa1WCVabq3VCghw9mbj0XZ3-2ZfsVyUrQWiTSUqYh9CUFVnWOmp710QzzKLj-Dy5Aup-bkSCbadoQe6HMevGPiSGeklgwBQc4jLO3oIbPTsujAijnaVr4CUIRBkD4KI8H2ZshEgJOujlpkg47FYqU8bVPNEIv9OwsQ9g4dRMB_cJ7C43kpURWIuiWkFpN8Q84RubskMNB3IfkHGR_Y63Z3LLzOCbPgT4S2zt97PBryCs-lUWSdA2ZCq9dcOtoHQq3Ed-3eB4o7FdZ0cJawa2i6oeUGzzPC2JtBQBcCqExMS8CXENosA0LY9cRUOSo4xc439wzlNpUbMI6K_y1AZWWN0f1QzLW1GkhtlUaLZFvLTwMqTVhClznln2ntmAJ_6iVVlvYco5x6Z4oNn8pMVPk76Iq8yM9o_2-tXmt0st7y_9B83eTSFOTbRnwgHabQXuMyzFKAA3xtuMcbcpB-Ij8c70lkv-eVQeJnfqRd_zbbnsMhxBybfjQyirKjY8bfLg",
         "eventCategory": "Management",
-        "eventID": "fa67e0b9-9837-4c84-baa0-78a271821d3e",
+        "eventID": "00000000-0000-0000-0000-000000000185",
         "eventName": "DescribeInstanceAttribute",
         "eventSource": "ec2.amazonaws.com",
         "eventTime": "2024-12-11 21:49:07.000000000",
@@ -57,12 +57,12 @@ Tests:
         "managementEvent": true,
         "readOnly": true,
         "recipientAccountId": "111122223333",
-        "requestID": "f2362cc7-4396-4be5-950c-16c36dddde76",
+        "requestID": "00000000-0000-0000-0000-000000000179",
         "requestParameters": {
           "attribute": "userData",
-          "instanceId": "i-12345678"
+          "instanceId": "i-0000001a"
         },
-        "sourceIPAddress": "1.2.3.4",
+        "sourceIPAddress": "198.51.100.150",
         "tlsDetails": {
           "cipherSuite": "TLS_AES_128_GCM_SHA256",
           "clientProvidedHostHeader": "ec2.us-west-2.amazonaws.com",
@@ -99,7 +99,7 @@ Tests:
         "p_parse_time": "2024-12-12 21:50:54.711099",
         "awsRegion": "us-west-2",
         "eventCategory": "Management",
-        "eventID": "6dbc00d3-1230-492a-ad34-4e3e49aba847",
+        "eventID": "00000000-0000-0000-0000-000000000081",
         "eventName": "DescribeInstanceAttribute",
         "eventSource": "ec2.amazonaws.com",
         "eventTime": "2024-12-12 21:44:35.000000000",
@@ -108,12 +108,12 @@ Tests:
         "managementEvent": true,
         "readOnly": true,
         "recipientAccountId": "111122223333",
-        "requestID": "26b6b895-900d-44aa-b286-b8d828c31aed",
+        "requestID": "00000000-0000-0000-0000-000000000028",
         "requestParameters": {
           "attribute": "userData",
-          "instanceId": "i-1234567890abcdefa"
+          "instanceId": "i-000000000000000ca"
         },
-        "sourceIPAddress": "1.2.3.4",
+        "sourceIPAddress": "198.51.100.150",
         "tlsDetails": {
           "cipherSuite": "TLS_AES_128_GCM_SHA256",
           "clientProvidedHostHeader": "ec2.us-west-2.amazonaws.com",
@@ -148,7 +148,7 @@ Tests:
         "p_log_type": "AWS.CloudTrail",
         "awsRegion": "us-west-2",
         "eventCategory": "Management",
-        "eventID": "21764f21-382a-4863-8573-908558a839ab",
+        "eventID": "00000000-0000-0000-0000-000000000024",
         "eventName": "DescribeInstanceAttribute",
         "eventSource": "ec2.amazonaws.com",
         "eventTime": "2025-02-09 20:29:17.000000000",
@@ -157,10 +157,10 @@ Tests:
         "managementEvent": true,
         "readOnly": true,
         "recipientAccountId": "123412341234",
-        "requestID": "cb8b2a56-d76d-40c2-af25-58c1547d9a48",
+        "requestID": "00000000-0000-0000-0000-000000000154",
         "requestParameters": {
           "attribute": "userData",
-          "instanceId": "i-1234123412341234"
+          "instanceId": "i-000000000000001a"
         },
         "sourceIPAddress": "cloudformation.amazonaws.com",
         "userAgent": "cloudformation.amazonaws.com",
@@ -168,7 +168,7 @@ Tests:
           "accountId": "123412341234",
           "arn": "arn:aws:sts::123412341234:assumed-role/PantherAuditRole-us-east-1/12341234123412341234",
           "invokedBy": "cloudformation.amazonaws.com",
-          "principalId": "AROA1234123412341234:12341234123412341234",
+          "principalId": "AROA_EXAMPLE_0002:12341234123412341234",
           "sessionContext": {
             "attributes": {
               "creationDate": "2025-02-09T20:29:15Z",
@@ -177,7 +177,7 @@ Tests:
             "sessionIssuer": {
               "accountId": "123412341234",
               "arn": "arn:aws:iam::123412341234:role/PantherAuditRole-us-east-1",
-              "principalId": "AROA1234123412341234",
+              "principalId": "AROA_EXAMPLE_0002",
               "type": "Role",
               "userName": "PantherAuditRole-us-east-1"
             }

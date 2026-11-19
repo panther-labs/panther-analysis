@@ -12,14 +12,14 @@ Tests:
   - ExpectedResult: false
     Log:
       awsRegion: us-east-1
-      eventID: 797163d3-5726-441d-80a7-6eeb7464acd4
+      eventID: 00000000-0000-0000-0000-000000000089
       eventName: CreateDBInstance
       eventSource: rds.amazonaws.com
       eventTime: "2018-07-30T22:14:06Z"
       eventType: AwsApiCall
       eventVersion: "1.04"
       recipientAccountId: "123456789012"
-      requestID: daf2e3f5-96a3-4df7-a026-863f96db793e
+      requestID: 00000000-0000-0000-0000-000000000166
       requestParameters:
         allocatedStorage: 20
         dBInstanceClass: db.m1.small
@@ -53,29 +53,29 @@ Tests:
           subnets:
             - subnetAvailabilityZone:
                 name: us-east-1b
-              subnetIdentifier: subnet-cbfff283
+              subnetIdentifier: subnet-0000006a
               subnetStatus: Active
             - subnetAvailabilityZone:
                 name: us-east-1e
-              subnetIdentifier: subnet-d7c825e8
+              subnetIdentifier: subnet-0000007a
               subnetStatus: Active
             - subnetAvailabilityZone:
                 name: us-east-1f
-              subnetIdentifier: subnet-6746046b
+              subnetIdentifier: subnet-0000002a
               subnetStatus: Active
             - subnetAvailabilityZone:
                 name: us-east-1c
-              subnetIdentifier: subnet-bac383e0
+              subnetIdentifier: subnet-0000005a
               subnetStatus: Active
             - subnetAvailabilityZone:
                 name: us-east-1d
-              subnetIdentifier: subnet-42599426
+              subnetIdentifier: subnet-0000001a
               subnetStatus: Active
             - subnetAvailabilityZone:
                 name: us-east-1a
-              subnetIdentifier: subnet-da327bf6
+              subnetIdentifier: subnet-0000008a
               subnetStatus: Active
-          vpcId: vpc-136a4c6a
+          vpcId: vpc-0000002a
         dbInstancePort: 0
         dbiResourceId: db-ETDZIIXHEWY5N7GXVC4SH7H5IA
         domainMemberships: []
@@ -106,28 +106,28 @@ Tests:
         storageType: standard
         vpcSecurityGroups:
           - status: active
-            vpcSecurityGroupId: sg-f839b688
+            vpcSecurityGroupId: sg-0000002a
       sourceIPAddress: 192.0.2.0
       userAgent: aws-cli/1.15.42 Python/3.6.1 Darwin/17.7.0 botocore/1.10.42
       userIdentity:
-        accessKeyId: AKIAI44QH8DHBEXAMPLE
+        accessKeyId: AKIA_EXAMPLE_0003
         accountId: "123456789012"
         arn: arn:aws:iam::123456789012:user/johndoe
-        principalId: AKIAIOSFODNN7EXAMPLE
+        principalId: AKIA_EXAMPLE_0004
         type: IAMUser
         userName: johndoe
     Name: Not-Restore-RDS-Request
   - ExpectedResult: false
     Log:
       awsRegion: us-east-1
-      eventID: 797163d3-5726-441d-80a7-6eeb7464acd4
+      eventID: 00000000-0000-0000-0000-000000000089
       eventName: RestoreDBInstanceFromDBSnapshot
       eventSource: rds.amazonaws.com
       eventTime: "2018-07-30T22:14:06Z"
       eventType: AwsApiCall
       eventVersion: "1.04"
       recipientAccountId: "123456789012"
-      requestID: daf2e3f5-96a3-4df7-a026-863f96db793e
+      requestID: 00000000-0000-0000-0000-000000000166
       requestParameters:
         allocatedStorage: 20
         dBInstanceClass: db.m1.small
@@ -161,29 +161,29 @@ Tests:
           subnets:
             - subnetAvailabilityZone:
                 name: us-east-1b
-              subnetIdentifier: subnet-cbfff283
+              subnetIdentifier: subnet-0000006a
               subnetStatus: Active
             - subnetAvailabilityZone:
                 name: us-east-1e
-              subnetIdentifier: subnet-d7c825e8
+              subnetIdentifier: subnet-0000007a
               subnetStatus: Active
             - subnetAvailabilityZone:
                 name: us-east-1f
-              subnetIdentifier: subnet-6746046b
+              subnetIdentifier: subnet-0000002a
               subnetStatus: Active
             - subnetAvailabilityZone:
                 name: us-east-1c
-              subnetIdentifier: subnet-bac383e0
+              subnetIdentifier: subnet-0000005a
               subnetStatus: Active
             - subnetAvailabilityZone:
                 name: us-east-1d
-              subnetIdentifier: subnet-42599426
+              subnetIdentifier: subnet-0000001a
               subnetStatus: Active
             - subnetAvailabilityZone:
                 name: us-east-1a
-              subnetIdentifier: subnet-da327bf6
+              subnetIdentifier: subnet-0000008a
               subnetStatus: Active
-          vpcId: vpc-136a4c6a
+          vpcId: vpc-0000002a
         dbInstancePort: 0
         dbiResourceId: db-ETDZIIXHEWY5N7GXVC4SH7H5IA
         domainMemberships: []
@@ -214,28 +214,28 @@ Tests:
         storageType: standard
         vpcSecurityGroups:
           - status: active
-            vpcSecurityGroupId: sg-f839b688
+            vpcSecurityGroupId: sg-0000002a
       sourceIPAddress: 192.0.2.0
       userAgent: aws-cli/1.15.42 Python/3.6.1 Darwin/17.7.0 botocore/1.10.42
       userIdentity:
-        accessKeyId: AKIAI44QH8DHBEXAMPLE
+        accessKeyId: AKIA_EXAMPLE_0003
         accountId: "123456789012"
         arn: arn:aws:iam::123456789012:user/johndoe
-        principalId: AKIAIOSFODNN7EXAMPLE
+        principalId: AKIA_EXAMPLE_0004
         type: IAMUser
         userName: johndoe
     Name: RDS-Restore-Not-Public
   - ExpectedResult: true
     Log:
       awsRegion: us-east-1
-      eventID: 797163d3-5726-441d-80a7-6eeb7464acd4
+      eventID: 00000000-0000-0000-0000-000000000089
       eventName: RestoreDBInstanceFromDBSnapshot
       eventSource: rds.amazonaws.com
       eventTime: "2018-07-30T22:14:06Z"
       eventType: AwsApiCall
       eventVersion: "1.04"
       recipientAccountId: "123456789012"
-      requestID: daf2e3f5-96a3-4df7-a026-863f96db793e
+      requestID: 00000000-0000-0000-0000-000000000166
       requestParameters:
         allocatedStorage: 20
         dBInstanceClass: db.m1.small
@@ -269,29 +269,29 @@ Tests:
           subnets:
             - subnetAvailabilityZone:
                 name: us-east-1b
-              subnetIdentifier: subnet-cbfff283
+              subnetIdentifier: subnet-0000006a
               subnetStatus: Active
             - subnetAvailabilityZone:
                 name: us-east-1e
-              subnetIdentifier: subnet-d7c825e8
+              subnetIdentifier: subnet-0000007a
               subnetStatus: Active
             - subnetAvailabilityZone:
                 name: us-east-1f
-              subnetIdentifier: subnet-6746046b
+              subnetIdentifier: subnet-0000002a
               subnetStatus: Active
             - subnetAvailabilityZone:
                 name: us-east-1c
-              subnetIdentifier: subnet-bac383e0
+              subnetIdentifier: subnet-0000005a
               subnetStatus: Active
             - subnetAvailabilityZone:
                 name: us-east-1d
-              subnetIdentifier: subnet-42599426
+              subnetIdentifier: subnet-0000001a
               subnetStatus: Active
             - subnetAvailabilityZone:
                 name: us-east-1a
-              subnetIdentifier: subnet-da327bf6
+              subnetIdentifier: subnet-0000008a
               subnetStatus: Active
-          vpcId: vpc-136a4c6a
+          vpcId: vpc-0000002a
         dbInstancePort: 0
         dbiResourceId: db-ETDZIIXHEWY5N7GXVC4SH7H5IA
         domainMemberships: []
@@ -322,14 +322,14 @@ Tests:
         storageType: standard
         vpcSecurityGroups:
           - status: active
-            vpcSecurityGroupId: sg-f839b688
+            vpcSecurityGroupId: sg-0000002a
       sourceIPAddress: 192.0.2.0
       userAgent: aws-cli/1.15.42 Python/3.6.1 Darwin/17.7.0 botocore/1.10.42
       userIdentity:
-        accessKeyId: AKIAI44QH8DHBEXAMPLE
+        accessKeyId: AKIA_EXAMPLE_0003
         accountId: "123456789012"
         arn: arn:aws:iam::123456789012:user/johndoe
-        principalId: AKIAIOSFODNN7EXAMPLE
+        principalId: AKIA_EXAMPLE_0004
         type: IAMUser
         userName: johndoe
     Name: RDS-Restore-Public

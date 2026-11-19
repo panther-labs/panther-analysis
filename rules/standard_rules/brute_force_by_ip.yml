@@ -44,7 +44,7 @@ Tests:
         "eventSource": "signin.amazonaws.com",
         "eventName": "ConsoleLogin",
         "awsRegion": "us-east-1",
-        "sourceIPAddress": "111.111.111.111",
+        "sourceIPAddress": "192.0.2.111",
         "userAgent": "Mozilla",
         "requestParameters": null,
         "responseElements": { "ConsoleLogin": "Success" },
@@ -67,11 +67,11 @@ Tests:
       - objectName: geoinfo_from_ip
         returnValue: >-
           {
-          "ip": "111.111.111.111",
+          "ip": "192.0.2.111",
           "region": "UnitTestRegion",
           "city": "UnitTestCityNew",
           "country": "UnitTestCountry",
-          "hostname": "somedomain.com",
+          "hostname": "example.com",
           "org": "Some Org"
           }
     Log:
@@ -89,7 +89,7 @@ Tests:
         "eventSource": "signin.amazonaws.com",
         "eventName": "ConsoleLogin",
         "awsRegion": "us-east-1",
-        "sourceIPAddress": "111.111.111.111",
+        "sourceIPAddress": "192.0.2.111",
         "userAgent": "Mozilla",
         "requestParameters": null,
         "responseElements": { "ConsoleLogin": "Failure" },
@@ -119,7 +119,7 @@ Tests:
             "login": "cat@example",
             "name": "Bob Cat",
           },
-        "ip_address": "111.111.111.111",
+        "ip_address": "192.0.2.111",
         "event_type": "DELETE",
         "p_log_type": "Box.Event",
         "p_parse_time": "2021-06-04 10:02:33.650807",
@@ -131,11 +131,11 @@ Tests:
       - objectName: geoinfo_from_ip
         returnValue: >-
           {
-          "ip": "111.111.111.111",
+          "ip": "192.0.2.111",
           "region": "UnitTestRegion",
           "city": "UnitTestCityNew",
           "country": "UnitTestCountry",
-          "hostname": "somedomain.com",
+          "hostname": "example.com",
           "org": "Some Org"
           }
     Log:
@@ -151,7 +151,7 @@ Tests:
           },
         "event_type": "FAILED_LOGIN",
         "source": { "id": "12345678", "type": "user", "name": "Bob Cat" },
-        "ip_address": "111.111.111.111",
+        "ip_address": "192.0.2.111",
         "p_log_type": "Box.Event",
         "p_parse_time": "2021-06-04 10:02:33.650807",
         "p_event_time": "2021-06-04 09:59:53.650807",
@@ -161,7 +161,7 @@ Tests:
     Log:
       {
         "id": { "applicationName": "login" },
-        "ipAddress": "111.111.111.111",
+        "ipAddress": "192.0.2.111",
         "type": "login",
         "name": "login_success",
         "p_log_type": "GSuite.ActivityEvent",
@@ -174,18 +174,18 @@ Tests:
       - objectName: geoinfo_from_ip
         returnValue: >-
           {
-          "ip": "111.111.111.111",
+          "ip": "192.0.2.111",
           "region": "UnitTestRegion",
           "city": "UnitTestCityNew",
           "country": "UnitTestCountry",
-          "hostname": "somedomain.com",
+          "hostname": "example.com",
           "org": "Some Org"
           }
     Log:
       {
         "actor": { "email": "bob@example.com" },
         "id": { "applicationName": "login" },
-        "ipAddress": "111.111.111.111",
+        "ipAddress": "192.0.2.111",
         "type": "login",
         "name": "login_failure",
         "p_log_type": "GSuite.ActivityEvent",
@@ -203,7 +203,7 @@ Tests:
             "id": "unknown",
             "type": "User",
           },
-        "client": { "ipAddress": "111.111.111.111" },
+        "client": { "ipAddress": "192.0.2.111" },
         "eventType": "user.session.start",
         "outcome": { "reason": "VERIFICATION_ERROR", "result": "SUCCESS" },
         "p_log_type": "Okta.SystemLog",
@@ -216,11 +216,11 @@ Tests:
       - objectName: geoinfo_from_ip
         returnValue: >-
           {
-          "ip": "111.111.111.111",
+          "ip": "192.0.2.111",
           "region": "UnitTestRegion",
           "city": "UnitTestCityNew",
           "country": "UnitTestCountry",
-          "hostname": "somedomain.com",
+          "hostname": "example.com",
           "org": "Some Org"
           }
     Log:
@@ -232,7 +232,7 @@ Tests:
             "id": "unknown",
             "type": "User",
           },
-        "client": { "ipAddress": "111.111.111.111" },
+        "client": { "ipAddress": "192.0.2.111" },
         "eventType": "user.session.start",
         "outcome": { "reason": "VERIFICATION_ERROR", "result": "FAILURE" },
         "p_log_type": "Okta.SystemLog",
@@ -248,7 +248,7 @@ Tests:
         "actor_user_name": "Bob Cat",
         "user_id": 123456,
         "user_name": "Bob Cat",
-        "ipaddr": "111.111.111.111",
+        "ipaddr": "192.0.2.111",
         "p_log_type": "OneLogin.Events",
         "p_parse_time": "2021-06-04 10:02:33.650807",
         "p_event_time": "2021-06-04 09:59:53.650807",
@@ -259,11 +259,11 @@ Tests:
       - objectName: geoinfo_from_ip
         returnValue: >-
           {
-          "ip": "111.111.111.111",
+          "ip": "192.0.2.111",
           "region": "UnitTestRegion",
           "city": "UnitTestCityNew",
           "country": "UnitTestCountry",
-          "hostname": "somedomain.com",
+          "hostname": "example.com",
           "org": "Some Org"
           }
     Log:
@@ -273,7 +273,7 @@ Tests:
         "actor_user_name": "Bob Cat",
         "user_id": 123456,
         "user_name": "Bob Cat",
-        "ipaddr": "1.2.3.4",
+        "ipaddr": "192.0.2.4",
         "p_log_type": "OneLogin.Events",
         "p_parse_time": "2021-06-04 10:02:33.650807",
         "p_event_time": "2021-06-04 09:59:53.650807",
@@ -288,7 +288,7 @@ Tests:
             "serviceName": "cloudresourcemanager.googleapis.com",
             "methodName": "SetIamPolicy",
             "authenticationInfo": { "principalEmail": "bob@example.com" },
-            "requestMetadata": { "callerIP": "111.111.111.111" },
+            "requestMetadata": { "callerIP": "192.0.2.111" },
             "serviceData":
               {
                 "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
@@ -316,11 +316,11 @@ Tests:
       - objectName: geoinfo_from_ip
         returnValue: >-
           {
-          "ip": "111.111.111.111",
+          "ip": "192.0.2.111",
           "region": "UnitTestRegion",
           "city": "UnitTestCityNew",
           "country": "UnitTestCountry",
-          "hostname": "somedomain.com",
+          "hostname": "example.com",
           "org": "Some Org"
           }
     Log:
@@ -328,7 +328,7 @@ Tests:
         "actor":
           {
             "actor_type": "user",
-            "email": "homer@springfield.com",
+            "email": "homer@example.net",
             "gid": "2222222",
             "name": "Homer",
           },
@@ -340,7 +340,7 @@ Tests:
         "gid": "222222222",
         "resource":
           {
-            "email": "homer@springfield.com",
+            "email": "homer@example.net",
             "gid": "2222222",
             "name": "homer",
             "resource_type": "user",
@@ -356,7 +356,7 @@ Tests:
         "actor":
           {
             "actor_type": "user",
-            "email": "homer@springfield.com",
+            "email": "homer@example.net",
             "gid": "2222222",
             "name": "Homer",
           },
@@ -368,7 +368,7 @@ Tests:
         "gid": "222222222",
         "resource":
           {
-            "email": "homer@springfield.com",
+            "email": "homer@example.net",
             "gid": "2222222",
             "name": "homer",
             "resource_type": "user",
@@ -389,7 +389,7 @@ Tests:
         "country": "US",
         "target_user":
           {
-            "email": "homer@springfield.gov",
+            "email": "homer@example.org",
             "name": "Homer Simpson",
             "uuid": "1234",
           },
@@ -411,11 +411,11 @@ Tests:
       - objectName: geoinfo_from_ip
         returnValue: >-
           {
-          "ip": "111.111.111.111",
+          "ip": "192.0.2.111",
           "region": "UnitTestRegion",
           "city": "UnitTestCityNew",
           "country": "UnitTestCountry",
-          "hostname": "somedomain.com",
+          "hostname": "example.com",
           "org": "Some Org"
           }
     Log:
@@ -428,7 +428,7 @@ Tests:
         "country": "US",
         "target_user":
           {
-            "email": "homer@springfield.gov",
+            "email": "homer@example.org",
             "name": "Homer Simpson",
             "uuid": "1234",
           },
@@ -436,7 +436,7 @@ Tests:
           {
             "app_name": "1Password Browser Extension",
             "app_version": "20184",
-            "ip_address": "111.111.111.111",
+            "ip_address": "192.0.2.111",
             "os_name": "Solaris",
             "os_version": "10",
             "platform_name": "Chrome",

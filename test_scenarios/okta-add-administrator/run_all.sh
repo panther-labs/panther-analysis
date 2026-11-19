@@ -1,6 +1,6 @@
 #! /bin/bash
 
-bucket=panther-test-scenario-7153027165
+bucket=example-test-scenario-bucket
 region=us-east-2
 
 python send_data.py --region $region --compromise-datetime '2021-05-29T19:00:00+00:00' --bucket-name $bucket  --file okta-add-administrator/legit_login.yml

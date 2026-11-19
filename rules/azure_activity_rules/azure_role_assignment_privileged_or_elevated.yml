@@ -52,7 +52,7 @@ Tests:
           "authorization": {
             "action": "Microsoft.Authorization/roleAssignments/write",
             "evidence": {
-              "principalId": "6b6d44f0-b13a-46a0-bfde-161324d4c34d",
+              "principalId": "00000000-0000-0000-0000-000000000040",
               "principalType": "User",
               "role": "Owner",
               "roleAssignmentId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
@@ -62,7 +62,7 @@ Tests:
           }
         },
         "properties": {
-          "requestbody": "{\"Id\":\"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\"Properties\":{\"PrincipalId\":\"770797c4-e05a-43f9-bda2-1f1f379987ae\",\"PrincipalType\":\"ServicePrincipal\",\"RoleDefinitionId\":\"/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635\",\"Scope\":\"/subscriptions/12345678-1234-1234-1234-123456789abc\"}}"
+          "requestbody": "{\"Id\":\"a1b2c3d4-e5f6-7890-abcd-ef1234567890\",\"Properties\":{\"PrincipalId\":\"00000000-0000-0000-0000-000000000045\",\"PrincipalType\":\"ServicePrincipal\",\"RoleDefinitionId\":\"/providers/Microsoft.Authorization/roleDefinitions/8e3af657-a8ff-443c-a75c-2fe8c4bcb635\",\"Scope\":\"/subscriptions/12345678-1234-1234-1234-123456789abc\"}}"
         }
       }
   - Name: Non-Privileged Role Assignment
@@ -75,7 +75,7 @@ Tests:
         "operationVersion": "2021-04-01",
         "category": "Administrative",
         "resultType": "Success",
-        "callerIpAddress": "1.2.3.4",
+        "callerIpAddress": "198.51.100.1",
         "correlationId": "h3g4f5e6-d7c8-9012-def0-333333333333",
         "location": "eastus",
         "tenantId": "87654321-4321-4321-4321-222222222222",
@@ -83,7 +83,7 @@ Tests:
           "authorization": {
             "action": "Microsoft.Authorization/roleAssignments/write",
             "evidence": {
-              "principalId": "6b6d44f0-b13a-46a0-bfde-161324d4c34d",
+              "principalId": "00000000-0000-0000-0000-000000000040",
               "principalType": "User",
               "role": "Owner",
               "roleAssignmentId": "c3d4e5f6-a7b8-9012-cdef-111111111111",
@@ -93,7 +93,7 @@ Tests:
           }
         },
         "properties": {
-          "requestbody": "{\"Id\":\"c3d4e5f6-a7b8-9012-cdef-111111111111\",\"Properties\":{\"PrincipalId\":\"22222222-3333-4444-5555-666666666666\",\"PrincipalType\":\"User\",\"RoleDefinitionId\":\"/providers/Microsoft.Authorization/roleDefinitions/acdd72a7-3385-48ef-bd42-f606fba81ae7\",\"Scope\":\"/subscriptions/12345678-1234-1234-1234-123456789abc\"}}"
+          "requestbody": "{\"Id\":\"c3d4e5f6-a7b8-9012-cdef-111111111111\",\"Properties\":{\"PrincipalId\":\"22222222-3333-4444-5555-666666666666\",\"PrincipalType\":\"User\",\"RoleDefinitionId\":\"/providers/Microsoft.Authorization/roleDefinitions/00000000-0000-0000-0000-000000000059\",\"Scope\":\"/subscriptions/12345678-1234-1234-1234-123456789abc\"}}"
         }
       }
   - Name: Elevated Role Assignment (Storage Blob Data Owner)
@@ -107,7 +107,7 @@ Tests:
         "category": "Administrative",
         "resultType": "Success",
         "resultSignature": "200",
-        "callerIpAddress": "1.2.3.4",
+        "callerIpAddress": "198.51.100.1",
         "correlationId": "i4h5g6f7-e8d9-0123-efgh-222222222222",
         "location": "westus",
         "tenantId": "87654321-4321-4321-4321-111111111111",
@@ -115,7 +115,7 @@ Tests:
           "authorization": {
             "action": "Microsoft.Authorization/roleAssignments/write",
             "evidence": {
-              "principalId": "6b6d44f0-b13a-46a0-bfde-161324d4c34d",
+              "principalId": "00000000-0000-0000-0000-000000000040",
               "principalType": "User",
               "role": "Owner",
               "roleAssignmentId": "d4e5f6a7-b8c9-0123-def4-111111111111",

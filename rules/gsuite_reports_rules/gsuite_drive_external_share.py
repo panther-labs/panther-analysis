@@ -2,39 +2,39 @@ import datetime
 
 from panther_base_helpers import pattern_match, pattern_match_list
 
-COMPANY_DOMAIN = "your-company-name.com"
+COMPANY_DOMAIN = "example.com"
 EXCEPTION_PATTERNS = {
     # The glob pattern for the document title (lowercased)
     "1 document title p*": {  # allow any title "all"
         "allowed_to_send": {
-            "alice@acme.com",
-            "samuel@acme.com",
-            "nathan@acme.com",
-            "barry@acme.com",
+            "alice@example.net",
+            "samuel@example.net",
+            "nathan@example.net",
+            "barry@example.net",
             # Allow any user
             # "all"
             # Allow any user in a specific domain
-            # "*@acme.com"
+            # "*@example.net"
         },
         "allowed_to_receive": {
-            "alice@abc.com",
-            "samuel@abc.com",
-            "nathan@abc.com",
-            "barry@abc.com",
+            "alice@example.org",
+            "samuel@example.org",
+            "nathan@example.org",
+            "barry@example.org",
             # Allow any user
             # "all"
             # Allow any user in a specific domain
-            # "*@acme.com"
+            # "*@example.net"
         },
         # The time limit for how long the file share stays valid
         "allowed_until": datetime.datetime(year=2030, month=6, day=2),
     },
     "2 document title p*": {
         "allowed_to_send": {
-            "alice@abc.com",
+            "alice@example.org",
         },
         "allowed_to_receive": {
-            "*@acme.com",
+            "*@example.net",
         },
         # The time limit for how long the file share stays valid
         "allowed_until": datetime.datetime(year=2030, month=6, day=2),

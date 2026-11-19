@@ -27,20 +27,20 @@ Tests:
         "logname": "projects/test-project-123456/logs/cloudaudit.googleapis.com%2Factivity",
         "operation":
           {
-            "id": "operation-1684869594486-5fc6145ac17b3-6f92b265-43256266",
+            "id": "operation-1684869594486-000000000001b-0000001c-0000001d",
             "last": true,
             "producer": "compute.googleapis.com",
           },
         "protoPayload":
           {
             "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
-            "authenticationInfo": { "principalEmail": "user@domain.com" },
+            "authenticationInfo": { "principalEmail": "user@example.com" },
             "methodName": "v1.compute.firewalls.delete",
             "request":
               { "@type": "type.googleapis.com/compute.firewalls.delete" },
             "requestMetadata":
               {
-                "callerIP": "12.12.12.12",
+                "callerIP": "192.0.2.2",
                 "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36,gzip(gfe),gzip(gfe)",
               },
             "resourceName": "projects/test-project-123456/global/firewalls/firewall-create",
@@ -51,7 +51,7 @@ Tests:
           {
             "labels":
               {
-                "firewall_rule_id": "6563507997690081088",
+                "firewall_rule_id": "1000000000000000007",
                 "project_id": "test-project-123456",
               },
             "type": "gce_firewall_rule",
@@ -69,7 +69,7 @@ Tests:
         "protoPayload":
           {
             "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
-            "authenticationInfo": { "principalEmail": "user@domain.com" },
+            "authenticationInfo": { "principalEmail": "user@example.com" },
             "authorizationInfo":
               [
                 {
@@ -82,7 +82,7 @@ Tests:
             "methodName": "google.appengine.v1.Firewall.DeleteIngressRule",
             "requestMetadata":
               {
-                "callerIP": "12.12.12.12",
+                "callerIP": "192.0.2.2",
                 "destinationAttributes": {},
                 "requestAttributes":
                   { "auth": {}, "time": "2023-05-23T19:28:48.805823Z" },
@@ -125,12 +125,12 @@ Tests:
       {
         "protoPayload":
           {
-            "authenticationInfo": { "principalEmail": "user@domain.com" },
+            "authenticationInfo": { "principalEmail": "user@example.com" },
             "methodName": "randomservice.compute.v1.Firewall.DeleteIngressRule",
             "resourceName": "randomservice/test-project-123456/firewall/ingressRules/1000",
             "requestMetadata":
               {
-                "callerIP": "12.12.12.12",
+                "callerIP": "192.0.2.2",
                 "destinationAttributes": {},
                 "requestAttributes":
                   { "auth": {}, "time": "2023-05-23T19:28:44.663413Z" },
@@ -140,7 +140,7 @@ Tests:
           {
             "labels":
               {
-                "firewall_rule_id": "6563507997690081088",
+                "firewall_rule_id": "1000000000000000007",
                 "project_id": "test-project-123456",
               },
             "type": "gce_firewall_rule",

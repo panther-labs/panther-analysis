@@ -31,10 +31,10 @@ Tests:
             "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "status": {},
             "authenticationInfo":
-              { "principalEmail": "user.name@runpanther.io" },
+              { "principalEmail": "user.name@example.com" },
             "requestMetadata":
               {
-                "callerIp": "136.24.229.58",
+                "callerIp": "192.0.2.4",
                 "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe)",
                 "requestAttributes":
                   { "time": "2020-05-15T04:28:42.243082428Z", "auth": {} },
@@ -45,13 +45,13 @@ Tests:
             "authorizationInfo":
               [
                 {
-                  "resource": "projects/_/buckets/jacks-test-bucket",
+                  "resource": "projects/_/buckets/test-bucket",
                   "permission": "storage.buckets.setIamPolicy",
                   "granted": true,
                   "resourceAttributes": {},
                 },
               ],
-            "resourceName": "projects/_/buckets/jacks-test-bucket",
+            "resourceName": "projects/_/buckets/test-bucket",
             "serviceData":
               {
                 "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
@@ -75,13 +75,13 @@ Tests:
             "type": "gcs_bucket",
             "labels":
               {
-                "bucket_name": "jacks-test-bucket",
-                "project_id": "western-verve-123456",
+                "bucket_name": "test-bucket",
+                "project_id": "example-project-123456",
                 "location": "us",
               },
           },
         "timestamp": "2020-05-15T04:28:42.237027213Z",
         "severity": "NOTICE",
-        "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Factivity",
+        "logName": "projects/example-project-123456/logs/cloudaudit.googleapis.com%2Factivity",
         "receiveTimestamp": "2020-05-15T04:28:42.900626148Z",
       }

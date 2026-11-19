@@ -25,11 +25,11 @@ Tests:
     Log:
       {
         "id": { "applicationName": "user_accounts", "customerId": "D12345" },
-        "actor": { "email": "homer.simpson@.springfield.io" },
+        "actor": { "email": "homer.simpson@.alpha.example.org" },
         "type": "email_forwarding_change",
         "name": "email_forwarding_out_of_domain",
         "parameters":
-          { "email_forwarding_destination_address": "HSimpson@gmail.com" },
+          { "email_forwarding_destination_address": "HSimpson@example.org" },
       }
 
   - Name: Forwarding to External Address - applicationName = login
@@ -37,10 +37,10 @@ Tests:
     Log:
       {
         "id": { "applicationName": "login", "customerId": "D12345" },
-        "actor": { "email": "homer.simpson@springfield.io" },
+        "actor": { "email": "homer.simpson@alpha.example.org" },
         "type": "email_forwarding_change",
         "name": "email_forwarding_out_of_domain",
-        "parameters": { "email_forwarding_destination_address": "HSimpsone@gmail.com" }
+        "parameters": { "email_forwarding_destination_address": "HSimpsone@example.org" }
       }
 
   - Name: Non Forwarding Event
@@ -48,7 +48,7 @@ Tests:
     Log:
       {
         "id": { "applicationName": "user_accounts", "customerId": "D12345" },
-        "actor": { "email": "homer.simpson@.springfield.io" },
+        "actor": { "email": "homer.simpson@.alpha.example.org" },
         "type": "2sv_change",
         "name": "2sv_enroll",
       }
@@ -57,15 +57,15 @@ Tests:
     Log:
       {
         "actor":
-          { "email": "user@example.io", "profileId": "118111111111111111111" },
+          { "email": "user@example.net", "profileId": "118111111111111111111" },
         "id":
           {
             "applicationName": "drive",
             "customerId": "D12345",
             "time": "2022-12-20 17:27:47.080000000",
-            "uniqueQualifier": "-7312729053723258069",
+            "uniqueQualifier": "-0000000000000000001",
           },
-        "ipAddress": "12.12.12.12",
+        "ipAddress": "203.0.113.2",
         "kind": "admin#reports#activity",
         "name": "rename",
         "parameters":
@@ -78,7 +78,7 @@ Tests:
             "is_encrypted": null,
             "new_value": ["Document Title- Found Here"],
             "old_value": ["Document Title- Old"],
-            "owner": "user@example.io",
+            "owner": "user@example.net",
             "owner_is_shared_drive": null,
             "owner_is_team_drive": null,
             "primary_event": true,

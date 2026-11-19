@@ -19,14 +19,14 @@ Tests:
     ExpectedResult: true
     Log:
       {
-        "id": "671d8e2d-1ca8-47eb-bf1c-d46cd3f0d737",
+        "id": "00000000-0000-0000-0000-00000000003b",
         "action": "DeleteUserRole",
-        "requestId": "a83aba82-c707-4a2f-9761-fe9ee723b703",
+        "requestId": "00000000-0000-0000-0000-000000000055",
         "status": "SUCCESS",
         "timestamp": "2024-07-31T18:09:28.790129Z",
         "actionParameters": {
           "input": {
-            "id": "b92c4032-9af8-4e2d-b6dc-3bf2005bb7ad"
+            "id": "00000000-0000-0000-0000-00000000005d"
           },
           "selection": [
             "__typename",
@@ -34,26 +34,26 @@ Tests:
           ]
         },
         "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-        "sourceIP": "12.34.56.78",
+        "sourceIP": "192.0.2.78",
         "serviceAccount": null,
         "user": {
-          "id": "test.user@company.com",
-          "name": "user@company.com"
+          "id": "test.user@example.com",
+          "name": "user@example.com"
         }
       }
   - Name: CreateUser
     ExpectedResult: false
     Log:
       {
-        "id": "220d23be-f07c-4d97-b4a6-87ad04eddb14",
+        "id": "00000000-0000-0000-0000-00000000001c",
         "action": "CreateUser",
-        "requestId": "0d9521b2-c3f8-4a73-bf7c-20257788752e",
+        "requestId": "00000000-0000-0000-0000-000000000015",
         "status": "SUCCESS",
         "timestamp": "2024-07-29T09:40:15.66643Z",
         "actionParameters": {
           "input": {
             "assignedProjectIds": null,
-            "email": "testy@company.com",
+            "email": "testy@example.com",
             "expiresAt": null,
             "name": "Test User",
             "role": "GLOBAL_ADMIN"
@@ -72,25 +72,25 @@ Tests:
         "sourceIP": "8.8.8.8",
         "serviceAccount": null,
         "user": {
-          "id": "someuser@company.com",
-          "name": "someuser@company.com"
+          "id": "someuser@example.com",
+          "name": "someuser@example.com"
         }
       }
   - Name: DeleteUserRole - Fail
     ExpectedResult: false
     Log:
       {
-        "id": "671d8e2d-1ca8-47eb-bf1c-d46cd3f0d737",
+        "id": "00000000-0000-0000-0000-00000000003b",
         "action": "DeleteUserRole",
-        "requestId": "a83aba82-c707-4a2f-9761-fe9ee723b703",
+        "requestId": "00000000-0000-0000-0000-000000000055",
         "status": "FAILED",
         "timestamp": "2024-07-31T18:09:28.790129Z",
         "actionParameters": { },
         "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-        "sourceIP": "12.34.56.78",
+        "sourceIP": "192.0.2.78",
         "serviceAccount": null,
         "user": {
-          "id": "test.user@company.com",
-          "name": "user@company.com"
+          "id": "test.user@example.com",
+          "name": "user@example.com"
         }
       }

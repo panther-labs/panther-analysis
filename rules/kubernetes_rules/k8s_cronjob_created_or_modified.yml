@@ -43,7 +43,7 @@ Tests:
         "auditID": "abc-123",
         "verb": "create",
         "user": {"username": "admin@example.com"},
-        "sourceIPs": ["1.2.3.4"],
+        "sourceIPs": ["192.0.2.1"],
         "userAgent": "kubectl/v1.28.0",
         "objectRef": {
           "resource": "cronjobs",
@@ -92,7 +92,7 @@ Tests:
     Log:
       {
         "protoPayload": {
-          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authenticationInfo": {"principalEmail": "user@example.org"},
           "authorizationInfo": [{
             "granted": true,
             "permission": "io.k8s.batch.v1.cronjobs.create",
@@ -100,7 +100,7 @@ Tests:
           }],
           "methodName": "io.k8s.batch.v1.cronjobs.create",
           "requestMetadata": {
-            "callerIP": "1.2.3.4",
+            "callerIP": "192.0.2.1",
             "callerSuppliedUserAgent": "kubectl/v1.27.0"
           },
           "resourceName": "batch/v1/namespaces/default/cronjobs/backup-job",

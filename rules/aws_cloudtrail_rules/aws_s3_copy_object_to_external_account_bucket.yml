@@ -38,7 +38,7 @@ Tests:
         "userIdentity":
           {
             "type": "AssumedRole",
-            "principalId": "AIDAI1234567890EXAMPLE:user",
+            "principalId": "AIDA_EXAMPLE_0006:user",
             "arn": "arn:aws:sts::12948575929274:assumed-role/sample-role-keen-cohen/sample-role-hardcore-driscoll-role-brave-yalow-role-intelligent-brahmagupta-role-admiring-vaughan-role-sad-khayyam-role-eager-haslett",
             "accountId": "12948575929274",
             "accessKeyId": "AKIA-MOCKACCESSKEYID-1",
@@ -52,7 +52,7 @@ Tests:
                 "sessionIssuer":
                   {
                     "type": "Role",
-                    "principalId": "AIDAI1234567890EXAMPLE",
+                    "principalId": "AIDA_EXAMPLE_0006",
                     "arn": "arn:aws:iam::12948575929274:role/sample-role-keen-cohen",
                     "accountId": "12948575929274",
                     "userName": "AdminRole",
@@ -63,13 +63,13 @@ Tests:
         "eventSource": "s3.amazonaws.com",
         "eventName": "CopyObject",
         "awsRegion": "us-east-1",
-        "sourceIPAddress": "1.2.3.4",
+        "sourceIPAddress": "198.51.100.150",
         "userAgent": "aws-cli/2.13.0",
         "requestParameters":
           {
-            "bucketName": "attacker-exfil-1764604156",
+            "bucketName": "example-exfil-bucket",
             "key": "customer-database.csv",
-            "x-amz-copy-source": "/ransomware-test-victim-1764604156/customer-database.csv",
+            "x-amz-copy-source": "/example-victim-bucket/customer-database.csv",
           },
         "responseElements": null,
         "requestID": "ABC123DEF456",
@@ -106,10 +106,10 @@ Tests:
         "userIdentity":
           {
             "type": "AssumedRole",
-            "principalId": "AIDAI1234567890EXAMPLE:user",
+            "principalId": "AIDA_EXAMPLE_0006:user",
             "arn": "arn:aws:sts::12948575929274:assumed-role/AdminRole/user",
             "accountId": "12948575929274",
-            "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+            "accessKeyId": "AKIA_EXAMPLE_0004",
           },
         "eventTime": "2024-01-15T12:00:00Z",
         "eventSource": "s3.amazonaws.com",

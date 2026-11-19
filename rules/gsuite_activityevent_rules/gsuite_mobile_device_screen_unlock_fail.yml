@@ -25,22 +25,22 @@ Tests:
     Log:
       {
         "id": { "applicationName": "mobile" },
-        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.net" },
         "type": "device_updates",
         "name": "DEVICE_SYNC_EVENT",
-        "parameters": { "USER_EMAIL": "homer.simpson@example.io" },
+        "parameters": { "USER_EMAIL": "homer.simpson@example.net" },
       }
   - Name: Small Number of Failed Logins
     ExpectedResult: false
     Log:
       {
         "id": { "applicationName": "mobile" },
-        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.net" },
         "type": "device_updates",
         "name": "FAILED_PASSWORD_ATTEMPTS_EVENT",
         "parameters":
           {
-            "USER_EMAIL": "homer.simpson@example.io",
+            "USER_EMAIL": "homer.simpson@example.net",
             "FAILED_PASSWD_ATTEMPTS": 2,
           },
       }
@@ -49,12 +49,12 @@ Tests:
     Log:
       {
         "id": { "applicationName": "mobile" },
-        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.net" },
         "type": "device_updates",
         "name": "FAILED_PASSWORD_ATTEMPTS_EVENT",
         "parameters":
           {
-            "USER_EMAIL": "homer.simpson@example.io",
+            "USER_EMAIL": "homer.simpson@example.net",
             "FAILED_PASSWD_ATTEMPTS": 100,
           },
       }
@@ -63,12 +63,12 @@ Tests:
     Log:
       {
         "id": { "applicationName": "mobile" },
-        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.net" },
         "type": "device_updates",
         "name": "FAILED_PASSWORD_ATTEMPTS_EVENT",
         "parameters":
           {
-            "USER_EMAIL": "homer.simpson@example.io",
+            "USER_EMAIL": "homer.simpson@example.net",
             "FAILED_PASSWD_ATTEMPTS": "100",
           },
       }

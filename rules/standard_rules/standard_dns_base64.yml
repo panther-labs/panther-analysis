@@ -27,11 +27,11 @@ Tests:
         "rcode": "NOERROR",
         "region": "us-west-2",
         "srcaddr": "172.31.46.187",
-        "srcids": { "instance": "i-09d9aa4e31675db61" },
+        "srcids": { "instance": "i-0123456789abcdef0" },
         "srcport": "36899",
         "transport": "UDP",
         "version": "1.100000",
-        "vpc_id": "vpc-c26c48ba",
+        "vpc_id": "vpc-00000000",
       }
   - Name: AWS VPS DNS (Negative)
     ExpectedResult: false
@@ -47,11 +47,11 @@ Tests:
         "rcode": "NOERROR",
         "region": "us-west-2",
         "srcaddr": "172.31.46.187",
-        "srcids": { "instance": "i-09d9aa4e31675db61" },
+        "srcids": { "instance": "i-0123456789abcdef0" },
         "srcport": "36899",
         "transport": "UDP",
         "version": "1.100000",
-        "vpc_id": "vpc-c26c48ba",
+        "vpc_id": "vpc-00000000",
       }
   - Name: AWS VPS DNS subdomain (Negative)
     ExpectedResult: false
@@ -67,11 +67,11 @@ Tests:
         "rcode": "NOERROR",
         "region": "us-west-2",
         "srcaddr": "172.31.46.187",
-        "srcids": { "instance": "i-09d9aa4e31675db61" },
+        "srcids": { "instance": "i-0123456789abcdef0" },
         "srcport": "36899",
         "transport": "UDP",
         "version": "1.100000",
-        "vpc_id": "vpc-c26c48ba",
+        "vpc_id": "vpc-00000000",
       }
   - Name: Crowdstrike DNS Request (Positive)
     ExpectedResult: true
@@ -83,9 +83,9 @@ Tests:
         "ContextThreadId": "43270698197",
         "ContextTimeStamp": "2023-04-23 18:50:03.172",
         "Entitlements": "15",
-        "aid": "877761efa8db44d792ddc2redacted",
+        "aid": "00000000000000000000000000000001",
         "aip": "1.1.1.1",
-        "cid": "cfe698690964434083fecdredacted",
+        "cid": "00000000000000000000000000000002",
         "event":
           {
             "ConfigBuild": "1007.3.0016606.11",
@@ -102,33 +102,33 @@ Tests:
             "InterfaceIndex": "0",
             "QueryStatus": "9003",
             "RequestType": "1",
-            "aid": "877761efa8db44d792ddc2redacted",
+            "aid": "00000000000000000000000000000001",
             "aip": "1.1.1.1",
-            "cid": "cfe698690964434083fecdredacted",
+            "cid": "00000000000000000000000000000002",
             "event_platform": "Win",
             "event_simpleName": "DnsRequest",
-            "id": "4f006a14-0fdf-474e-bfca-021a00a935ad",
+            "id": "00000000-0000-0000-0000-000000000031",
             "name": "DnsRequestV4",
             "timestamp": "1682275805712",
           },
         "event_platform": "Win",
         "event_simpleName": "DnsRequest",
         "fdr_event_type": "DnsRequest",
-        "id": "4f006a14-0fdf-474e-bfca-021a00a935ad",
+        "id": "00000000-0000-0000-0000-000000000031",
         "name": "DnsRequestV4",
         "p_any_domain_names": ["win8.ipv6.microsoft.com"],
         "p_any_ip_addresses": ["1.1.1.1"],
         "p_any_md5_hashes":
-          ["877761efa8db44d792ddc2redacted", "cfe698690964434083fecdredacted"],
+          ["00000000000000000000000000000001", "00000000000000000000000000000002"],
         "p_any_trace_ids":
-          ["877761efa8db44d792ddc2redacted", "cfe698690964434083fecdredacted"],
+          ["00000000000000000000000000000001", "00000000000000000000000000000002"],
         "p_event_time": "2023-04-23 18:50:03.172",
         "p_log_type": "Crowdstrike.FDREvent",
         "p_parse_time": "2023-04-23 19:00:53.11",
-        "p_row_id": "f2c89ec8f09cbc8ca2c1cbdf171a",
+        "p_row_id": "0000000000000000000000000001",
         "p_schema_version": 0,
-        "p_source_id": "1f33f64c-124d-413c-a9e3-d51ccedd8e77",
-        "p_source_label": "Crowdstrike-FDR-Dev",
+        "p_source_id": "00000000-0000-0000-0000-00000000001a",
+        "p_source_label": "Crowdstrike-FDR-Example",
         "timestamp": "2023-04-23 18:50:05.712",
       }
   - Name: Crowdstrike DNS Request (Negative)
@@ -141,9 +141,9 @@ Tests:
         "ContextThreadId": "43270698197",
         "ContextTimeStamp": "2023-04-23 18:50:03.172",
         "Entitlements": "15",
-        "aid": "877761efa8db44d792ddc2redacted",
+        "aid": "00000000000000000000000000000001",
         "aip": "1.1.1.1",
-        "cid": "cfe698690964434083fecdredacted",
+        "cid": "00000000000000000000000000000002",
         "event":
           {
             "ConfigBuild": "1007.3.0016606.11",
@@ -160,33 +160,33 @@ Tests:
             "InterfaceIndex": "0",
             "QueryStatus": "9003",
             "RequestType": "1",
-            "aid": "877761efa8db44d792ddc2redacted",
+            "aid": "00000000000000000000000000000001",
             "aip": "1.1.1.1",
-            "cid": "cfe698690964434083fecdredacted",
+            "cid": "00000000000000000000000000000002",
             "event_platform": "Win",
             "event_simpleName": "DnsRequest",
-            "id": "4f006a14-0fdf-474e-bfca-021a00a935ad",
+            "id": "00000000-0000-0000-0000-000000000031",
             "name": "DnsRequestV4",
             "timestamp": "1682275805712",
           },
         "event_platform": "Win",
         "event_simpleName": "DnsRequest",
         "fdr_event_type": "DnsRequest",
-        "id": "4f006a14-0fdf-474e-bfca-021a00a935ad",
+        "id": "00000000-0000-0000-0000-000000000031",
         "name": "DnsRequestV4",
         "p_any_domain_names": ["win8.ipv6.microsoft.com"],
         "p_any_ip_addresses": ["1.1.1.1"],
         "p_any_md5_hashes":
-          ["877761efa8db44d792ddc2redacted", "cfe698690964434083fecdredacted"],
+          ["00000000000000000000000000000001", "00000000000000000000000000000002"],
         "p_any_trace_ids":
-          ["877761efa8db44d792ddc2redacted", "cfe698690964434083fecdredacted"],
+          ["00000000000000000000000000000001", "00000000000000000000000000000002"],
         "p_event_time": "2023-04-23 18:50:03.172",
         "p_log_type": "Crowdstrike.FDREvent",
         "p_parse_time": "2023-04-23 19:00:53.11",
-        "p_row_id": "f2c89ec8f09cbc8ca2c1cbdf171a",
+        "p_row_id": "0000000000000000000000000001",
         "p_schema_version": 0,
-        "p_source_id": "1f33f64c-124d-413c-a9e3-d51ccedd8e77",
-        "p_source_label": "Crowdstrike-FDR-Dev",
+        "p_source_id": "00000000-0000-0000-0000-00000000001a",
+        "p_source_label": "Crowdstrike-FDR-Example",
         "timestamp": "2023-04-23 18:50:05.712",
       }
   - Name: Cisco Umbrella DNS Request (Positive)
@@ -194,11 +194,11 @@ Tests:
     Log:
       {
         "action": "Allow",
-        "internalIp": "136.24.229.58",
-        "externalIp": "136.24.229.58",
+        "internalIp": "10.0.0.5",
+        "externalIp": "203.0.113.58",
         "timestamp": "2020-05-21 19:20:25.000",
         "responseCode": "NOERROR",
-        "domain": "c29tZSBsb25nIGJhc2U2NCBzdHJpbmc=.example.io.",
+        "domain": "c29tZSBsb25nIGJhc2U2NCBzdHJpbmc=.example.com.",
         "p_log_type": "CiscoUmbrella.DNS",
       }
   - Name: Cisco Umbrella DNS Request (Negative)
@@ -206,11 +206,11 @@ Tests:
     Log:
       {
         "action": "Allow",
-        "internalIp": "136.24.229.58",
-        "externalIp": "136.24.229.58",
+        "internalIp": "10.0.0.5",
+        "externalIp": "203.0.113.58",
         "timestamp": "2020-05-21 19:20:25.000",
         "responseCode": "NOERROR",
-        "domain": "c29tZSBsb25IGJhc2.example.io.",
+        "domain": "c29tZSBsb25IGJhc2.example.com.",
         "p_log_type": "CiscoUmbrella.DNS",
       }
   - Name: Crowdstrike no query
@@ -223,9 +223,9 @@ Tests:
         "ContextThreadId": "43270698197",
         "ContextTimeStamp": "2023-04-23 18:50:03.172",
         "Entitlements": "15",
-        "aid": "877761efa8db44d792ddc2redacted",
+        "aid": "00000000000000000000000000000001",
         "aip": "1.1.1.1",
-        "cid": "cfe698690964434083fecdredacted",
+        "cid": "00000000000000000000000000000002",
         "event":
           {
             "ConfigBuild": "1007.3.0016606.11",
@@ -241,45 +241,45 @@ Tests:
             "InterfaceIndex": "0",
             "QueryStatus": "9003",
             "RequestType": "1",
-            "aid": "877761efa8db44d792ddc2redacted",
+            "aid": "00000000000000000000000000000001",
             "aip": "1.1.1.1",
-            "cid": "cfe698690964434083fecdredacted",
+            "cid": "00000000000000000000000000000002",
             "event_platform": "Win",
             "event_simpleName": "DnsRequest",
-            "id": "4f006a14-0fdf-474e-bfca-021a00a935ad",
+            "id": "00000000-0000-0000-0000-000000000031",
             "name": "DnsRequestV4",
             "timestamp": "1682275805712",
           },
         "event_platform": "Win",
         "event_simpleName": "DnsRequest",
         "fdr_event_type": "DnsRequest",
-        "id": "4f006a14-0fdf-474e-bfca-021a00a935ad",
+        "id": "00000000-0000-0000-0000-000000000031",
         "name": "DnsRequestV4",
         "p_any_domain_names": ["win8.ipv6.microsoft.com"],
         "p_any_ip_addresses": ["1.1.1.1"],
         "p_any_md5_hashes":
-          ["877761efa8db44d792ddc2redacted", "cfe698690964434083fecdredacted"],
+          ["00000000000000000000000000000001", "00000000000000000000000000000002"],
         "p_any_trace_ids":
-          ["877761efa8db44d792ddc2redacted", "cfe698690964434083fecdredacted"],
+          ["00000000000000000000000000000001", "00000000000000000000000000000002"],
         "p_event_time": "2023-04-23 18:50:03.172",
         "p_log_type": "Crowdstrike.FDREvent",
         "p_parse_time": "2023-04-23 19:00:53.11",
-        "p_row_id": "f2c89ec8f09cbc8ca2c1cbdf171a",
+        "p_row_id": "0000000000000000000000000001",
         "p_schema_version": 0,
-        "p_source_id": "1f33f64c-124d-413c-a9e3-d51ccedd8e77",
-        "p_source_label": "Crowdstrike-FDR-Dev",
+        "p_source_id": "00000000-0000-0000-0000-00000000001a",
+        "p_source_label": "Crowdstrike-FDR-Example",
         "timestamp": "2023-04-23 18:50:05.712",
       }
   - Name: Crowdstrike 32-char service ID (Negative)
     ExpectedResult: false
     Log:
       {
-        "aid": "d825772fcca046f3b2876decaafacd60",
-        "aip": "83.106.110.25",
-        "cid": "e4a46c2a445744f7860dcf62bf1b6ad4",
+        "aid": "0000000000000000000000000000000a",
+        "aip": "198.51.100.25",
+        "cid": "0000000000000000000000000000000b",
         "event":
           {
-            "DomainName": "4ifgvg5jcq6meu7m4acon5vnfa0kocom.cloudfront.net.",
+            "DomainName": "abcdefghijklmnopqrstuvwxyz012345.cloudfront.net.",
             "event_platform": "Win",
             "event_simpleName": "DnsRequest",
           },

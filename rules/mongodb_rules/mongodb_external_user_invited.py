@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 from panther_mongodb_helpers import mongodb_alert_context
 
-# Set domains allowed to join the organization ie. company.com
+# Set domains allowed to join the organization ie. example.com
 ALLOWED_DOMAINS = []
 
 

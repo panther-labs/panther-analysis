@@ -19,7 +19,7 @@ Runbook: |
   1. Query Azure Monitor Activity logs for all storage account blob service operations by the callerIpAddress in the 6 hours before and after this alert to identify patterns
   2. Check if the source IP is associated with known cloud providers, VPN services, or corporate network ranges using threat intelligence
   3. Search for other Azure storage account configuration changes or blob deletion events from the same user or IP in the past 7 days to assess if this is part of a data destruction campaign
-Reference: https://www.azadvertizer.net/azpolicyadvertizer/c36a325b-ae04-4863-ad4f-19c6678f8e08.html
+Reference: https://www.azadvertizer.net/azpolicyadvertizer/00000000-0000-0000-0000-000000000065.html
 SummaryAttributes:
   - resourceId
   - callerIpAddress
@@ -41,7 +41,7 @@ Tests:
         "correlationId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
         "identity": {
           "claims": {
-            "name": "denethor@lotr.com"
+            "name": "denethor@lotr.example.com"
           }
         },
         "level": "Informational",
@@ -56,12 +56,12 @@ Tests:
     Log:
       {
         "time": "2024-12-17T11:45:00.0000000Z",
-        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/prod-rg/providers/Microsoft.Storage/storageAccounts/prodstorage/blobServices/default",
+        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789abc/resourceGroups/prod-rg/providers/Microsoft.Storage/storageAccounts/examplestorage12/blobServices/default",
         "operationName": "microsoft.storage/storageaccounts/blobservices/write",
         "operationVersion": "2021-04-01",
         "category": "Administrative",
         "resultType": "Succeeded",
-        "callerIpAddress": "1.2.3.4",
+        "callerIpAddress": "198.51.100.1",
         "correlationId": "f9e8d7c6-b5a4-3210-9876-fedcba098765",
         "properties": {
           "requestbody": "{\"properties\":{\"isVersioningEnabled\":false}}"
@@ -78,7 +78,7 @@ Tests:
         "operationVersion": "2021-04-01",
         "category": "Administrative",
         "resultType": "Success",
-        "callerIpAddress": "3.3.3.3",
+        "callerIpAddress": "198.51.100.3",
         "correlationId": "d4e5f6a7-b8c9-0123-def0-444444444444",
         "tenantId": "87654321-4321-4321-4321-111111111111"
       }

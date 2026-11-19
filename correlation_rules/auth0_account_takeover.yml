@@ -34,12 +34,12 @@ Tests:
         - ID: CreateAdmin
           Matches:
             p_alert_context.actor.email:
-              'homer.simpson@yourcompany.com':
+              'homer.simpson@example.com':
                 - 0
         - ID: DeleteUser
           Matches:
             p_alert_context.actor.email:
-              'homer.simpson@yourcompany.com':
+              'homer.simpson@example.com':
                 - 2
                 - 5
     - Name: CreateAdmin NOT FOLLOWED BY DeleteUser
@@ -48,5 +48,5 @@ Tests:
         - ID: CreateAdmin
           Matches:
             p_alert_context.actor.email:
-              'homer.simpson@company.com':
+              'homer.simpson@example.com':
                 - 0

@@ -75,7 +75,7 @@ Tests:
         "category": "kube-audit",
         "operationName": "Microsoft.ContainerService/managedClusters/diagnosticLogs/Read",
         "properties": {
-          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"developer@example.com\"},\"sourceIPs\":[\"1.2.3.4\"],\"objectRef\":{\"resource\":\"roles\",\"namespace\":\"production\",\"name\":\"pod-deployer\",\"apiGroup\":\"rbac.authorization.k8s.io\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"kind\":\"Role\",\"metadata\":{\"name\":\"pod-deployer\",\"namespace\":\"production\"},\"rules\":[{\"apiGroups\":[\"\"],\"resources\":[\"pods\"],\"verbs\":[\"create\",\"update\",\"patch\"]}]}}"
+          "log": "{\"kind\":\"Event\",\"apiVersion\":\"audit.k8s.io/v1\",\"verb\":\"create\",\"user\":{\"username\":\"developer@example.com\"},\"sourceIPs\":[\"192.0.2.1\"],\"objectRef\":{\"resource\":\"roles\",\"namespace\":\"production\",\"name\":\"pod-deployer\",\"apiGroup\":\"rbac.authorization.k8s.io\"},\"responseStatus\":{\"code\":201},\"requestObject\":{\"kind\":\"Role\",\"metadata\":{\"name\":\"pod-deployer\",\"namespace\":\"production\"},\"rules\":[{\"apiGroups\":[\"\"],\"resources\":[\"pods\"],\"verbs\":[\"create\",\"update\",\"patch\"]}]}}"
         },
         "p_source_label": "aks-cluster"
       }
@@ -84,7 +84,7 @@ Tests:
     Log:
       {
         "protoPayload": {
-          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authenticationInfo": {"principalEmail": "user@example.org"},
           "authorizationInfo": [{
             "granted": true,
             "permission": "io.k8s.rbac.v1.clusterroles.create",

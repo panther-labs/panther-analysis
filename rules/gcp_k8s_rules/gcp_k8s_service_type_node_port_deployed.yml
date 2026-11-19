@@ -32,7 +32,7 @@ Tests:
         "protoPayload":
           {
             "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
-            "authenticationInfo": { "principalEmail": "some.user@company.com" },
+            "authenticationInfo": { "principalEmail": "some.user@example.org" },
             "authorizationInfo":
               [
                 {
@@ -63,7 +63,7 @@ Tests:
               },
             "requestMetadata":
               {
-                "callerIP": "1.2.3.4",
+                "callerIP": "192.0.2.1",
                 "callerSuppliedUserAgent": "kubectl/v1.28.2 (darwin/amd64) kubernetes/89a4ea3",
               },
             "resourceName": "core/v1/namespaces/default/services/test-ns",
@@ -78,12 +78,12 @@ Tests:
                     "name": "test-ns",
                     "namespace": "default",
                     "resourceVersion": "15036073",
-                    "uid": "28758fe1-534a-4705-bcc2-12eeac6f11a4",
+                    "uid": "00000000-0000-0000-0000-000000000011",
                   },
                 "spec":
                   {
-                    "clusterIP": "2.3.4.5",
-                    "clusterIPs": ["2.3.4.5"],
+                    "clusterIP": "192.0.2.7",
+                    "clusterIPs": ["192.0.2.7"],
                     "ports":
                       [
                         {
@@ -121,7 +121,7 @@ Tests:
         "protoPayload":
           {
             "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
-            "authenticationInfo": { "principalEmail": "some.user@company.com" },
+            "authenticationInfo": { "principalEmail": "some.user@example.org" },
             "authorizationInfo":
               [
                 {
@@ -152,7 +152,7 @@ Tests:
               },
             "requestMetadata":
               {
-                "callerIP": "1.2.3.4",
+                "callerIP": "192.0.2.1",
                 "callerSuppliedUserAgent": "kubectl/v1.28.2 (darwin/amd64) kubernetes/89a4ea3",
               },
             "resourceName": "core/v1/namespaces/default/services/test-ns",
@@ -193,7 +193,7 @@ Tests:
         "protoPayload":
           {
             "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
-            "authenticationInfo": { "principalEmail": "some.user@company.com" },
+            "authenticationInfo": { "principalEmail": "some.user@example.org" },
             "authorizationInfo":
               [
                 {
@@ -224,14 +224,14 @@ Tests:
               },
             "requestMetadata":
               {
-                "callerIP": "1.2.3.4",
+                "callerIP": "192.0.2.1",
                 "callerSuppliedUserAgent": "kubectl/v1.28.2 (darwin/amd64) kubernetes/89a4ea3",
               },
             "resourceName": "core/v1/namespaces/default/services/test-ns",
             "spec":
               {
-                "clusterIP": "2.3.4.5",
-                "clusterIPs": ["2.3.4.5"],
+                "clusterIP": "192.0.2.7",
+                "clusterIPs": ["192.0.2.7"],
                 "externalTrafficPolicy": "Cluster",
                 "internalTrafficPolicy": "Cluster",
                 "ipFamilies": ["IPv4"],

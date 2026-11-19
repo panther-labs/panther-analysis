@@ -15,20 +15,20 @@ Tests:
         last: true
         producer: bigquery.googleapis.com
       p_any_emails:
-        - user@company.io
+        - user@example.com
       p_any_ip_addresses:
-        - 1.2.3.4
+        - 192.0.2.1
       p_event_time: "2023-03-28 17:37:02.096"
       p_log_type: GCP.AuditLog
       p_parse_time: "2023-03-28 17:38:14.621"
-      p_row_id: de00d3dcdaeee4b4d5f7fa9d17b4c203
+      p_row_id: 00000000000000000000000000000003
       p_schema_version: 0
-      p_source_id: 964c7894-9a0d-4ddf-864f-0193438221d6
+      p_source_id: 00000000-0000-0000-0000-000000000002
       p_source_label: gcp-logsource
       protoPayload:
         at_sign_type: type.googleapis.com/google.cloud.audit.AuditLog
         authenticationInfo:
-          principalEmail: user@company.io
+          principalEmail: user@example.com
         authorizationInfo:
           - granted: true
             permission: bigquery.jobs.create
@@ -41,7 +41,7 @@ Tests:
               jobConfig:
                 queryConfig:
                   createDisposition: CREATE_IF_NEEDED
-                  destinationTable: projects/gcp-project1/datasets/_c2b49f742788f188022fcec1f1622e7404b40ce5/tables/anondea8e77183dcdf1cf93a47b5003036409a525808207450ab80db17fcc8cdcf53
+                  destinationTable: projects/gcp-project1/datasets/_0000000000000000000000000000000000000001/tables/anon0000000000000000000000000000000000000000000000000000000000000001
                   priority: QUERY_INTERACTIVE
                   query: |-
                     -- This query shows a list of the daily top Google Search terms.
@@ -68,7 +68,7 @@ Tests:
                 jobState: DONE
         methodName: google.cloud.bigquery.v2.JobService.InsertJob
         requestMetadata:
-          callerIP: 1.2.3.4
+          callerIP: 192.0.2.1
           callerSuppliedUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36,gzip(gfe),gzip(gfe)
         resourceName: projects/gcp-project1/jobs/abcdefg_hijklmnop_1234567abcd
         serviceName: bigquery.googleapis.com
@@ -91,20 +91,20 @@ Tests:
         last: true
         producer: bigquery.googleapis.com
       p_any_emails:
-        - user@company.io
+        - user@example.com
       p_any_ip_addresses:
-        - 1.2.3.4
+        - 192.0.2.1
       p_event_time: "2023-03-28 17:37:02.096"
       p_log_type: GCP.AuditLog
       p_parse_time: "2023-03-28 17:38:14.621"
-      p_row_id: de00d3dcdaeee4b4d5f7fa9d17b4c203
+      p_row_id: 00000000000000000000000000000003
       p_schema_version: 0
-      p_source_id: 964c7894-9a0d-4ddf-864f-0193438221d6
+      p_source_id: 00000000-0000-0000-0000-000000000002
       p_source_label: gcp-logsource
       protoPayload:
         at_sign_type: type.googleapis.com/google.cloud.audit.AuditLog
         authenticationInfo:
-          principalEmail: user@company.io
+          principalEmail: user@example.com
         authorizationInfo:
           - granted: true
             permission: bigquery.jobs.create
@@ -117,7 +117,7 @@ Tests:
               jobConfig:
                 queryConfig:
                   createDisposition: CREATE_IF_NEEDED
-                  destinationTable: projects/gcp-project1/datasets/_c2b49f742788f188022fcec1f1622e7404b40ce5/tables/anondea8e77183dcdf1cf93a47b5003036409a525808207450ab80db17fcc8cdcf53
+                  destinationTable: projects/gcp-project1/datasets/_0000000000000000000000000000000000000001/tables/anon0000000000000000000000000000000000000000000000000000000000000001
                   priority: QUERY_INTERACTIVE
                   query: |-
                     -- This query shows a list of the daily top Google Search terms.
@@ -144,7 +144,7 @@ Tests:
                 jobState: DONE
         methodName: google.cloud.bigquery.v2.JobService.InsertJob
         requestMetadata:
-          callerIP: 1.2.3.4
+          callerIP: 192.0.2.1
           callerSuppliedUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36,gzip(gfe),gzip(gfe)
         resourceName: projects/gcp-project1/jobs/abcdefg_hijklmnop_1234567abcd
         serviceName: bigquery.googleapis.com

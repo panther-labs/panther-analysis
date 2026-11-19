@@ -34,12 +34,12 @@ Tests:
             "status": {},
             "authenticationInfo":
               {
-                "principalEmail": "user.name@runpanther.io",
-                "principalSubject": "user:user.name@runpanther.io",
+                "principalEmail": "user.name@example.com",
+                "principalSubject": "user:user.name@example.com",
               },
             "requestMetadata":
               {
-                "callerIp": "136.24.229.58",
+                "callerIp": "192.0.2.4",
                 "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe)",
                 "requestAttributes":
                   { "time": "2020-05-15T04:11:28.411897632Z", "auth": {} },
@@ -50,13 +50,13 @@ Tests:
             "authorizationInfo":
               [
                 {
-                  "resource": "projects/western-verve-123456",
+                  "resource": "projects/example-project-123456",
                   "permission": "iam.roles.create",
                   "granted": true,
                   "resourceAttributes": {},
                 },
               ],
-            "resourceName": "projects/western-verve-123456/roles/CustomRole",
+            "resourceName": "projects/example-project-123456/roles/CustomRole",
             "serviceData":
               {
                 "@type": "type.googleapis.com/google.iam.admin.v1.AuditData",
@@ -72,7 +72,7 @@ Tests:
               },
             "request":
               {
-                "parent": "projects/western-verve-123456",
+                "parent": "projects/example-project-123456",
                 "role":
                   {
                     "stage": 1,
@@ -82,7 +82,7 @@ Tests:
                         "apigee.apiproducts.delete",
                         "apigee.apiproducts.get",
                       ],
-                    "title": "Jack's custom role",
+                    "title": "Example custom role",
                     "description": "Created on: 2020-05-14",
                   },
                 "@type": "type.googleapis.com/google.iam.admin.v1.CreateRoleRequest",
@@ -90,9 +90,9 @@ Tests:
               },
             "response":
               {
-                "name": "projects/western-verve-123456/roles/CustomRole",
+                "name": "projects/example-project-123456/roles/CustomRole",
                 "group_title": "Custom",
-                "title": "Jack's custom role",
+                "title": "Example custom role",
                 "included_permissions":
                   [
                     "apigee.apiproducts.create",
@@ -112,12 +112,12 @@ Tests:
             "type": "iam_role",
             "labels":
               {
-                "project_id": "western-verve-123456",
-                "role_name": "projects/western-verve-123456/roles/CustomRole",
+                "project_id": "example-project-123456",
+                "role_name": "projects/example-project-123456/roles/CustomRole",
               },
           },
         "timestamp": "2020-05-15T04:11:28.224558457Z",
         "severity": "NOTICE",
-        "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Factivity",
+        "logName": "projects/example-project-123456/logs/cloudaudit.googleapis.com%2Factivity",
         "receiveTimestamp": "2020-05-15T04:11:29.472913078Z",
       }

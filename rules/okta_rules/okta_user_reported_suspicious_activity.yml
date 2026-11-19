@@ -11,7 +11,7 @@ Tests:
   - ExpectedResult: false
     Log:
       actor:
-        alternateId: homer.simpson@duff.com
+        alternateId: homer.simpson@example.net
         displayName: Homer Simpson
         id: 00abc123
         type: User
@@ -24,11 +24,11 @@ Tests:
           city: Springfield
           country: United States
           geolocation:
-            lat: 20
-            lon: -25
+            lat: 0.0
+            lon: 0.0
           postalCode: "12345"
           state: Ohio
-        ipAddress: 1.3.2.4
+        ipAddress: 203.0.113.4
         userAgent:
           browser: CHROME
           os: Mac OS X
@@ -51,21 +51,21 @@ Tests:
               city: Springfield
               country: United States
               geolocation:
-                lat: 20
-                lon: -25
+                lat: 0.0
+                lon: 0.0
               postalCode: "12345"
               state: Ohio
-            ip: 1.3.2.4
+            ip: 203.0.113.4
             version: V4
       securitycontext:
-        asNumber: 701
-        asOrg: verizon
-        domain: verizon.net
+        asNumber: 64496
+        asOrg: Example ISP
+        domain: alpha.example.org
         isProxy: false
-        isp: verizon
+        isp: Example ISP
       severity: INFO
       target:
-        - alternateId: peter.griffin@company.com
+        - alternateId: peter.griffin@example.org
           displayName: Peter Griffin
           id: 0002222AAAA
           type: User
@@ -79,7 +79,7 @@ Tests:
   - ExpectedResult: true
     Log:
       actor:
-        alternateId: homer.simpson@duff.com
+        alternateId: homer.simpson@example.net
         displayName: Homer Simpson
         id: 00ABC123
         type: User
@@ -92,11 +92,11 @@ Tests:
           city: Springfield
           country: United States
           geolocation:
-            lat: 30
-            lon: -55
+            lat: 0.0
+            lon: 0.0
           postalCode: "12345"
           state: Texas
-        ipAddress: 1.2.3.4
+        ipAddress: 203.0.113.3
         userAgent:
           browser: CHROME
           os: Mac OS X
@@ -111,7 +111,7 @@ Tests:
           suspiciousActivityEventCity: Springfield
           suspiciousActivityEventCountry: United States
           suspiciousActivityEventId: aaa-123-bbb
-          suspiciousActivityEventIp: 9.8.7.6
+          suspiciousActivityEventIp: 203.0.113.9
           suspiciousActivityEventLatitude: "30.000"
           suspiciousActivityEventLongitude: "-55.000"
           suspiciousActivityEventState: Texas
@@ -129,24 +129,24 @@ Tests:
       request:
         ipChain:
           - geographicalContext:
-              city: Austin
+              city: Hilltop
               country: United States
               geolocation:
-                lat: 30
-                lon: -55
+                lat: 0.0
+                lon: 0.0
               postalCode: "12345"
               state: Texas
-            ip: 9.8.7.6
+            ip: 203.0.113.9
             version: V4
       securitycontext:
-        asNumber: 11427
-        asOrg: charter communications inc
-        domain: spectrum.com
+        asNumber: 64503
+        asOrg: Example ISP
+        domain: beta.example.org
         isProxy: false
-        isp: charter communications inc
+        isp: Example ISP
       severity: WARN
       target:
-        - alternateId: homer.simpson@duff.com
+        - alternateId: homer.simpson@example.net
           displayName: Homer Simpson
           id: "01234"
           type: User

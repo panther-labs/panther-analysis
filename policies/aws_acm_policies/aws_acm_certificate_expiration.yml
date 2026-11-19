@@ -23,22 +23,22 @@ Tests:
     ExpectedResult: true
     Resource:
       {
-        "Arn": "arn:aws:acm:us-east-1:123456789012:certificate/33333333-5555-4444-aaaa-04206915b869",
-        "CertificateArn": "arn:aws:acm:us-east-1:123456789012:certificate/33333333-5555-4444-aaaa-04206915b869",
+        "Arn": "arn:aws:acm:us-east-1:123456789012:certificate/00000000-0000-0000-0000-000000000001",
+        "CertificateArn": "arn:aws:acm:us-east-1:123456789012:certificate/00000000-0000-0000-0000-000000000001",
         "CertificateAuthorityArn": null,
         "CreatedAt": "2019-05-23T19:20:52Z",
-        "DomainName": "test.domain.io",
+        "DomainName": "test.example.com",
         "DomainValidationOptions":
           [
             {
-              "DomainName": "test.domain.io",
+              "DomainName": "test.example.com",
               "ResourceRecord":
                 {
-                  "Name": "_cc1fccccc11111111c286666111ee999.test.domain.io.",
+                  "Name": "_00000000000000000000000000000000.test.example.com.",
                   "Type": "CNAME",
-                  "Value": "_cc1fccccc11111111c286666111ee999.ltfvzjuylp.acm-validations.aws.",
+                  "Value": "_00000000000000000000000000000000.example.acm-validations.aws.",
                 },
-              "ValidationDomain": "test.domain.io",
+              "ValidationDomain": "test.example.com",
               "ValidationEmails": null,
               "ValidationMethod": "DNS",
               "ValidationStatus": "SUCCESS",
@@ -70,34 +70,34 @@ Tests:
         "RenewalSummary": null,
         "RevocationReason": null,
         "RevokedAt": null,
-        "Serial": "00:bb:cc:aa:66:11:22:00:dd:88:f8:48:3e:92:6e:0d",
+        "Serial": "00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:01",
         "SignatureAlgorithm": "SHA256WITHRSA",
         "Status": "ISSUED",
-        "Subject": "CN=test.domain.io",
-        "SubjectAlternativeNames": ["test.domain.io"],
+        "Subject": "CN=test.example.com",
+        "SubjectAlternativeNames": ["test.example.com"],
         "Type": "AMAZON_ISSUED",
-        "Domain": "test.domain.io",
+        "Domain": "test.example.com",
       }
   - Name: Past Expiration
     ExpectedResult: false
     Resource:
       {
-        "Arn": "arn:aws:acm:us-east-1:123456789012:certificate/33333333-5555-4444-aaaa-04206915b869",
-        "CertificateArn": "arn:aws:acm:us-east-1:123456789012:certificate/33333333-5555-4444-aaaa-04206915b869",
+        "Arn": "arn:aws:acm:us-east-1:123456789012:certificate/00000000-0000-0000-0000-000000000001",
+        "CertificateArn": "arn:aws:acm:us-east-1:123456789012:certificate/00000000-0000-0000-0000-000000000001",
         "CertificateAuthorityArn": null,
         "CreatedAt": "2019-05-23T19:20:52Z",
-        "DomainName": "test.domain.io",
+        "DomainName": "test.example.com",
         "DomainValidationOptions":
           [
             {
-              "DomainName": "test.domain.io",
+              "DomainName": "test.example.com",
               "ResourceRecord":
                 {
-                  "Name": "_cc1fccccc11111111c286666111ee999.test.domain.io.",
+                  "Name": "_00000000000000000000000000000000.test.example.com.",
                   "Type": "CNAME",
-                  "Value": "_cc1fccccc11111111c286666111ee999.ltfvzjuylp.acm-validations.aws.",
+                  "Value": "_00000000000000000000000000000000.example.acm-validations.aws.",
                 },
-              "ValidationDomain": "test.domain.io",
+              "ValidationDomain": "test.example.com",
               "ValidationEmails": null,
               "ValidationMethod": "DNS",
               "ValidationStatus": "SUCCESS",
@@ -129,34 +129,34 @@ Tests:
         "RenewalSummary": null,
         "RevocationReason": null,
         "RevokedAt": null,
-        "Serial": "00:bb:cc:aa:66:11:22:00:dd:88:f8:48:3e:92:6e:0d",
+        "Serial": "00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:01",
         "SignatureAlgorithm": "SHA256WITHRSA",
         "Status": "ISSUED",
-        "Subject": "CN=test.domain.io",
-        "SubjectAlternativeNames": ["test.domain.io"],
+        "Subject": "CN=test.example.com",
+        "SubjectAlternativeNames": ["test.example.com"],
         "Type": "AMAZON_ISSUED",
-        "Domain": "test.domain.io",
+        "Domain": "test.example.com",
       }
   - Name: Null Expiration
     ExpectedResult: false
     Resource:
       {
-        "Arn": "arn:aws:acm:us-east-1:123456789012:certificate/33333333-5555-4444-aaaa-04206915b869",
-        "CertificateArn": "arn:aws:acm:us-east-1:123456789012:certificate/33333333-5555-4444-aaaa-04206915b869",
+        "Arn": "arn:aws:acm:us-east-1:123456789012:certificate/00000000-0000-0000-0000-000000000001",
+        "CertificateArn": "arn:aws:acm:us-east-1:123456789012:certificate/00000000-0000-0000-0000-000000000001",
         "CertificateAuthorityArn": null,
         "CreatedAt": "2019-05-23T19:20:52Z",
-        "DomainName": "test.domain.io",
+        "DomainName": "test.example.com",
         "DomainValidationOptions":
           [
             {
-              "DomainName": "test.domain.io",
+              "DomainName": "test.example.com",
               "ResourceRecord":
                 {
-                  "Name": "_cc1fccccc11111111c286666111ee999.test.domain.io.",
+                  "Name": "_00000000000000000000000000000000.test.example.com.",
                   "Type": "CNAME",
-                  "Value": "_cc1fccccc11111111c286666111ee999.ltfvzjuylp.acm-validations.aws.",
+                  "Value": "_00000000000000000000000000000000.example.acm-validations.aws.",
                 },
-              "ValidationDomain": "test.domain.io",
+              "ValidationDomain": "test.example.com",
               "ValidationEmails": null,
               "ValidationMethod": "DNS",
               "ValidationStatus": "SUCCESS",
@@ -188,11 +188,11 @@ Tests:
         "RenewalSummary": null,
         "RevocationReason": null,
         "RevokedAt": null,
-        "Serial": "00:bb:cc:aa:66:11:22:00:dd:88:f8:48:3e:92:6e:0d",
+        "Serial": "00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:01",
         "SignatureAlgorithm": "SHA256WITHRSA",
         "Status": "ISSUED",
-        "Subject": "CN=test.domain.io",
-        "SubjectAlternativeNames": ["test.domain.io"],
+        "Subject": "CN=test.example.com",
+        "SubjectAlternativeNames": ["test.example.com"],
         "Type": "AMAZON_ISSUED",
-        "Domain": "test.domain.io",
+        "Domain": "test.example.com",
       }

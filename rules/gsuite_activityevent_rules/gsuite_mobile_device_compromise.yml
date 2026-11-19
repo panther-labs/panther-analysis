@@ -21,22 +21,22 @@ Tests:
     Log:
       {
         "id": { "applicationName": "mobile" },
-        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.net" },
         "type": "device_updates",
         "name": "DEVICE_REGISTER_UNREGISTER_EVENT",
-        "parameters": { "USER_EMAIL": "homer.simpson@example.io" },
+        "parameters": { "USER_EMAIL": "homer.simpson@example.net" },
       }
   - Name: Suspicious Activity Shows not Compromised
     ExpectedResult: false
     Log:
       {
         "id": { "applicationName": "mobile" },
-        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.net" },
         "type": "device_updates",
         "name": "DEVICE_COMPROMISED_EVENT",
         "parameters":
           {
-            "USER_EMAIL": "homer.simpson@example.io",
+            "USER_EMAIL": "homer.simpson@example.net",
             "DEVICE_COMPROMISED_STATE": "NOT_COMPROMISED",
           },
       }
@@ -45,12 +45,12 @@ Tests:
     Log:
       {
         "id": { "applicationName": "mobile" },
-        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
+        "actor": { "callerType": "USER", "email": "homer.simpson@example.net" },
         "type": "device_updates",
         "name": "DEVICE_COMPROMISED_EVENT",
         "parameters":
           {
-            "USER_EMAIL": "homer.simpson@example.io",
+            "USER_EMAIL": "homer.simpson@example.net",
             "DEVICE_COMPROMISED_STATE": "COMPROMISED",
           },
       }

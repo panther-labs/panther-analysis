@@ -10,56 +10,56 @@ Tests:
     Log:
       action: Batch Update
       category_type: User
-      operation_detail: "Change Role  - homer.simpson@duff.io: from User to Co-Owner"
-      operator: admin-test%1223+123@duff.dev.co
+      operation_detail: "Change Role  - homer.simpson@duff.example: from User to Co-Owner"
+      operator: admin-test%1223+123@duff-dev.example
       time: "2022-07-05 20:28:48"
     Name: Admin Promotion Event
   - ExpectedResult: false
     Log:
       action: Batch Update
       category_type: User
-      operation_detail: "Change Role  - homer.simpson@duff.io: from Admin to Co-Owner"
-      operator: admin@duff.io
+      operation_detail: "Change Role  - homer.simpson@duff.example: from Admin to Co-Owner"
+      operator: admin@duff.example
       time: "2022-07-05 20:28:48"
     Name: Admin to Admin
   - ExpectedResult: false
     Log:
       action: Batch Update
       category_type: User
-      operation_detail: "Change Role  - homer.simpson@duff.io: from Admin to Billing Admin"
-      operator: admin@duff.io
+      operation_detail: "Change Role  - homer.simpson@duff.example: from Admin to Billing Admin"
+      operator: admin@duff.example
       time: "2022-07-05 20:28:48"
     Name: Admin to Billing Admin
   - ExpectedResult: true
     Log:
       action: Batch Update
       category_type: User
-      operation_detail: "Change Role  - homer.simpson@duff.io: from Member to Billing Admin"
-      operator: admin@duff.io
+      operation_detail: "Change Role  - homer.simpson@duff.example: from Member to Billing Admin"
+      operator: admin@duff.example
       time: "2022-07-05 20:28:48"
     Name: Member to Billing Admin Event
   - ExpectedResult: false
     Log:
       action: Batch Update
       category_type: User
-      operation_detail: "Change Role  - homer.simpson@duff.io: from Co-Owner to User"
-      operator: admin@duff.io
+      operation_detail: "Change Role  - homer.simpson@duff.example: from Co-Owner to User"
+      operator: admin@duff.example
       time: "2022-07-05 20:28:48"
     Name: Admin to User
   - ExpectedResult: false
     Log:
       action: Batch Update
       category_type: User
-      operation_detail: "Change Role  - homer.simpson@duff.io: from Co-Owner to Admin"
-      operator: admin@duff.io
+      operation_detail: "Change Role  - homer.simpson@duff.example: from Co-Owner to Admin"
+      operator: admin@duff.example
       time: "2022-07-05 20:28:48"
     Name: CoOwner to Admin
   - ExpectedResult: false
     Log:
       action: SCIM API - Update
       category_type: User
-      operation_detail: "Edit User homer.simpson@duff.co  - Change Type: from Basic to Licensed"
-      operator: admin-test%1223+123@duff.dev.co
+      operation_detail: "Edit User homer.simpson@duff-co.example  - Change Type: from Basic to Licensed"
+      operator: admin-test%1223+123@duff-dev.example
       time: "2022-07-01 22:05:22"
     Name: Other Event
 DedupPeriodMinutes: 60

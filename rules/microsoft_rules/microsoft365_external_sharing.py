@@ -4,9 +4,9 @@ from fnmatch import fnmatch
 from panther_base_helpers import EMAIL_REGEX
 from panther_msft_helpers import m365_alert_context
 
-ALLOWED_DOMAINS = ["mycompany.com", "alloweddomain.com"]  # should be in lowercase
+ALLOWED_DOMAINS = ["mycompany.example.com", "alloweddomain.example.com"]  # should be in lowercase
 
-ALLOWED_USERS = ["exception@outsider.com"]  # should be in lowercase
+ALLOWED_USERS = ["exception@outsider.example.com"]  # should be in lowercase
 
 ALLOWED_PATHS = ["*/External/*", "External/*"]
 

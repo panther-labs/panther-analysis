@@ -22,7 +22,7 @@ class TestAWSCloudTrailDataModel(unittest.TestCase):
             "p_log_type": "AWS.CloudTrail",
             "userIdentity": {
                 "type": "user_type",
-                "principalId": "AIDAJ45Q7YFFAREXAMPLE",
+                "principalId": "AIDA_EXAMPLE_0005",
                 "arn": "arn:aws:iam::123456789012:user/Alice",
                 "accountId": "Root",
                 "accessKeyId": "",
@@ -30,7 +30,7 @@ class TestAWSCloudTrailDataModel(unittest.TestCase):
                 "sessionContext": {
                     "sessionIssuer": {
                         "type": "Role",
-                        "principalId": "AROAIDPPEZS35WEXAMPLE",
+                        "principalId": "AROA_EXAMPLE_0013",
                         "arn": "arn:aws:iam::123456789012:role/RoleToBeAssumed",
                         "accountId": "123456789012",
                         "userName": "AssumedRole,Role,FederatedUser",
@@ -119,7 +119,7 @@ class TestSentinelOneDataModel(unittest.TestCase):
         """Test Sigma network field mappings"""
         event_data = {
             "p_log_type": "SentinelOne.DeepVisibility",
-            "dst_ip_address": "1.2.3.4",
+            "dst_ip_address": "192.0.2.4",
             "dst_port_number": 443,
             "src_ip_address": "10.0.0.5",
             "src_port_number": 54321,
@@ -128,7 +128,7 @@ class TestSentinelOneDataModel(unittest.TestCase):
         }
         event = PantherEvent(event_data, self.data_model)
 
-        self.assertEqual("1.2.3.4", event.udm("DestinationIp"))
+        self.assertEqual("192.0.2.4", event.udm("DestinationIp"))
         self.assertEqual(443, event.udm("DestinationPort"))
         self.assertEqual("10.0.0.5", event.udm("SourceIp"))
         self.assertEqual(54321, event.udm("SourcePort"))
@@ -204,7 +204,7 @@ class TestCrowdStrikeFDRDataModel(unittest.TestCase):
             "event": {
                 "UserName": "DOMAIN\\user",
                 "CommandLine": "powershell.exe -encodedcommand ABC123",
-                "RemoteAddressIP4": "1.2.3.4",
+                "RemoteAddressIP4": "192.0.2.4",
                 "RemotePort": 443,
                 "DomainName": "malicious.com.",
                 "ImageFileName": "C:\\Windows\\System32\\powershell.exe",
@@ -218,7 +218,7 @@ class TestCrowdStrikeFDRDataModel(unittest.TestCase):
         # Test existing UDM mappings
         self.assertEqual("DOMAIN\\user", event.udm("actor_user"))
         self.assertEqual("powershell.exe -encodedcommand ABC123", event.udm("cmd"))
-        self.assertEqual("1.2.3.4", event.udm("destination_ip"))
+        self.assertEqual("192.0.2.4", event.udm("destination_ip"))
         self.assertEqual(443, event.udm("destination_port"))
         self.assertEqual("malicious.com", event.udm("dns_query"))  # Trailing period stripped
         self.assertEqual("powershell.exe", event.udm("process_name"))
@@ -274,7 +274,7 @@ class TestCrowdStrikeFDRDataModel(unittest.TestCase):
         event_data = {
             "p_log_type": "Crowdstrike.FDREvent",
             "event": {
-                "RemoteAddressIP4": "1.2.3.4",
+                "RemoteAddressIP4": "192.0.2.4",
                 "RemotePort": 443,
                 "LocalPort": 54321,
             },
@@ -282,11 +282,11 @@ class TestCrowdStrikeFDRDataModel(unittest.TestCase):
         }
         event = PantherEvent(event_data, self.data_model)
 
-        self.assertEqual("1.2.3.4", event.udm("DestinationIp"))
+        self.assertEqual("192.0.2.4", event.udm("DestinationIp"))
         self.assertEqual(443, event.udm("DestinationPort"))
         self.assertEqual("10.0.0.5", event.udm("SourceIp"))
         self.assertEqual(54321, event.udm("SourcePort"))
-        self.assertEqual("1.2.3.4", event.udm("dst_ip"))
+        self.assertEqual("192.0.2.4", event.udm("dst_ip"))
         self.assertEqual(443, event.udm("dst_port"))
         self.assertEqual("10.0.0.5", event.udm("src_ip"))
         self.assertEqual(54321, event.udm("src_port"))
@@ -297,14 +297,14 @@ class TestCrowdStrikeFDRDataModel(unittest.TestCase):
             "p_log_type": "Crowdstrike.FDREvent",
             "event": {
                 "DomainName": "example.com.",
-                "IP4Records": "1.2.3.4,5.6.7.8",
+                "IP4Records": "192.0.2.4,192.0.2.56",
             },
         }
         event = PantherEvent(event_data, self.data_model)
 
         self.assertEqual("example.com", event.udm("QueryName"))  # Trailing period stripped
         self.assertEqual("example.com", event.udm("query"))  # Trailing period stripped
-        self.assertEqual("1.2.3.4,5.6.7.8", event.udm("QueryResults"))
+        self.assertEqual("192.0.2.4,192.0.2.56", event.udm("QueryResults"))
 
     def test_process_name_linux_mac(self):
         """Test process name extraction for Linux and Mac platforms"""
@@ -378,16 +378,16 @@ class TestCarbonBlackEndpointDataModel(unittest.TestCase):
         """Test Sigma network field mappings"""
         event_data = {
             "p_log_type": "CarbonBlack.EndpointEvent",
-            "remote_ip": "1.2.3.4",
+            "remote_ip": "192.0.2.4",
             "remote_port": 443,
             "netconn_domain": "malicious.com",
         }
         event = PantherEvent(event_data, self.data_model)
 
-        self.assertEqual("1.2.3.4", event.udm("DestinationIp"))
+        self.assertEqual("192.0.2.4", event.udm("DestinationIp"))
         self.assertEqual(443, event.udm("DestinationPort"))
         self.assertEqual("malicious.com", event.udm("DestinationHostname"))
-        self.assertEqual("1.2.3.4", event.udm("dst_ip"))
+        self.assertEqual("192.0.2.4", event.udm("dst_ip"))
         self.assertEqual(443, event.udm("dst_port"))
 
     def test_sigma_file_fields(self):

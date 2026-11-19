@@ -35,24 +35,24 @@ Tests:
       insertId: 1vfv897ejxgc2
       logName: projects/example-project/logs/cloudaudit.googleapis.com%2Fdata_access
       p_any_ip_addresses:
-        - 1.2.3.4
+        - 192.0.2.1
       p_any_emails:
-        - denethor@lotr.com
+        - denethor@example.com
       p_any_usernames:
         - user
       p_event_time: "2025-12-12 22:05:35.878912806"
       p_log_type: GCP.AuditLog
       p_parse_time: "2025-12-12 22:06:21.141743969"
-      p_row_id: 000000000013a23f82a982753925d2c2
+      p_row_id: 00000000000000000000000000000022
       p_schema_version: 0
-      p_source_id: bd7da315-647e-4eca-bcfe-083fab18f3f1
+      p_source_id: 00000000-0000-0000-0000-000000000005
       p_source_label: gcp-audit-logs
       protoPayload:
         at_sign_type: type.googleapis.com/google.cloud.audit.AuditLog
         authenticationInfo:
           oauthInfo:
             oauthClientId: 111111111111-abcdefghijklmnopqrstuvwxyz123456.apps.googleusercontent.com
-          principalEmail: denethor@lotr.com
+          principalEmail: denethor@example.com
         authorizationInfo:
           - granted: true
             permission: storage.objects.delete
@@ -64,8 +64,8 @@ Tests:
             resourceAttributes: {}
         methodName: storage.objects.create
         requestMetadata:
-          callerIP: 1.2.3.4
-          callerIp: 1.2.3.4
+          callerIP: 192.0.2.1
+          callerIp: 192.0.2.1
           callerSuppliedUserAgent: google-cloud-sdk gcloud/548.0.0 command/gcloud.storage.cp invocation-id/abc123def456 environment/devshell environment-version/None client-os/LINUX client-os-ver/6.6.111 client-pltf-arch/x86_64 interactive/False from-script/False python/3.13.7,gzip(gfe)
           destinationAttributes: {}
           requestAttributes:
@@ -104,9 +104,9 @@ Tests:
       p_event_time: "2025-12-12 22:10:15.123456789"
       p_log_type: GCP.AuditLog
       p_parse_time: "2025-12-12 22:11:01.987654321"
-      p_row_id: 11d269250d7ba7e2b399f8e83bbb9915
+      p_row_id: 00000000000000000000000000000023
       p_schema_version: 0
-      p_source_id: bd7da315-647e-4eca-bcfe-083fab18f3f1
+      p_source_id: 00000000-0000-0000-0000-000000000005
       p_source_label: gcp-audit-logs
       protoPayload:
         at_sign_type: type.googleapis.com/google.cloud.audit.AuditLog

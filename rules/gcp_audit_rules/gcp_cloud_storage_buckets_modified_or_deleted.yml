@@ -33,17 +33,17 @@ Tests:
       insertid: ezyd47c12y
       logname: projects/gcp-project1/logs/cloudaudit.googleapis.com%2Factivity
       p_any_ip_addresses:
-        - 1.2.3.4
+        - 192.0.2.1
       p_event_time: "2023-03-09 16:41:30.524"
       p_log_type: GCP.AuditLog
       p_parse_time: "2023-03-09 16:44:14.617"
-      p_row_id: "1234567909689348911"
-      p_source_id: 4fc88a5a-2d51-4279-9c4a-08fa7cc52566
+      p_row_id: "1000000000000000001"
+      p_source_id: 00000000-0000-0000-0000-000000000001
       p_source_label: gcplogsource
       protoPayload:
         at_sign_type: type.googleapis.com/google.cloud.audit.AuditLog
         authenticationInfo:
-          principalEmail: john@justice.org
+          principalEmail: john@example.org
         authorizationInfo:
           - granted: true
             permission: logging.sinks.update
@@ -60,13 +60,13 @@ Tests:
               - filter: protoPayload.serviceName = 'k8s.io
                 name: excludek8s
             name: log-sink
-            writerIdentity: serviceAccount:denethor@lotr.com
+            writerIdentity: serviceAccount:denethor@example.com
           sinkName: projects/gcp-project1/sinks/log-sink
           uniqueWriterIdentity: true
           updateMask: exclusions
         requestMetadata:
-          callerIP: 1.2.3.4
-          callerSuppliedUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/1.2.3.4 Safari/537.36,gzip(gfe),gzip(gfe)
+          callerIP: 192.0.2.1
+          callerSuppliedUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/192.0.2.1 Safari/537.36,gzip(gfe),gzip(gfe)
           destinationAttributes: {}
           requestAttributes:
             auth: {}
@@ -89,17 +89,17 @@ Tests:
       insertId: asdf1234asdfg
       logName: projects/gcp-project1/logs/cloudaudit.googleapis.com%2Factivity
       p_any_ip_addresses:
-        - 1.2.3.4
+        - 192.0.2.1
       p_event_time: "2023-03-09 10:05:23.603"
       p_log_type: GCP.AuditLog
       p_parse_time: "2023-03-09 10:07:14.731"
-      p_row_id: 7ad218d42253b7e6f78cc0ed1635
-      p_source_id: 4fc88a5a-2d51-4279-9c4a-08fa7cc52566
+      p_row_id: 0000000000000000000000000005
+      p_source_id: 00000000-0000-0000-0000-000000000001
       p_source_label: gcplogsource
       protoPayload:
         at_sign_type: type.googleapis.com/google.cloud.audit.AuditLog
         authenticationInfo:
-          principalEmail: user@company.io
+          principalEmail: user@example.com
         authorizationInfo:
           - granted: true
             permission: storage.buckets.update
@@ -107,7 +107,7 @@ Tests:
             resourceAttributes: {}
         methodName: storage.buckets.update
         requestMetadata:
-          callerIP: 1.2.3.4
+          callerIP: 192.0.2.1
           callerSuppliedUserAgent: apitools Python/3.9.11 gsutil/5.11 (darwin) analytics/enabled interactive/True command/notification google-cloud-sdk/394.0.0,gzip(gfe)
           destinationAttributes: {}
           requestAttributes:

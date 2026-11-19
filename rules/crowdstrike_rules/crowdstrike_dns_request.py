@@ -1,7 +1,8 @@
 from panther_crowdstrike_fdr_helpers import filter_crowdstrike_fdr_event_type, get_crowdstrike_field
 
-# baddomain.com is present for testing purposes. Add domains you wish to be alerted on to this list
-DENYLIST = ["baddomain.com"]
+# baddomain.example.com is present for testing purposes. Add domains you wish to be alerted on
+# to this list
+DENYLIST = ["baddomain.example.com"]
 
 
 def rule(event):

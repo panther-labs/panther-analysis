@@ -38,7 +38,7 @@ Tests:
         "auditID": "abc-123",
         "verb": "create",
         "user": {"username": "admin@example.com"},
-        "sourceIPs": ["1.2.3.4"],
+        "sourceIPs": ["192.0.2.1"],
         "userAgent": "kubectl/v1.28.0",
         "objectRef": {
           "resource": "pods",
@@ -90,7 +90,7 @@ Tests:
               "containers": [{"name": "nginx", "image": "nginx"}]
             }
           },
-          "requestMetadata": {"callerIP": "1.2.3.4"},
+          "requestMetadata": {"callerIP": "192.0.2.1"},
           "resourceName": "core/v1/namespaces/default/pods/nginx-test",
           "serviceName": "k8s.io"
         },

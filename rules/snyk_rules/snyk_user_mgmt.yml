@@ -30,14 +30,14 @@ Tests:
             "email": "user@example.com",
             "force": true,
             "name": "user@example.com",
-            "userPublicId": "cccccccc-3333-4ddd-8ccc-755555555555",
+            "userPublicId": "00000000-0000-0000-0000-000000000065",
             "username": "user@example.com",
           },
         "created": "2023-04-11 23:32:14.173",
         "event": "org.user.remove",
-        "groupId": "8fffffff-1555-4444-b000-b55555555555",
-        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
-        "userId": "05555555-3333-4ddd-8ccc-755555555555",
+        "groupId": "00000000-0000-0000-0000-000000000048",
+        "orgId": "00000000-0000-0000-0000-00000000001b",
+        "userId": "00000000-0000-0000-0000-000000000011",
       }
   - Name: Snyk User Invite Revoke
     ExpectedResult: true
@@ -46,9 +46,9 @@ Tests:
         "content": {},
         "created": "2023-04-11 23:32:13.248",
         "event": "org.user.invite.revoke",
-        "groupId": "8fffffff-1555-4444-b000-b55555555555",
-        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
-        "userId": "05555555-3333-4ddd-8ccc-755555555555",
+        "groupId": "00000000-0000-0000-0000-000000000048",
+        "orgId": "00000000-0000-0000-0000-00000000001b",
+        "userId": "00000000-0000-0000-0000-000000000011",
       }
   - Name: Snyk Group User add
     ExpectedResult: true
@@ -57,22 +57,22 @@ Tests:
         "content":
           {
             "role": "Group Member",
-            "rolePublicId": "65555555-c000-4ddd-2222-cfffffffffff",
-            "userPublicId": "cccccccc-3333-4ddd-8ccc-755555555555",
+            "rolePublicId": "00000000-0000-0000-0000-000000000039",
+            "userPublicId": "00000000-0000-0000-0000-000000000065",
           },
         "created": "2023-04-11 23:14:55.572",
         "event": "group.user.add",
-        "groupId": "8fffffff-1555-4444-b000-b55555555555",
-        "userId": "05555555-3333-4ddd-8ccc-755555555555",
+        "groupId": "00000000-0000-0000-0000-000000000048",
+        "userId": "00000000-0000-0000-0000-000000000011",
       }
   - Name: Snyk System SSO Setting event happened
     ExpectedResult: false
     Log:
       {
-        "userId": "05555555-3333-4ddd-8ccc-755555555555",
+        "userId": "00000000-0000-0000-0000-000000000011",
         "event": "group.sso.edit",
-        "groupId": "8fffffff-1555-4444-b000-b55555555555",
-        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
+        "groupId": "00000000-0000-0000-0000-000000000048",
+        "orgId": "00000000-0000-0000-0000-00000000001b",
         "content": { "unknown": "contents" },
       }
   - Name: SAML User Added
@@ -82,12 +82,12 @@ Tests:
         "content":
           {
             "role": "Org Collaborator",
-            "rolePublicId": "beeeeeee-dddd-4444-aaaa-133333333333",
-            "userPublicId": "05555555-3333-4ddd-8ccc-755555555555",
+            "rolePublicId": "00000000-0000-0000-0000-000000000060",
+            "userPublicId": "00000000-0000-0000-0000-000000000011",
           },
         "created": "2023-06-01 03:14:42.776",
         "event": "org.user.add",
-        "groupId": "8fffffff-1555-4444-b000-b55555555555",
-        "orgId": "21111111-a222-4eee-8ddd-a99999999999",
-        "userId": "05555555-3333-4ddd-8ccc-755555555555",
+        "groupId": "00000000-0000-0000-0000-000000000048",
+        "orgId": "00000000-0000-0000-0000-00000000001b",
+        "userId": "00000000-0000-0000-0000-000000000011",
       }

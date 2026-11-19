@@ -17,18 +17,18 @@ python send_data.py --account-id 050603629XXX --region us-east-1 --compromise-da
 
 ## Background Info
 
-Legit IP: `71.253.251.71`
-Attacker IP: `92.55.146.245`
-Compromised Account: `493859302102`
-Legit Employee: Tracey Stone
-Attacker Alias: tracy stone (no e)
-Malicious access key: AKIASWJJJ66ZZZII4IYY
+Legit IP: `198.51.100.108`
+Attacker IP: `198.51.100.107`
+Compromised Account: `123456789012`
+Legit Employee: Alice Doe
+Attacker Alias: alic doe (no e)
+Malicious access key: AKIA_EXAMPLE_0003
 
 ## Usernames
 
-tracy_stone (attacker)
-tracey_stone (legit)
-tracey.stone@acme.io
+alic (attacker)
+alice (legit)
+alice.doe@example.com
 
 ## Data
 
