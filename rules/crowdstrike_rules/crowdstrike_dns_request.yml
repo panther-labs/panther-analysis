@@ -23,7 +23,7 @@ Reports:
     - TA0010:T1567
 Description: >
   Detects DNS requests to domains on a custom denylist configured by security teams based on their threat landscape. This template rule requires configuration before enabling and monitors for C2 communication, phishing infrastructure, malware distribution, and data exfiltration. Organizations populate the denylist with threat intelligence indicators, known malicious infrastructure, and domains associated with targeted campaigns.
-Reference: https://example-sub-05.example-org-28.example.com/data-onboarding/supported-logs/crowdstrike#crowdstrike-dnsrequest
+Reference: https://docs.runpanther.io/data-onboarding/supported-logs/crowdstrike#crowdstrike-dnsrequest
 Runbook: |
   1. Query CrowdStrike ProcessRollup events for ContextProcessId matching this DNS request to identify the process, user account, and parent process that initiated the query to DomainName
   2. Search CrowdStrike DNS logs for all queries to the same DomainName from the affected host (aid) in the past 30 days to determine when it was first queried and the frequency of attempts
