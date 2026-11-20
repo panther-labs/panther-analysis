@@ -48,54 +48,54 @@ Tests:
       - ID: Multiple Failed Logins
         Matches:
           p_any_emails:
-            "user@company.com": [0, 2, 4, 6, 8]
+            "user@example.com": [0, 2, 4, 6, 8]
       - ID: Successful Login
         Matches:
           p_any_emails:
-            "user@company.com": [10]
+            "user@example.com": [10]
   - Name: "5 Failed Logins FOLLOWED BY Successful Login - Different User"
     ExpectedResult: false
     RuleOutputs:
       - ID: Multiple Failed Logins
         Matches:
           p_any_emails:
-            "user@company.com": [0, 2, 4, 6, 8]
+            "user@example.com": [0, 2, 4, 6, 8]
       - ID: Successful Login
         Matches:
           p_any_emails:
-            "other@company.com": [10]
+            "other@example.com": [10]
   - Name: "Only 3 Failed Logins FOLLOWED BY Success"
     ExpectedResult: false
     RuleOutputs:
       - ID: Multiple Failed Logins
         Matches:
           p_any_emails:
-            "user@company.com": [0, 2, 4]
+            "user@example.com": [0, 2, 4]
       - ID: Successful Login
         Matches:
           p_any_emails:
-            "user@company.com": [6]
+            "user@example.com": [6]
   - Name: "5 Failed Logins FOLLOWED BY Success Outside Lookback Window"
     ExpectedResult: false
     RuleOutputs:
       - ID: Multiple Failed Logins
         Matches:
           p_any_emails:
-            "user@company.com": [0, 2, 4, 6, 8]
+            "user@example.com": [0, 2, 4, 6, 8]
       - ID: Successful Login
         Matches:
           p_any_emails:
-            "user@company.com": [1860]
+            "user@example.com": [1860]
   - Name: "Multiple Users - Only One Triggers"
     ExpectedResult: true
     RuleOutputs:
       - ID: Multiple Failed Logins
         Matches:
           p_any_emails:
-            "user@company.com": [0, 2, 4, 6, 8]
-            "other@company.com": [1, 3]
+            "user@example.com": [0, 2, 4, 6, 8]
+            "other@example.com": [1, 3]
       - ID: Successful Login
         Matches:
           p_any_emails:
-            "user@company.com": [10]
-            "other@company.com": [11]
+            "user@example.com": [10]
+            "other@example.com": [11]

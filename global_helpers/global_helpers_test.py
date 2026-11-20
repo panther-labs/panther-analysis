@@ -54,7 +54,7 @@ class TestEksPantherObjRef(unittest.TestCase):
                     "authorization.k8s.io/reason": "",
                 },
                 "apiVersion": "audit.k8s.io/v1",
-                "auditID": "35506555-dffc-4337-b2b1-c4af52b88e18",
+                "auditID": "00000000-0000-0000-0000-000000000001",
                 "kind": "Event",
                 "level": "Request",
                 "objectRef": {
@@ -64,36 +64,36 @@ class TestEksPantherObjRef(unittest.TestCase):
                     "resource": "pods",
                     "subresource": "log",
                 },
-                "p_any_aws_account_ids": ["123412341234"],
+                "p_any_aws_account_ids": ["222222222222"],
                 "p_any_aws_arns": [
-                    "arn:aws:iam::123412341234:role/KubeAdministrator",
-                    "arn:aws:sts::123412341234:assumed-role/KubeAdministrator/1669660343296132000",
+                    "arn:aws:iam::222222222222:role/KubeAdministrator",
+                    "arn:aws:sts::222222222222:assumed-role/KubeAdministrator/1669660343296132000",
                 ],
-                "p_any_ip_addresses": ["5.5.5.5"],
+                "p_any_ip_addresses": ["999.999.999.11"],
                 "p_any_usernames": ["kubernetes-admin"],
                 "p_event_time": "2022-11-29 00:09:04.38",
                 "p_log_type": "Amazon.EKS.Audit",
                 "p_parse_time": "2022-11-29 00:10:25.067",
                 "p_row_id": "2e4ab474b0f0f7a4a8fff4f014aab32a",
-                "p_source_id": "4c859cd4-9406-469b-9e0e-c2dc1bee24fa",
+                "p_source_id": "00000000-0000-0000-0000-000000000002",
                 "p_source_label": "example-cluster-eks-logs",
                 "requestReceivedTimestamp": "2022-11-29 00:09:04.38",
-                "requestURI": "/api/v1/namespaces/default/pods/kube-bench-drn4j/log?container=kube-bench",
+                "requestURI": "/api/v1/namespaces/default/pods/kube-bench-00004/log?container=kube-bench",
                 "responseStatus": {"code": 200},
-                "sourceIPs": ["5.5.5.5"],
+                "sourceIPs": ["999.999.999.11"],
                 "stage": "ResponseComplete",
                 "stageTimestamp": "2022-11-29 00:09:04.394",
                 "user": {
                     "extra": {
-                        "accessKeyId": ["ASIARLIVEKVNNXXXXXXX"],
+                        "accessKeyId": ["ASIA_EXAMPLE_0001"],
                         "arn": [
-                            "arn:aws:sts::123412341234:assumed-role/KubeAdministrator/1669660343296132000"
+                            "arn:aws:sts::222222222222:assumed-role/KubeAdministrator/1669660343296132000"
                         ],
-                        "canonicalArn": ["arn:aws:iam::123412341234:role/KubeAdministrator"],
+                        "canonicalArn": ["arn:aws:iam::222222222222:role/KubeAdministrator"],
                         "sessionName": ["1669660343296132000"],
                     },
                     "groups": ["system:masters", "system:authenticated"],
-                    "uid": "aws-iam-authenticator:123412341234:AROARLIVEXXXXXXXXXXXX",
+                    "uid": "aws-iam-authenticator:222222222222:AROA_EXAMPLE_0013",
                     "username": "kubernetes-admin",
                 },
                 "userAgent": "kubectl/v1.25.4 (darwin/arm64) kubernetes/872a965",
@@ -107,7 +107,7 @@ class TestEksPantherObjRef(unittest.TestCase):
         self.assertEqual(response.get("object", ""), "some-job-xxx1y")
         self.assertEqual(response.get("ns", ""), "default")
         self.assertEqual(len(response.get("sourceIPs", [])), 1)
-        self.assertEqual(response.get("sourceIPs", [])[0], "5.5.5.5")
+        self.assertEqual(response.get("sourceIPs", [])[0], "999.999.999.11")
         self.assertEqual(response.get("resource", ""), "pods/log")
         self.assertEqual(response.get("verb", ""), "get")
         self.assertEqual(response.get("p_source_label", ""), "example-cluster-eks-logs")
@@ -213,7 +213,11 @@ class TestBoxParseAdditionalDetails(unittest.TestCase):
 class TestTorExitNodes(unittest.TestCase):
     def setUp(self):
         self.event = PantherEvent(
-            {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}, "p_match": "1.2.3.4"}}}
+            {
+                "p_enrichment": {
+                    "tor_exit_nodes": {"foo": {"ip": "999.999.999.5"}, "p_match": "999.999.999.5"}
+                }
+            }
         )
 
         # match against array field
@@ -222,8 +226,8 @@ class TestTorExitNodes(unittest.TestCase):
                 "p_enrichment": {
                     "tor_exit_nodes": {
                         "p_any_ip_addresses": [
-                            {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
-                            {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+                            {"ip": "999.999.999.5", "p_match": "999.999.999.5"},
+                            {"ip": "999.999.999.6", "p_match": "999.999.999.6"},
                         ]
                     }
                 }
@@ -241,14 +245,14 @@ class TestTorExitNodes(unittest.TestCase):
         """Should find enrichment"""
         tor_exit_nodes = p_tor_h.TorExitNodes(self.event)
         ip_address = tor_exit_nodes.ip_address("foo")
-        self.assertEqual(ip_address, "1.2.3.4")
+        self.assertEqual(ip_address, "999.999.999.5")
         self.assertEqual(tor_exit_nodes.has_exit_nodes(), True)
 
     def test_ip_address_found_list(self):
         """Should find enrichment list"""
         tor_exit_nodes = p_tor_h.TorExitNodes(self.event_list)
         ip_address_list = tor_exit_nodes.ip_address("p_any_ip_addresses")
-        self.assertEqual(ip_address_list, ["1.2.3.4", "1.2.3.5"])
+        self.assertEqual(ip_address_list, ["999.999.999.5", "999.999.999.6"])
         self.assertEqual(tor_exit_nodes.has_exit_nodes(), True)
 
     def test_url(self):
@@ -259,7 +263,7 @@ class TestTorExitNodes(unittest.TestCase):
         # pylint: disable=line-too-long
         self.assertEqual(
             url,
-            f"https://metrics.torproject.org/exonerator.html?ip=1.2.3.4&timestamp={today}&lang=en",
+            f"https://metrics.torproject.org/exonerator.html?ip=999.999.999.5&timestamp={today}&lang=en",
         )
 
     def test_url_list(self):
@@ -271,8 +275,8 @@ class TestTorExitNodes(unittest.TestCase):
         self.assertEqual(
             urls,
             [
-                f"https://metrics.torproject.org/exonerator.html?ip=1.2.3.4&timestamp={today}&lang=en",
-                f"https://metrics.torproject.org/exonerator.html?ip=1.2.3.5&timestamp={today}&lang=en",
+                f"https://metrics.torproject.org/exonerator.html?ip=999.999.999.5&timestamp={today}&lang=en",
+                f"https://metrics.torproject.org/exonerator.html?ip=999.999.999.6&timestamp={today}&lang=en",
             ],
         )
 
@@ -284,9 +288,9 @@ class TestTorExitNodes(unittest.TestCase):
         self.assertEqual(
             context,
             {
-                "IP": "1.2.3.4",
+                "IP": "999.999.999.5",
                 # pylint: disable=line-too-long
-                "ExoneraTorURL": f"https://metrics.torproject.org/exonerator.html?ip=1.2.3.4&timestamp={today}&lang=en",
+                "ExoneraTorURL": f"https://metrics.torproject.org/exonerator.html?ip=999.999.999.5&timestamp={today}&lang=en",
             },
         )
 
@@ -300,7 +304,7 @@ class TestGreyNoiseV3ScannerIntelligence(
                 "p_enrichment": {
                     "my_custom_greynoise_noise": {
                         "ClientIP": {
-                            "ip": "142.93.204.250",
+                            "ip": "999.999.999.15",
                             "internet_scanner_intelligence": {
                                 "actor": "alphastrike",
                                 "bot": False,
@@ -393,11 +397,11 @@ class TestGreyNoiseV3ScannerIntelligence(
 
     def test_ip_address(self):
         scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
-        self.assertEqual(scanner.ip_address("ClientIP"), "142.93.204.250")
+        self.assertEqual(scanner.ip_address("ClientIP"), "999.999.999.15")
 
     def test_url(self):
         scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
-        self.assertEqual(scanner.url("ClientIP"), "https://www.greynoise.io/viz/ip/142.93.204.250")
+        self.assertEqual(scanner.url("ClientIP"), "https://www.greynoise.io/viz/ip/999.999.999.15")
 
     def test_asn(self):
         scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
@@ -474,7 +478,7 @@ class TestGreyNoiseV3ScannerIntelligence(
     def test_context(self):
         scanner = p_greynoise_h.GreyNoiseV3ScannerIntelligence(self.event)
         context = scanner.context("ClientIP")
-        self.assertEqual(context["IP"], "142.93.204.250")
+        self.assertEqual(context["IP"], "999.999.999.15")
         self.assertEqual(context["Classification"], "malicious")
         self.assertEqual(context["Actor"], "alphastrike")
         self.assertEqual(context["VPN"], "NordVPN")
@@ -502,7 +506,7 @@ class TestGreyNoiseV3ScannerIntelligence(
                     "my_custom_greynoise_noise": {
                         "MultiMatch": [
                             {
-                                "ip": "142.93.204.250",
+                                "ip": "999.999.999.15",
                                 "internet_scanner_intelligence": {
                                     "classification": "malicious",
                                     "found": True,
@@ -524,7 +528,7 @@ class TestGreyNoiseV3ScannerIntelligence(
                     "my_custom_greynoise_noise": {
                         "MultiMatch": [
                             {
-                                "ip": "142.93.204.250",
+                                "ip": "999.999.999.15",
                                 "internet_scanner_intelligence": {
                                     "classification": "unknown",
                                     "found": False,
@@ -553,7 +557,7 @@ class TestGreyNoiseV3ScannerIntelligence(
                     "my_custom_greynoise_noise": {
                         "MultiMatch": [
                             {
-                                "ip": "142.93.204.250",
+                                "ip": "999.999.999.15",
                                 "internet_scanner_intelligence": {
                                     "found": False,
                                 },
@@ -667,7 +671,7 @@ class TestGreyNoiseV3BusinessService(unittest.TestCase):
                     "my_custom_greynoise_noise": {
                         "MultiMatch": [
                             {
-                                "ip": "142.93.204.250",
+                                "ip": "999.999.999.15",
                                 "internet_scanner_intelligence": {"found": False},
                                 "business_service_intelligence": {"found": False},
                             }
@@ -1191,7 +1195,7 @@ class TestIpInfoHelpersLocation(unittest.TestCase):
                 "p_enrichment": {
                     p_i_h.IPINFO_LOCATION_LUT_NAME: {
                         self.match_field: {
-                            "p_match": "12.12.12.12",
+                            "p_match": "999.999.999.14",
                             "city": "Constantinople",
                             "country": "Byzantium",
                             "lat": "41.008610",
@@ -1264,11 +1268,11 @@ class TestIpInfoHelpersASN(unittest.TestCase):
                 "p_enrichment": {
                     p_i_h.IPINFO_ASN_LUT_NAME: {
                         self.match_field: {
-                            "p_match": "1.2.3.15",
+                            "p_match": "999.999.999.8",
                             "asn": "AS00000",
-                            "domain": "byzantineempire.com",
+                            "domain": "example.com",
                             "name": "Byzantine Empire",
-                            "route": "1.2.3.4/24",
+                            "route": "999.999.999.5/24",
                             "type": "isp",
                         }
                     }
@@ -1283,7 +1287,7 @@ class TestIpInfoHelpersASN(unittest.TestCase):
 
     def test_domain(self):
         domain = self.ip_info.domain(self.match_field)
-        self.assertEqual(domain, "byzantineempire.com")
+        self.assertEqual(domain, "example.com")
 
     def test_name(self):
         name = self.ip_info.name(self.match_field)
@@ -1291,7 +1295,7 @@ class TestIpInfoHelpersASN(unittest.TestCase):
 
     def test_route(self):
         route = self.ip_info.route(self.match_field)
-        self.assertEqual(route, "1.2.3.4/24")
+        self.assertEqual(route, "999.999.999.5/24")
 
     def test_type(self):
         _type = self.ip_info.type(self.match_field)
@@ -1303,9 +1307,9 @@ class TestIpInfoHelpersASN(unittest.TestCase):
     def test_context(self):
         expected = {
             "ASN": "AS00000",
-            "Domain": "byzantineempire.com",
+            "Domain": "example.com",
             "Name": "Byzantine Empire",
-            "Route": "1.2.3.4/24",
+            "Route": "999.999.999.5/24",
             "Type": "isp",
         }
         self.assertEqual(expected, self.ip_info.context(self.match_field))
@@ -1389,7 +1393,7 @@ class TestIpInfoHelpersPrivacy(unittest.TestCase):
                 "p_enrichment": {
                     p_i_h.IPINFO_PRIVACY_LUT_NAME: {
                         self.match_field: {
-                            "p_match": "1.2.3.4",
+                            "p_match": "999.999.999.5",
                             "hosting": False,
                             "proxy": False,
                             "tor": False,
@@ -1450,17 +1454,17 @@ class TestGeoInfoFromIP(unittest.TestCase):
                 "p_enrichment": {
                     p_i_h.IPINFO_ASN_LUT_NAME: {
                         self.match_field: {
-                            "p_match": "1.2.3.12",
+                            "p_match": "999.999.999.7",
                             "asn": "AS00000",
-                            "domain": "byzantineempire.com",
+                            "domain": "example.com",
                             "name": "Byzantine Empire",
-                            "route": "1.2.3.4/24",
+                            "route": "999.999.999.5/24",
                             "type": "isp",
                         }
                     },
                     p_i_h.IPINFO_LOCATION_LUT_NAME: {
                         self.match_field: {
-                            "p_match": "2.2.2.2",
+                            "p_match": "999.999.999.4",
                             "city": "Constantinople",
                             "country": "Byzantium",
                             "lat": "41.008610",
@@ -1472,7 +1476,7 @@ class TestGeoInfoFromIP(unittest.TestCase):
                         }
                     },
                 },
-                self.match_field: "1.2.3.4",
+                self.match_field: "999.999.999.5",
             }
         )
 
@@ -1481,7 +1485,7 @@ class TestGeoInfoFromIP(unittest.TestCase):
         expected = {
             "city": "Constantinople",
             "country": "Byzantium",
-            "ip": "1.2.3.4",
+            "ip": "999.999.999.5",
             "loc": "41.008610,28.971111",
             "org": "AS00000 Byzantine Empire",
             "postal": "NA",
@@ -1759,7 +1763,7 @@ class TestCloudflareHelpers(unittest.TestCase):
         self.event = PantherEvent(
             {
                 "Source": "firewallrules",
-                "ClientIP": "12.12.12.12",
+                "ClientIP": "999.999.999.14",
                 "BotScore": 0,
                 "Action": "block",
             }
@@ -1776,12 +1780,12 @@ class TestCloudflareHelpers(unittest.TestCase):
                 "ClientASN": 15169,
                 "ClientCountry": "us",
                 "ClientDeviceType": "desktop",
-                "ClientIP": "12.12.12.12",
+                "ClientIP": "999.999.999.14",
                 "ClientIPClass": "searchEngine",
                 "ClientMTLSAuthCertFingerprint": "",
                 "ClientMTLSAuthStatus": "unknown",
                 "ClientRequestBytes": 5460,
-                "ClientRequestHost": "panther.com",
+                "ClientRequestHost": "example.com",
                 "ClientRequestMethod": "GET",
                 "ClientRequestPath": "/blog/",
                 "ClientRequestProtocol": "HTTP/1.1",
@@ -1804,7 +1808,7 @@ class TestCloudflareHelpers(unittest.TestCase):
                 "EdgePathingStatus": "se",
                 "EdgeRateLimitAction": "",
                 "EdgeRateLimitID": "0",
-                "EdgeRequestHost": "panther.com",
+                "EdgeRequestHost": "example.com",
                 "EdgeResponseBodyBytes": 76074,
                 "EdgeResponseBytes": 77454,
                 "EdgeResponseCompressionRatio": 1,
@@ -1837,7 +1841,7 @@ class TestCloudflareHelpers(unittest.TestCase):
                 "WorkerSubrequest": True,
                 "WorkerSubrequestCount": 0,
                 "ZoneID": 500000000,
-                "ZoneName": "panther.com",
+                "ZoneName": "example.com",
             }
         )
 
@@ -1856,14 +1860,14 @@ class TestCloudflareHelpers(unittest.TestCase):
         context = p_cf_h.cloudflare_fw_alert_context(tmp_event)
         self.assertEqual("<Source_NOT_IN_EVENT>", context.get("Source"))
         self.assertEqual("block", context.get("Action"))
-        self.assertEqual("12.12.12.12", context.get("ClientIP"))
+        self.assertEqual("999.999.999.14", context.get("ClientIP"))
 
     def test_http_context_helper(self):
         context = p_cf_h.cloudflare_http_alert_context(self.http_event)
         # We have only 10 keeper keys in http alert context
         self.assertLessEqual(len(context), 10)
         self.assertIsNone(context.get("BotScore"))
-        self.assertEqual("12.12.12.12", context.get("ClientIP"))
+        self.assertEqual("999.999.999.14", context.get("ClientIP"))
 
 
 class TestAsanaHelpers(unittest.TestCase):
@@ -1872,12 +1876,12 @@ class TestAsanaHelpers(unittest.TestCase):
             {
                 "actor": {
                     "actor_type": "user",
-                    "email": "user@domain.com",
+                    "email": "user@example.com",
                     "gid": "11111111111111111111",
                     "name": "Users Name",
                 },
                 "context": {
-                    "client_ip_address": "209.6.224.22",
+                    "client_ip_address": "999.999.999.9",
                     "context_type": "web",
                     "user_agent": "AsanaDesktopOfficial darwin_arm64/1.12.0 Chrome/108.0.5359.62",
                 },
@@ -1898,7 +1902,7 @@ class TestAsanaHelpers(unittest.TestCase):
 
     def test_alert_context(self):
         returns = p_a_h.asana_alert_context(self.event)
-        self.assertEqual(returns.get("actor", ""), "user@domain.com")
+        self.assertEqual(returns.get("actor", ""), "user@example.com")
         self.assertEqual(returns.get("event_type", ""), "task_deleted")
         # Remove the user's email attribute
         tmp_event = self.event.to_dict()
@@ -1915,7 +1919,7 @@ class TestAsanaHelpers(unittest.TestCase):
         # resource with no resource subtype
         tmp_event = tmp_event.to_dict()
         tmp_event["resource"] = {
-            "email": "user@email.com",
+            "email": "user@example.com",
             "gid": "1111111111111111",
             "name": "Users Name",
             "resource_type": "user",
@@ -1950,7 +1954,7 @@ class TestAsanaHelpers(unittest.TestCase):
                 "event_type": "user_logged_out",
                 "gid": "1222222222222222",
                 "resource": {
-                    "email": "user@email.com",
+                    "email": "user@example.com",
                     "gid": "1201201201201201",
                     "name": "User Name",
                     "resource_type": "user",
@@ -1969,9 +1973,9 @@ class TestSnykHelpers(unittest.TestCase):
                 "content": {"url": "/api/v1/user/me"},
                 "created": "2022-12-27 16:50:46.959",
                 "event": "api.access",
-                "groupId": "8fffffff-1555-4444-b000-b55555555555",
-                "orgId": "21111111-a222-4eee-8ddd-a99999999999",
-                "userId": "05555555-3333-4ddd-8ccc-755555555555",
+                "groupId": "00000000-0000-0000-0000-000000000003",
+                "orgId": "00000000-0000-0000-0000-000000000004",
+                "userId": "00000000-0000-0000-0000-000000000005",
             }
         )
 
@@ -1981,11 +1985,11 @@ class TestSnykHelpers(unittest.TestCase):
             returns,
             {
                 # pylint: disable=line-too-long
-                "actor": "05555555-3333-4ddd-8ccc-755555555555",
+                "actor": "00000000-0000-0000-0000-000000000005",
                 "action": "api.access",
-                "groupId": "8fffffff-1555-4444-b000-b55555555555",
-                "orgId": "21111111-a222-4eee-8ddd-a99999999999",
-                "actor_link": "https://app.snyk.io/group/8fffffff-1555-4444-b000-b55555555555/manage/member/05555555-3333-4ddd-8ccc-755555555555",
+                "groupId": "00000000-0000-0000-0000-000000000003",
+                "orgId": "00000000-0000-0000-0000-000000000004",
+                "actor_link": "https://app.snyk.io/group/00000000-0000-0000-0000-000000000003/manage/member/00000000-0000-0000-0000-000000000005",
             },
         )
         returns = p_snyk_h.snyk_alert_context(ImmutableCaseInsensitiveDict({}))
@@ -2007,12 +2011,12 @@ class TestTinesHelpers(unittest.TestCase):
                 "created_at": "2023-05-01 01:02:03",
                 "id": 7206820,
                 "operation_name": "Login",
-                "request_ip": "12.12.12.12",
+                "request_ip": "999.999.999.14",
                 "request_user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) UserAgent",
                 "tenant_id": "1234",
-                "user_email": "user@domain.com",
+                "user_email": "user@example.com",
                 "user_id": "17171",
-                "user_name": "user at domain dot com",
+                "user_name": "user at example dot com",
             }
         )
 
@@ -2021,13 +2025,13 @@ class TestTinesHelpers(unittest.TestCase):
         self.assertEqual(
             returns,
             {
-                "actor": "user@domain.com",
+                "actor": "user@example.com",
                 "action": "Login",
                 "tenant_id": "1234",
-                "user_email": "user@domain.com",
+                "user_email": "user@example.com",
                 "user_id": "17171",
                 "operation_name": "Login",
-                "request_ip": "12.12.12.12",
+                "request_ip": "999.999.999.14",
             },
         )
         returns = p_tines_h.tines_alert_context(ImmutableCaseInsensitiveDict({}))
@@ -2050,7 +2054,7 @@ class TestAuth0Helpers(unittest.TestCase):
         self.event = PantherEvent(
             {
                 "data": {
-                    "client_id": "1HXWWGKk1Zj3JF8GvMrnCSirccDs4qvr",
+                    "client_id": "example-client-id-13",
                     "client_name": "",
                     "date": "2023-05-15 17:41:31.451000000",
                     "description": "Create a role",
@@ -2060,14 +2064,14 @@ class TestAuth0Helpers(unittest.TestCase):
                                 "credentials": {"jti": "949869e066205b5076e6df203fdd7b9b"},
                                 "strategy": "jwt",
                                 "user": {
-                                    "email": "user.name@yourcompany.io",
+                                    "email": "user.name@example.com",
                                     "name": "User Name",
-                                    "user_id": "google-oauth2|20839745023748560278",
+                                    "user_id": "google-oauth2|00000000000000000023",
                                 },
                             },
                             "body": {"description": "custom_role", "name": "custom_role"},
                             "channel": "https://manage.auth0.com/",
-                            "ip": "12.12.12.12",
+                            "ip": "999.999.999.14",
                             "method": "post",
                             "path": "/api/v2/roles",
                             "query": {},
@@ -2081,10 +2085,10 @@ class TestAuth0Helpers(unittest.TestCase):
                             "statusCode": 200,
                         },
                     },
-                    "ip": "12.12.12.12",
+                    "ip": "999.999.999.14",
                     "log_id": "90020230515174135349782000000000000001223372037486042970",
                     "type": "sapi",
-                    "user_id": "google-oauth2|105261262156475850461",
+                    "user_id": "google-oauth2|000000000000000000019",
                 },
                 "log_id": "90020230515174135349782000000000000001223372037486042970",
             }
@@ -2096,9 +2100,9 @@ class TestAuth0Helpers(unittest.TestCase):
         self.assertEqual(
             returns.get("actor", ""),
             {
-                "email": "user.name@yourcompany.io",
+                "email": "user.name@example.com",
                 "name": "User Name",
-                "user_id": "google-oauth2|20839745023748560278",
+                "user_id": "google-oauth2|00000000000000000023",
             },
         )
         self.assertEqual(returns.get("action", ""), "Create a role")
@@ -2119,7 +2123,7 @@ class TestTailscaleHelpers(unittest.TestCase):
                     "actor": {
                         "displayName": "Homer Simpson",
                         "id": "uodc9f3CNTRL",
-                        "loginName": "homer.simpson@yourcompany.io",
+                        "loginName": "example.user07@example.com",
                         "type": "USER",
                     },
                     "eventGroupID": "9f880e02981e341447958344b7b4071f",
@@ -2139,7 +2143,7 @@ class TestTailscaleHelpers(unittest.TestCase):
             {
                 "displayName": "Homer Simpson",
                 "id": "uodc9f3CNTRL",
-                "loginName": "homer.simpson@yourcompany.io",
+                "loginName": "example.user07@example.com",
                 "type": "USER",
             },
         )
@@ -2162,7 +2166,7 @@ class TestKmBetweenTwoIPInfoLocs(unittest.TestCase):
                 "country": "US",
                 "lat": "40.71427",
                 "lng": "-74.00597",
-                "postal_code": "10004",
+                "postal_code": "00011",
                 "region": "New York",
                 "region_code": "NY",
                 "timezone": "America/New_York",
@@ -2174,7 +2178,7 @@ class TestKmBetweenTwoIPInfoLocs(unittest.TestCase):
                 "country": "US",
                 "lat": "37.77493",
                 "lng": "-122.41942",
-                "postal_code": "94102",
+                "postal_code": "00009",
                 "region": "California",
                 "region_code": "CA",
                 "timezone": "America/Los_Angeles",
@@ -2198,7 +2202,7 @@ class TestKmBetweenTwoIPInfoLocs(unittest.TestCase):
                 "country": "NZ",
                 "lat": "-36.84853",
                 "lng": "174.76349",
-                "postal_code": "1010",
+                "postal_code": "00010",
                 "region": "Auckland",
                 "region_code": "AUK",
                 "timezone": "Pacific/Auckland",
@@ -2232,7 +2236,7 @@ class TestNotionHelpers(unittest.TestCase):
                         "id": "..",
                         "object": "user",
                         "type": "person",
-                        "person": {"email": "user.name@yourcompany.io"},
+                        "person": {"email": "user.name@example.com"},
                     },
                     "ip_address": "...",
                     "platform": "mac-desktop",
@@ -2250,7 +2254,7 @@ class TestNotionHelpers(unittest.TestCase):
                 "id": "..",
                 "object": "user",
                 "type": "person",
-                "person": {"email": "user.name@yourcompany.io"},
+                "person": {"email": "user.name@example.com"},
             },
         )
         self.assertEqual(returns.get("action", ""), "workspace.content_exported")
@@ -2263,22 +2267,22 @@ class TestLookupTableHelpers(unittest.TestCase):
     # pylint: disable=protected-access
     def setUp(self):
         self.simple_event_no_pmatch = PantherEvent(
-            {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "1.2.3.4"}}}}
+            {"p_enrichment": {"tor_exit_nodes": {"foo": {"ip": "999.999.999.5"}}}}
         )
         self.simple_event = PantherEvent(
             {
                 "p_enrichment": {
                     "tor_exit_nodes": {
-                        "foo": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
-                        "bar": {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+                        "foo": {"ip": "999.999.999.5", "p_match": "999.999.999.5"},
+                        "bar": {"ip": "999.999.999.6", "p_match": "999.999.999.6"},
                     },
                     "ipinfo_asn": {
                         "foo": {
                             "asn": "AS99999",
-                            "domain": "verytrusty.com",
+                            "domain": "example.net",
                             "name": "Super Trustworthy, LLC",
-                            "p_match": "1.2.3.4",
-                            "route": "1.0.0.0/8",
+                            "p_match": "999.999.999.5",
+                            "route": "999.0.0.0/8",
                             "type": "isp",
                         }
                     },
@@ -2291,8 +2295,8 @@ class TestLookupTableHelpers(unittest.TestCase):
                 "p_enrichment": {
                     "tor_exit_nodes": {
                         "p_any_ip_addresses": [
-                            {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
-                            {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+                            {"ip": "999.999.999.5", "p_match": "999.999.999.5"},
+                            {"ip": "999.999.999.6", "p_match": "999.999.999.6"},
                         ]
                     }
                 }
@@ -2305,8 +2309,8 @@ class TestLookupTableHelpers(unittest.TestCase):
         self.assertEqual(
             lut.lut_matches,
             {
-                "foo": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
-                "bar": {"ip": "1.2.3.5", "p_match": "1.2.3.5"},
+                "foo": {"ip": "999.999.999.5", "p_match": "999.999.999.5"},
+                "bar": {"ip": "999.999.999.6", "p_match": "999.999.999.6"},
             },
         )
         # call lut._register with non-extant key
@@ -2317,28 +2321,30 @@ class TestLookupTableHelpers(unittest.TestCase):
         lut = p_l_h.LookupTableMatches()
         self.assertEqual(lut.p_matches(None, None), {})
         self.assertEqual(lut.p_matches({}), {})
-        self.assertEqual(lut.p_matches(self.simple_event_no_pmatch, "1.2.3.4"), {})
+        self.assertEqual(lut.p_matches(self.simple_event_no_pmatch, "999.999.999.5"), {})
         self.assertEqual(lut.p_matched, {})
 
         self.assertEqual(
-            lut.p_matches(self.simple_event, "1.2.3.4"),
+            lut.p_matches(self.simple_event, "999.999.999.5"),
             {
-                "tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"},
+                "tor_exit_nodes": {"ip": "999.999.999.5", "p_match": "999.999.999.5"},
                 "ipinfo_asn": {
                     "asn": "AS99999",
-                    "domain": "verytrusty.com",
+                    "domain": "example.net",
                     "name": "Super Trustworthy, LLC",
-                    "p_match": "1.2.3.4",
-                    "route": "1.0.0.0/8",
+                    "p_match": "999.999.999.5",
+                    "route": "999.0.0.0/8",
                     "type": "isp",
                 },
             },
         )
         self.assertEqual(
-            lut.p_matches(self.list_event, "1.2.3.4"),
-            {"tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}},
+            lut.p_matches(self.list_event, "999.999.999.5"),
+            {"tor_exit_nodes": {"ip": "999.999.999.5", "p_match": "999.999.999.5"}},
         )
-        self.assertEqual(lut.p_matched, {"tor_exit_nodes": {"ip": "1.2.3.4", "p_match": "1.2.3.4"}})
+        self.assertEqual(
+            lut.p_matched, {"tor_exit_nodes": {"ip": "999.999.999.5", "p_match": "999.999.999.5"}}
+        )
 
 
 class TestAzureSigninHelpers(unittest.TestCase):
@@ -2347,9 +2353,9 @@ class TestAzureSigninHelpers(unittest.TestCase):
         self.event_noninteractive = PantherEvent(
             {
                 "Level": 4,
-                "callerIpAddress": "12.12.12.12",
+                "callerIpAddress": "999.999.999.14",
                 "category": "NonInteractiveUserSignInLogs",
-                "correlationId": "ca0ce740-f84f-4c0b-b18e-4def0e947bca",
+                "correlationId": "00000000-0000-0000-0000-000000000006",
                 "durationMs": 0,
                 "identity": "Some Identity",
                 "location": "US",
@@ -2357,7 +2363,7 @@ class TestAzureSigninHelpers(unittest.TestCase):
                 "operationVersion": 1,
                 "properties": {
                     "appDisplayName": "app-name-here",
-                    "appId": "6a035cc9-e319-4031-b407-8324f5fbde95",
+                    "appId": "00000000-0000-0000-0000-000000000007",
                     "appliedConditionalAccessPolicies": [
                         {
                             "conditionsNotSatisfied": 0,
@@ -2387,15 +2393,15 @@ class TestAzureSigninHelpers(unittest.TestCase):
                     "clientAppUsed": "Browser",
                     "clientCredentialType": "none",
                     "conditionalAccessStatus": "notApplied",
-                    "correlationId": "b51210dc-ccb9-45e1-af8d-1d0ff7f00caa",
+                    "correlationId": "00000000-0000-0000-0000-000000000008",
                     "createdDateTime": "2023-07-24 07:11:51.987224200",
                     "crossTenantAccessType": "b2bCollaboration",
                     "deviceDetail": {"deviceId": "", "displayName": "", "operatingSystem": "MacOs"},
                     "flaggedForReview": False,
-                    "homeTenantId": "d44a40ce-11c5-4be4-90d9-e61fbedb89f5",
-                    "id": "a1afa1a3-562f-4bef-9a65-4b35481f5478",
+                    "homeTenantId": "00000000-0000-0000-0000-000000000009",
+                    "id": "00000000-0000-0000-0000-000000000010",
                     "incomingTokenType": "primaryRefreshToken",
-                    "ipAddress": "12.12.12.12",
+                    "ipAddress": "999.999.999.14",
                     "isInteractive": False,
                     "isTenantRestricted": False,
                     "location": {
@@ -2410,13 +2416,13 @@ class TestAzureSigninHelpers(unittest.TestCase):
                     "managedIdentityType": "none",
                     "mfaDetail": {},
                     "networkLocationDetails": [],
-                    "originalRequestId": "c18d8a2e-12b8-4d40-b593-6d561bbbe0c7",
+                    "originalRequestId": "00000000-0000-0000-0000-000000000011",
                     "privateLinkDetails": {},
                     "processingTimeInMilliseconds": 149,
                     "resourceDisplayName": "Microsoft Graph",
-                    "resourceId": "7bc6eca8-4773-4346-b1e9-2a3ee8d72bb7",
-                    "resourceServicePrincipalId": "b7060413-6f64-4a2a-a6a8-5cba11d2a7bf",
-                    "resourceTenantId": "fad4f1c7-844b-4298-880e-11a66fcccd7d",
+                    "resourceId": "00000000-0000-0000-0000-000000000012",
+                    "resourceServicePrincipalId": "00000000-0000-0000-0000-000000000013",
+                    "resourceTenantId": "00000000-0000-0000-0000-000000000014",
                     "riskDetail": "none",
                     "riskEventTypes": [],
                     "riskEventTypes_v2": [],
@@ -2431,29 +2437,29 @@ class TestAzureSigninHelpers(unittest.TestCase):
                         "additionalDetails": "MFA requirement satisfied by claim in the token",
                         "errorCode": 0,
                     },
-                    "tenantId": "0cf0ba68-28ce-4669-bc91-f8aca94fa428",
+                    "tenantId": "00000000-0000-0000-0000-000000000015",
                     "tokenIssuerName": "",
                     "tokenIssuerType": "AzureAD",
                     "uniqueTokenIdentifier": "_WWWWWWWWWWWWWWWWWW-AA",
                     "userAgent": "Go-http-client/1.1",
                     "userDisplayName": "Some DisplayName",
-                    "userId": "0086dbe1-f372-4269-b6c4-dae3cb1893e5",
-                    "userPrincipalName": "homer.simpson@springfield.org",
+                    "userId": "00000000-0000-0000-0000-000000000016",
+                    "userPrincipalName": "example.user07@example.org",
                     "userType": "Member",
                 },
-                "resourceId": "/tenants/773a96b9-5c79-49cd-8a48-8d16881fc3b9/providers/Microsoft.aadiam",
+                "resourceId": "/tenants/00000000-0000-0000-0000-000000000017/providers/Microsoft.aadiam",
                 "resultSignature": "None",
                 "resultType": 0,
-                "tenantId": "14d9d047-c52e-43c9-8081-91e92d3d4ab7",
+                "tenantId": "00000000-0000-0000-0000-000000000018",
                 "time": "2023-07-24 07:13:50.894",
             }
         )
         self.event_signin = PantherEvent(
             {
                 "Level": 4,
-                "callerIpAddress": "12.12.12.12",
+                "callerIpAddress": "999.999.999.14",
                 "category": "SignInLogs",
-                "correlationId": "69ad836a-0382-4f36-9f5d-68d893074687",
+                "correlationId": "00000000-0000-0000-0000-000000000019",
                 "durationMs": 0,
                 "identity": "Some Identity",
                 "location": "US",
@@ -2461,7 +2467,7 @@ class TestAzureSigninHelpers(unittest.TestCase):
                 "operationVersion": 1,
                 "properties": {
                     "appDisplayName": "Azure Portal",
-                    "appId": "7e822bfa-8a8c-41f4-ac6c-fe8f6982f4d7",
+                    "appId": "00000000-0000-0000-0000-000000000020",
                     "appliedConditionalAccessPolicies": [
                         {
                             "conditionsNotSatisfied": 0,
@@ -2498,7 +2504,7 @@ class TestAzureSigninHelpers(unittest.TestCase):
                     "clientAppUsed": "Browser",
                     "clientCredentialType": "none",
                     "conditionalAccessStatus": "notApplied",
-                    "correlationId": "e20871a7-2981-4012-a331-03a2dbadf642",
+                    "correlationId": "00000000-0000-0000-0000-000000000021",
                     "createdDateTime": "2023-07-21 16:57:26.864923100",
                     "crossTenantAccessType": "b2bCollaboration",
                     "deviceDetail": {
@@ -2508,10 +2514,10 @@ class TestAzureSigninHelpers(unittest.TestCase):
                         "operatingSystem": "MacOs",
                     },
                     "flaggedForReview": False,
-                    "homeTenantId": "a24b2cc7-06ea-4605-a98c-403332dc6bb9",
-                    "id": "f6ea0697-bf57-4c02-a269-c2773796f083",
+                    "homeTenantId": "00000000-0000-0000-0000-000000000022",
+                    "id": "00000000-0000-0000-0000-000000000023",
                     "incomingTokenType": "none",
-                    "ipAddress": "12.12.12.12",
+                    "ipAddress": "999.999.999.14",
                     "isInteractive": True,
                     "isTenantRestricted": False,
                     "location": {
@@ -2526,13 +2532,13 @@ class TestAzureSigninHelpers(unittest.TestCase):
                     "managedIdentityType": "none",
                     "mfaDetail": {},
                     "networkLocationDetails": [],
-                    "originalRequestId": "c32fe3a9-44a9-44dd-82cd-f7d279701d30",
+                    "originalRequestId": "00000000-0000-0000-0000-000000000024",
                     "privateLinkDetails": {},
                     "processingTimeInMilliseconds": 339,
                     "resourceDisplayName": "Windows Azure Service Management API",
-                    "resourceId": "b0d1813f-efb7-4d74-b573-50f2931a6837",
-                    "resourceServicePrincipalId": "c782313b-9d3c-4c7c-bed9-3a8ce7f7c613",
-                    "resourceTenantId": "f96ee678-4bb1-4a69-a9a7-666fea8e60bb",
+                    "resourceId": "00000000-0000-0000-0000-000000000025",
+                    "resourceServicePrincipalId": "00000000-0000-0000-0000-000000000026",
+                    "resourceTenantId": "00000000-0000-0000-0000-000000000027",
                     "riskDetail": "none",
                     "riskEventTypes": [],
                     "riskEventTypes_v2": [],
@@ -2547,20 +2553,20 @@ class TestAzureSigninHelpers(unittest.TestCase):
                         "additionalDetails": "MFA requirement satisfied by claim in the token",
                         "errorCode": 0,
                     },
-                    "tenantId": "21fd595c-e160-4736-a385-49516bd28442",
+                    "tenantId": "00000000-0000-0000-0000-000000000028",
                     "tokenIssuerName": "",
                     "tokenIssuerType": "AzureAD",
                     "uniqueTokenIdentifier": "P4ygygygygygygygygygyg",
                     "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
                     "userDisplayName": "Some Username",
-                    "userId": "36a478d0-fe3b-4954-9d35-7aa072f5503b",
-                    "userPrincipalName": "marge.simpson@springfield.org",
+                    "userId": "00000000-0000-0000-0000-000000000029",
+                    "userPrincipalName": "example.user11@example.org",
                     "userType": "Member",
                 },
-                "resourceId": "/tenants/c4fe447a-95b3-4765-9a1d-3c36b6a95747/providers/Microsoft.aadiam",
+                "resourceId": "/tenants/00000000-0000-0000-0000-000000000030/providers/Microsoft.aadiam",
                 "resultSignature": "None",
                 "resultType": 0,
-                "tenantId": "d0417634-72d6-4509-ba5e-1484e7e7ef7e",
+                "tenantId": "00000000-0000-0000-0000-000000000031",
                 "time": "2023-07-21 16:59:35.718",
             }
         )
@@ -2570,22 +2576,22 @@ class TestAzureSigninHelpers(unittest.TestCase):
         self.assertEqual(
             returns,
             {
-                "actor_user": "homer.simpson@springfield.org",
-                "tenantId": "14d9d047-c52e-43c9-8081-91e92d3d4ab7",
-                "source_ip": "12.12.12.12",
+                "actor_user": "example.user07@example.org",
+                "tenantId": "00000000-0000-0000-0000-000000000018",
+                "source_ip": "999.999.999.14",
                 "resourceDisplayName": "Microsoft Graph",
-                "resourceId": "7bc6eca8-4773-4346-b1e9-2a3ee8d72bb7",
+                "resourceId": "00000000-0000-0000-0000-000000000012",
             },
         )
         returns = p_asi_h.azure_signin_alert_context(self.event_signin)
         self.assertEqual(
             returns,
             {
-                "actor_user": "marge.simpson@springfield.org",
-                "tenantId": "d0417634-72d6-4509-ba5e-1484e7e7ef7e",
-                "source_ip": "12.12.12.12",
+                "actor_user": "example.user11@example.org",
+                "tenantId": "00000000-0000-0000-0000-000000000031",
+                "source_ip": "999.999.999.14",
                 "resourceDisplayName": "Windows Azure Service Management API",
-                "resourceId": "b0d1813f-efb7-4d74-b573-50f2931a6837",
+                "resourceId": "00000000-0000-0000-0000-000000000025",
             },
         )
         returns = p_asi_h.azure_signin_alert_context(PantherEvent({}))
@@ -2625,37 +2631,37 @@ class TestPantherFlowInvestigation(unittest.TestCase):
     def test_pantherflow_investigation(self):
         # pylint: disable=line-too-long
         event = {
-            "p_any_ip_addresses": ["12.34.56.78"],
+            "p_any_ip_addresses": ["999.999.999.13"],
             "p_source_file": {
-                "aws_s3_bucket": "threat-research-trail-trail-bucket-0ipb5nzxam",
-                "aws_s3_key": "AWSLogs/123456789123/CloudTrail/us-east-1/2024/11/25/123456789123_CloudTrail_us-east-1_20241125T1505Z_XLixf09QqBSOD7c4.json.gz",
+                "aws_s3_bucket": "example-trail-bucket",
+                "aws_s3_key": "AWSLogs/333333333333/CloudTrail/us-east-1/2024/11/25/333333333333_CloudTrail_us-east-1_20241125T1505Z_XLixf09QqBSOD7c4.json.gz",
             },
-            "p_any_trace_ids": ["ASIAQWERTYUIOPASDFGH"],
-            "p_any_actor_ids": ["AROAQWERTYUIOPASDFGH", "AROAQWERTYUIOPASDFGH:bob.ross"],
-            "p_any_aws_account_ids": ["123456789123"],
+            "p_any_trace_ids": ["ASIA_EXAMPLE_0002"],
+            "p_any_actor_ids": ["AROA_EXAMPLE_0024", "AROA_EXAMPLE_0024:EXAMPLE_USER_19"],
+            "p_any_aws_account_ids": ["333333333333"],
             "p_any_aws_arns": [
-                "arn:aws:iam::123456789123:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin",
-                "arn:aws:sts::123456789123:assumed-role/AWSReservedSSO_DevAdmin/bob.ross",
-                "arn:aws:iam::123456789123:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin",
+                "arn:aws:iam::333333333333:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin",
+                "arn:aws:sts::333333333333:assumed-role/AWSReservedSSO_DevAdmin/EXAMPLE_USER_19",
+                "arn:aws:iam::333333333333:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin",
             ],
-            "p_any_usernames": ["AWSReservedSSO_DevAdmin", "bob.ross"],
+            "p_any_usernames": ["AWSReservedSSO_DevAdmin", "EXAMPLE_USER_19"],
             "p_event_time": "2024-11-25 15:00:21.000000",
             "p_log_type": "AWS.CloudTrail",
             "p_parse_time": "2024-11-25 15:05:54.123385",
             "p_row_id": "d66379c617d1f7b3b2e7ce9623c104",
             "p_schema_version": 0,
-            "p_source_id": "d0a1e235-6548-4e7f-952a-35063b304007",
-            "p_source_label": "threat-research-trail-us-east-1",
+            "p_source_id": "00000000-0000-0000-0000-000000000032",
+            "p_source_label": "example-trail-us-east-1",
         }
         event = ImmutableCaseInsensitiveDict(event)
         query = """union panther_signals.public.correlation_signals
     , panther_logs.public.aws_cloudtrail
 | where p_event_time between time.parse_timestamp('2024-11-25 15:00:21.000000') - time.parse_timespan('30m') .. time.parse_timestamp('2024-11-25 15:00:21.000000') + time.parse_timespan('30m')
-| where arrays.overlap(p_any_ip_addresses, ['12.34.56.78'])
-     or arrays.overlap(p_any_trace_ids, ['ASIAQWERTYUIOPASDFGH'])
-     or arrays.overlap(p_any_actor_ids, ['AROAQWERTYUIOPASDFGH', 'AROAQWERTYUIOPASDFGH:bob.ross'])
-     or arrays.overlap(p_any_aws_arns, ['arn:aws:iam::123456789123:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin', 'arn:aws:sts::123456789123:assumed-role/AWSReservedSSO_DevAdmin/bob.ross', 'arn:aws:iam::123456789123:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin'])
-     or arrays.overlap(p_any_usernames, ['AWSReservedSSO_DevAdmin', 'bob.ross'])
+| where arrays.overlap(p_any_ip_addresses, ['999.999.999.13'])
+     or arrays.overlap(p_any_trace_ids, ['ASIA_EXAMPLE_0002'])
+     or arrays.overlap(p_any_actor_ids, ['AROA_EXAMPLE_0024', 'AROA_EXAMPLE_0024:EXAMPLE_USER_19'])
+     or arrays.overlap(p_any_aws_arns, ['arn:aws:iam::333333333333:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_DevAdmin', 'arn:aws:sts::333333333333:assumed-role/AWSReservedSSO_DevAdmin/EXAMPLE_USER_19', 'arn:aws:iam::333333333333:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_DevAdmin'])
+     or arrays.overlap(p_any_usernames, ['AWSReservedSSO_DevAdmin', 'EXAMPLE_USER_19'])
 | sort p_event_time"""
         self.assertEqual(p_b_h.pantherflow_investigation(event), query)
 
@@ -2699,14 +2705,14 @@ class TestGCPHelpersSystemPrincipal(unittest.TestCase):
         """Test that attacker accounts trying to mimic system accounts are rejected."""
         attacker_accounts = [
             # Attacker trying to use system keywords
-            "kubernetes-attacker@evil.com",
-            "my-container-engine-robot@attacker.com",
-            "fake-gke-metrics-agent@evil.com",
+            "kubernetes-attacker@example.net",
+            "my-container-engine-robot@example.org",
+            "fake-gke-metrics-agent@example.net",
             # Wrong domain for container-engine-robot
-            "container-engine-robot@fake-project.com",
-            "container-engine-robot@attacker.iam.com",
+            "container-engine-robot@example.net",
+            "container-engine-robot@example.org",
             # Missing system: prefix
-            "kube-controller-manager@attacker.com",
+            "kube-controller-manager@example.org",
             "serviceaccount:kube-system:default",
             # Non-numeric project IDs where required
             "not-a-number@cloudservices.gserviceaccount.com",
@@ -2734,7 +2740,7 @@ class TestGCPHelpersSystemPrincipal(unittest.TestCase):
     def test_regular_user_accounts(self):
         """Test that regular user accounts are not identified as system accounts."""
         regular_accounts = [
-            "user@company.com",
+            "user@example.com",
             "admin@example.org",
             "developer@myproject.iam.gserviceaccount.com",
             "my-custom-sa@my-project.iam.gserviceaccount.com",
@@ -2829,7 +2835,7 @@ class TestEmailRegex(unittest.TestCase):
     def test_email_regex(self):
         email_regex = p_b_h.EMAIL_REGEX
         valid_emails = [
-            "asfe@acme.com",
+            "asfe@example.com",
             "afef-awef@feaf.efaef.aef-aefc.org",
             "ifjlid%fesfdj+123@gmail.com",
             "a@b.co",

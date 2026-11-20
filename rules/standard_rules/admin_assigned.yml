@@ -34,7 +34,7 @@ Tests:
             "serviceName": "cloudresourcemanager.googleapis.com",
             "methodName": "SetIamPolicy",
             "authenticationInfo": { "principalEmail": "bob@example.com" },
-            "requestMetadata": { "callerIP": "4.4.4.4" },
+            "requestMetadata": { "callerIP": "999.999.999.30" },
             "serviceData":
               {
                 "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
@@ -63,7 +63,7 @@ Tests:
             "serviceName": "cloudresourcemanager.googleapis.com",
             "methodName": "SetIamPolicy",
             "authenticationInfo": { "principalEmail": "bob@example.com" },
-            "requestMetadata": { "callerIP": "4.4.4.4" },
+            "requestMetadata": { "callerIP": "999.999.999.30" },
             "serviceData":
               {
                 "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
@@ -173,7 +173,7 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
+        "url": "https://example.zendesk.com/api/v2/audit_logs/111222333444.json",
         "id": 123456789123,
         "action_label": "Updated",
         "actor_id": 123,
@@ -190,7 +190,7 @@ Tests:
     ExpectedResult: true
     Log:
       {
-        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
+        "url": "https://example.zendesk.com/api/v2/audit_logs/111222333444.json",
         "id": 123456789123,
         "action_label": "Updated",
         "actor_id": 123,
@@ -207,7 +207,7 @@ Tests:
     ExpectedResult: true
     Log:
       {
-        "url": "https://myzendek.zendesk.com/api/v2/audit_logs/111222333444.json",
+        "url": "https://example.zendesk.com/api/v2/audit_logs/111222333444.json",
         "id": 123456789123,
         "action_label": "Updated",
         "actor_id": 123,
@@ -227,7 +227,7 @@ Tests:
         "actor":
           {
             "actor_type": "user",
-            "email": "homer@springfield.com",
+            "email": "example.user42@example.net",
             "gid": "2222222",
             "name": "Homer",
           },
@@ -239,7 +239,7 @@ Tests:
         "gid": "222222222",
         "resource":
           {
-            "email": "homer@springfield.com",
+            "email": "example.user42@example.net",
             "gid": "2222222",
             "name": "homer",
             "resource_type": "user",
@@ -261,7 +261,7 @@ Tests:
             "group":
               {
                 "gid": "11111",
-                "name": "1183399881404774.2lgxga.asanatest1.us",
+                "name": "example-tenant.example.com",
                 "resource_type": "workspace",
               },
             "new_value": "member",
@@ -272,7 +272,7 @@ Tests:
         "gid": "22222",
         "resource":
           {
-            "email": "marge@springfield.com",
+            "email": "example.user56@example.net",
             "gid": "222222",
             "name": "Marge Simpson",
             "resource_type": "user",

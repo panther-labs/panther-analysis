@@ -22,7 +22,7 @@ Tests:
         "p_event_time": "2024-07-22 14:20:56.237323088",
         "p_log_type": "GCP.AuditLog",
         "insertId": "123456789xyz",
-        "logName": "projects/internal-sentry/logs/cloudaudit.googleapis.com%2Factivity",
+        "logName": "projects/example-internal/logs/cloudaudit.googleapis.com%2Factivity",
         "protoPayload":
           {
             "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
@@ -35,7 +35,7 @@ Tests:
                 {
                   "granted": true,
                   "permission": "cloudbuild.builds.create",
-                  "resource": "projects/00000000aaaaaaaa",
+                  "resource": "projects/0000000000000004",
                   "resourceAttributes": {},
                 },
               ],
@@ -67,8 +67,8 @@ Tests:
             "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "authenticationInfo":
               {
-                "principalEmail": "some.user@company.com",
-                "principalSubject": "user:some.user@company.com",
+                "principalEmail": "some.user@example.org",
+                "principalSubject": "user:some.user@example.org",
               },
             "authorizationInfo":
               [
@@ -123,7 +123,7 @@ Tests:
               },
             "requestMetadata":
               {
-                "callerIP": "1.2.3.4",
+                "callerIP": "999.999.998.1",
                 "callerSuppliedUserAgent": "(gzip),gzip(gfe)",
                 "destinationAttributes": {},
                 "requestAttributes":
@@ -142,18 +142,18 @@ Tests:
                       {
                         "client.knative.dev/user-image": "us-west1-docker.pkg.dev/some-project/abc-test/run_services_create_test",
                         "run.googleapis.com/ingress": "all",
-                        "run.googleapis.com/operation-id": "6fdf115a-1bdd-4836-b0ca-ae71f8ba6718",
-                        "serving.knative.dev/creator": "some.user@company.com",
-                        "serving.knative.dev/lastModifier": "some.user@company.com",
+                        "run.googleapis.com/operation-id": "00000000-0000-0000-0000-000000000003",
+                        "serving.knative.dev/creator": "some.user@example.org",
+                        "serving.knative.dev/lastModifier": "some.user@example.org",
                       },
                     "creationTimestamp": "2024-02-02T09:43:54.640837Z",
                     "generation": 1,
                     "labels": { "cloud.googleapis.com/location": "us-west1" },
                     "name": "cloudrun-exfil",
-                    "namespace": "1028347275902",
+                    "namespace": "777777777777",
                     "resourceVersion": "AAYQYvNHUcU",
-                    "selfLink": "/apis/serving.knative.dev/v1/namespaces/1028347275902/services/cloudrun-exfil",
-                    "uid": "45101e8e-7b91-4c41-81a1-969e876923f4",
+                    "selfLink": "/apis/serving.knative.dev/v1/namespaces/777777777777/services/cloudrun-exfil",
+                    "uid": "00000000-0000-0000-0000-000000000004",
                   },
                 "spec":
                   {
@@ -212,8 +212,8 @@ Tests:
             "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "authenticationInfo":
               {
-                "principalEmail": "some.user@company.com",
-                "principalSubject": "user:some.user@company.com",
+                "principalEmail": "some.user@example.org",
+                "principalSubject": "user:some.user@example.org",
               },
             "authorizationInfo":
               [

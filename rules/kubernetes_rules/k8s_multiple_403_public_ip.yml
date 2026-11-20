@@ -43,7 +43,7 @@ Tests:
         "auditID": "abc-123",
         "verb": "watch",
         "user": {"username": "system:serviceaccount:kube-system:coredns"},
-        "sourceIPs": ["5.5.5.5"],
+        "sourceIPs": ["8.8.4.4"],
         "objectRef": {
           "apiGroup": "discovery.k8s.io",
           "apiVersion": "v1",
@@ -54,7 +54,7 @@ Tests:
         "userAgent": "Go-http-client/2.0",
         "p_log_type": "Amazon.EKS.Audit",
         "p_source_label": "eks-cluster",
-        "p_any_ip_addresses": ["5.5.5.5"]
+        "p_any_ip_addresses": ["8.8.4.4"]
       }
   - Name: AKS 403 from Public IP
     ExpectedResult: true
@@ -77,7 +77,7 @@ Tests:
           "authenticationInfo": {"principalEmail": "user@example.com"},
           "methodName": "io.k8s.core.v1.pods.list",
           "requestMetadata": {
-            "callerIP": "1.2.3.4",
+            "callerIP": "1.0.0.1",
             "callerSuppliedUserAgent": "kubectl/v1.27.0"
           },
           "resourceName": "core/v1/namespaces/default/pods",
@@ -90,7 +90,7 @@ Tests:
         },
         "p_log_type": "GCP.AuditLog",
         "p_source_label": "gke-cluster",
-        "p_any_ip_addresses": ["1.2.3.4"]
+        "p_any_ip_addresses": ["1.0.0.1"]
       }
   - Name: 403 from Private IP (Excluded)
     ExpectedResult: false
@@ -109,7 +109,7 @@ Tests:
       {
         "kind": "Event",
         "verb": "get",
-        "sourceIPs": ["5.5.5.5"],
+        "sourceIPs": ["8.8.4.4"],
         "responseStatus": {"code": 200},
         "p_log_type": "Amazon.EKS.Audit"
       }

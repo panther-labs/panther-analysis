@@ -16,7 +16,7 @@ Tests:
     Log:
       awsRegion: us-east-1
       eventCategory: Management
-      eventID: 0ea3f05a-066c-43f9-8869-393ba67e7936
+      eventID: 00000000-0000-0000-0000-000000000007
       eventName: CreateImage
       eventSource: ec2.amazonaws.com
       eventTime: "2022-09-29 22:25:17"
@@ -29,20 +29,20 @@ Tests:
         - arn:aws:iam::123456789101:role/DevAdministrator
         - arn:aws:sts::123456789101:assumed-role/DevAdministrator/test_user
       p_any_aws_instance_ids:
-        - i-0381a3817f72a949d
+        - i-0000000000000005a
       p_any_domain_names:
         - AWS Internal
       p_any_trace_ids:
-        - ASIA5PZQZ5QHE2FUNXHR
+        - ASIA_EXAMPLE_0004
       p_event_time: "2022-09-29 22:25:17"
       p_log_type: AWS.CloudTrail
       p_parse_time: "2022-09-29 22:27:25.748"
-      p_row_id: 66011977ec1fd0cf9dacf7d913f08d06
-      p_source_id: 125a8146-e3ea-454b-aed7-9e08e735b670
+      p_row_id: 0000000000000000000000000000003f
+      p_source_id: 00000000-0000-0000-0000-000000000008
       p_source_label: CloudTrail Logs
       readOnly: false
       recipientAccountId: "123456789101"
-      requestID: e686939a-a08a-4fd6-abf5-9ea34793cf25
+      requestID: 00000000-0000-0000-0000-000000000174
       requestParameters:
         blockDeviceMapping:
           items:
@@ -50,20 +50,20 @@ Tests:
               ebs:
                 deleteOnTermination: true
                 volumeSize: 8
-        instanceId: i-0381a3817f72a949d
+        instanceId: i-0000000000000005a
         name: testimage
         noReboot: false
       responseElements:
-        imageId: ami-06aaf5e4b77161786
-        requestId: e686939a-a08a-4fd6-abf5-9ea34793cf25
+        imageId: ami-0000000000000004a
+        requestId: 00000000-0000-0000-0000-000000000174
       sessionCredentialFromConsole: true
       sourceIPAddress: AWS Internal
       userAgent: AWS Internal
       userIdentity:
-        accessKeyId: ASIA5PZQZ5QHE2FUNXHR
+        accessKeyId: ASIA_EXAMPLE_0004
         accountId: "123456789101"
         arn: arn:aws:sts::123456789101:assumed-role/DevAdministrator/test_user
-        principalId: AROA5PZQZ5QHBULW27VAC:test_user
+        principalId: AROA_EXAMPLE_0010:EXAMPLE_USER_15
         sessionContext:
           attributes:
             creationDate: "2022-09-29T22:22:46Z"
@@ -71,7 +71,7 @@ Tests:
           sessionIssuer:
             accountId: "123456789101"
             arn: arn:aws:iam::123456789101:role/DevAdministrator
-            principalId: AROA5PZQZ5QHBULW27VAC
+            principalId: AROA_EXAMPLE_0010
             type: Role
             userName: DevAdministrator
           webIdFederationData: {}
@@ -81,7 +81,7 @@ Tests:
     Log:
       awsRegion: us-east-1
       eventCategory: Management
-      eventID: 015c585b-cbc2-4f9e-9c52-a2f22f3c09f4
+      eventID: 00000000-0000-0000-0000-000000000001
       eventName: RunInstances
       eventSource: ec2.amazonaws.com
       eventTime: "2022-10-20 14:16:43"
@@ -94,27 +94,27 @@ Tests:
         - arn:aws:iam::123123123123:role/DevAdministrator
         - arn:aws:sts::123123123123:assumed-role/DevAdministrator/temp_user
       p_any_aws_instance_ids:
-        - i-0d7e4b9be8a0de6ea
+        - i-000000000000000aa
       p_any_aws_tags:
         - Name:test2
       p_any_domain_names:
         - AWS Internal
-        - ip-111.111.111.111.ec2.internal
+        - ip-999.999.999.34.ec2.internal
       p_any_ip_addresses:
-        - 111.111.111.111
+        - 999.999.999.34
       p_any_trace_ids:
-        - ASIA5PZQZ5QHAW6RFPO5
+        - ASIA_EXAMPLE_0003
       p_any_usernames:
         - DevAdministrator
       p_event_time: "2022-10-20 14:16:43"
       p_log_type: AWS.CloudTrail
       p_parse_time: "2022-10-20 14:21:06.845"
       p_row_id: be7b3bed9bb891e4a8b9f38d149909
-      p_source_id: 125a8146-e3ea-454b-aed7-9e08e735b670
-      p_source_label: Panther Identity Org CloudTrail
+      p_source_id: 00000000-0000-0000-0000-000000000008
+      p_source_label: Example Org CloudTrail
       readOnly: false
       recipientAccountId: "123123123123"
-      requestID: 25c95576-a825-44fd-971d-5a52c1e3b2be
+      requestID: 00000000-0000-0000-0000-000000000026
       requestParameters:
         blockDeviceMapping: {}
         disableApiStop: false
@@ -123,7 +123,7 @@ Tests:
         instanceType: t1.micro
         instancesSet:
           items:
-            - imageId: ami-026b57f3c383c2eec
+            - imageId: ami-0000000000000002a
               keyName: kp1
               maxCount: 1
               minCount: 1
@@ -135,7 +135,7 @@ Tests:
               deviceIndex: 0
               groupSet:
                 items:
-                  - groupId: sg-0aebfa21f302bded9
+                  - groupId: sg-0000000000000008a
         privateDnsNameOptions:
           enableResourceNameDnsAAAARecord: false
           enableResourceNameDnsARecord: true
@@ -165,11 +165,11 @@ Tests:
                 enabled: false
               groupSet:
                 items:
-                  - groupId: sg-0aebfa21f302bded9
+                  - groupId: sg-0000000000000008a
                     groupName: launch-wizard-4
               hypervisor: xen
-              imageId: ami-026b57f3c383c2eec
-              instanceId: i-0d7e4b9be8a0de6ea
+              imageId: ami-0000000000000002a
+              instanceId: i-000000000000000aa
               instanceState:
                 code: 0
                 name: pending
@@ -199,34 +199,34 @@ Tests:
                       status: attaching
                     groupSet:
                       items:
-                        - groupId: sg-0aebfa21f302bded9
+                        - groupId: sg-0000000000000008a
                           groupName: launch-wizard-4
                     interfaceType: interface
                     ipv6AddressesSet: {}
                     macAddress: 0a:47:b4:21:fe:8d
-                    networkInterfaceId: eni-08b298299ee7c922c
+                    networkInterfaceId: eni-0000000000000002a
                     ownerId: "123123123123"
-                    privateDnsName: ip-111.111.111.111.ec2.internal
-                    privateIpAddress: 111.111.111.111
+                    privateDnsName: ip-999.999.999.34.ec2.internal
+                    privateIpAddress: 999.999.999.34
                     privateIpAddressesSet:
                       item:
                         - primary: true
-                          privateDnsName: ip-111.111.111.111.ec2.internal
-                          privateIpAddress: 111.111.111.111
+                          privateDnsName: ip-999.999.999.34.ec2.internal
+                          privateIpAddress: 999.999.999.34
                     sourceDestCheck: true
                     status: in-use
-                    subnetId: subnet-0ae6d533cb0b18193
+                    subnetId: subnet-0000000000000003a
                     tagSet: {}
-                    vpcId: vpc-0f59e8f1222b0de6a
+                    vpcId: vpc-0000000000000004a
               placement:
                 availabilityZone: us-east-1a
                 tenancy: default
-              privateDnsName: ip-111.111.111.111.ec2.internal
+              privateDnsName: ip-999.999.999.34.ec2.internal
               privateDnsNameOptions:
                 enableResourceNameDnsAAAARecord: false
                 enableResourceNameDnsARecord: true
                 hostnameType: ip-name
-              privateIpAddress: 111.111.111.111
+              privateIpAddress: 999.999.999.34
               productCodes: {}
               rootDeviceName: /dev/xvda
               rootDeviceType: ebs
@@ -234,24 +234,24 @@ Tests:
               stateReason:
                 code: pending
                 message: pending
-              subnetId: subnet-0ae6d533cb0b18193
+              subnetId: subnet-0000000000000003a
               tagSet:
                 items:
                   - key: Name
                     value: test2
               virtualizationType: hvm
-              vpcId: vpc-0f59e8f1222b0de6a
+              vpcId: vpc-0000000000000004a
         ownerId: "123123123123"
-        requestId: 25c95576-a825-44fd-971d-5a52c1e3b2be
+        requestId: 00000000-0000-0000-0000-000000000026
         reservationId: r-02debcf2c4878bc7f
       sessionCredentialFromConsole: true
       sourceIPAddress: AWS Internal
       userAgent: AWS Internal
       userIdentity:
-        accessKeyId: ASIA5PZQZ5QHAW6RFPO5
+        accessKeyId: ASIA_EXAMPLE_0003
         accountId: "123123123123"
         arn: arn:aws:sts::123123123123:assumed-role/DevAdministrator/temp_user
-        principalId: AROA5PZQZ5QHBULW27VAC:temp_user
+        principalId: AROA_EXAMPLE_0010:EXAMPLE_USER_16
         sessionContext:
           attributes:
             creationDate: "2022-10-20T14:14:22Z"
@@ -259,7 +259,7 @@ Tests:
           sessionIssuer:
             accountId: "123123123123"
             arn: arn:aws:iam::123123123123:role/DevAdministrator
-            principalId: AROA5PZQZ5QHBULW27VAC
+            principalId: AROA_EXAMPLE_0010
             type: Role
             userName: DevAdministrator
           webIdFederationData: {}
@@ -271,7 +271,7 @@ Tests:
       errorCode: Client.DryRunOperation
       errorMessage: Request would have succeeded, but DryRun flag is set.
       eventCategory: Management
-      eventID: ab804e72-7237-49c6-8f20-c3ef09859e78
+      eventID: 00000000-0000-0000-0000-000000000131
       eventName: RunInstances
       eventSource: ec2.amazonaws.com
       eventTime: "2022-10-13 16:35:33"
@@ -290,16 +290,16 @@ Tests:
       p_event_time: "2022-10-13 16:35:33"
       p_log_type: AWS.CloudTrail
       p_parse_time: "2022-10-13 16:42:16.583"
-      p_row_id: 464736612772b0bd8dd8c5fc1384d209
-      p_source_id: 125a8146-e3ea-454b-aed7-9e08e735b670
-      p_source_label: Panther Identity Org CloudTrail
+      p_row_id: 0000000000000000000000000000001f
+      p_source_id: 00000000-0000-0000-0000-000000000008
+      p_source_label: Example Org CloudTrail
       readOnly: false
       recipientAccountId: "123123123123"
-      requestID: 5e7636b9-d5b5-4bb1-8e37-f98ae7c04e52
+      requestID: 00000000-0000-0000-0000-000000000068
       requestParameters:
         availabilityZone: us-west-2b
         blockDeviceMapping: {}
-        clientToken: 27bec563-7673-4b80-8e00-3537e3b7ad6b
+        clientToken: 00000000-0000-0000-0000-000000000029
         disableApiStop: false
         disableApiTermination: false
         instanceType: m5.xlarge
@@ -308,18 +308,18 @@ Tests:
             - maxCount: 1
               minCount: 1
         launchTemplate:
-          launchTemplateId: lt-0622a7ff26539376a
+          launchTemplateId: lt-0000000000000001a
           version: "4"
         monitoring:
           enabled: false
-        subnetId: subnet-0d465e7cad854a993
+        subnetId: subnet-0000000000000004a
       sourceIPAddress: eks-nodegroup.amazonaws.com
       userAgent: eks-nodegroup.amazonaws.com
       userIdentity:
         accountId: "123123123123"
         arn: arn:aws:sts::123123123123:assumed-role/AWSServiceRoleForAmazonEKSNodegroup/EKS
         invokedBy: eks-nodegroup.amazonaws.com
-        principalId: AROAZBD2CNPWD5DHZ366F:EKS
+        principalId: AROA_EXAMPLE_0026:EKS
         sessionContext:
           attributes:
             creationDate: "2022-10-13T16:35:31Z"
@@ -327,7 +327,7 @@ Tests:
           sessionIssuer:
             accountId: "123123123123"
             arn: arn:aws:iam::123123123123:role/aws-service-role/eks-nodegroup.amazonaws.com/AWSServiceRoleForAmazonEKSNodegroup
-            principalId: AROAZBD2CNPWD5DHZ366F
+            principalId: AROA_EXAMPLE_0026
             type: Role
             userName: AWSServiceRoleForAmazonEKSNodegroup
           webIdFederationData: {}
@@ -337,7 +337,7 @@ Tests:
     Log:
       awsRegion: us-east-1
       eventCategory: Management
-      eventID: 0ea3f05a-066c-43f9-8869-393ba67e7936
+      eventID: 00000000-0000-0000-0000-000000000007
       eventName: CreateImage
       eventSource: ec2.amazonaws.com
       eventTime: "2022-09-29 22:25:17"
@@ -346,7 +346,7 @@ Tests:
       managementEvent: true
       readOnly: false
       recipientAccountId: "123456789101"
-      requestID: e686939a-a08a-4fd6-abf5-ffffffffffff
+      requestID: 00000000-0000-0000-0000-000000000175
       requestParameters:
         blockDeviceMapping:
           items:
@@ -354,20 +354,20 @@ Tests:
               ebs:
                 deleteOnTermination: true
                 volumeSize: 8
-        instanceId: i-0381a3817f72a949d
+        instanceId: i-0000000000000005a
         name: testimage
         noReboot: false
       responseElements:
-        imageId: ami-06aaf5e4b77161786
-        requestId: e686939a-a08a-4fd6-abf5-9ea34793cf25
+        imageId: ami-0000000000000004a
+        requestId: 00000000-0000-0000-0000-000000000174
       sessionCredentialFromConsole: true
       sourceIPAddress: AWS Internal
       userAgent: AWS Internal
       userIdentity:
-        accessKeyId: ASIA5PZQZ5QHE2FUNXHR
+        accessKeyId: ASIA_EXAMPLE_0004
         accountId: "123456789101"
         arn: arn:aws:sts::123456789101:assumed-role/DevAdministrator/test_user
-        principalId: AROA5PZQZ5QHBULW27VAC:test_user
+        principalId: AROA_EXAMPLE_0010:EXAMPLE_USER_15
         invokedBy: null
         sessionContext:
           attributes:
@@ -376,7 +376,7 @@ Tests:
           sessionIssuer:
             accountId: "123456789101"
             arn: arn:aws:iam::123456789101:role/DevAdministrator
-            principalId: AROA5PZQZ5QHBULW27VAC
+            principalId: AROA_EXAMPLE_0010
             type: Role
             userName: DevAdministrator
           webIdFederationData: {}

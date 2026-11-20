@@ -16,7 +16,7 @@ import yaml
 # Note: Timeshift works by adding the diff in days between the compromise time and now to the log time
 # example:
 #  python send_data.py
-#   --account-id 050603629922
+#   --account-id 123456789012
 #   --region us-east-1
 #   --compromise-datetime '2020-11-01T18:00:00+00:00'
 #   --bucket-name panther-demo-2020-11

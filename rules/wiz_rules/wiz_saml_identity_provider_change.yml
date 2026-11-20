@@ -19,9 +19,9 @@ Tests:
     ExpectedResult: true
     Log:
       {
-        "id": "0fc891d1-c2e3-4db2-b896-7af27964c71b",
+        "id": "00000000-0000-0000-0000-000000000016",
         "action": "DeleteSAMLIdentityProvider",
-        "requestId": "eec733c5-175c-4d0c-8b65-b9344f223a36",
+        "requestId": "00000000-0000-0000-0000-00000000006f",
         "status": "SUCCESS",
         "timestamp": "2024-07-12T08:59:33.946633Z",
         "actionParameters": {
@@ -33,7 +33,7 @@ Tests:
           ]
         },
         "userAgent": "Wiz-Terraform-Provider/1.13.3433",
-        "sourceIP": "12.34.56.78",
+        "sourceIP": "999.999.999.35",
         "serviceAccount": {
           "id": "<redacted>",
           "name": "test-graphql-api"
@@ -44,15 +44,15 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        "id": "220d23be-f07c-4d97-b4a6-87ad04eddb14",
+        "id": "00000000-0000-0000-0000-00000000001c",
         "action": "CreateUser",
-        "requestId": "0d9521b2-c3f8-4a73-bf7c-20257788752e",
+        "requestId": "00000000-0000-0000-0000-000000000015",
         "status": "SUCCESS",
         "timestamp": "2024-07-29T09:40:15.66643Z",
         "actionParameters": {
           "input": {
             "assignedProjectIds": null,
-            "email": "testy@company.com",
+            "email": "example.user88@example.com",
             "expiresAt": null,
             "name": "Test User",
             "role": "GLOBAL_ADMIN"
@@ -71,22 +71,22 @@ Tests:
         "sourceIP": "8.8.8.8",
         "serviceAccount": null,
         "user": {
-          "id": "someuser@company.com",
-          "name": "someuser@company.com"
+          "id": "example.user80@example.com",
+          "name": "example.user80@example.com"
         }
       }
   - Name: DeleteSAMLIdentityProvider - Fail
     ExpectedResult: false
     Log:
       {
-        "id": "0fc891d1-c2e3-4db2-b896-7af27964c71b",
+        "id": "00000000-0000-0000-0000-000000000016",
         "action": "DeleteSAMLIdentityProvider",
-        "requestId": "eec733c5-175c-4d0c-8b65-b9344f223a36",
+        "requestId": "00000000-0000-0000-0000-00000000006f",
         "status": "FAILED",
         "timestamp": "2024-07-12T08:59:33.946633Z",
         "actionParameters": { },
         "userAgent": "Wiz-Terraform-Provider/1.13.3433",
-        "sourceIP": "12.34.56.78",
+        "sourceIP": "999.999.999.35",
         "serviceAccount": {
           "id": "<redacted>",
           "name": "test-graphql-api"

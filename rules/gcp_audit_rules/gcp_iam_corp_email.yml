@@ -32,10 +32,10 @@ Tests:
           {
             "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "status": {},
-            "authenticationInfo": { "principalEmail": "test@runpanther.com" },
+            "authenticationInfo": { "principalEmail": "test@example.com" },
             "requestMetadata":
               {
-                "callerIp": "136.24.229.58",
+                "callerIp": "999.999.998.4",
                 "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe)",
                 "requestAttributes": {},
                 "destinationAttributes": {},
@@ -45,19 +45,19 @@ Tests:
             "authorizationInfo":
               [
                 {
-                  "resource": "projects/western-verve-123456",
+                  "resource": "projects/example-project-123456",
                   "permission": "resourcemanager.projects.setIamPolicy",
                   "granted": true,
                   "resourceAttributes": {},
                 },
                 {
-                  "resource": "projects/western-verve-123456",
+                  "resource": "projects/example-project-123456",
                   "permission": "resourcemanager.projects.setIamPolicy",
                   "granted": true,
                   "resourceAttributes": {},
                 },
               ],
-            "resourceName": "projects/western-verve-123456",
+            "resourceName": "projects/example-project-123456",
             "serviceData":
               {
                 "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
@@ -75,7 +75,7 @@ Tests:
               },
             "request":
               {
-                "resource": "western-verve-123456",
+                "resource": "example-project-123456",
                 "@type": "type.googleapis.com/google.iam.v1.SetIamPolicyRequest",
                 "policy":
                   {
@@ -88,7 +88,7 @@ Tests:
                         {
                           "members":
                             [
-                              "serviceAccount:service-951849100836@compute-system.iam.gserviceaccount.com",
+                              "serviceAccount:service-111111111111@compute-system.iam.gserviceaccount.com",
                             ],
                           "role": "roles/compute.serviceAgent",
                         },
@@ -96,12 +96,12 @@ Tests:
                           "role": "roles/editor",
                           "members":
                             [
-                              "serviceAccount:951849100836-compute@developer.gserviceaccount.com",
-                              "serviceAccount:951849100836@cloudservices.gserviceaccount.com",
+                              "serviceAccount:111111111111-compute@developer.gserviceaccount.com",
+                              "serviceAccount:111111111111@cloudservices.gserviceaccount.com",
                             ],
                         },
                         {
-                          "members": ["user:test@runpanther.com"],
+                          "members": ["user:test@example.com"],
                           "role": "roles/owner",
                         },
                         {
@@ -111,20 +111,20 @@ Tests:
                         {
                           "members":
                             [
-                              "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com",
+                              "serviceAccount:pubsub-reader@example-project-123456.iam.gserviceaccount.com",
                             ],
                           "role": "roles/pubsub.subscriber",
                         },
                         {
                           "members":
                             [
-                              "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com",
+                              "serviceAccount:pubsub-reader@example-project-123456.iam.gserviceaccount.com",
                             ],
                           "role": "roles/pubsub.viewer",
                         },
                         {
                           "role": "roles/resourcemanager.organizationAdmin",
-                          "members": ["user:test@runpanther.com"],
+                          "members": ["user:test@example.com"],
                         },
                         {
                           "members": ["user:username@gmail.com"],
@@ -146,20 +146,20 @@ Tests:
                     {
                       "members":
                         [
-                          "serviceAccount:service-951849100836@compute-system.iam.gserviceaccount.com",
+                          "serviceAccount:service-111111111111@compute-system.iam.gserviceaccount.com",
                         ],
                       "role": "roles/compute.serviceAgent",
                     },
                     {
                       "members":
                         [
-                          "serviceAccount:951849100836-compute@developer.gserviceaccount.com",
-                          "serviceAccount:951849100836@cloudservices.gserviceaccount.com",
+                          "serviceAccount:111111111111-compute@developer.gserviceaccount.com",
+                          "serviceAccount:111111111111@cloudservices.gserviceaccount.com",
                         ],
                       "role": "roles/editor",
                     },
                     {
-                      "members": ["user:test@runpanther.com"],
+                      "members": ["user:test@example.com"],
                       "role": "roles/owner",
                     },
                     {
@@ -170,18 +170,18 @@ Tests:
                       "role": "roles/pubsub.subscriber",
                       "members":
                         [
-                          "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com",
+                          "serviceAccount:pubsub-reader@example-project-123456.iam.gserviceaccount.com",
                         ],
                     },
                     {
                       "members":
                         [
-                          "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com",
+                          "serviceAccount:pubsub-reader@example-project-123456.iam.gserviceaccount.com",
                         ],
                       "role": "roles/pubsub.viewer",
                     },
                     {
-                      "members": ["user:test@runpanther.com"],
+                      "members": ["user:test@example.com"],
                       "role": "roles/resourcemanager.organizationAdmin",
                     },
                     {
@@ -196,11 +196,11 @@ Tests:
         "resource":
           {
             "type": "project",
-            "labels": { "project_id": "western-verve-123456" },
+            "labels": { "project_id": "example-project-123456" },
           },
         "timestamp": "2020-05-15T03:51:35.019Z",
         "severity": "NOTICE",
-        "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Factivity",
+        "logName": "projects/example-project-123456/logs/cloudaudit.googleapis.com%2Factivity",
         "receiveTimestamp": "2020-05-15T03:51:35.977314225Z",
       }
   - Name: Expected account added
@@ -211,10 +211,10 @@ Tests:
           {
             "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "status": {},
-            "authenticationInfo": { "principalEmail": "test@runpanther.com" },
+            "authenticationInfo": { "principalEmail": "test@example.com" },
             "requestMetadata":
               {
-                "callerIp": "136.24.229.58",
+                "callerIp": "999.999.998.4",
                 "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe)",
                 "requestAttributes": {},
                 "destinationAttributes": {},
@@ -224,19 +224,19 @@ Tests:
             "authorizationInfo":
               [
                 {
-                  "resource": "projects/western-verve-123456",
+                  "resource": "projects/example-project-123456",
                   "permission": "resourcemanager.projects.setIamPolicy",
                   "granted": true,
                   "resourceAttributes": {},
                 },
                 {
-                  "resource": "projects/western-verve-123456",
+                  "resource": "projects/example-project-123456",
                   "permission": "resourcemanager.projects.setIamPolicy",
                   "granted": true,
                   "resourceAttributes": {},
                 },
               ],
-            "resourceName": "projects/western-verve-123456",
+            "resourceName": "projects/example-project-123456",
             "serviceData":
               {
                 "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
@@ -247,14 +247,14 @@ Tests:
                         {
                           "action": "ADD",
                           "role": "roles/viewer",
-                          "member": "user:username@runpanther.com",
+                          "member": "user:username@example.com",
                         },
                       ],
                   },
               },
             "request":
               {
-                "resource": "western-verve-123456",
+                "resource": "example-project-123456",
                 "@type": "type.googleapis.com/google.iam.v1.SetIamPolicyRequest",
                 "policy":
                   {
@@ -267,7 +267,7 @@ Tests:
                         {
                           "members":
                             [
-                              "serviceAccount:service-951849100836@compute-system.iam.gserviceaccount.com",
+                              "serviceAccount:service-111111111111@compute-system.iam.gserviceaccount.com",
                             ],
                           "role": "roles/compute.serviceAgent",
                         },
@@ -275,12 +275,12 @@ Tests:
                           "role": "roles/editor",
                           "members":
                             [
-                              "serviceAccount:951849100836-compute@developer.gserviceaccount.com",
-                              "serviceAccount:951849100836@cloudservices.gserviceaccount.com",
+                              "serviceAccount:111111111111-compute@developer.gserviceaccount.com",
+                              "serviceAccount:111111111111@cloudservices.gserviceaccount.com",
                             ],
                         },
                         {
-                          "members": ["user:test@runpanther.com"],
+                          "members": ["user:test@example.com"],
                           "role": "roles/owner",
                         },
                         {
@@ -290,20 +290,20 @@ Tests:
                         {
                           "members":
                             [
-                              "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com",
+                              "serviceAccount:pubsub-reader@example-project-123456.iam.gserviceaccount.com",
                             ],
                           "role": "roles/pubsub.subscriber",
                         },
                         {
                           "members":
                             [
-                              "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com",
+                              "serviceAccount:pubsub-reader@example-project-123456.iam.gserviceaccount.com",
                             ],
                           "role": "roles/pubsub.viewer",
                         },
                         {
                           "role": "roles/resourcemanager.organizationAdmin",
-                          "members": ["user:test@runpanther.com"],
+                          "members": ["user:test@example.com"],
                         },
                         {
                           "members": ["user:username@gmail.com"],
@@ -325,20 +325,20 @@ Tests:
                     {
                       "members":
                         [
-                          "serviceAccount:service-951849100836@compute-system.iam.gserviceaccount.com",
+                          "serviceAccount:service-111111111111@compute-system.iam.gserviceaccount.com",
                         ],
                       "role": "roles/compute.serviceAgent",
                     },
                     {
                       "members":
                         [
-                          "serviceAccount:951849100836-compute@developer.gserviceaccount.com",
-                          "serviceAccount:951849100836@cloudservices.gserviceaccount.com",
+                          "serviceAccount:111111111111-compute@developer.gserviceaccount.com",
+                          "serviceAccount:111111111111@cloudservices.gserviceaccount.com",
                         ],
                       "role": "roles/editor",
                     },
                     {
-                      "members": ["user:test@runpanther.com"],
+                      "members": ["user:test@example.com"],
                       "role": "roles/owner",
                     },
                     {
@@ -349,18 +349,18 @@ Tests:
                       "role": "roles/pubsub.subscriber",
                       "members":
                         [
-                          "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com",
+                          "serviceAccount:pubsub-reader@example-project-123456.iam.gserviceaccount.com",
                         ],
                     },
                     {
                       "members":
                         [
-                          "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com",
+                          "serviceAccount:pubsub-reader@example-project-123456.iam.gserviceaccount.com",
                         ],
                       "role": "roles/pubsub.viewer",
                     },
                     {
-                      "members": ["user:test@runpanther.com"],
+                      "members": ["user:test@example.com"],
                       "role": "roles/resourcemanager.organizationAdmin",
                     },
                     {
@@ -375,11 +375,11 @@ Tests:
         "resource":
           {
             "type": "project",
-            "labels": { "project_id": "western-verve-123456" },
+            "labels": { "project_id": "example-project-123456" },
           },
         "timestamp": "2020-05-15T03:51:35.019Z",
         "severity": "NOTICE",
-        "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Factivity",
+        "logName": "projects/example-project-123456/logs/cloudaudit.googleapis.com%2Factivity",
         "receiveTimestamp": "2020-05-15T03:51:35.977314225Z",
       }
   - Name: Expected GCP service account added by Service Agent Manager
@@ -396,7 +396,7 @@ Tests:
               },
             "requestMetadata":
               {
-                "callerIp": "136.24.229.58",
+                "callerIp": "999.999.998.4",
                 "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe)",
                 "requestAttributes": {},
                 "destinationAttributes": {},
@@ -406,19 +406,19 @@ Tests:
             "authorizationInfo":
               [
                 {
-                  "resource": "projects/western-verve-123456",
+                  "resource": "projects/example-project-123456",
                   "permission": "resourcemanager.projects.setIamPolicy",
                   "granted": true,
                   "resourceAttributes": {},
                 },
                 {
-                  "resource": "projects/western-verve-123456",
+                  "resource": "projects/example-project-123456",
                   "permission": "resourcemanager.projects.setIamPolicy",
                   "granted": true,
                   "resourceAttributes": {},
                 },
               ],
-            "resourceName": "projects/western-verve-123456",
+            "resourceName": "projects/example-project-123456",
             "serviceData":
               {
                 "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
@@ -429,14 +429,14 @@ Tests:
                         {
                           "action": "ADD",
                           "role": "roles/logging.serviceAgent",
-                          "member": "serviceAccount:service-951849100836@gcp-sa-logging.iam.gserviceaccount.com",
+                          "member": "serviceAccount:service-111111111111@gcp-sa-logging.iam.gserviceaccount.com",
                         },
                       ],
                   },
               },
             "request":
               {
-                "resource": "western-verve-123456",
+                "resource": "example-project-123456",
                 "@type": "type.googleapis.com/google.iam.v1.SetIamPolicyRequest",
                 "policy":
                   {
@@ -449,7 +449,7 @@ Tests:
                         {
                           "members":
                             [
-                              "serviceAccount:service-951849100836@compute-system.iam.gserviceaccount.com",
+                              "serviceAccount:service-111111111111@compute-system.iam.gserviceaccount.com",
                             ],
                           "role": "roles/compute.serviceAgent",
                         },
@@ -457,12 +457,12 @@ Tests:
                           "role": "roles/editor",
                           "members":
                             [
-                              "serviceAccount:951849100836-compute@developer.gserviceaccount.com",
-                              "serviceAccount:951849100836@cloudservices.gserviceaccount.com",
+                              "serviceAccount:111111111111-compute@developer.gserviceaccount.com",
+                              "serviceAccount:111111111111@cloudservices.gserviceaccount.com",
                             ],
                         },
                         {
-                          "members": ["user:test@runpanther.com"],
+                          "members": ["user:test@example.com"],
                           "role": "roles/owner",
                         },
                         {
@@ -472,25 +472,25 @@ Tests:
                         {
                           "members":
                             [
-                              "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com",
+                              "serviceAccount:pubsub-reader@example-project-123456.iam.gserviceaccount.com",
                             ],
                           "role": "roles/pubsub.subscriber",
                         },
                         {
                           "members":
                             [
-                              "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com",
+                              "serviceAccount:pubsub-reader@example-project-123456.iam.gserviceaccount.com",
                             ],
                           "role": "roles/pubsub.viewer",
                         },
                         {
                           "role": "roles/resourcemanager.organizationAdmin",
-                          "members": ["user:test@runpanther.com"],
+                          "members": ["user:test@example.com"],
                         },
                         {
                           "members":
                             [
-                              "serviceAccount:service-951849100836@gcp-sa-logging.iam.gserviceaccount.com",
+                              "serviceAccount:service-111111111111@gcp-sa-logging.iam.gserviceaccount.com",
                             ],
                           "role": "roles/logging.ServiceAgent",
                         },
@@ -510,20 +510,20 @@ Tests:
                     {
                       "members":
                         [
-                          "serviceAccount:service-951849100836@compute-system.iam.gserviceaccount.com",
+                          "serviceAccount:service-111111111111@compute-system.iam.gserviceaccount.com",
                         ],
                       "role": "roles/compute.serviceAgent",
                     },
                     {
                       "members":
                         [
-                          "serviceAccount:951849100836-compute@developer.gserviceaccount.com",
-                          "serviceAccount:951849100836@cloudservices.gserviceaccount.com",
+                          "serviceAccount:111111111111-compute@developer.gserviceaccount.com",
+                          "serviceAccount:111111111111@cloudservices.gserviceaccount.com",
                         ],
                       "role": "roles/editor",
                     },
                     {
-                      "members": ["user:test@runpanther.com"],
+                      "members": ["user:test@example.com"],
                       "role": "roles/owner",
                     },
                     {
@@ -534,24 +534,24 @@ Tests:
                       "role": "roles/pubsub.subscriber",
                       "members":
                         [
-                          "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com",
+                          "serviceAccount:pubsub-reader@example-project-123456.iam.gserviceaccount.com",
                         ],
                     },
                     {
                       "members":
                         [
-                          "serviceAccount:pubsub-reader@western-verve-123456.iam.gserviceaccount.com",
+                          "serviceAccount:pubsub-reader@example-project-123456.iam.gserviceaccount.com",
                         ],
                       "role": "roles/pubsub.viewer",
                     },
                     {
-                      "members": ["user:test@runpanther.com"],
+                      "members": ["user:test@example.com"],
                       "role": "roles/resourcemanager.organizationAdmin",
                     },
                     {
                       "members":
                         [
-                          "serviceAccount:service-951849100836@gcp-sa-logging.iam.gserviceaccount.com",
+                          "serviceAccount:service-111111111111@gcp-sa-logging.iam.gserviceaccount.com",
                         ],
                       "role": "roles/logging.ServiceAgent",
                     },
@@ -563,10 +563,10 @@ Tests:
         "resource":
           {
             "type": "project",
-            "labels": { "project_id": "western-verve-123456" },
+            "labels": { "project_id": "example-project-123456" },
           },
         "timestamp": "2020-05-15T03:51:35.019Z",
         "severity": "NOTICE",
-        "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Factivity",
+        "logName": "projects/example-project-123456/logs/cloudaudit.googleapis.com%2Factivity",
         "receiveTimestamp": "2020-05-15T03:51:35.977314225Z",
       }

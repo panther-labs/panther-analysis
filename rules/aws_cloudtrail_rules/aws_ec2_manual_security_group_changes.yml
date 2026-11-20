@@ -25,7 +25,7 @@ Tests:
     Log:
       {
         "awsRegion": "us-west-2",
-        "eventID": "504b492f-7832-406b-a4fd-45a13e48adc4",
+        "eventID": "00000000-0000-0000-0000-000000000055",
         "eventName": "AuthorizeSecurityGroupIngress",
         "eventSource": "ec2.amazonaws.com",
         "eventTime": "2021-01-24 04:55:45.000",
@@ -34,10 +34,10 @@ Tests:
         "managementEvent": true,
         "readOnly": false,
         "recipientAccountId": "112233445566",
-        "requestID": "91f34d65-513d-4e9f-a3de-e8d27f7ee4b2",
+        "requestID": "00000000-0000-0000-0000-000000000106",
         "requestParameters":
           {
-            "groupId": "sg-04f0b44316f7d2471",
+            "groupId": "sg-0000000000000007a",
             "ipPermissions":
               {
                 "items":
@@ -57,17 +57,17 @@ Tests:
         "responseElements":
           {
             "_return": true,
-            "requestId": "91f34d65-513d-4e9f-a3de-e8d27f7ee4b2",
+            "requestId": "00000000-0000-0000-0000-000000000106",
           },
-        "sourceIPAddress": "136.25.37.134",
+        "sourceIPAddress": "999.999.999.26",
         "userAgent": "console.ec2.amazonaws.com",
         "userIdentity":
           {
             "type": "AssumedRole",
-            "principalid": "ARORJ4ULULLE0EEJAAKDO:alan",
-            "arn": "arn:aws:sts::112233445566:assumed-role/TestAdmin/alan",
+            "principalid": "AROA_EXAMPLE_0099:EXAMPLE_USER_06",
+            "arn": "arn:aws:sts::112233445566:assumed-role/TestAdmin/EXAMPLE_USER_06",
             "accountid": "112233445566",
-            "accesskeyid": "ASIASWJRT64Z7ZLFLJNI",
+            "accesskeyid": "ASIA_EXAMPLE_0013",
             "sessioncontext":
               {
                 "attributes":
@@ -89,14 +89,14 @@ Tests:
         "p_parse_time": "2021-01-24 05:02:58.358",
         "p_log_type": "AWS.CloudTrail",
         "p_row_id": "1a57ff7ade26aaf5a1a4d7d20775",
-        "p_source_id": "e55677c6-7ef5-4541-a443-0d0f17eec19f",
+        "p_source_id": "00000000-0000-0000-0000-000000000172",
         "p_source_label": "CloudTrail Test",
-        "p_any_ip_addresses": ["136.25.37.134"],
+        "p_any_ip_addresses": ["999.999.999.26"],
         "p_any_aws_account_ids": ["112233445566"],
         "p_any_aws_arns":
           [
             "arn:aws:iam::112233445566:role/TestAdmin",
-            " arn:aws:sts::112233445566:assumed-role/TestAdmin/alan",
+            " arn:aws:sts::112233445566:assumed-role/TestAdmin/EXAMPLE_USER_06",
           ],
       }
   - Name: Terraform Security Group Creation
@@ -108,16 +108,16 @@ Tests:
         "userIdentity":
           {
             "type": "AssumedRole",
-            "principalId": "AROAIZCYMDBM4SJU6XXXX:ryan@example.com",
+            "principalId": "AROA_EXAMPLE_0014:example.user09@example.com",
             "arn": "arn:aws:sts::112233445566:assumed-role/Operator/ryan@example.com",
             "accountId": "112233445566",
-            "accessKeyId": "ASIAWDWBPTM3RJH7XXXX",
+            "accessKeyId": "ASIA_EXAMPLE_0021",
             "sessionContext":
               {
                 "sessionIssuer":
                   {
                     "type": "Role",
-                    "principalId": "AROAIZCYMDBM4SJU65M54",
+                    "principalId": "AROA_EXAMPLE_0012",
                     "arn": "arn:aws:iam::112233445566:role/Operator",
                     "accountId": "112233445566",
                     "userName": "Operator",
@@ -134,22 +134,22 @@ Tests:
         "eventSource": "ec2.amazonaws.com",
         "eventName": "CreateSecurityGroup",
         "awsRegion": "us-east-1",
-        "sourceIPAddress": "100.1.114.142",
+        "sourceIPAddress": "999.999.999.25",
         "userAgent": "aws-sdk-go/1.29.7 (go1.13.7; darwin; amd64) APN/1.0 HashiCorp/1.0 Terraform/0.12.24 (+https://www.terraform.io)",
         "requestParameters":
           {
             "groupName": "prod-webapp-webserver-security",
             "groupDescription": "prod-webapp-webserver Security SG",
-            "vpcId": "vpc-a1a044c7",
+            "vpcId": "vpc-0000003a",
           },
         "responseElements":
           {
-            "requestId": "594fe3e3-0f74-4085-9336-189b36a1cd8c",
+            "requestId": "00000000-0000-0000-0000-000000000062",
             "_return": true,
-            "groupId": "sg-04d018d184a18f647",
+            "groupId": "sg-0000000000000006a",
           },
-        "requestID": "594fe3e3-0f74-4085-9336-189b36a1cd8c",
-        "eventID": "52601748-2659-4ed8-b5fd-c530547b07ec",
+        "requestID": "00000000-0000-0000-0000-000000000062",
+        "eventID": "00000000-0000-0000-0000-000000000057",
         "eventType": "AwsApiCall",
         "recipientAccountId": "112233445566",
       }
@@ -162,16 +162,16 @@ Tests:
         "userIdentity":
           {
             "type": "AssumedRole",
-            "principalId": "AROAIZCYMDBM4SJU65M54:ryan@example.com",
+            "principalId": "AROA_EXAMPLE_0012:example.user09@example.com",
             "arn": "arn:aws:sts::112233445566:assumed-role/ContinousDeployment/ryan@example.com",
             "accountId": "112233445566",
-            "accessKeyId": "ASIAWDWBPTM3RJH7XXXX",
+            "accessKeyId": "ASIA_EXAMPLE_0021",
             "sessionContext":
               {
                 "sessionIssuer":
                   {
                     "type": "Role",
-                    "principalId": "AROAIZCYMDBM4SJU65M54",
+                    "principalId": "AROA_EXAMPLE_0012",
                     "arn": "arn:aws:iam::112233445566:role/Operator",
                     "accountId": "112233445566",
                     "userName": "Operator",
@@ -188,11 +188,11 @@ Tests:
         "eventSource": "ec2.amazonaws.com",
         "eventName": "AuthorizeSecurityGroupEgress",
         "awsRegion": "us-east-1",
-        "sourceIPAddress": "100.1.114.142",
+        "sourceIPAddress": "999.999.999.25",
         "userAgent": "aws-sdk-go/1.29.7 (go1.13.7; darwin; amd64) APN/1.0 HashiCorp/1.0 Terraform/0.12.24 (+https://www.terraform.io)",
         "requestParameters":
           {
-            "groupId": "sg-03eee825d6bb78f54",
+            "groupId": "sg-0000000000000005a",
             "ipPermissions":
               {
                 "items":
@@ -218,11 +218,11 @@ Tests:
           },
         "responseElements":
           {
-            "requestId": "4c7a5036-09d3-46e8-b0b6-f611ff1959a6",
+            "requestId": "00000000-0000-0000-0000-000000000051",
             "_return": true,
           },
-        "requestID": "4c7a5036-09d3-46e8-b0b6-f611ff1959a6",
-        "eventID": "1a593035-e072-49c4-8c72-4ff35e195330",
+        "requestID": "00000000-0000-0000-0000-000000000051",
+        "eventID": "00000000-0000-0000-0000-000000000014",
         "eventType": "AwsApiCall",
         "recipientAccountId": "112233445566",
       }
@@ -235,16 +235,16 @@ Tests:
         "userIdentity":
           {
             "type": "AssumedRole",
-            "principalId": "AROAIZCYMDBM4SJU65M54:ryan@example.com",
+            "principalId": "AROA_EXAMPLE_0012:example.user09@example.com",
             "arn": "arn:aws:sts::112233445566:assumed-role/Operator/ryan@example.com",
             "accountId": "112233445566",
-            "accessKeyId": "ASIAWDWBPTM3QPXQXXXX",
+            "accessKeyId": "ASIA_EXAMPLE_0020",
             "sessionContext":
               {
                 "sessionIssuer":
                   {
                     "type": "Role",
-                    "principalId": "AROAIZCYMDBM4SJU65M54",
+                    "principalId": "AROA_EXAMPLE_0012",
                     "arn": "arn:aws:iam::112233445566:role/Operator",
                     "accountId": "112233445566",
                     "userName": "Operator",
@@ -261,11 +261,11 @@ Tests:
         "eventSource": "ec2.amazonaws.com",
         "eventName": "AuthorizeSecurityGroupIngress",
         "awsRegion": "us-east-1",
-        "sourceIPAddress": "100.1.114.142",
+        "sourceIPAddress": "999.999.999.25",
         "userAgent": "aws-sdk-go/1.24.1 (go1.14; darwin; amd64)",
         "requestParameters":
           {
-            "groupId": "sg-0d921df5d84f7270a",
+            "groupId": "sg-0000000000000009a",
             "ipPermissions":
               {
                 "items":
@@ -284,11 +284,11 @@ Tests:
           },
         "responseElements":
           {
-            "requestId": "2be70b99-4937-4a76-b7d9-390b6d0eda73",
+            "requestId": "00000000-0000-0000-0000-000000000033",
             "_return": true,
           },
-        "requestID": "2be70b99-4937-4a76-b7d9-390b6d0eda73",
-        "eventID": "42155429-7e8e-43b5-9b5e-6953f80d51d5",
+        "requestID": "00000000-0000-0000-0000-000000000033",
+        "eventID": "00000000-0000-0000-0000-000000000042",
         "eventType": "AwsApiCall",
         "recipientAccountId": "112233445566",
       }
@@ -299,7 +299,7 @@ Tests:
       {
         "awsRegion": "us-west-2",
         "errorCode": "UnauthorizedOperation",
-        "eventID": "504b492f-7832-406b-a4fd-45a13e48adc4",
+        "eventID": "00000000-0000-0000-0000-000000000055",
         "eventName": "AuthorizeSecurityGroupIngress",
         "eventSource": "ec2.amazonaws.com",
         "eventTime": "2021-01-24 04:55:45.000",
@@ -308,10 +308,10 @@ Tests:
         "managementEvent": true,
         "readOnly": false,
         "recipientAccountId": "112233445566",
-        "requestID": "91f34d65-513d-4e9f-a3de-e8d27f7ee4b2",
+        "requestID": "00000000-0000-0000-0000-000000000106",
         "requestParameters":
           {
-            "groupId": "sg-04f0b44316f7d2471",
+            "groupId": "sg-0000000000000007a",
             "ipPermissions":
               {
                 "items":
@@ -331,17 +331,17 @@ Tests:
         "responseElements":
           {
             "_return": true,
-            "requestId": "91f34d65-513d-4e9f-a3de-e8d27f7ee4b2",
+            "requestId": "00000000-0000-0000-0000-000000000106",
           },
-        "sourceIPAddress": "136.25.37.134",
+        "sourceIPAddress": "999.999.999.26",
         "userAgent": "console.ec2.amazonaws.com",
         "userIdentity":
           {
             "type": "AssumedRole",
-            "principalid": "ARORJ4ULULLE0EEJAAKDO:alan",
-            "arn": "arn:aws:sts::112233445566:assumed-role/TestAdmin/alan",
+            "principalid": "AROA_EXAMPLE_0099:EXAMPLE_USER_06",
+            "arn": "arn:aws:sts::112233445566:assumed-role/TestAdmin/EXAMPLE_USER_06",
             "accountid": "112233445566",
-            "accesskeyid": "ASIASWJRT64Z7ZLFLJNI",
+            "accesskeyid": "ASIA_EXAMPLE_0013",
             "sessioncontext":
               {
                 "attributes":
@@ -363,13 +363,13 @@ Tests:
         "p_parse_time": "2021-01-24 05:02:58.358",
         "p_log_type": "AWS.CloudTrail",
         "p_row_id": "1a57ff7ade26aaf5a1a4d7d20775",
-        "p_source_id": "e55677c6-7ef5-4541-a443-0d0f17eec19f",
+        "p_source_id": "00000000-0000-0000-0000-000000000172",
         "p_source_label": "CloudTrail Test",
-        "p_any_ip_addresses": ["136.25.37.134"],
+        "p_any_ip_addresses": ["999.999.999.26"],
         "p_any_aws_account_ids": ["112233445566"],
         "p_any_aws_arns":
           [
             "arn:aws:iam::112233445566:role/TestAdmin",
-            " arn:aws:sts::112233445566:assumed-role/TestAdmin/alan",
+            " arn:aws:sts::112233445566:assumed-role/TestAdmin/EXAMPLE_USER_06",
           ],
       }

@@ -27,10 +27,10 @@ Tests:
     ExpectedResult: true
     Log:
       {
-        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "logName": "projects/example-project-02/logs/cloudaudit.googleapis.com%2Factivity",
         "operation":
           {
-            "id": "operations/akmf.p7-1028347275902-fe0c0688-44a7-4dca-bc06-8456068e5673",
+            "id": "operations/example-op-777777777777-fe0c0688-44a7-4dca-bc06-8456068e5673",
             "last": true,
             "producer": "apikeys.googleapis.com",
           },
@@ -39,16 +39,16 @@ Tests:
             "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "authenticationInfo":
               {
-                "principalEmail": "some.user@some-project.com",
-                "principalSubject": "serviceAccount:some-team@some-project.com",
-                "serviceAccountKeyName": "//iam.googleapis.com/projects/some-project/serviceAccounts/some-team@some-project.gserviceaccount.com/keys/dc5344c246064589v76ec76f66bafc92b093ed41",
+                "principalEmail": "some.user@example.com",
+                "principalSubject": "serviceAccount:some-team@example.com",
+                "serviceAccountKeyName": "//iam.googleapis.com/projects/example-project-02/serviceAccounts/some-team@example-project-02.gserviceaccount.com/keys/EXAMPLE-KEY-ID-0002",
               },
             "authorizationInfo":
               [
                 {
                   "granted": true,
                   "permission": "serviceusage.apiKeys.create",
-                  "resource": "projectnumbers/1028347245602",
+                  "resource": "projectnumbers/444444444444",
                   "resourceAttributes": {},
                 },
               ],
@@ -56,22 +56,22 @@ Tests:
             "request":
               {
                 "@type": "type.googleapis.com/google.api.apikeys.v2.CreateKeyRequest",
-                "parent": "projects/some-project/locations/global",
+                "parent": "projects/example-project-02/locations/global",
               },
             "requestMetadata":
               {
-                "callerIP": "189.163.74.177",
+                "callerIP": "999.999.998.5",
                 "callerSuppliedUserAgent": "(gzip),gzip(gfe)",
                 "destinationAttributes": {},
                 "requestAttributes": {},
               },
-            "resourceName": "projects/1028347245602",
+            "resourceName": "projects/444444444444",
             "response":
               {
                 "@type": "type.googleapis.com/google.api.apikeys.v2.Key",
                 "createTime": "1970-01-01T00:00:00Z",
-                "etag": 'W/"DSLGu9UKHwqq2ICm7YPE7g=="',
-                "name": "projects/1028347245602/locations/global/keys/bf67db25-d748-4335-ae08-7f0e65fnfy02",
+                "etag": 'W/"EXAMPLE-ETAG"',
+                "name": "projects/444444444444/locations/global/keys/EXAMPLE-KEY-ID-0001",
                 "updateTime": "1970-01-01T00:00:00Z",
               },
             "serviceName": "apikeys.googleapis.com",
@@ -83,7 +83,7 @@ Tests:
             "labels":
               {
                 "method": "google.api.apikeys.v2.ApiKeys.CreateKey",
-                "project_id": "some-project",
+                "project_id": "example-project-02",
                 "service": "apikeys.googleapis.com",
               },
             "type": "audited_resource",
@@ -95,10 +95,10 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "logName": "projects/example-project-02/logs/cloudaudit.googleapis.com%2Factivity",
         "operation":
           {
-            "id": "operations/akmf.p7-1028347275902-fe0c0688-44a7-4dca-bc06-8456068e5673",
+            "id": "operations/example-op-777777777777-fe0c0688-44a7-4dca-bc06-8456068e5673",
             "last": true,
             "producer": "apikeys.googleapis.com",
           },
@@ -107,16 +107,16 @@ Tests:
             "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "authenticationInfo":
               {
-                "principalEmail": "some.user@some-project.com",
-                "principalSubject": "serviceAccount:some-team@some-project.com",
-                "serviceAccountKeyName": "//iam.googleapis.com/projects/some-project/serviceAccounts/some-team@some-project.gserviceaccount.com/keys/dc5344c246064589v76ec76f66bafc92b093ed41",
+                "principalEmail": "some.user@example.com",
+                "principalSubject": "serviceAccount:some-team@example.com",
+                "serviceAccountKeyName": "//iam.googleapis.com/projects/example-project-02/serviceAccounts/some-team@example-project-02.gserviceaccount.com/keys/EXAMPLE-KEY-ID-0002",
               },
             "authorizationInfo":
               [
                 {
                   "granted": false,
                   "permission": "serviceusage.apiKeys.create",
-                  "resource": "projectnumbers/1028347245602",
+                  "resource": "projectnumbers/444444444444",
                   "resourceAttributes": {},
                 },
               ],
@@ -124,22 +124,22 @@ Tests:
             "request":
               {
                 "@type": "type.googleapis.com/google.api.apikeys.v2.CreateKeyRequest",
-                "parent": "projects/some-project/locations/global",
+                "parent": "projects/example-project-02/locations/global",
               },
             "requestMetadata":
               {
-                "callerIP": "189.163.74.177",
+                "callerIP": "999.999.998.5",
                 "callerSuppliedUserAgent": "(gzip),gzip(gfe)",
                 "destinationAttributes": {},
                 "requestAttributes": {},
               },
-            "resourceName": "projects/1028347245602",
+            "resourceName": "projects/444444444444",
             "response":
               {
                 "@type": "type.googleapis.com/google.api.apikeys.v2.Key",
                 "createTime": "1970-01-01T00:00:00Z",
-                "etag": 'W/"DSLGu9UKHwqq2ICm7YPE7g=="',
-                "name": "projects/1028347245602/locations/global/keys/bf67db25-d748-4335-ae08-7f0e65fnfy02",
+                "etag": 'W/"EXAMPLE-ETAG"',
+                "name": "projects/444444444444/locations/global/keys/EXAMPLE-KEY-ID-0001",
                 "updateTime": "1970-01-01T00:00:00Z",
               },
             "serviceName": "apikeys.googleapis.com",
@@ -151,7 +151,7 @@ Tests:
             "labels":
               {
                 "method": "google.api.apikeys.v2.ApiKeys.CreateKey",
-                "project_id": "some-project",
+                "project_id": "example-project-02",
                 "service": "apikeys.googleapis.com",
               },
             "type": "audited_resource",
@@ -163,10 +163,10 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        "logName": "projects/some-project/logs/cloudaudit.googleapis.com%2Factivity",
+        "logName": "projects/example-project-02/logs/cloudaudit.googleapis.com%2Factivity",
         "operation":
           {
-            "id": "operations/akmf.p7-1028347275902-fe0c0688-44a7-4dca-bc06-8456068e5673",
+            "id": "operations/example-op-777777777777-fe0c0688-44a7-4dca-bc06-8456068e5673",
             "last": true,
             "producer": "apikeys.googleapis.com",
           },
@@ -175,30 +175,30 @@ Tests:
             "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "authenticationInfo":
               {
-                "principalEmail": "some.user@some-project.com",
-                "principalSubject": "serviceAccount:some-team@some-project.com",
-                "serviceAccountKeyName": "//iam.googleapis.com/projects/some-project/serviceAccounts/some-team@some-project.gserviceaccount.com/keys/dc5344c246064589v76ec76f66bafc92b093ed41",
+                "principalEmail": "some.user@example.com",
+                "principalSubject": "serviceAccount:some-team@example.com",
+                "serviceAccountKeyName": "//iam.googleapis.com/projects/example-project-02/serviceAccounts/some-team@example-project-02.gserviceaccount.com/keys/EXAMPLE-KEY-ID-0002",
               },
             "methodName": "google.api.apikeys.v2.ApiKeys.CreateKey",
             "request":
               {
                 "@type": "type.googleapis.com/google.api.apikeys.v2.CreateKeyRequest",
-                "parent": "projects/some-project/locations/global",
+                "parent": "projects/example-project-02/locations/global",
               },
             "requestMetadata":
               {
-                "callerIP": "189.163.74.177",
+                "callerIP": "999.999.998.5",
                 "callerSuppliedUserAgent": "(gzip),gzip(gfe)",
                 "destinationAttributes": {},
                 "requestAttributes": {},
               },
-            "resourceName": "projects/1028347245602",
+            "resourceName": "projects/444444444444",
             "response":
               {
                 "@type": "type.googleapis.com/google.api.apikeys.v2.Key",
                 "createTime": "1970-01-01T00:00:00Z",
-                "etag": 'W/"DSLGu9UKHwqq2ICm7YPE7g=="',
-                "name": "projects/1028347245602/locations/global/keys/bf67db25-d748-4335-ae08-7f0e65fnfy02",
+                "etag": 'W/"EXAMPLE-ETAG"',
+                "name": "projects/444444444444/locations/global/keys/EXAMPLE-KEY-ID-0001",
                 "updateTime": "1970-01-01T00:00:00Z",
               },
             "serviceName": "apikeys.googleapis.com",

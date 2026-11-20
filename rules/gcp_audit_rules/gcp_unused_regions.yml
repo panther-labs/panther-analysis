@@ -28,7 +28,7 @@ Tests:
     ExpectedResult: false
     Log:
       {
-        "logName": "projects/western-verve-225918/logs/cloudaudit.googleapis.com%2Factivity",
+        "logName": "projects/example-project-225918/logs/cloudaudit.googleapis.com%2Factivity",
         "severity": "NOTICE",
         "insertId": "81xwjyd5vh0",
         "resource":
@@ -36,8 +36,8 @@ Tests:
             "type": "gce_instance",
             "labels":
               {
-                "instance_id": "5423650206360236277",
-                "project_id": "western-verve-225918",
+                "instance_id": "0000000000000000025",
+                "project_id": "example-project-225918",
                 "zone": "europe-north1-a",
               },
           },
@@ -45,7 +45,7 @@ Tests:
         "receiveTimestamp": "2020-05-15 17:55:20.210068584",
         "operation":
           {
-            "id": "operation-1589565287793-5a5b382538481-3da9816c-ce929997",
+            "id": "operation-9999999999926-000000000002d-0000002e-0000002f",
             "producer": "compute.googleapis.com",
             "last": true,
           },
@@ -54,12 +54,12 @@ Tests:
             "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "serviceName": "compute.googleapis.com",
             "methodName": "v1.compute.instances.delete",
-            "resourceName": "projects/western-verve-225918/zones/europe-north1-a/instances/instance-3",
+            "resourceName": "projects/example-project-225918/zones/europe-north1-a/instances/instance-3",
             "authenticationInfo":
-              { "principalEmail": "jack.naglieri@runpanther.io" },
+              { "principalEmail": "example.user11@example.com" },
             "requestMetadata":
               {
-                "callerIP": "136.24.229.58",
+                "callerIP": "999.999.998.4",
                 "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe),gzip(gfe)",
               },
             "request":
@@ -74,15 +74,15 @@ Tests:
           {
             "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "authenticationInfo":
-              { "principalEmail": "user.name@runpanther.io" },
+              { "principalEmail": "user.name@example.com" },
             "requestMetadata":
               {
-                "callerIp": "136.24.229.58",
+                "callerIp": "999.999.998.4",
                 "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe)",
               },
             "serviceName": "compute.googleapis.com",
             "methodName": "beta.compute.instances.insert",
-            "resourceName": "projects/western-verve-123456/zones/asia-northeast1-b/instances/instance-5",
+            "resourceName": "projects/example-project-123456/zones/asia-northeast1-b/instances/instance-5",
             "request":
               { "@type": "type.googleapis.com/compute.instances.insert" },
           },
@@ -92,17 +92,17 @@ Tests:
             "type": "gce_instance",
             "labels":
               {
-                "instance_id": "8498166540490993880",
-                "project_id": "western-verve-123456",
+                "instance_id": "0000000000000000027",
+                "project_id": "example-project-123456",
                 "zone": "southamerica-east1-b",
               },
           },
         "timestamp": "2020-05-15T17:15:42.415Z",
         "severity": "NOTICE",
-        "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Factivity",
+        "logName": "projects/example-project-123456/logs/cloudaudit.googleapis.com%2Factivity",
         "operation":
           {
-            "id": "operation-1589562934964-5a5b2f61631d6-cc67597a-98092474",
+            "id": "operation-9999999999928-0000000000030-00000031-00000032",
             "producer": "compute.googleapis.com",
             "last": true,
           },
@@ -117,10 +117,10 @@ Tests:
             "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "status": {},
             "authenticationInfo":
-              { "principalEmail": "user.name@runpanther.io" },
+              { "principalEmail": "user.name@example.com" },
             "requestMetadata":
               {
-                "callerIp": "136.24.229.58",
+                "callerIp": "999.999.998.4",
                 "callerSuppliedUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36,gzip(gfe),gzip(gfe)",
                 "requestAttributes":
                   { "time": "2020-05-15T17:25:07.810848781Z", "auth": {} },
@@ -131,13 +131,13 @@ Tests:
             "authorizationInfo":
               [
                 {
-                  "resource": "projects/_/buckets/jacks-test-bucket-200",
+                  "resource": "projects/_/buckets/example-bucket-02",
                   "permission": "storage.buckets.create",
                   "granted": true,
                   "resourceAttributes": {},
                 },
               ],
-            "resourceName": "projects/_/buckets/jacks-test-bucket-200",
+            "resourceName": "projects/_/buckets/example-bucket-02",
             "serviceData":
               {
                 "@type": "type.googleapis.com/google.iam.v1.logging.AuditData",
@@ -148,17 +148,17 @@ Tests:
                         {
                           "action": "ADD",
                           "role": "roles/storage.legacyBucketOwner",
-                          "member": "projectEditor:western-verve-123456",
+                          "member": "projectEditor:example-project-123456",
                         },
                         {
                           "action": "ADD",
                           "role": "roles/storage.legacyBucketOwner",
-                          "member": "projectOwner:western-verve-123456",
+                          "member": "projectOwner:example-project-123456",
                         },
                         {
                           "action": "ADD",
                           "role": "roles/storage.legacyBucketReader",
-                          "member": "projectViewer:western-verve-123456",
+                          "member": "projectViewer:example-project-123456",
                         },
                       ],
                   },
@@ -171,13 +171,13 @@ Tests:
                       [
                         {
                           "role": "roles/storage.legacyObjectReader",
-                          "members": ["projectViewer:western-verve-123456"],
+                          "members": ["projectViewer:example-project-123456"],
                         },
                         {
                           "members":
                             [
-                              "projectOwner:western-verve-123456",
-                              "projectEditor:western-verve-123456",
+                              "projectOwner:example-project-123456",
+                              "projectEditor:example-project-123456",
                             ],
                           "role": "roles/storage.legacyObjectOwner",
                         },
@@ -193,14 +193,14 @@ Tests:
             "type": "gcs_bucket",
             "labels":
               {
-                "bucket_name": "jacks-test-bucket-200",
-                "project_id": "western-verve-123456",
+                "bucket_name": "example-bucket-02",
+                "project_id": "example-project-123456",
                 "location": "asia-northeast2",
               },
           },
         "timestamp": "2020-05-15T17:25:07.807169539Z",
         "severity": "NOTICE",
-        "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Factivity",
+        "logName": "projects/example-project-123456/logs/cloudaudit.googleapis.com%2Factivity",
         "receiveTimestamp": "2020-05-15T17:25:09.393448555Z",
       }
   - Name: "BigQuery access log (does not have standard attribute: resource.labels.location)"
@@ -208,18 +208,18 @@ Tests:
     Log:
       {
         "insertId": "v3a96bedw1us",
-        "logName": "projects/western-verve-123456/logs/cloudaudit.googleapis.com%2Fdata_access",
+        "logName": "projects/example-project-123456/logs/cloudaudit.googleapis.com%2Fdata_access",
         "protoPayload":
           {
             "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
             "authenticationInfo":
-              { "principalEmail": "user.name@runpanther.io" },
+              { "principalEmail": "user.name@example.com" },
             "authorizationInfo":
               [
                 {
                   "granted": true,
                   "permission": "bigquery.jobs.create",
-                  "resource": "projects/western-verve-123456",
+                  "resource": "projects/example-project-123456",
                   "resourceAttributes": {},
                 },
               ],
@@ -231,7 +231,7 @@ Tests:
                 "destinationAttributes": {},
                 "requestAttributes": {},
               },
-            "resourceName": "projects/western-verve-123456/jobs",
+            "resourceName": "projects/example-project-123456/jobs",
             "serviceData":
               {
                 "@type": "type.googleapis.com/google.cloud.bigquery.logging.v1.AuditData",
@@ -255,7 +255,7 @@ Tests:
                         "jobName":
                           {
                             "location": "US",
-                            "projectId": "western-verve-123456",
+                            "projectId": "example-project-123456",
                           },
                       },
                   },
@@ -280,7 +280,7 @@ Tests:
         "receiveTimestamp": "2021-10-19 16:09:26.351861539",
         "resource":
           {
-            "labels": { "project_id": "western-verve-123456" },
+            "labels": { "project_id": "example-project-123456" },
             "type": "bigquery_resource",
           },
         "severity": "ERROR",

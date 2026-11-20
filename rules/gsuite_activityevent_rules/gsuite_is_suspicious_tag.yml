@@ -25,7 +25,7 @@ Tests:
         "kind": "admin#reports#activity",
         "type": "account_warning",
         "name": "login_success",
-        "parameters": { "affected_email_address": "denethor@lotr.com" },
+        "parameters": { "affected_email_address": "example.user01@example.org" },
       }
 
   - Name: Login Success But Flagged Suspicious
@@ -34,12 +34,12 @@ Tests:
       {
         "id": { "applicationName": "login" },
         "actor": {
-          "email": "bobert@ext.runpanther.io"},
+          "email": "example.user18@ext.example.net"},
         "kind": "admin#reports#activity",
         "type": "login",
         "name": "login_success",
         "parameters": {
-          "affected_email_address": "bobert@ext.runpanther.io",
+          "affected_email_address": "example.user18@ext.example.net",
           "is_suspicious": true
         }
       }

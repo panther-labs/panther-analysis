@@ -21,18 +21,18 @@ Tests:
     Log:
       {
         "id": { "applicationName": "mobile" },
-        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
+        "actor": { "callerType": "USER", "email": "example.user03@example.net" },
         "type": "device_updates",
         "name": "DEVICE_SYNC_EVENT",
-        "parameters": { "USER_EMAIL": "homer.simpson@example.io" },
+        "parameters": { "USER_EMAIL": "example.user03@example.net" },
       }
   - Name: Suspicious Activity
     ExpectedResult: true
     Log:
       {
         "id": { "applicationName": "mobile" },
-        "actor": { "callerType": "USER", "email": "homer.simpson@example.io" },
+        "actor": { "callerType": "USER", "email": "example.user03@example.net" },
         "type": "device_updates",
         "name": "SUSPICIOUS_ACTIVITY_EVENT",
-        "parameters": { "USER_EMAIL": "homer.simpson@example.io" },
+        "parameters": { "USER_EMAIL": "example.user03@example.net" },
       }

@@ -33,14 +33,14 @@ Tests:
     ExpectedResult: false
     Log:
       messageTime: "2026-01-08T12:00:00Z"
-      sender: "attacker@evil.com"
+      sender: "attacker@evil.example"
       senderIP: "192.0.2.88"
       fromAddress:
-        - "attacker@evil.com"
+        - "attacker@evil.example"
       toAddresses:
-        - "victim@company.com"
+        - "victim@example.com"
       recipient:
-        - "victim@company.com"
+        - "victim@example.com"
       subject: "Urgent Action Required"
       malwareScore: 80
       phishScore: 75
@@ -48,7 +48,7 @@ Tests:
       impostorScore: 10
       quarantineFolder: "Attachment Defense"
       quarantineRule: "threat"
-      messageID: "<multi-threat@evil.com>"
+      messageID: "<multi-threat@evil.example>"
       threatsInfoMap:
         - threatType: "attachment"
           classification: "malware"
@@ -58,20 +58,20 @@ Tests:
         - threatType: "url"
           classification: "phish"
           threatStatus: "active"
-          threat: "http://fake-login.com/verify"
+          threat: "http://fake-login.example/verify"
           threatID: "threat-002"
   - Name: Five Active Threats - Critical
     ExpectedResult: true
     Log:
       messageTime: "2026-01-08T13:30:00Z"
-      sender: "sophisticated@attacker.net"
+      sender: "sophisticated@attacker-net.example"
       senderIP: "198.51.100.123"
       fromAddress:
-        - "sophisticated@attacker.net"
+        - "sophisticated@attacker-net.example"
       toAddresses:
-        - "target@company.com"
+        - "target@example.com"
       recipient:
-        - "target@company.com"
+        - "target@example.com"
       subject: "Critical Update Required"
       malwareScore: 95
       phishScore: 90
@@ -79,7 +79,7 @@ Tests:
       impostorScore: 20
       quarantineFolder: "Attachment Defense"
       quarantineRule: "threat"
-      messageID: "<advanced-threat@attacker.net>"
+      messageID: "<advanced-threat@attacker-net.example>"
       threatsInfoMap:
         - threatType: "attachment"
           classification: "malware"
@@ -89,12 +89,12 @@ Tests:
         - threatType: "url"
           classification: "phish"
           threatStatus: "active"
-          threat: "http://phish1.com"
+          threat: "http://phish1.example"
           threatID: "threat-004"
         - threatType: "url"
           classification: "phish"
           threatStatus: "active"
-          threat: "http://phish2.com"
+          threat: "http://phish2.example"
           threatID: "threat-005"
         - threatType: "attachment"
           classification: "malware"
@@ -104,20 +104,20 @@ Tests:
         - threatType: "url"
           classification: "malware"
           threatStatus: "active"
-          threat: "http://malware-download.com"
+          threat: "http://malware-download.example"
           threatID: "threat-007"
   - Name: Three Active Threats - High Severity
     ExpectedResult: true
     Log:
       messageTime: "2026-01-08T14:00:00Z"
-      sender: "bad-actor@malicious.org"
+      sender: "bad-actor@malicious.example"
       senderIP: "203.0.113.77"
       fromAddress:
-        - "bad-actor@malicious.org"
+        - "bad-actor@malicious.example"
       toAddresses:
-        - "employee@company.com"
+        - "employee@example.com"
       recipient:
-        - "employee@company.com"
+        - "employee@example.com"
       subject: "Invoice Attached"
       malwareScore: 70
       phishScore: 65
@@ -125,7 +125,7 @@ Tests:
       impostorScore: 5
       quarantineFolder: "Attachment Defense"
       quarantineRule: "threat"
-      messageID: "<triple-threat@malicious.org>"
+      messageID: "<triple-threat@malicious.example>"
       threatsInfoMap:
         - threatType: "attachment"
           classification: "malware"
@@ -135,12 +135,12 @@ Tests:
         - threatType: "url"
           classification: "phish"
           threatStatus: "active"
-          threat: "http://credential-stealer.com"
+          threat: "http://credential-stealer.example"
           threatID: "threat-009"
         - threatType: "url"
           classification: "malware"
           threatStatus: "active"
-          threat: "http://drive-by-download.net"
+          threat: "http://drive-by-download.example"
           threatID: "threat-010"
   - Name: One Active Threat - No Alert
     ExpectedResult: false
@@ -151,9 +151,9 @@ Tests:
       fromAddress:
         - "sender@example.com"
       toAddresses:
-        - "user@company.com"
+        - "user@example.com"
       recipient:
-        - "user@company.com"
+        - "user@example.com"
       subject: "Suspicious Link"
       malwareScore: 5
       phishScore: 60
@@ -166,7 +166,7 @@ Tests:
         - threatType: "url"
           classification: "phish"
           threatStatus: "active"
-          threat: "http://phishing-site.com"
+          threat: "http://phishing-site.example"
           threatID: "threat-011"
   - Name: One Active With Multiple Cleared - No Alert
     ExpectedResult: false
@@ -177,9 +177,9 @@ Tests:
       fromAddress:
         - "mixed-status@example.com"
       toAddresses:
-        - "user@company.com"
+        - "user@example.com"
       recipient:
-        - "user@company.com"
+        - "user@example.com"
       subject: "Mixed Threat Status"
       malwareScore: 30
       phishScore: 40
@@ -192,7 +192,7 @@ Tests:
         - threatType: "url"
           classification: "phish"
           threatStatus: "active"
-          threat: "http://active-phish.com"
+          threat: "http://active-phish.example"
           threatID: "threat-014"
         - threatType: "attachment"
           classification: "malware"
@@ -202,7 +202,7 @@ Tests:
         - threatType: "url"
           classification: "malware"
           threatStatus: "cleared"
-          threat: "http://cleared-malware.com"
+          threat: "http://cleared-malware.example"
           threatID: "threat-016"
   - Name: Multiple Threats But Not Active - No Alert
     ExpectedResult: false
@@ -213,9 +213,9 @@ Tests:
       fromAddress:
         - "old-threat@example.com"
       toAddresses:
-        - "user@company.com"
+        - "user@example.com"
       recipient:
-        - "user@company.com"
+        - "user@example.com"
       subject: "Old Campaign"
       malwareScore: 10
       phishScore: 10
@@ -226,7 +226,7 @@ Tests:
         - threatType: "url"
           classification: "phish"
           threatStatus: "cleared"
-          threat: "http://old-phish.com"
+          threat: "http://old-phish.example"
           threatID: "threat-012"
         - threatType: "attachment"
           classification: "malware"

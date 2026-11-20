@@ -43,8 +43,8 @@ Tests:
         "apiVersion": "audit.k8s.io/v1",
         "auditID": "abc-123",
         "verb": "create",
-        "user": {"username": "user@company.com"},
-        "sourceIPs": ["1.2.3.4"],
+        "user": {"username": "user@example.org"},
+        "sourceIPs": ["999.999.998.1"],
         "userAgent": "kubectl/v1.28.2",
         "objectRef": {
           "resource": "pods",
@@ -93,7 +93,7 @@ Tests:
       {
         "logName": "projects/test-project/logs/cloudaudit.googleapis.com%2Factivity",
         "protoPayload": {
-          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authenticationInfo": {"principalEmail": "user@example.org"},
           "authorizationInfo": [{
             "granted": true,
             "permission": "io.k8s.core.v1.pods.create",
@@ -120,7 +120,7 @@ Tests:
               }]
             }
           },
-          "requestMetadata": {"callerIP": "1.2.3.4"},
+          "requestMetadata": {"callerIP": "999.999.998.1"},
           "resourceName": "core/v1/namespaces/default/pods/test",
           "serviceName": "k8s.io"
         },

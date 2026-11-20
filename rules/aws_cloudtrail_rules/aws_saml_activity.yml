@@ -18,7 +18,7 @@ Tests:
       managementEvent: true
       recipientAccountId: "0123456789"
       requestID: ABC1234
-      sourceIPAddress: 1.2.3.4
+      sourceIPAddress: 999.999.999.11
       userAgent: cloudformation.amazonaws.com
       userIdentity:
         accessKeyId: ABCDEFGHIJK
@@ -51,7 +51,7 @@ Tests:
       managementEvent: true
       recipientAccountId: "0123456789"
       requestID: ABC1234
-      sourceIPAddress: 1.2.3.4
+      sourceIPAddress: 999.999.999.11
       userAgent: cloudformation.amazonaws.com
       userIdentity:
         accessKeyId: ABCDEFGHIJK
@@ -85,7 +85,7 @@ Tests:
       readOnly: true
       recipientAccountId: "0123456789"
       requestID: requestID12345
-      sourceIPAddress: 1.2.3.4
+      sourceIPAddress: 999.999.999.11
       userAgent: console.amazonaws.com
       userIdentity:
         accessKeyId: ABCDEFGHIJKLMNOP
@@ -113,7 +113,7 @@ Tests:
       managementEvent: true
       recipientAccountId: "0123456789"
       requestID: ABC1234
-      sourceIPAddress: 1.2.3.4
+      sourceIPAddress: 999.999.999.11
       userAgent: cloudformation.amazonaws.com
       userIdentity:
         accessKeyId: ABCDEFGHIJK
@@ -156,11 +156,11 @@ Tests:
             "userAgent": "sso.amazonaws.com",
             "userIdentity":
               {
-                "accessKeyId": "ASIAXXXXNLMHSP3MFXX",
+                "accessKeyId": "ASIA00000002EXAMPLE",
                 "accountId": "123412341234",
                 "arn": "arn:aws:sts::123412341234:assumed-role/AWSServiceRoleForSSO/AWS-SSO",
                 "invokedBy": "sso.amazonaws.com",
-                "principalId": "AROAT7BCMNLMONMOFFFFF:AWS-SSO",
+                "principalId": "AROA_EXAMPLE_0021:AWS-SSO",
                 "sessionContext":
                   {
                     "attributes":
@@ -172,7 +172,7 @@ Tests:
                       {
                         "accountId": "123412341234",
                         "arn": "arn:aws:iam::123412341234:role/aws-service-role/sso.amazonaws.com/AWSServiceRoleForSSO",
-                        "principalId": "AROAT7BCMNLMONMOFFFFF",
+                        "principalId": "AROA_EXAMPLE_0021",
                         "type": "Role",
                         "userName": "AWSServiceRoleForSSO",
                       },
@@ -187,11 +187,11 @@ Tests:
         "p_any_aws_arns":
           [
             "arn:aws:iam::123412341234:role/aws-service-role/sso.amazonaws.com/AWSServiceRoleForSSO",
-            "arn:aws:iam::123412341234:saml-provider/AWSSSO_abdf34fd171b4a7e_DO_NOT_DELETE",
+            "arn:aws:iam::111111111111:saml-provider/AWSSSO_0000000000000000_DO_NOT_DELETE",
             "arn:aws:sts::123412341234:assumed-role/AWSServiceRoleForSSO/AWS-SSO",
           ],
         "p_any_domain_names": ["sso.amazonaws.com"],
-        "p_any_trace_ids": ["ASIAXXXXNLMHSP3MFXX"],
+        "p_any_trace_ids": ["ASIA00000002EXAMPLE"],
         "p_any_usernames": ["AWSServiceRoleForSSO"],
         "p_event_time": "2022-12-12 21:46:17.000000000",
         "p_log_type": "AWS.CloudTrail",
@@ -200,25 +200,25 @@ Tests:
         "p_source_label": "YourOrg - Cloudtrail - Label",
         "readOnly": false,
         "recipientAccountId": "123412341234",
-        "requestID": "cb89df1f-6019-427f-9a69-00b8b904ce0d",
+        "requestID": "00000000-0000-0000-0000-000000000153",
         "requestParameters":
           {
-            "name": "AWSSSO_abdf34fd171b4a7e_DO_NOT_DELETE",
+            "name": "AWSSSO_0000000000000000_DO_NOT_DELETE",
             "sAMLMetadataDocument": '<?xml version="1.0" encoding="UTF-8"?></xml>',
           },
         "responseElements":
           {
-            "sAMLProviderArn": "arn:aws:iam::123412341234:saml-provider/AWSSSO_abdf34fd171b4a7e_DO_NOT_DELETE",
+            "sAMLProviderArn": "arn:aws:iam::111111111111:saml-provider/AWSSSO_0000000000000000_DO_NOT_DELETE",
           },
         "sourceIPAddress": "sso.amazonaws.com",
         "userAgent": "sso.amazonaws.com",
         "userIdentity":
           {
-            "accessKeyId": "ASIAXXXXNLMHSP3MFXX",
+            "accessKeyId": "ASIA00000002EXAMPLE",
             "accountId": "123412341234",
             "arn": "arn:aws:sts::123412341234:assumed-role/AWSServiceRoleForSSO/AWS-SSO",
             "invokedBy": "sso.amazonaws.com",
-            "principalId": "AROAT7BCMNLMONMOFFFFF:AWS-SSO",
+            "principalId": "AROA_EXAMPLE_0021:AWS-SSO",
             "sessionContext":
               {
                 "attributes":
@@ -230,7 +230,7 @@ Tests:
                   {
                     "accountId": "123412341234",
                     "arn": "arn:aws:iam::123412341234:role/aws-service-role/sso.amazonaws.com/AWSServiceRoleForSSO",
-                    "principalId": "AROAT7BCMNLMONMOFFFFF",
+                    "principalId": "AROA_EXAMPLE_0021",
                     "type": "Role",
                     "userName": "AWSServiceRoleForSSO",
                   },

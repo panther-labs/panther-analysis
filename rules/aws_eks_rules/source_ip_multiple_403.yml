@@ -32,52 +32,52 @@ Tests:
             "authorization.k8s.io/reason": "",
           },
         "apiVersion": "audit.k8s.io/v1",
-        "auditID": "35506555-dffc-4337-b2b1-c4af52b88e18",
+        "auditID": "00000000-0000-0000-0000-000000000015",
         "kind": "Event",
         "level": "Request",
         "objectRef":
           {
             "apiVersion": "v1",
-            "name": "kube-bench-drn4j",
+            "name": "kube-bench-00004",
             "namespace": "default",
             "resource": "pods",
             "subresource": "log",
           },
-        "p_any_aws_account_ids": ["123412341234"],
+        "p_any_aws_account_ids": ["222222222222"],
         "p_any_aws_arns":
           [
-            "arn:aws:iam::123412341234:role/DevAdministrator",
-            "arn:aws:sts::123412341234:assumed-role/DevAdministrator/1669660343296132000",
+            "arn:aws:iam::222222222222:role/DevAdministrator",
+            "arn:aws:sts::222222222222:assumed-role/DevAdministrator/1669660343296132000",
           ],
-        "p_any_ip_addresses": ["5.5.5.5"],
+        "p_any_ip_addresses": ["8.8.4.4"],
         "p_any_usernames": ["kubernetes-admin"],
         "p_event_time": "2022-11-29 00:09:04.38",
         "p_log_type": "Amazon.EKS.Audit",
         "p_parse_time": "2022-11-29 00:10:25.067",
-        "p_row_id": "2e4ab474b0f0f7a4a8fff4f014a9b32a",
-        "p_source_id": "4c859cd4-9406-469b-9e0e-c2dc1bee24fa",
+        "p_row_id": "0000000000000000000000000000003a",
+        "p_source_id": "00000000-0000-0000-0000-000000000012",
         "p_source_label": "example-cluster-eks-logs",
         "requestReceivedTimestamp": "2022-11-29 00:09:04.38",
-        "requestURI": "/api/v1/namespaces/default/pods/kube-bench-drn4j/log?container=kube-bench",
+        "requestURI": "/api/v1/namespaces/default/pods/kube-bench-00004/log?container=kube-bench",
         "responseStatus": { "code": 200 },
-        "sourceIPs": ["5.5.5.5"],
+        "sourceIPs": ["8.8.4.4"],
         "stage": "ResponseStarted",
         "stageTimestamp": "2022-11-29 00:09:04.392",
         "user":
           {
             "extra":
               {
-                "accessKeyId": ["ASIARLIVEKVNN6Y6J5UW"],
+                "accessKeyId": ["ASIA_EXAMPLE_0024"],
                 "arn":
                   [
-                    "arn:aws:sts::123412341234:assumed-role/DevAdministrator/1669660343296132000",
+                    "arn:aws:sts::222222222222:assumed-role/DevAdministrator/1669660343296132000",
                   ],
                 "canonicalArn":
-                  ["arn:aws:iam::123412341234:role/DevAdministrator"],
+                  ["arn:aws:iam::222222222222:role/DevAdministrator"],
                 "sessionName": ["1669660343296132000"],
               },
             "groups": ["system:masters", "system:authenticated"],
-            "uid": "aws-iam-authenticator:123412341234:AROARLIVEKVNIRVGDLJWJ",
+            "uid": "aws-iam-authenticator:222222222222:AROA_EXAMPLE_0004",
             "username": "kubernetes-admin",
           },
         "userAgent": "kubectl/v1.25.4 (darwin/arm64) kubernetes/872a965",
@@ -93,7 +93,7 @@ Tests:
             "authorization.k8s.io/reason": 'RBAC: allowed by ClusterRoleBinding "system:coredns" of ClusterRole "system:coredns" to ServiceAccount "coredns/kube-system"',
           },
         "apiVersion": "audit.k8s.io/v1",
-        "auditID": "e2626946-90e1-4d0c-829e-ad5a78572926",
+        "auditID": "00000000-0000-0000-0000-000000000016",
         "kind": "Event",
         "level": "Metadata",
         "objectRef":
@@ -107,8 +107,8 @@ Tests:
         "p_event_time": "2022-11-29 22:34:06.892",
         "p_log_type": "Amazon.EKS.Audit",
         "p_parse_time": "2022-11-29 22:45:25.024",
-        "p_row_id": "c2a7d8dd7c858dcae0a1aaf314b2a207",
-        "p_source_id": "4c859cd4-9406-469b-9e0e-c2dc1bee24fa",
+        "p_row_id": "0000000000000000000000000000003b",
+        "p_source_id": "00000000-0000-0000-0000-000000000012",
         "p_source_label": "example-cluster-eks-logs",
         "requestReceivedTimestamp": "2022-11-29 22:34:06.892",
         "requestURI": "/apis/discovery.k8s.io/v1/endpointslices?allowWatchBookmarks=true&resourceVersion=2528212&timeout=5m56s&timeoutSeconds=356&watch=true",
@@ -121,9 +121,9 @@ Tests:
             "extra":
               {
                 "authentication_kubernetes_io_slash_pod-name":
-                  ["coredns-57ff979f67-bl27n"],
+                  ["coredns-0000000001-00001"],
                 "authentication_kubernetes_io_slash_pod-uid":
-                  ["5b9488ae-5563-42aa-850b-b0d82edb3e22"],
+                  ["00000000-0000-0000-0000-000000000017"],
               },
             "groups":
               [
@@ -131,7 +131,7 @@ Tests:
                 "system:serviceaccounts:kube-system",
                 "system:authenticated",
               ],
-            "uid": "5e4461f9-f529-4e66-9343-0b0cc9452284",
+            "uid": "00000000-0000-0000-0000-000000000018",
             "username": "system:serviceaccount:kube-system:coredns",
           },
         "userAgent": "Go-http-client/2.0",
@@ -147,7 +147,7 @@ Tests:
             "authorization.k8s.io/reason": 'RBAC: allowed by ClusterRoleBinding "system:coredns" of ClusterRole "system:coredns" to ServiceAccount "coredns/kube-system"',
           },
         "apiVersion": "audit.k8s.io/v1",
-        "auditID": "e2626946-90e1-4d0c-829e-ad5a78572926",
+        "auditID": "00000000-0000-0000-0000-000000000016",
         "kind": "Event",
         "level": "Metadata",
         "objectRef":
@@ -156,18 +156,18 @@ Tests:
             "apiVersion": "v1",
             "resource": "endpointslices",
           },
-        "p_any_ip_addresses": ["5.5.5.5"],
+        "p_any_ip_addresses": ["8.8.4.4"],
         "p_any_usernames": ["system:serviceaccount:kube-system:coredns"],
         "p_event_time": "2022-11-29 22:34:06.892",
         "p_log_type": "Amazon.EKS.Audit",
         "p_parse_time": "2022-11-29 22:45:25.024",
-        "p_row_id": "c2a7d8dd7c858dcae0a1aaf314b2a207",
-        "p_source_id": "4c859cd4-9406-469b-9e0e-c2dc1bee24fa",
+        "p_row_id": "0000000000000000000000000000003b",
+        "p_source_id": "00000000-0000-0000-0000-000000000012",
         "p_source_label": "example-cluster-eks-logs",
         "requestReceivedTimestamp": "2022-11-29 22:34:06.892",
         "requestURI": "/apis/discovery.k8s.io/v1/endpointslices?allowWatchBookmarks=true&resourceVersion=2528212&timeout=5m56s&timeoutSeconds=356&watch=true",
         "responseStatus": { "code": 403 },
-        "sourceIPs": ["5.5.5.5"],
+        "sourceIPs": ["8.8.4.4"],
         "stage": "ResponseComplete",
         "stageTimestamp": "2022-11-29 22:40:02.903",
         "user":
@@ -175,9 +175,9 @@ Tests:
             "extra":
               {
                 "authentication_kubernetes_io_slash_pod-name":
-                  ["coredns-57ff979f67-bl27n"],
+                  ["coredns-0000000001-00001"],
                 "authentication_kubernetes_io_slash_pod-uid":
-                  ["5b9488ae-5563-42aa-850b-b0d82edb3e22"],
+                  ["00000000-0000-0000-0000-000000000017"],
               },
             "groups":
               [
@@ -185,7 +185,7 @@ Tests:
                 "system:serviceaccounts:kube-system",
                 "system:authenticated",
               ],
-            "uid": "5e4461f9-f529-4e66-9343-0b0cc9452284",
+            "uid": "00000000-0000-0000-0000-000000000018",
             "username": "system:serviceaccount:kube-system:coredns",
           },
         "userAgent": "Go-http-client/2.0",

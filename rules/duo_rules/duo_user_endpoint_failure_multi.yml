@@ -17,90 +17,90 @@ Tests:
     ExpectedResult: true
     Log:
       {
-        "access_device": { "ip": "12.12.112.25", "os": "Mac OS X" },
-        "auth_device": { "ip": "12.12.12.12" },
+        "access_device": { "ip": "999.999.999.5", "os": "Mac OS X" },
+        "auth_device": { "ip": "999.999.999.2" },
         "application": {},
         "event_type": "authentication",
         "factor": "duo_push",
         "reason": "endpoint_is_not_in_management_system",
         "result": "denied",
-        "user": { "name": "example@example.io" },
+        "user": { "name": "example@example.net" },
       }
   - Name: endpoint_failed_google_verification
     ExpectedResult: true
     Log:
       {
-        "access_device": { "ip": "12.12.112.25", "os": "Mac OS X" },
-        "auth_device": { "ip": "12.12.12.12" },
+        "access_device": { "ip": "999.999.999.5", "os": "Mac OS X" },
+        "auth_device": { "ip": "999.999.999.2" },
         "application": {},
         "event_type": "authentication",
         "factor": "duo_push",
         "reason": "endpoint_failed_google_verification",
         "result": "denied",
-        "user": { "name": "example@example.io" },
+        "user": { "name": "example@example.net" },
       }
   - Name: endpoint_is_not_trusted
     ExpectedResult: true
     Log:
       {
-        "access_device": { "ip": "12.12.112.25", "os": "Mac OS X" },
-        "auth_device": { "ip": "12.12.12.12" },
+        "access_device": { "ip": "999.999.999.5", "os": "Mac OS X" },
+        "auth_device": { "ip": "999.999.999.2" },
         "application": {},
         "event_type": "authentication",
         "factor": "duo_push",
         "reason": "endpoint_is_not_trusted",
         "result": "denied",
-        "user": { "name": "example@example.io" },
+        "user": { "name": "example@example.net" },
       }
   - Name: could_not_determine_if_endpoint_was_trusted
     ExpectedResult: true
     Log:
       {
-        "access_device": { "ip": "12.12.112.25", "os": "Mac OS X" },
-        "auth_device": { "ip": "12.12.12.12" },
+        "access_device": { "ip": "999.999.999.5", "os": "Mac OS X" },
+        "auth_device": { "ip": "999.999.999.2" },
         "application": {},
         "event_type": "authentication",
         "factor": "duo_push",
         "reason": "could_not_determine_if_endpoint_was_trusted",
         "result": "denied",
-        "user": { "name": "example@example.io" },
+        "user": { "name": "example@example.net" },
       }
   - Name: invalid_device
     ExpectedResult: true
     Log:
       {
-        "access_device": { "ip": "12.12.112.25", "os": "Mac OS X" },
-        "auth_device": { "ip": "12.12.12.12" },
+        "access_device": { "ip": "999.999.999.5", "os": "Mac OS X" },
+        "auth_device": { "ip": "999.999.999.2" },
         "application": {},
         "event_type": "authentication",
         "factor": "duo_push",
         "reason": "invalid_device",
         "result": "denied",
-        "user": { "name": "example@example.io" },
+        "user": { "name": "example@example.net" },
       }
   - Name: good_auth
     ExpectedResult: false
     Log:
       {
-        "access_device": { "ip": "12.12.112.25", "os": "Mac OS X" },
-        "auth_device": { "ip": "12.12.12.12" },
+        "access_device": { "ip": "999.999.999.5", "os": "Mac OS X" },
+        "auth_device": { "ip": "999.999.999.2" },
         "application": { "key": "D12345", "name": "Slack" },
         "event_type": "authentication",
         "factor": "duo_push",
         "reason": "user_approved",
         "result": "success",
-        "user": { "name": "example@example.io" },
+        "user": { "name": "example@example.net" },
       }
   - Name: denied_old_creds
     ExpectedResult: false
     Log:
       {
-        "access_device": { "ip": "12.12.112.25", "os": "Mac OS X" },
-        "auth_device": { "ip": "12.12.12.12" },
+        "access_device": { "ip": "999.999.999.5", "os": "Mac OS X" },
+        "auth_device": { "ip": "999.999.999.2" },
         "application": { "key": "D12345", "name": "Slack" },
         "event_type": "authentication",
         "factor": "duo_push",
         "reason": "out_of_date",
         "result": "denied",
-        "user": { "name": "example@example.io" },
+        "user": { "name": "example@example.net" },
       }

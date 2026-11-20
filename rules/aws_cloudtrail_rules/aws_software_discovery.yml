@@ -15,7 +15,7 @@ Tests:
   - ExpectedResult: true
     Log:
       awsRegion: us-west-2
-      eventID: 6faccad9-b6ae-4549-8e39-03430cbce2aa
+      eventID: 00000000-0000-0000-0000-000000000085
       eventName: DescribeSecurityGroups
       eventSource: ec2.amazonaws.com
       eventTime: "2021-10-19 01:06:59"
@@ -28,29 +28,29 @@ Tests:
         - arn:aws:iam::123456789012:role/ExampleRole-us-east-2
         - arn:aws:sts::123456789012:assumed-role/ExampleRole-us-east-2/153151351351351
       p_any_ip_addresses:
-        - 12.34.56.78
+        - 999.999.999.18
       p_event_time: "2021-10-19 01:06:59"
       p_log_type: AWS.CloudTrail
       p_parse_time: "2021-10-19 01:11:10.412"
       p_row_id: eabaceda7842c2b2e7a398f40cc150
-      p_source_id: 5f9f0f60-9c56-4027-b93a-8bab3019f0f1
+      p_source_id: 00000000-0000-0000-0000-000000000069
       p_source_label: Hosted - Cloudtrail - XYZ
       readOnly: true
       recipientAccountId: "123456789012"
-      requestID: 43efad11-bb40-43df-ad25-c8e7f0bfdc7a
+      requestID: 00000000-0000-0000-0000-000000000046
       requestParameters:
         filterSet: {}
         securityGroupIdSet:
           items:
-            - groupId: sg-01e29ae063f5f63a0
+            - groupId: sg-0000000000000003a
         securityGroupSet: {}
-      sourceIPAddress: 12.34.56.78
+      sourceIPAddress: 999.999.999.18
       userAgent: aws-sdk-go/1.40.21 (go1.17; linux; amd64) exec-env/AWS_Lambda_go1.x
       userIdentity:
-        accessKeyId: ASIA153151351351351
+        accessKeyId: ASIA00000001EXAMPLE
         accountId: "123456789012"
         arn: arn:aws:sts::123456789012:assumed-role/ExampleRole-us-east-2/153151351351351
-        principalId: AROA4NOI7P47OHH3NQORX:153151351351351
+        principalId: AROA_EXAMPLE_0007:153151351351351
         sessionContext:
           attributes:
             creationDate: "2021-10-19T01:05:18Z"
@@ -58,7 +58,7 @@ Tests:
           sessionIssuer:
             accountId: "123456789012"
             arn: arn:aws:iam::123456789012:role/ExampleRole-us-east-2
-            principalId: AROA153151351351351
+            principalId: AROAEXAMPLE00000000
             type: Role
             userName: ExampleRole-us-east-2
           webIdFederationData: {}
@@ -69,7 +69,7 @@ Tests:
       apiVersion: "2012-08-10"
       awsRegion: us-east-1
       eventCategory: Data
-      eventID: 9b666120-d5f9-4ca8-b158-3cd53e4c48bd
+      eventID: 00000000-0000-0000-0000-000000000116
       eventName: GetRecords
       eventSource: dynamodb.amazonaws.com
       eventTime: "2023-01-09 16:01:21"

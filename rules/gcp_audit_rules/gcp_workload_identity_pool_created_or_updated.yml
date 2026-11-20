@@ -26,10 +26,10 @@ Tests:
     ExpectedResult: false
     Log:
       insertId: 1h09dxwe33il5
-      logName: projects/test-project/logs/cloudaudit.googleapis.com%2Factivity
+      logName: projects/example-project-05/logs/cloudaudit.googleapis.com%2Factivity
       operation:
         first: true
-        id: projects/1234567890123/locations/global/workloadIdentityPools/test-pool/operations/bigarrpp32vamefyvthk4ay000000000
+        id: projects/1111111111111/locations/global/workloadIdentityPools/example-pool-01/operations/bi0000000000000000000000000000004
         producer: iam.googleapis.com
       protoPayload:
         "@type": type.googleapis.com/google.cloud.audit.AuditLog
@@ -39,26 +39,26 @@ Tests:
         authorizationInfo:
           - granted: true
             permission: iam.workloadIdentityPools.delete
-            resource: projects/test-project/locations/global/workloadIdentityPools/test-pool
+            resource: projects/example-project-05/locations/global/workloadIdentityPools/example-pool-01
             resourceAttributes: {}
         methodName: google.iam.v1.WorkloadIdentityPools.DeleteWorkloadIdentityPool
         request:
           "@type": type.googleapis.com/google.iam.v1.DeleteWorkloadIdentityPoolRequest
-          name: projects/test-project/locations/global/workloadIdentityPools/test-pool
+          name: projects/example-project-05/locations/global/workloadIdentityPools/example-pool-01
         requestMetadata:
-          callerIp: 07da:0994:97fb:8db1:c68f:c109:fcdd:d594
+          callerIp: EXAMPLE::1
           callerSuppliedUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/119.0,gzip(gfe)
           destinationAttributes: {}
           requestAttributes:
             auth: {}
             time: "2023-11-17T18:58:13.519015485Z"
-        resourceName: projects/test-project/locations/global/workloadIdentityPools/test-pool
+        resourceName: projects/example-project-05/locations/global/workloadIdentityPools/example-pool-01
         serviceName: iam.googleapis.com
       receiveTimestamp: "2023-11-17T18:58:14.565078208Z"
       resource:
         labels:
           method: google.iam.v1.WorkloadIdentityPools.DeleteWorkloadIdentityPool
-          project_id: test-project
+          project_id: example-project-05
           service: iam.googleapis.com
         type: audited_resource
       severity: NOTICE
@@ -67,10 +67,10 @@ Tests:
     ExpectedResult: true
     Log:
       insertId: 1plwiv7e2lak8
-      logName: projects/test-project/logs/cloudaudit.googleapis.com%2Factivity
+      logName: projects/example-project-05/logs/cloudaudit.googleapis.com%2Factivity
       operation:
         first: true
-        id: projects/1234567890123/locations/global/workloadIdentityPools/test-pool/providers/test-project/operations/bifqr6xo32vameeqtose200000000000
+        id: projects/1111111111111/locations/global/workloadIdentityPools/example-pool-01/providers/example-project-05/operations/bi0000000000000000000000000000005
         producer: iam.googleapis.com
       protoPayload:
         "@type": type.googleapis.com/google.cloud.audit.AuditLog
@@ -80,7 +80,7 @@ Tests:
         authorizationInfo:
           - granted: true
             permission: iam.workloadIdentityPoolProviders.update
-            resource: projects/test-project/locations/global/workloadIdentityPools/test-pool/providers/test-project
+            resource: projects/example-project-05/locations/global/workloadIdentityPools/example-pool-01/providers/example-project-05
             resourceAttributes: {}
         methodName: google.iam.v1.WorkloadIdentityPools.UpdateWorkloadIdentityPoolProvider
         request:
@@ -95,21 +95,21 @@ Tests:
               accountId: "123456789012"
             disabled: false
             displayName: Test Provider
-            name: projects/test-project/locations/global/workloadIdentityPools/test-pool/providers/test-project
+            name: projects/example-project-05/locations/global/workloadIdentityPools/example-pool-01/providers/example-project-05
         requestMetadata:
-          callerIp: 07da:0994:97fb:8db1:c68f:c109:fcdd:d594
+          callerIp: EXAMPLE::1
           callerSuppliedUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/119.0,gzip(gfe)
           destinationAttributes: {}
           requestAttributes:
             auth: {}
             time: "2023-11-17T18:56:57.745203848Z"
-        resourceName: projects/test-project/locations/global/workloadIdentityPools/test-pool/providers/test-project
+        resourceName: projects/example-project-05/locations/global/workloadIdentityPools/example-pool-01/providers/example-project-05
         serviceName: iam.googleapis.com
       receiveTimestamp: "2023-11-17T18:56:58.871491875Z"
       resource:
         labels:
           method: google.iam.v1.WorkloadIdentityPools.UpdateWorkloadIdentityPoolProvider
-          project_id: test-project
+          project_id: example-project-05
           service: iam.googleapis.com
         type: audited_resource
       severity: NOTICE
@@ -118,10 +118,10 @@ Tests:
     ExpectedResult: true
     Log:
       insertId: 11gmdk5e1ne4r
-      logName: projects/test-project/logs/cloudaudit.googleapis.com%2Factivity
+      logName: projects/example-project-05/logs/cloudaudit.googleapis.com%2Factivity
       operation:
         first: true
-        id: projects/1234567890123/locations/global/workloadIdentityPools/test-pool/providers/test-project/operations/bigarpxj32vamehaqcf5oai000000000
+        id: projects/1111111111111/locations/global/workloadIdentityPools/example-pool-01/providers/example-project-05/operations/bi0000000000000000000000000000006
         producer: iam.googleapis.com
       protoPayload:
         "@type": type.googleapis.com/google.cloud.audit.AuditLog
@@ -131,12 +131,12 @@ Tests:
         authorizationInfo:
           - granted: true
             permission: iam.workloadIdentityPoolProviders.create
-            resource: projects/test-project/locations/global/workloadIdentityPools/test-pool
+            resource: projects/example-project-05/locations/global/workloadIdentityPools/example-pool-01
             resourceAttributes: {}
         methodName: google.iam.v1.WorkloadIdentityPools.CreateWorkloadIdentityPoolProvider
         request:
           "@type": type.googleapis.com/google.iam.v1.CreateWorkloadIdentityPoolProviderRequest
-          parent: projects/test-project/locations/global/workloadIdentityPools/test-pool
+          parent: projects/example-project-05/locations/global/workloadIdentityPools/example-pool-01
           workloadIdentityPoolProvider:
             attributeCondition: ""
             attributeMapping:
@@ -146,9 +146,9 @@ Tests:
               accountId: "123456789012"
             disabled: false
             displayName: Test Provider
-          workloadIdentityPoolProviderId: test-project
+          workloadIdentityPoolProviderId: example-project-05
         requestMetadata:
-          callerIp: 07da:0994:97fb:8db1:c68f:c109:fcdd:d594
+          callerIp: EXAMPLE::1
           callerSuppliedUserAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/119.0,gzip(gfe)
           destinationAttributes: {}
           requestAttributes:
@@ -157,13 +157,13 @@ Tests:
         resourceLocation:
           currentLocations:
             - global
-        resourceName: projects/test-project/locations/global/workloadIdentityPools/test-pool
+        resourceName: projects/example-project-05/locations/global/workloadIdentityPools/example-pool-01
         serviceName: iam.googleapis.com
       receiveTimestamp: "2023-11-17T18:45:19.404664001Z"
       resource:
         labels:
           method: google.iam.v1.WorkloadIdentityPools.CreateWorkloadIdentityPoolProvider
-          project_id: test-project
+          project_id: example-project-05
           service: iam.googleapis.com
         type: audited_resource
       severity: NOTICE

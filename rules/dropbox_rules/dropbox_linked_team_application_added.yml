@@ -19,7 +19,7 @@ Tests:
           _tag: team_member
           account_id: dbid:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
           display_name: user_name
-          email: user@domain.com
+          email: user@example.edu
           team_member_id: dbmid:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
       context:
         _tag: team
@@ -40,10 +40,10 @@ Tests:
           .tag: api
           request_id: dbarod:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         geo_location:
-          city: Los Angeles
+          city: EXAMPLE_CITY
           country: US
-          ip_address: 1.2.3.4
-          region: California
+          ip_address: 999.999.999.29
+          region: Example Region
       timestamp: "2023-02-16 20:39:34"
     Name: App linked for team is LOW severity
   - ExpectedResult: false
@@ -54,7 +54,7 @@ Tests:
           _tag: team_member
           account_id: dbid:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
           display_name: user_name
-          email: user@domain.com
+          email: user@example.edu
           team_member_id: dbmid:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
       context:
         _tag: team
@@ -75,10 +75,10 @@ Tests:
           .tag: api
           request_id: dbarod:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         geo_location:
-          city: Los Angeles
+          city: EXAMPLE_CITY
           country: US
-          ip_address: 1.2.3.4
-          region: California
+          ip_address: 999.999.999.29
+          region: Example Region
       timestamp: "2023-02-16 20:39:34"
     Name: A non-team linked event does not alert
   - ExpectedResult: true
@@ -89,7 +89,7 @@ Tests:
           _tag: team_member
           account_id: dbid:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
           display_name: user_name
-          email: user@domain.com
+          email: user@example.edu
           team_member_id: dbmid:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
       context:
         _tag: team
@@ -110,10 +110,10 @@ Tests:
           .tag: api
           request_id: dbarod:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         geo_location:
-          city: Los Angeles
+          city: EXAMPLE_CITY
           country: US
-          ip_address: 1.2.3.4
-          region: California
+          ip_address: 999.999.999.29
+          region: Example Region
       timestamp: "2023-02-16 20:39:34"
     Name: App linked for team involving non-team member is HIGH severity
 DedupPeriodMinutes: 60

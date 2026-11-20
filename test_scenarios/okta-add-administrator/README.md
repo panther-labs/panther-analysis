@@ -21,8 +21,8 @@ This scenario shows brute force logins
 
 ## Usernames
 
-jack.naglieri@tines.io
-thomas.kinsella@tines.io
+example.user01@example.com
+example.user03@example.com
 
 ## Data
 

@@ -33,12 +33,12 @@ Tests:
       - ID: AccountCreated
         Matches:
           p_alert_context.actor_target:
-            'newuser@biz.co-hackerman@biz.co':
+            'example.user60@example-org-03.example.com-hackerman@biz.example.com':
               - 0
       - ID: AdminRoleAssigned
         Matches:
           p_alert_context.actor_target:
-            'newuser@biz.co-hackerman@biz.co':
+            'example.user60@example-org-03.example.com-hackerman@biz.example.com':
               - 15
   - Name: User Creation, Not Followed By Role Assignment
     ExpectedResult: false
@@ -46,7 +46,7 @@ Tests:
       - ID: AccountCreated
         Matches:
           p_alert_context.actor_target:
-            'newuser@biz.co-hackerman@biz.co':
+            'example.user60@example-org-03.example.com-hackerman@biz.example.com':
               - 0
   - Name: Role Assignment Not Preceded By User Creation
     ExpectedResult: false
@@ -54,5 +54,5 @@ Tests:
       - ID: AdminRoleAssigned
         Matches:
           p_alert_context.actor_target:
-            'newuser@biz.co-hackerman@biz.co':
+            'example.user60@example-org-03.example.com-hackerman@biz.example.com':
               - 20

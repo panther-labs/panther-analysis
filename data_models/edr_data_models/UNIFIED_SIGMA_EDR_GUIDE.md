@@ -396,7 +396,7 @@ Tests:
       tgt_process_image_path: "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
       tgt_process_cmdline: "powershell.exe -encodedcommand ABC123"
       tgt_process_user: "DOMAIN\\user"
-      dst_ip_address: "1.2.3.4"
+      dst_ip_address: "999.999.999.5"
       dst_port_number: 443
 
   # Test with CrowdStrike event
@@ -408,7 +408,7 @@ Tests:
         ImageFileName: "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
         CommandLine: "powershell.exe -encodedcommand ABC123"
         UserName: "DOMAIN\\user"
-        RemoteAddressIP4: "1.2.3.4"
+        RemoteAddressIP4: "999.999.999.5"
         RemotePort: 443
       aip: "10.0.0.5"
       event_platform: "Win"
@@ -421,7 +421,7 @@ Tests:
       process_path: "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
       target_cmdline: "powershell.exe -encodedcommand ABC123"
       process_username: "DOMAIN\\user"
-      remote_ip: "1.2.3.4"
+      remote_ip: "999.999.999.5"
       remote_port: 443
 
   # Negative test case

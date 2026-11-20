@@ -132,7 +132,7 @@ def is_gke_system_principal(principal_email):
 
     This function uses strict pattern matching to prevent false negatives where
     an attacker might create an account with system-like names
-    (e.g., "kubernetes-attacker@evil.com").
+    (e.g., "kubernetes-attacker@example.net").
 
     Args:
         principal_email: The email/identifier of the principal performing the action

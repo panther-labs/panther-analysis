@@ -37,7 +37,7 @@ Tests:
         "tenantId": "tenant-abc",
         "resultSignature": "None",
         "durationMs": 0,
-        "callerIpAddress": "1.2.3.4",
+        "callerIpAddress": "999.999.999.1",
         "correlationId": "policy-update-001",
         "Level": "4",
         "properties":
@@ -54,8 +54,8 @@ Tests:
                   {
                     "id": "admin-compromised-001",
                     "displayName": "Compromised Global Admin",
-                    "userPrincipalName": "denethor@lotr.com",
-                    "ipAddress": "1.2.3.4",
+                    "userPrincipalName": "example.user24@example-org-17.example.com",
+                    "ipAddress": "999.999.999.1",
                   },
               },
             "targetResources":
@@ -69,7 +69,7 @@ Tests:
                       {
                         "displayName": "OpenIdConnectConfiguration",
                         "oldValue": "{\"discoveryUrl\":\"https://login.microsoftonline.com/tenant-abc/.well-known/openid-configuration\"}",
-                        "newValue": "{\"discoveryUrl\":\"https://attacker-idp.evil.com/.well-known/openid-configuration\"}",
+                        "newValue": "{\"discoveryUrl\":\"https://example-sub-02.example-org-07.example.com/.well-known/openid-configuration\"}",
                       },
                     ],
                 },
@@ -107,7 +107,7 @@ Tests:
                   {
                     "id": "admin-legitimate-002",
                     "displayName": "Legitimate Admin",
-                    "userPrincipalName": "admin@company.com",
+                    "userPrincipalName": "example.user02@example-org-04.example.com",
                     "ipAddress": "203.0.113.50",
                   },
               },

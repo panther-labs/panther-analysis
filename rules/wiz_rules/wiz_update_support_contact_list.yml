@@ -19,16 +19,16 @@ Tests:
     ExpectedResult: true
     Log:
       {
-        "id": "3a9d0fc8-8466-4e79-a2cd-014a068b985c",
+        "id": "00000000-0000-0000-0000-000000000026",
         "action": "UpdateSupportContactList",
-        "requestId": "fddf46ff-c69a-4f5b-a06d-c05ec95dbb21",
+        "requestId": "00000000-0000-0000-0000-000000000072",
         "status": "SUCCESS",
         "timestamp": "2024-07-23T10:16:54.517212Z",
         "actionParameters": {
           "input": {
             "patch": {
               "contacts": [
-                "test.user@company.com"
+                "example.user85@example.com"
               ]
             }
           },
@@ -48,26 +48,26 @@ Tests:
           ]
         },
         "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-        "sourceIP": "12.34.56.78",
+        "sourceIP": "999.999.999.35",
         "serviceAccount": null,
         "user": {
-          "id": "test.user@company.com",
-          "name": "user@company.com"
+          "id": "example.user85@example.com",
+          "name": "example.user89@example.com"
         }
       }
   - Name: CreateUser
     ExpectedResult: false
     Log:
       {
-        "id": "220d23be-f07c-4d97-b4a6-87ad04eddb14",
+        "id": "00000000-0000-0000-0000-00000000001c",
         "action": "CreateUser",
-        "requestId": "0d9521b2-c3f8-4a73-bf7c-20257788752e",
+        "requestId": "00000000-0000-0000-0000-000000000015",
         "status": "SUCCESS",
         "timestamp": "2024-07-29T09:40:15.66643Z",
         "actionParameters": {
           "input": {
             "assignedProjectIds": null,
-            "email": "testy@company.com",
+            "email": "example.user88@example.com",
             "expiresAt": null,
             "name": "Test User",
             "role": "GLOBAL_ADMIN"
@@ -86,25 +86,25 @@ Tests:
         "sourceIP": "8.8.8.8",
         "serviceAccount": null,
         "user": {
-          "id": "someuser@company.com",
-          "name": "someuser@company.com"
+          "id": "example.user80@example.com",
+          "name": "example.user80@example.com"
         }
       }
   - Name: UpdateSupportContactList - Fail
     ExpectedResult: false
     Log:
       {
-        "id": "3a9d0fc8-8466-4e79-a2cd-014a068b985c",
+        "id": "00000000-0000-0000-0000-000000000026",
         "action": "UpdateSupportContactList",
-        "requestId": "fddf46ff-c69a-4f5b-a06d-c05ec95dbb21",
+        "requestId": "00000000-0000-0000-0000-000000000072",
         "status": "FAILED",
         "timestamp": "2024-07-23T10:16:54.517212Z",
         "actionParameters": { },
         "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
-        "sourceIP": "12.34.56.78",
+        "sourceIP": "999.999.999.35",
         "serviceAccount": null,
         "user": {
-          "id": "test.user@company.com",
-          "name": "user@company.com"
+          "id": "example.user85@example.com",
+          "name": "example.user89@example.com"
         }
       }

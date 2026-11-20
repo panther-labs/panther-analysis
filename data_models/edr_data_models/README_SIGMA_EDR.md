@@ -137,4 +137,4 @@ For questions or issues:
 
 **Version**: 1.0
 **Last Updated**: 2024
-**Maintainers**: Panther Labs Community
+**Maintainers**: Example Community

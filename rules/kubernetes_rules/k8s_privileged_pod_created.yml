@@ -43,10 +43,10 @@ Tests:
         "requestURI": "/api/v1/namespaces/default/pods",
         "verb": "create",
         "user": {
-          "username": "john.doe@company.com",
+          "username": "example.user08@example.org",
           "groups": ["system:authenticated"]
         },
-        "sourceIPs": ["1.2.3.4"],
+        "sourceIPs": ["999.999.998.1"],
         "userAgent": "kubectl/v1.28.0",
         "objectRef": {
           "resource": "pods",
@@ -92,7 +92,7 @@ Tests:
         "logName": "projects/test-project/logs/cloudaudit.googleapis.com%2Factivity",
         "protoPayload": {
           "at_sign_type": "type.googleapis.com/google.cloud.audit.AuditLog",
-          "authenticationInfo": {"principalEmail": "john.doe@company.com"},
+          "authenticationInfo": {"principalEmail": "example.user08@example.org"},
           "authorizationInfo": [{
             "granted": true,
             "permission": "io.k8s.core.v1.pods.create",
@@ -112,7 +112,7 @@ Tests:
               }]
             }
           },
-          "requestMetadata": {"callerIP": "1.2.3.4"},
+          "requestMetadata": {"callerIP": "999.999.998.1"},
           "resourceName": "core/v1/namespaces/default/pods/test-privileged-pod",
           "response": {
             "@type": "core.k8s.io/v1.Pod",
@@ -149,8 +149,8 @@ Tests:
         "stage": "ResponseComplete",
         "requestURI": "/api/v1/namespaces/default/pods",
         "verb": "create",
-        "user": {"username": "john.doe@company.com"},
-        "sourceIPs": ["1.2.3.4"],
+        "user": {"username": "example.user08@example.org"},
+        "sourceIPs": ["999.999.998.1"],
         "objectRef": {
           "resource": "pods",
           "namespace": "default",
@@ -178,8 +178,8 @@ Tests:
         "kind": "Event",
         "apiVersion": "audit.k8s.io/v1",
         "verb": "create",
-        "user": {"username": "developer@company.com"},
-        "sourceIPs": ["1.2.3.4"],
+        "user": {"username": "developer@example.org"},
+        "sourceIPs": ["999.999.998.1"],
         "objectRef": {
           "resource": "pods",
           "namespace": "default",
@@ -207,8 +207,8 @@ Tests:
         "kind": "Event",
         "apiVersion": "audit.k8s.io/v1",
         "verb": "create",
-        "user": {"username": "john.doe@company.com"},
-        "sourceIPs": ["1.2.3.4"],
+        "user": {"username": "example.user08@example.org"},
+        "sourceIPs": ["999.999.998.1"],
         "objectRef": {
           "resource": "pods",
           "namespace": "default",

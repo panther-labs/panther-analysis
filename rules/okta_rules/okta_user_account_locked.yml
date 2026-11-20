@@ -9,7 +9,7 @@ Tests:
   - ExpectedResult: true
     Log:
       actor:
-        alternateId: homer.simpson@duff.com
+        alternateId: example.user03@example.net
         displayName: Homer Simpson
         id: 00abc123
         type: User
@@ -19,14 +19,14 @@ Tests:
       client:
         device: Computer
         geographicalContext:
-          city: Atlanta
+          city: EXAMPLE_CITY_03
           country: United States
           geolocation:
-            lat: 33
-            lon: -80
-          postalCode: "30318"
+            lat: 0.0
+            lon: 0.0
+          postalCode: "00000"
           state: Georgia
-        ipAddress: 1.2.3.4
+        ipAddress: 999.999.999.3
         userAgent:
           browser: CHROME
           os: Mac OS X
@@ -50,21 +50,21 @@ Tests:
       request:
         ipChain:
           - geographicalContext:
-              city: Atlanta
+              city: EXAMPLE_CITY_03
               country: United States
               geolocation:
-                lat: 33
-                lon: -80
-              postalCode: "30318"
+                lat: 0.0
+                lon: 0.0
+              postalCode: "00000"
               state: Georgia
-            ip: 1.2.3.4
+            ip: 999.999.999.3
             version: V4
       securitycontext:
-        asNumber: 7018
-        asOrg: at&t corp.
-        domain: sbcglobal.net
+        asNumber: 0
+        asOrg: EXAMPLE_ISP
+        domain: alpha.example.org
         isProxy: false
-        isp: att services inc
+        isp: EXAMPLE_ISP
       severity: DEBUG
       transaction:
         detail: {}
@@ -76,7 +76,7 @@ Tests:
   - ExpectedResult: false
     Log:
       actor:
-        alternateId: homer.simpson@duff.com
+        alternateId: example.user03@example.net
         displayName: Homer Simpsons
         id: 00ABC123
         type: User
@@ -89,11 +89,11 @@ Tests:
           city: Springfield
           country: United States
           geolocation:
-            lat: 11.111
-            lon: -70
+            lat: 0.0
+            lon: 0.0
           postalCode: "1234"
           state: California
-        ipAddress: 1.2.3.4
+        ipAddress: 999.999.999.3
         userAgent:
           browser: CHROME
           os: Mac OS X
@@ -120,18 +120,18 @@ Tests:
               city: Springfield
               country: United States
               geolocation:
-                lat: 11.111
-                lon: -70
+                lat: 0.0
+                lon: 0.0
               postalCode: "1234"
               state: California
-            ip: 1.2.3.4
+            ip: 999.999.999.3
             version: V4
       securitycontext:
-        asNumber: 11351
-        asOrg: charter communications inc
-        domain: rr.com
+        asNumber: 0
+        asOrg: EXAMPLE_ISP
+        domain: example.org
         isProxy: false
-        isp: charter communications inc
+        isp: EXAMPLE_ISP
       severity: WARN
       target:
         - alternateId: App (123)

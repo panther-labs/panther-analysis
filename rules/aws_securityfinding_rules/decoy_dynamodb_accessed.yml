@@ -26,7 +26,7 @@ Tests:
                     City: {}
                     Country: {}
                     GeoLocation: {}
-                    IpAddressV4: 11.111.11.111
+                    IpAddressV4: 999.999.999.3
                     Organization: {}
                 ServiceName: dynamodb.amazonaws.com
             DnsRequestAction: {}
@@ -37,7 +37,7 @@ Tests:
         AwsAccountId: "123456789012"
         CompanyName: Custom
         CreatedAt: "2024-05-24 22:53:24.000000000"
-        Description: Private decoy DynamoDB table arn:aws:dynamodb:us-east-1:123456789012:table/Panther-DataTable was accessed by arn:aws:iam::123456789012:user/tester. This DynamoDB table has been provisioned to monitor and generate security events when accessed and can be an indicator of unintended or unauthorized access to your AWS Account.
+        Description: Private decoy DynamoDB table arn:aws:dynamodb:us-east-1:123456789012:table/Example-DataTable was accessed by arn:aws:iam::123456789012:user/EXAMPLE_USER_10. This DynamoDB table has been provisioned to monitor and generate security events when accessed and can be an indicator of unintended or unauthorized access to your AWS Account.
         FindingProviderFields:
             Severity:
                 Label: HIGH
@@ -45,15 +45,15 @@ Tests:
             Types:
                 - Unusual Behaviors
         GeneratorId: dynamodb.amazonaws.com
-        Id: 1abc2de3-69ea-4e15-91c6-27eb4a07bd21
+        Id: 00000000-0000-0000-0000-000000000008
         ProcessedAt: "2024-05-24T22:53:41.884Z"
         ProductArn: arn:aws:securityhub:us-east-1:123456789012:product/123456789012/default
         ProductFields:
             Custom/DecoyDetector/apiResult: SUCCESS
-            Custom/DecoyDetector/requestID: ab1cd234-1986-4c45-8546-fdb1776e23b0
+            Custom/DecoyDetector/requestID: 00000000-0000-0000-0000-000000000009
             Custom/DecoyDetector/userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
             aws/securityhub/CompanyName: Personal
-            aws/securityhub/FindingId: arn:aws:securityhub:us-east-1:123456789012:product/123456789012/default/1abc2de3-69ea-4e15-91c6-27eb4a07bd21
+            aws/securityhub/FindingId: arn:aws:securityhub:us-east-1:123456789012:product/123456789012/default/00000000-0000-0000-0000-000000000008
             aws/securityhub/ProductName: Default
         ProductName: DecoyDetector
         RecordState: ACTIVE
@@ -94,7 +94,7 @@ Tests:
         Severity:
             Label: HIGH
             Normalized: 70
-        Title: Suspicious activity detected accessing private decoy DynamoDB table arn:aws:dynamodb:us-east-1:123456789012:table/Panther-DataTable
+        Title: Suspicious activity detected accessing private decoy DynamoDB table arn:aws:dynamodb:us-east-1:123456789012:table/Example-DataTable
         Types:
             - Unusual Behaviors
         UpdatedAt: "2024-05-24 22:53:24.000000000"
@@ -112,7 +112,7 @@ Tests:
         p_parse_time: "2024-05-24 22:55:04.312964001"
         p_row_id: 8e1c8ebd709fb49e9eb5a1c61ff1a303
         p_schema_version: 0
-        p_source_id: e29fd64f-53d9-43ab-92ca-575a8af289e6
+        p_source_id: 00000000-0000-0000-0000-000000000010
         p_source_label: AWS Security Hub
     - Name: DynamoDB-Decoy-Not-Accessed
       ExpectedResult: false
@@ -127,7 +127,7 @@ Tests:
                     City: {}
                     Country: {}
                     GeoLocation: {}
-                    IpAddressV4: 11.111.11.111
+                    IpAddressV4: 999.999.999.3
                     Organization: {}
                 ServiceName: dynamodb.amazonaws.com
             DnsRequestAction: {}
@@ -138,7 +138,7 @@ Tests:
         AwsAccountId: "123456789012"
         CompanyName: Custom
         CreatedAt: "2024-05-24 22:53:24.000000000"
-        Description: Private decoy DynamoDB table arn:aws:dynamodb:us-east-1:123456789012:table/Panther-DataTable was not accessed by arn:aws:iam::123456789012:user/tester. This DynamoDB table has been provisioned to monitor and generate security events when accessed and can be an indicator of unintended or unauthorized access to your AWS Account.
+        Description: Private decoy DynamoDB table arn:aws:dynamodb:us-east-1:123456789012:table/Example-DataTable was not accessed by arn:aws:iam::123456789012:user/EXAMPLE_USER_10. This DynamoDB table has been provisioned to monitor and generate security events when accessed and can be an indicator of unintended or unauthorized access to your AWS Account.
         FindingProviderFields:
             Severity:
                 Label: HIGH
@@ -146,15 +146,15 @@ Tests:
             Types:
                 - Unusual Behaviors
         GeneratorId: dynamodb.amazonaws.com
-        Id: 1abc2de3-69ea-4e15-91c6-27eb4a07bd21
+        Id: 00000000-0000-0000-0000-000000000008
         ProcessedAt: "2024-05-24T22:53:41.884Z"
         ProductArn: arn:aws:securityhub:us-east-1:123456789012:product/123456789012/default
         ProductFields:
             Custom/DecoyDetector/apiResult: SUCCESS
-            Custom/DecoyDetector/requestID: ab1cd234-1986-4c45-8546-fdb1776e23b0
+            Custom/DecoyDetector/requestID: 00000000-0000-0000-0000-000000000009
             Custom/DecoyDetector/userAgent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
             aws/securityhub/CompanyName: Personal
-            aws/securityhub/FindingId: arn:aws:securityhub:us-east-1:123456789012:product/123456789012/default/1abc2de3-69ea-4e15-91c6-27eb4a07bd21
+            aws/securityhub/FindingId: arn:aws:securityhub:us-east-1:123456789012:product/123456789012/default/00000000-0000-0000-0000-000000000008
             aws/securityhub/ProductName: Default
         ProductName: DecoyDetector
         RecordState: ACTIVE
@@ -195,7 +195,7 @@ Tests:
         Severity:
             Label: HIGH
             Normalized: 70
-        Title: Non-Suspicious activity detected accessing private decoy DynamoDB table arn:aws:dynamodb:us-east-1:123456789012:table/Panther-DataTable
+        Title: Non-Suspicious activity detected accessing private decoy DynamoDB table arn:aws:dynamodb:us-east-1:123456789012:table/Example-DataTable
         Types:
             - Unusual Behaviors
         UpdatedAt: "2024-05-24 22:53:24.000000000"
@@ -213,5 +213,5 @@ Tests:
         p_parse_time: "2024-05-24 22:55:04.312964001"
         p_row_id: 8e1c8ebd709fb49e9eb5a1c61ff1a303
         p_schema_version: 0
-        p_source_id: e29fd64f-53d9-43ab-92ca-575a8af289e6
+        p_source_id: 00000000-0000-0000-0000-000000000010
         p_source_label: AWS Security Hub

@@ -33,12 +33,12 @@ Tests:
       - ID: AccountCreated
         Matches:
           p_alert_context.target_name:
-            'non.chalant@legitbiz.com':
+            'example.user61@example-org-13.example.com':
               - 0
       - ID: AccountDeleted
         Matches:
           p_alert_context.target_name:
-            'non.chalant@legitbiz.com':
+            'example.user61@example-org-13.example.com':
               - 640 # 9 hours
   - Name: User Creation, Not Followed By Deletion
     ExpectedResult: false
@@ -46,7 +46,7 @@ Tests:
       - ID: AccountCreated
         Matches:
           p_alert_context.target_name:
-            'non.chalant@legitbiz.com':
+            'example.user61@example-org-13.example.com':
               - 0
   - Name: User Deletion, Not Preceded By Creation
     ExpectedResult: false
@@ -54,5 +54,5 @@ Tests:
       - ID: AccountDeleted
         Matches:
           p_alert_context.target_name:
-            'non.chalant@legitbiz.com':
+            'example.user61@example-org-13.example.com':
               - 120 # 2 hours

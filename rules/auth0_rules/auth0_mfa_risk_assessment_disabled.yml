@@ -10,7 +10,7 @@ Tests:
   - ExpectedResult: false
     Log:
       data:
-        client_id: 1HXWWGKk1Zj3JF8GvMrnCSirccDs4qvr
+        client_id: example-client-id-13
         client_name: ""
         date: "2023-05-16 17:28:11.165000000"
         description: Set the Multi-factor Authentication policies
@@ -18,7 +18,7 @@ Tests:
           request:
             auth:
               credentials:
-                jti: 0107c849078d8d889af711840197ba7c
+                jti: 00000000000000000000000000000026
                 scopes:
                   - create:actions
                   - create:actions_log_sessions
@@ -156,12 +156,12 @@ Tests:
                   - update:users
               strategy: jwt
               user:
-                email: user.name@yourcompany.io
+                email: user.name@example.net
                 name: User Name
-                user_id: google-oauth2|105261262156475850461
+                user_id: EXAMPLE_USER_ID_01
             body: []
             channel: https://manage.auth0.com/
-            ip: 12.12.12.12
+            ip: 999.999.999.2
             method: put
             path: /api/v2/guardian/policies
             query: {}
@@ -169,28 +169,28 @@ Tests:
           response:
             body: []
             statusCode: 200
-        ip: 12.12.12.12
+        ip: 999.999.999.2
         log_id: "90020230516172812328948000000000000001223372037498448373"
         type: sapi
         user_agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36
-        user_id: google-oauth2|105261262156475850461
+        user_id: EXAMPLE_USER_ID_01
       log_id: "90020230516172812328948000000000000001223372037498448373"
       p_any_ip_addresses:
-        - 12.12.12.12
+        - 999.999.999.2
       p_any_usernames:
-        - google-oauth2|105261262156475850461
+        - EXAMPLE_USER_ID_01
       p_event_time: "2023-05-16 17:28:11.165"
       p_log_type: Auth0.Events
       p_parse_time: "2023-05-16 17:29:28.904"
-      p_row_id: a2d1b1713461e7a5f1b08f991886e402
+      p_row_id: 00000000000000000000000000000029
       p_schema_version: 0
-      p_source_id: b9031579-b2c5-45c2-b15c-632b995a4e36
+      p_source_id: 00000000-0000-0000-0000-000000000021
       p_source_label: Org Tenant Label
     Name: Other Event
   - ExpectedResult: true
     Log:
       data:
-        client_id: 1HXWWGKk1Zj3JF8GvMrnCSirccDs4qvr
+        client_id: example-client-id-13
         client_name: ""
         date: "2023-05-15 21:55:18.060000000"
         description: Updates risk assessment configs
@@ -198,7 +198,7 @@ Tests:
           request:
             auth:
               credentials:
-                jti: 949869e066205b5076e6df203fdd7b9b
+                jti: 00000000000000000000000000000025
                 scopes:
                   - create:actions
                   - create:actions_log_sessions
@@ -336,13 +336,13 @@ Tests:
                   - update:users
               strategy: jwt
               user:
-                email: user.name@yourcompany.io
+                email: user.name@example.net
                 name: User Name
-                user_id: google-oauth2|105261262156475850461
+                user_id: EXAMPLE_USER_ID_01
             body:
               AfterAuthentication: false
             channel: https://manage.auth0.com/
-            ip: 12.12.12.12
+            ip: 999.999.999.2
             method: patch
             path: /api/v2/risk-assessment/config
             query: {}
@@ -353,22 +353,22 @@ Tests:
               BeforeLoginPrompt: false
               BeforeLoginPromptMonitoring: false
             statusCode: 200
-        ip: 12.12.12.12
+        ip: 999.999.999.2
         log_id: "90020230515215719063964000000000000001223372037488829643"
         type: sapi
         user_agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36
-        user_id: google-oauth2|105261262156475850461
+        user_id: EXAMPLE_USER_ID_01
       log_id: "90020230515215719063964000000000000001223372037488829643"
       p_any_ip_addresses:
-        - 12.12.12.12
+        - 999.999.999.2
       p_any_usernames:
-        - google-oauth2|105261262156475850461
+        - EXAMPLE_USER_ID_01
       p_event_time: "2023-05-15 21:55:18.06"
       p_log_type: Auth0.Events
       p_parse_time: "2023-05-15 21:58:28.629"
-      p_row_id: 42b742dba9d5f3f284d49b971814
+      p_row_id: 0000000000000000000000000028
       p_schema_version: 0
-      p_source_id: b9031579-b2c5-45c2-b15c-632b995a4e36
+      p_source_id: 00000000-0000-0000-0000-000000000021
       p_source_label: Org Tenant Label
     Name: Risk Assessment Disabled
 DedupPeriodMinutes: 60

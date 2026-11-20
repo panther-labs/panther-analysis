@@ -36,14 +36,14 @@ Tests:
     ExpectedResult: true
     Log:
       messageTime: "2026-01-08T09:30:00Z"
-      sender: "campaign-actor@malware.net"
+      sender: "campaign-actor@malware.example"
       senderIP: "192.0.2.200"
       fromAddress:
-        - "campaign-actor@malware.net"
+        - "campaign-actor@malware.example"
       toAddresses:
-        - "target@company.com"
+        - "target@example.com"
       recipient:
-        - "target@company.com"
+        - "target@example.com"
       subject: "Invoice #98765"
       malwareScore: 100
       phishScore: 30
@@ -51,26 +51,26 @@ Tests:
       impostorScore: 0
       quarantineFolder: "Attachment Defense"
       quarantineRule: "threat"
-      messageID: "<campaign-email-001@malware.net>"
+      messageID: "<campaign-email-001@malware.example>"
       threatsInfoMap:
         - threatType: "attachment"
           classification: "malware"
           threatStatus: "active"
           threat: "invoice_98765.exe"
           threatID: "mal-threat-abc123"
-          campaignID: "46e01b8a-0e67-4464-ac5a-b87ad4cc1f2a"
+          campaignID: "00000000-0000-0000-0000-000000100001"
   - Name: Active Phishing Campaign
     ExpectedResult: true
     Log:
       messageTime: "2026-01-08T11:00:00Z"
-      sender: "support@paypa1-secure.com"
+      sender: "support@paypa1-secure.example"
       senderIP: "198.51.100.88"
       fromAddress:
-        - "support@paypa1-secure.com"
+        - "support@paypa1-secure.example"
       toAddresses:
-        - "victim@company.com"
+        - "victim@example.com"
       recipient:
-        - "victim@company.com"
+        - "victim@example.com"
       subject: "Verify Your Account Now"
       malwareScore: 0
       phishScore: 95
@@ -78,26 +78,26 @@ Tests:
       impostorScore: 15
       quarantineFolder: "Phish"
       quarantineRule: "phish"
-      messageID: "<phish-campaign-002@paypa1-secure.com>"
+      messageID: "<phish-campaign-002@paypa1-secure.example>"
       threatsInfoMap:
         - threatType: "url"
           classification: "phish"
           threatStatus: "active"
-          threat: "http://paypa1-verify-account.com/login"
+          threat: "http://paypa1-verify.example/login"
           threatID: "phish-threat-xyz789"
           campaignID: "credential-harvest-2026-01"
   - Name: Multiple Campaigns in One Email
     ExpectedResult: true
     Log:
       messageTime: "2026-01-08T14:00:00Z"
-      sender: "multi-campaign@attacker.org"
+      sender: "multi-campaign@attacker-org.example"
       senderIP: "203.0.113.150"
       fromAddress:
-        - "multi-campaign@attacker.org"
+        - "multi-campaign@attacker-org.example"
       toAddresses:
-        - "employee@company.com"
+        - "employee@example.com"
       recipient:
-        - "employee@company.com"
+        - "employee@example.com"
       subject: "Urgent Security Update"
       malwareScore: 85
       phishScore: 80
@@ -105,7 +105,7 @@ Tests:
       impostorScore: 10
       quarantineFolder: "Attachment Defense"
       quarantineRule: "threat"
-      messageID: "<multi-campaign@attacker.org>"
+      messageID: "<multi-campaign@attacker-org.example>"
       threatsInfoMap:
         - threatType: "attachment"
           classification: "malware"
@@ -116,21 +116,21 @@ Tests:
         - threatType: "url"
           classification: "phish"
           threatStatus: "active"
-          threat: "http://fake-security-portal.com"
+          threat: "http://fake-security-portal.example"
           threatID: "phish-ghi789"
           campaignID: "phish-campaign-beta"
   - Name: Threat Without Campaign - No Alert
     ExpectedResult: false
     Log:
       messageTime: "2026-01-08T15:00:00Z"
-      sender: "random-attacker@spam.net"
+      sender: "random-attacker@spam.example"
       senderIP: "198.51.100.200"
       fromAddress:
-        - "random-attacker@spam.net"
+        - "random-attacker@spam.example"
       toAddresses:
-        - "user@company.com"
+        - "user@example.com"
       recipient:
-        - "user@company.com"
+        - "user@example.com"
       subject: "Click Here Now"
       malwareScore: 20
       phishScore: 70
@@ -138,56 +138,56 @@ Tests:
       impostorScore: 0
       quarantineFolder: "Phish"
       quarantineRule: "phish"
-      messageID: "<no-campaign@spam.net>"
+      messageID: "<no-campaign@spam.example>"
       threatsInfoMap:
         - threatType: "url"
           classification: "phish"
           threatStatus: "active"
-          threat: "http://isolated-phish.com"
+          threat: "http://isolated-phish.example"
           threatID: "phish-jkl012"
   - Name: Campaign But Threat Not Active - No Alert
     ExpectedResult: false
     Log:
       messageTime: "2026-01-08T16:00:00Z"
-      sender: "old-campaign@historical.com"
+      sender: "old-campaign@historical.example"
       senderIP: "203.0.113.250"
       fromAddress:
-        - "old-campaign@historical.com"
+        - "old-campaign@historical.example"
       toAddresses:
-        - "user@company.com"
+        - "user@example.com"
       recipient:
-        - "user@company.com"
+        - "user@example.com"
       subject: "Old Threat"
       malwareScore: 5
       phishScore: 5
       spamScore: 10
       impostorScore: 0
-      messageID: "<cleared-campaign@historical.com>"
+      messageID: "<cleared-campaign@historical.example>"
       threatsInfoMap:
         - threatType: "url"
           classification: "phish"
           threatStatus: "cleared"
-          threat: "http://old-threat.com"
+          threat: "http://old-threat.example"
           threatID: "phish-mno345"
           campaignID: "old-campaign-2025"
   - Name: Cleared Campaign Threats Only - No Alert
     ExpectedResult: false
     Log:
       messageTime: "2026-01-08T16:30:00Z"
-      sender: "remediated@historical.com"
+      sender: "remediated@historical.example"
       senderIP: "198.51.100.250"
       fromAddress:
-        - "remediated@historical.com"
+        - "remediated@historical.example"
       toAddresses:
-        - "user@company.com"
+        - "user@example.com"
       recipient:
-        - "user@company.com"
+        - "user@example.com"
       subject: "Previously Flagged Campaign"
       malwareScore: 10
       phishScore: 15
       spamScore: 5
       impostorScore: 0
-      messageID: "<all-cleared@historical.com>"
+      messageID: "<all-cleared@historical.example>"
       threatsInfoMap:
         - threatType: "attachment"
           classification: "malware"
@@ -198,6 +198,6 @@ Tests:
         - threatType: "url"
           classification: "phish"
           threatStatus: "cleared"
-          threat: "http://remediated-phish.com"
+          threat: "http://remediated-phish.example"
           threatID: "phish-stu901"
           campaignID: "remediated-campaign-2025"

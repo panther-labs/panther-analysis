@@ -44,7 +44,7 @@ Tests:
         "apiVersion": "audit.k8s.io/v1",
         "verb": "create",
         "user": {"username": "admin@example.com"},
-        "sourceIPs": ["1.2.3.4"],
+        "sourceIPs": ["999.999.998.1"],
         "userAgent": "kubectl/v1.28.0",
         "objectRef": {
           "resource": "pods",
@@ -87,14 +87,14 @@ Tests:
     Log:
       {
         "protoPayload": {
-          "authenticationInfo": {"principalEmail": "user@company.com"},
+          "authenticationInfo": {"principalEmail": "user@example.org"},
           "authorizationInfo": [{
             "granted": true,
             "permission": "io.k8s.core.v1.pods.create",
             "resource": "core/v1/namespaces/default/pods/monitoring"
           }],
           "methodName": "io.k8s.core.v1.pods.create",
-          "requestMetadata": {"callerIP": "1.2.3.4"},
+          "requestMetadata": {"callerIP": "999.999.998.1"},
           "resourceName": "core/v1/namespaces/default/pods/monitoring",
           "serviceName": "k8s.io",
           "request": {

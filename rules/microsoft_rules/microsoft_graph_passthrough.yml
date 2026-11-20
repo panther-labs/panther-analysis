@@ -25,11 +25,11 @@ Tests:
         - at_sign_odata_type: "#microsoft.graph.security.userEvidence"
           userAccount:
             accountName: homer.simpson
-            domainName: corporation.onmicrosoft.com
-            userPrincipalName: homer.simpson@corporation.onmicrosoft.com
-            azureAdUserId: 011d5ede-0faa-4946-a25e-b2cd0c47a52c
+            domainName: example-tenant-04.onmicrosoft.com
+            userPrincipalName: example.user43@example-tenant-04.onmicrosoft.com
+            azureAdUserId: 00000000-0000-0000-0000-000000000002
         - at_sign_odata_type: "#microsoft.graph.security.ipEvidence"
-          ipAddress: 185.220.103.6
+          ipAddress: 999.999.999.20
           countryLetterCode: US
     Name: Anonymous Login Event (v2)
   - ExpectedResult: true
@@ -49,8 +49,8 @@ Tests:
         - at_sign_odata_type: "#microsoft.graph.security.userEvidence"
           userAccount:
             accountName: homer.simpson
-            domainName: corporation.onmicrosoft.com
-            userPrincipalName: homer.simpson@corporation.onmicrosoft.com
+            domainName: example-tenant-04.onmicrosoft.com
+            userPrincipalName: example.user43@example-tenant-04.onmicrosoft.com
     Name: Password Spray Event (v2)
   - ExpectedResult: false
     Log:
