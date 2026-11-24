@@ -9,6 +9,9 @@ TTL = timedelta(days=3)
 
 
 def rule(event):
+    # A failed CloudTrail call (e.g. errorCode AccessDenied) did not create any account.
+    if event.get("errorCode"):
+        return False
     if event.udm("event_type") != event_type.USER_ACCOUNT_CREATED:
         return False
 

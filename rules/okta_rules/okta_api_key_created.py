@@ -14,7 +14,7 @@ def title(event):
 
     return (
         f"{event.deep_get('actor', 'displayName')} <{event.deep_get('actor', 'alternateId')}>"
-        f"created a new API key - <{key_name}>"
+        f" created a new API key - <{key_name}>"
     )
 
 
