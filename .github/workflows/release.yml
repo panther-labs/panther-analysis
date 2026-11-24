@@ -3,10 +3,6 @@ name: Panther Analysis Release (Internal)
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        description: "Branch to release from"
-        required: true
-        default: "main"
       bump:
         description: "Version bump type"
         required: true
@@ -23,7 +19,10 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: github.repository == 'panther-labs/panther-analysis'
+    # Releases are signed with the Panther managed-content key. Only the protected
+    # `release` environment (main only, required reviewers) may assume the signing role.
+    if: github.repository == 'panther-labs/panther-analysis' && github.ref == 'refs/heads/main'
+    environment: release
     permissions:
       id-token: write
       contents: read
@@ -42,7 +41,7 @@ jobs:
           permissions: '{"contents":"write"}'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
         with:
-          ref: ${{ github.event.inputs.branch }}
+          # Build exactly the dispatched commit; the environment's branch policy checks this ref.
           fetch-depth: 0
           # Separate from bootstrap/ so the token action survives for its post hook.
           path: release
