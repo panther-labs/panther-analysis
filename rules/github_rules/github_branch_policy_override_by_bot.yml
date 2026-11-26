@@ -1,0 +1,108 @@
+AnalysisType: rule
+Filename: github_branch_policy_override_by_bot.py
+RuleID: "GitHub.Branch.PolicyOverrideByBot"
+DisplayName: "GitHub Branch Protection Policy Override by Bot"
+Enabled: true
+LogTypes:
+  - GitHub.Audit
+Tags:
+  - GitHub
+  - Initial Access:Supply Chain Compromise
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195 # Supply Chain Compromise
+Severity: High
+Description: >
+  A GitHub App or bot bypassed a branch protection requirement on a repository and branch
+  where no automation is expected to write. Automation is only expected to write to the
+  protected branches listed in the rule; a bypass anywhere else may mean an automation token
+  was obtained by untrusted code, such as a pull request's workflow run.
+Runbook: |
+  1. Confirm whether the write or approval came from an approved automation workflow run
+     (the workflow run that minted the token is in the token broker's log).
+  2. If it did not: suspend the GitHub App installation for the organisation, or rotate the
+     App's private key, so no further token is minted.
+  3. Disable the workflow that performed it.
+  4. Revert the commit or dismiss the review, and review every change the token made
+     (same token_id).
+  5. Notify Security.
+Reference: https://docs.github.com/en/organizations/keeping-your-organization-secure/managing-security-settings-for-your-organization/audit-log-events-for-your-organization#protected_branch
+Tests:
+  - Name: Bot Override on a Branch Where No Automation Writes
+    ExpectedResult: true
+    Log:
+      {
+        "action": "protected_branch.policy_override",
+        "actor": "my-automation[bot]",
+        "actor_id": "12345678",
+        "actor_is_bot": true,
+        "branch": "refs/heads/main",
+        "created_at": "2025-10-15 18:45:47.048000000",
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "programmatic_access_type": "GitHub App server-to-server token",
+        "repo": "my-org/my-repo",
+        "repo_id": 243627255,
+        "token_id": "1111111111111",
+      }
+  - Name: Bot Override on a Repository With No Expected Automation Writes
+    ExpectedResult: true
+    Log:
+      {
+        "action": "protected_branch.policy_override",
+        "actor": "my-automation[bot]",
+        "actor_id": "12345678",
+        "actor_is_bot": true,
+        "branch": "refs/heads/main",
+        "created_at": "2025-10-15 18:45:47.048000000",
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "programmatic_access_type": "GitHub App server-to-server token",
+        "repo": "my-org/my-other-repo",
+        "repo_id": 551635469,
+        "token_id": "1111111111111",
+      }
+  - Name: Bot Override on an Expected Release Branch
+    ExpectedResult: false
+    Log:
+      {
+        "action": "protected_branch.policy_override",
+        "actor": "my-automation[bot]",
+        "actor_id": "12345678",
+        "actor_is_bot": true,
+        "branch": "refs/heads/release-1.140",
+        "created_at": "2025-10-15 18:45:47.048000000",
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "programmatic_access_type": "GitHub App server-to-server token",
+        "repo": "my-org/my-repo",
+        "repo_id": 243627255,
+        "token_id": "1111111111111",
+      }
+  - Name: Human Admin Override
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "cat",
+        "action": "protected_branch.policy_override",
+        "branch": "refs/heads/main",
+        "created_at": 1621305118553,
+        "p_log_type": "GitHub.Audit",
+        "org": "my-org",
+        "repo": "my-org/my-repo",
+        "repo_id": 243627255,
+      }
+  - Name: Protected Branch Name Updated by Bot
+    ExpectedResult: false
+    Log:
+      {
+        "actor": "my-automation[bot]",
+        "actor_is_bot": true,
+        "action": "protected_branch.update_name",
+        "created_at": 1621305118553,
+        "org": "my-org",
+        "p_log_type": "GitHub.Audit",
+        "programmatic_access_type": "GitHub App server-to-server token",
+        "repo": "my-org/my-repo",
+        "repo_id": 243627255,
+      }
