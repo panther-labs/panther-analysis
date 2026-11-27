@@ -5585,6 +5585,15 @@
     },
     {
         "AnalysisType": "Rule",
+        "Description": "A GitHub App or bot bypassed a branch protection requirement on a repository and branch where no automation is expected to write. Automation is only expected to write to the protected branches listed in the rule; a bypass anywhere else may mean an automation token was obtained by untrusted code, such as a pull request's workflow run.",
+        "DisplayName": "GitHub Branch Protection Policy Override by Bot",
+        "LogTypes": [
+            "GitHub.Audit"
+        ],
+        "YAMLPath": "rules/github_rules/github_branch_policy_override_by_bot.yml"
+    },
+    {
+        "AnalysisType": "Rule",
         "Description": "Detects commits from cross-fork scenarios that contain workflow skip directives, which bypass GitHub Actions workflows. These skip patterns ([skip ci], [ci skip], [no ci], [skip actions], [actions skip], skip-checks:true) can be used to avoid security checks and CI/CD processes. This rule only alerts on commits to public forkable repositories.",
         "DisplayName": "GitHub Commits Skipping Workflows",
         "LogTypes": [
@@ -5681,6 +5690,15 @@
             "GitHub.Audit"
         ],
         "YAMLPath": "rules/github_rules/github_public_repository_created.yml"
+    },
+    {
+        "AnalysisType": "Rule",
+        "Description": "A GitHub App or bot submitted an approving review on a pull request. Automation is expected to comment on pull requests, never to approve them: a bot approval can satisfy a required review and let code reach a protected branch without a human reviewer. It may mean a workflow's token was used by the code under review.",
+        "DisplayName": "GitHub Pull Request Approved by Bot",
+        "LogTypes": [
+            "GitHub.Webhook"
+        ],
+        "YAMLPath": "rules/github_rules/github_bot_pull_request_approval.yml"
     },
     {
         "AnalysisType": "Correlation Rule",
@@ -6125,13 +6143,13 @@
         "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_doc_ownership_transfer.yml"
     },
     {
-        "AnalysisType": "Scheduled Rule",
-        "Description": "Scheduled rule for the GSuite Drive Many Documents Deleted query. Looks for users who have deleted more than 10 (tunable) documents the past day.",
+        "AnalysisType": "Rule",
+        "Description": "Detects when a user moves more than 10 distinct documents to the trash in Google Drive within 60 minutes. This may indicate accidental or malicious bulk deletion of files.",
         "DisplayName": "GSuite Drive Many Documents Deleted",
         "LogTypes": [
             "GSuite.ActivityEvent"
         ],
-        "YAMLPath": "queries/gsuite_queries/gsuite_drive_many_docs_deleted.yml"
+        "YAMLPath": "rules/gsuite_activityevent_rules/gsuite_drive_many_docs_deleted.yml"
     },
     {
         "AnalysisType": "Rule",
@@ -8789,9 +8807,9 @@
         "Description": "Detects multi-step Snowflake data exfiltration by identifying temporary stage creation, table data copied to stage, and file downloads. This technique was used in the April 2024 Snowflake breach (UNC5537) targeting accounts without MFA. The correlation of all three steps provides high-confidence evidence of active data theft beyond legitimate ETL operations.",
         "DisplayName": "Snowflake Data Exfiltration",
         "LogTypes": [
-            "Snowflake.AccountUsage"
+            "Snowflake.QueryHistory"
         ],
-        "YAMLPath": "correlation_rules/snowflake_data_exfiltration.yml"
+        "YAMLPath": "correlation_rules/snowflake_data_exfiltration_streaming.yml"
     },
     {
         "AnalysisType": "Rule",
