@@ -1,0 +1,131 @@
+AnalysisType: rule
+Filename: github_bot_pull_request_approval.py
+RuleID: "GitHub.Webhook.BotPullRequestApproval"
+DisplayName: "GitHub Pull Request Approved by Bot"
+Enabled: true
+LogTypes:
+  - GitHub.Webhook
+Tags:
+  - GitHub
+  - No Pack
+  - CI/CD
+Reports:
+  MITRE ATT&CK:
+    - TA0001:T1195.002 # Supply Chain Compromise: Compromise Software Supply Chain
+Severity: High
+Description: >
+  A GitHub App or bot submitted an approving review on a pull request. Automation is expected
+  to comment on pull requests, never to approve them: a bot approval can satisfy a required
+  review and let code reach a protected branch without a human reviewer. It may mean a
+  workflow's token was used by the code under review.
+Runbook: |
+  1. Confirm whether the write or approval came from an approved automation workflow run
+     (the workflow run that minted the token is in the token broker's log).
+  2. If it did not: suspend the GitHub App installation for the organisation, or rotate the
+     App's private key, so no further token is minted.
+  3. Disable the workflow that performed it.
+  4. Revert the commit or dismiss the review, and review every change the token made
+     (same token_id).
+  5. Notify Security.
+Reference: https://docs.github.com/en/webhooks/webhook-events-and-payloads#pull_request_review
+Tests:
+  - Name: Bot Approved a Pull Request
+    ExpectedResult: true
+    Log:
+      {
+        "action": "submitted",
+        "review": {
+          "id": 345678,
+          "body": "Approved.",
+          "state": "approved",
+          "user": {
+            "login": "my-automation[bot]",
+            "type": "Bot"
+          },
+          "html_url": "https://github.com/org/repo/pull/10#pullrequestreview-345678",
+          "submitted_at": "2024-01-15T11:00:00Z"
+        },
+        "pull_request": {
+          "number": 10,
+          "title": "Bug fix"
+        },
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Bot Commented on a Pull Request
+    ExpectedResult: false
+    Log:
+      {
+        "action": "submitted",
+        "review": {
+          "id": 345679,
+          "body": "Review comments follow.",
+          "state": "commented",
+          "user": {
+            "login": "my-automation[bot]",
+            "type": "Bot"
+          },
+          "html_url": "https://github.com/org/repo/pull/10#pullrequestreview-345679",
+          "submitted_at": "2024-01-15T11:00:00Z"
+        },
+        "pull_request": {
+          "number": 10,
+          "title": "Bug fix"
+        },
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Human Approved a Pull Request
+    ExpectedResult: false
+    Log:
+      {
+        "action": "submitted",
+        "review": {
+          "id": 345680,
+          "body": "Looks good!",
+          "state": "approved",
+          "user": {
+            "login": "fake-reviewer",
+            "type": "User"
+          },
+          "html_url": "https://github.com/org/repo/pull/10#pullrequestreview-345680",
+          "submitted_at": "2024-01-15T11:00:00Z"
+        },
+        "pull_request": {
+          "number": 10,
+          "title": "Bug fix"
+        },
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }
+  - Name: Bot Review Dismissed
+    ExpectedResult: false
+    Log:
+      {
+        "action": "dismissed",
+        "review": {
+          "id": 345678,
+          "body": "Approved.",
+          "state": "dismissed",
+          "user": {
+            "login": "my-automation[bot]",
+            "type": "Bot"
+          },
+          "html_url": "https://github.com/org/repo/pull/10#pullrequestreview-345678",
+          "submitted_at": "2024-01-15T11:00:00Z"
+        },
+        "pull_request": {
+          "number": 10,
+          "title": "Bug fix"
+        },
+        "repository": {
+          "full_name": "org/repo"
+        },
+        "p_log_type": "GitHub.Webhook"
+      }

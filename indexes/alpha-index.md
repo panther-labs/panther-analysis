@@ -1855,6 +1855,8 @@
   - Disabling branch protection controls could indicate malicious use of admin credentials in an attempt to hide activity.
 - [GitHub Branch Protection Policy Override](../rules/github_rules/github_branch_policy_override.yml)
   - Bypassing branch protection controls could indicate malicious use of admin credentials in an attempt to hide activity.
+- [GitHub Branch Protection Policy Override by Bot](../rules/github_rules/github_branch_policy_override_by_bot.yml)
+  - A GitHub App or bot bypassed a branch protection requirement on a repository and branch where no automation is expected to write. Automation is only expected to write to the protected branches listed in the rule; a bypass anywhere else may mean an automation token was obtained by untrusted code, such as a pull request's workflow run.
 - [GitHub Commits Skipping Workflows](../rules/github_rules/github_workflow_skip_commits.yml)
   - Detects commits from cross-fork scenarios that contain workflow skip directives, which bypass GitHub Actions workflows. These skip patterns ([skip ci], [ci skip], [no ci], [skip actions], [actions skip], skip-checks:true) can be used to avoid security checks and CI/CD processes. This rule only alerts on commits to public forkable repositories.
 - [GitHub Cross-Fork Workflow Run](../rules/github_rules/github_crossfork_workflow_run.yml)
@@ -1877,6 +1879,8 @@
   - An application integration was installed to your organization's Github account by someone in your organization.
 - [Github Public Repository Created](../rules/github_rules/github_public_repository_created.yml)
   - A public Github repository was created.
+- [GitHub Pull Request Approved by Bot](../rules/github_rules/github_bot_pull_request_approval.yml)
+  - A GitHub App or bot submitted an approving review on a pull request. Automation is expected to comment on pull requests, never to approve them: a bot approval can satisfy a required review and let code reach a protected branch without a human reviewer. It may mean a workflow's token was used by the code under review.
 - [GitHub pull_request_target Workflow on Self-Hosted Runner](../correlation_rules/github_pull_request_target_with_self_hosted_runner.yml)
   - Detects when a pull_request_target workflow runs on a self-hosted runner. pull_request_target workflows run with elevated privileges and have access to repository secrets even when triggered by external contributors from forks. When these workflows run on self-hosted runners attackers can gain direct code execution on the underlying infrastructure  with potential access to internal network, databases, and systems. Unlike GitHub-hosted runners which are destroyed after each job,  self-hosted runners persist and can be permanently compromised. This pattern is high risk regardless of whether the PR is cross-fork or same-repository because self-hosted runners represent infrastructure access. GitHub explicitly warns never to use self-hosted runners with public repositories or workflows that can be triggered by untrusted contributors. This configuration allows any GitHub user with read access to your repository to execute arbitrary code on your infrastructure.
 - [GitHub pull_request_target Workflow Usage](../rules/github_rules/github_pull_request_target_usage.yml)
@@ -2001,8 +2005,8 @@
   - GSuite reported a suspicious activity on a user's device.
 - [GSuite Document External Ownership Transfer](../rules/gsuite_activityevent_rules/gsuite_doc_ownership_transfer.yml)
   - A GSuite document's ownership was transferred to an external party.
-- [GSuite Drive Many Documents Deleted](../queries/gsuite_queries/gsuite_drive_many_docs_deleted.yml)
-  - Scheduled rule for the GSuite Drive Many Documents Deleted query. Looks for users who have deleted more than 10 (tunable) documents the past day.
+- [GSuite Drive Many Documents Deleted](../rules/gsuite_activityevent_rules/gsuite_drive_many_docs_deleted.yml)
+  - Detects when a user moves more than 10 distinct documents to the trash in Google Drive within 60 minutes. This may indicate accidental or malicious bulk deletion of files.
 - [Gsuite Email Bypassed Spam Filter](../rules/gsuite_activityevent_rules/gsuite_bypass_spam_filter_email.yml)
   - Detects if an email received by a user has bypassed the organization's spam filter.
 - [GSuite External Drive Document](../rules/gsuite_reports_rules/gsuite_drive_visibility_change.yml)
@@ -2620,7 +2624,7 @@
   - Monitor for malicious IPs interacting with Snowflake as part of ongoing cyber threat activity reported May 31st, 2024
 - [Snowflake Configuration Drift](../queries/snowflake_queries/snowflake_0108977_configuration_drift.yml)
   - Monitor for configuration drift made by malicious actors as part of ongoing cyber threat activity reported May 31st, 2024
-- [Snowflake Data Exfiltration](../correlation_rules/snowflake_data_exfiltration.yml)
+- [Snowflake Data Exfiltration](../correlation_rules/snowflake_data_exfiltration_streaming.yml)
   - Detects multi-step Snowflake data exfiltration by identifying temporary stage creation, table data copied to stage, and file downloads. This technique was used in the April 2024 Snowflake breach (UNC5537) targeting accounts without MFA. The correlation of all three steps provides high-confidence evidence of active data theft beyond legitimate ETL operations.
 - [Snowflake External Data Share](../rules/snowflake_rules/snowflake_stream_external_shares.yml)
   - Detect when an external share has been initiated from one source cloud to another target cloud.
